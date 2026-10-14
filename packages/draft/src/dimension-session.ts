@@ -68,6 +68,20 @@ export class DimensionSession {
     this.notify();
   }
 
+  acceptPick(point: CadPoint, entity?: CadEntity): DimensionInputResult {
+    if (this.status !== 'active') return failure('closedSession');
+    if (this.getSnapshot().inputMode !== 'entity') return this.acceptPoint(point);
+    if (entity) return this.acceptEntity(entity, point);
+    if (this.tool === 'DIM' && this.prompt === 'selectObject') return this.acceptPoint(point);
+    return failure(
+      this.mode === 'radial'
+        ? 'selectCircle'
+        : this.mode === 'angular'
+          ? 'selectLineOrArc'
+          : 'selectDimensionObject',
+    );
+  }
+
   acceptPoint(point: CadPoint): DimensionInputResult {
     if (this.status !== 'active') return failure('closedSession');
     if (!validDraftPoint(point)) return failure('point');
@@ -236,7 +250,17 @@ export class DimensionSession {
       this.mode = 'angular';
       return this.changePrompt('vertex');
     }
-    const point = parseDraftPoint(text, this.points.at(-1));
+    const base = this.points.at(-1);
+    const distance = parseDraftNumber(text);
+    if (distance !== undefined && base && this.cursor) {
+      const length = dimensionDistance(base, this.cursor);
+      if (length > epsilon)
+        return this.acceptPoint({
+          x: base.x + ((this.cursor.x - base.x) * distance) / length,
+          y: base.y + ((this.cursor.y - base.y) * distance) / length,
+        });
+    }
+    const point = parseDraftPoint(text, base);
     return point ? this.acceptPoint(point) : failure('point');
   }
 

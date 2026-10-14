@@ -1,5 +1,35 @@
 # HanCAD progress
 
+## Delivered follow-up: reliable basic drafting (2026-10-15)
+
+Baseline before changes: 157 unit, 23 compatibility and 23 Edge browser tests
+passed (one opt-in private-file test skipped).
+
+| Milestone                                   | Status | Acceptance                                                                               |
+| ------------------------------------------- | ------ | ---------------------------------------------------------------------------------------- |
+| 4.2 Exact drafting snaps                    | Done   | Ortho/grid-safe endpoints, accepted in-command segments, true intersections and feedback |
+| 5.2 Practical selection and editing         | Done   | Directional selection, selected-object drag, MOVE/COPY, cancellation and command undo    |
+| 2.3 Reliable mouse navigation               | Done   | Cursor-anchored wheel, live sysvars, captured middle pan and double-middle extents       |
+| 11.4 Dimension input reliability            | Done   | Exact point/entity input, numeric distance and empty-pick regressions                    |
+| 24.2 Integrated basic-workflow verification | Done   | Full production checks, actual pointer workflows, visual QA and updated manual steps     |
+
+`HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=1 pnpm verify` passes WASM, ESLint,
+formatting, strict TypeScript, 183 unit tests, 23 compatibility tests, the production
+build and 34 Edge E2E tests (41.9 seconds). The one opt-in private-file benchmark
+is skipped and was not repeated in this increment. The running server was verified
+as the local production server serving this workspace's refreshed build.
+
+Actual browser visual QA confirms readable 120/80 dimensions and arrowheads on a
+sample rectangle/circle drawing. A held object drag followed by Escape preserves
+one selected object, removes the preview and leaves the saved drawing unchanged;
+the second Escape clears selection. Evidence is ignored under
+`test-artifacts/basic-workflow/` and the general E2E output directory. Continuous
+LINE endpoint recognition also passes before Enter commits the command.
+
+Next: implement basic TRIM/OFFSET and general TEXT creation as small runnable
+increments, then extend grips/lasso, dimension associativity and full styles.
+The full phase acceptance/performance/AutoCAD reference checks remain pending.
+
 ## Delivered follow-up: launcher, performance and dimensions
 
 The user's next request adds dimension creation/display following the supplied
@@ -14,7 +44,7 @@ The previously delivered slice remains the baseline; Phase 11 is partial scope.
 | 11.2 Dimension UI and basic style settings       | Done   | Shared command aliases, mouse/coordinates/entity picks, undo/reload and DXF/PDF output           |
 | 11.3 Final integration verification              | Done   | Full checks, actual large-file dimension/undo/reload and readable dimension exports passed       |
 
-Current full verification passes 157 unit tests, 23 compatibility tests and 23
+The previous dimension delivery passed 157 unit tests, 23 compatibility tests and 23
 production Edge browser tests; the opt-in private-file test is skipped in this
 general run and is covered separately by the actual-file benchmark. Twenty small
 renderer golden scenes also pass. Independent PDFium/PNG/JPG/Edge-SVG inspection
@@ -98,15 +128,15 @@ accepted merely because a subset works.
 | 04    | Coordinates/drafting aids                                    | In progress |
 | 05    | Selection/grips/clipboard                                    | In progress |
 | 06    | 2D drawing                                                   | In progress |
-| 07    | 2D modification                                              | Planned     |
+| 07    | 2D modification                                              | In progress |
 | 08    | Layers/properties                                            | In progress |
 | 09    | DWG/DXF/recovery                                             | In progress |
 | 10    | Text/fonts                                                   | Planned     |
-| 11    | Dimensions/leaders                                           | Planned     |
+| 11    | Dimensions/leaders                                           | In progress |
 | 12    | Hatch/boundary/regions                                       | Planned     |
 | 13    | Blocks/references/images                                     | Planned     |
 | 14    | Layouts/plotting                                             | In progress |
-| 15    | Inquiry/settings                                             | Planned     |
+| 15    | Inquiry/settings                                             | In progress |
 | 16    | Advanced 2D                                                  | Planned     |
 | 17–23 | Dynamic blocks, constraints, automation/customization and 3D | Deferred    |
 | 24    | Performance/compatibility                                    | In progress |
@@ -167,7 +197,7 @@ DWG saving and lossless unsupported-object preservation are pending. Current I/O
 covers supported 2D model-space geometry, with omissions/approximations reported.
 PDF is raster A4; exact plot scales/window selection/vector CJK output are pending.
 Canvas2D is transitional; full rendering budgets and AutoCAD prompt/option parity
-remain unmet. Advanced selection, move/copy, trim, offset, general text creation,
+remain unmet. Lasso/grips, trim, offset, general text creation,
 associative dimensions, the complete DIMSTYLE manager and optional drafting aids
 are future work. Initial dimension creation is part of the active follow-up above.
 
@@ -175,3 +205,25 @@ The current follow-up is verified. The next usable increment starts from
 `prompt-source/NEXT_STEPS.md`: prioritize essential 2D editing, general text,
 associative/full dimension workflows, accurate snapping and real-file fidelity.
 Keep the app runnable; defer 3D and secondary features.
+
+## Basic-workflow manual acceptance (2026-10-15)
+
+1. Run the main launcher, then NEW. Enter `L`, Enter, `0,0`, Enter, `100,30`,
+   Enter, Enter. Use the wheel to zoom toward the cursor, middle drag to pan and
+   double-middle to fit the geometry.
+2. Set `OSMODE` to `1`. F3 should show object snap enabled. Start `L`, enter
+   `10,40`, then hover/click near the prior line endpoint. The green square and
+   Korean endpoint tooltip identify the exact snap. F8 Ortho must not displace it.
+3. Enter `DLI`, click the two endpoints and click a dimension position. `DAL`
+   measures the sloped length; DRA/DDI select a circle; DAN measures an angle.
+   `D` opens text/arrow/scale settings. `DI` then two snapped points reports the
+   distance without adding objects. Esc cancels unfinished inputs.
+4. Drag left-to-right around a complete object for a blue window; drag
+   right-to-left across it for green crossing. Shift removes from the selection.
+   Drag a selected object to move; hold Ctrl while dragging to copy. Escape before
+   release cancels the drag and retains selection; a second Escape clears it.
+5. Select an object, enter `M`, `0,0`, `@20,10`. Use U/REDO to verify one edit.
+   Select again, `CO`, `0,0`, `@30,0`, `@60,0`, Enter. One U removes both copies.
+   Esc retains completed copy placements and discards the next preview.
+6. Save DXF from File and reload the page. Completed geometry/dimension definitions
+   remain; temporary selection, preview and measurement objects do not persist.

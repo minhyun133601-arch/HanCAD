@@ -157,6 +157,62 @@ describe('2D drafting command sessions', () => {
     expect(parseDraftPoint('1e20,0')).toBeUndefined();
   });
 
+  it('preserves exact object snaps in previews and accepted points with grid and Ortho enabled', () => {
+    const settings = {
+      ...createEmptyCadState().settings,
+      ortho: true,
+      gridSnap: true,
+      gridSize: 10,
+    };
+    const commits: CadEntity[][] = [];
+    for (const tool of ['LINE', 'PLINE'] as const) {
+      const session = new DraftSession(tool, settings, {
+        onCommit: (entities) => commits.push(entities),
+      });
+      session.acceptPoint({ x: 3, y: -4 }, { snapped: true });
+      const endpoint = { x: 37, y: -19 };
+      session.moveCursor(endpoint, { snapped: true });
+      const preview = session.getSnapshot().preview[0];
+      expect(
+        preview?.type === 'line'
+          ? preview.b
+          : preview?.type === 'polyline'
+            ? preview.points.at(-1)
+            : undefined,
+      ).toEqual(endpoint);
+      session.acceptPoint(endpoint, { snapped: true });
+      endpoint.x = 999;
+      expect(session.getSnapshot().points).toEqual([
+        { x: 3, y: -4 },
+        { x: 37, y: -19 },
+      ]);
+      session.finish();
+    }
+    expect(commits[0]?.[0]).toMatchObject({
+      type: 'line',
+      a: { x: 3, y: -4 },
+      b: { x: 37, y: -19 },
+    });
+    expect(commits[1]?.[0]).toMatchObject({
+      type: 'polyline',
+      points: [
+        { x: 3, y: -4 },
+        { x: 37, y: -19 },
+      ],
+    });
+    const circle = new DraftSession('CIRCLE', settings, {
+      onCommit: (entities) => commits.push(entities),
+    });
+    circle.acceptPoint({ x: 3, y: -4 }, { snapped: true });
+    circle.acceptPoint({ x: 6, y: -8 }, { snapped: true });
+    expect(commits[2]?.[0]).toMatchObject({ type: 'circle', center: { x: 3, y: -4 }, radius: 5 });
+    const invalid = new DraftSession('LINE', settings, { onCommit: () => {} });
+    expect(invalid.acceptPoint({ x: NaN, y: 0 }, { snapped: true })).toEqual({
+      status: 'error',
+      error: 'point',
+    });
+  });
+
   it('deletes only selected visible unlocked entities and leaves input snapshots unchanged', () => {
     const drawing = normalizeCadState({
       layers: [

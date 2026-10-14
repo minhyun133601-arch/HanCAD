@@ -1,0 +1,258 @@
+import type { CadPoint } from '@hancad/legacy-bridge';
+
+export interface CadView {
+  scale: number;
+  tx: number;
+  ty: number;
+}
+export interface CadPointerPick {
+  point: CadPoint;
+  entityId?: string;
+  shiftKey: boolean;
+}
+export interface CadSelectionDrag {
+  start: CadPoint;
+  end: CadPoint;
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  phase: 'start' | 'move' | 'end' | 'cancel';
+  reason?: 'escape';
+}
+export interface CadNavigationSettings {
+  zoomFactor: number;
+  zoomWheel: number;
+  middleButtonPan: number;
+}
+export interface CadCanvasOptions {
+  onCoordinates?: (point: CadPoint) => void;
+  onPick?: (pick: CadPointerPick) => void;
+  canSelectArea?: () => boolean;
+  suppressSelectionBox?: (start: CadPoint) => boolean;
+  onSelectionDrag?: (event: CadSelectionDrag) => void;
+  getNavigationSettings?: () => CadNavigationSettings;
+  observeResize?: boolean;
+}
+interface PointerHost {
+  view: () => CadView;
+  viewport: () => CadPoint;
+  changeView: (view: CadView) => void;
+  worldPoint: (local: CadPoint) => CadPoint;
+  pick: (point: CadPoint) => string | undefined;
+  coordinates: (point: CadPoint) => void;
+  fit: () => void;
+  invalidate: () => void;
+}
+interface Press {
+  pointerId: number;
+  local: CadPoint;
+  start: CadPoint;
+  end: CadPoint;
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  suppressBox: boolean;
+  dragging: boolean;
+}
+
+/** Keeps canvas capture, selection gestures and view navigation out of drawing code. */
+export class CadPointerController {
+  private pan: { pointerId: number; local: CadPoint; view: CadView; moved: boolean } | undefined;
+  private press: Press | undefined;
+  private middleClick: { time: number; local: CadPoint } | undefined;
+
+  constructor(
+    private readonly canvas: HTMLCanvasElement,
+    private readonly options: CadCanvasOptions,
+    private readonly host: PointerHost,
+  ) {
+    canvas.addEventListener('wheel', this.onWheel, { passive: false });
+    canvas.addEventListener('pointerdown', this.onPointerDown);
+    canvas.addEventListener('pointermove', this.onPointerMove);
+    canvas.addEventListener('pointerup', this.onPointerUp);
+    canvas.addEventListener('pointercancel', this.onPointerCancel);
+    canvas.addEventListener('lostpointercapture', this.onPointerCancel);
+    canvas.addEventListener('auxclick', this.onAuxClick);
+    canvas.ownerDocument?.addEventListener?.('keydown', this.onKeyDown, true);
+    canvas.ownerDocument?.defaultView?.addEventListener('blur', this.onBlur);
+  }
+
+  getSelectionArea(): CadSelectionDrag | undefined {
+    return this.press?.dragging && !this.press.suppressBox
+      ? this.selectionEvent(this.press, 'move')
+      : undefined;
+  }
+  cancel(reason?: 'escape'): void {
+    const press = this.press;
+    const pan = this.pan;
+    this.press = undefined;
+    this.pan = undefined;
+    this.middleClick = undefined;
+    if (press?.dragging) {
+      this.options.onSelectionDrag?.(this.selectionEvent(press, 'cancel', reason));
+      this.host.invalidate();
+    }
+    if (press) this.release(press.pointerId);
+    if (pan) this.release(pan.pointerId);
+  }
+  dispose(): void {
+    this.cancel();
+    this.canvas.removeEventListener('wheel', this.onWheel);
+    this.canvas.removeEventListener('pointerdown', this.onPointerDown);
+    this.canvas.removeEventListener('pointermove', this.onPointerMove);
+    this.canvas.removeEventListener('pointerup', this.onPointerUp);
+    this.canvas.removeEventListener('pointercancel', this.onPointerCancel);
+    this.canvas.removeEventListener('lostpointercapture', this.onPointerCancel);
+    this.canvas.removeEventListener('auxclick', this.onAuxClick);
+    this.canvas.ownerDocument?.removeEventListener?.('keydown', this.onKeyDown, true);
+    this.canvas.ownerDocument?.defaultView?.removeEventListener('blur', this.onBlur);
+  }
+  private localPoint(event: MouseEvent): CadPoint {
+    const rect = this.canvas.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  }
+  private release(pointerId: number): void {
+    if (this.canvas.hasPointerCapture?.(pointerId)) this.canvas.releasePointerCapture(pointerId);
+  }
+  private selectionEvent(
+    press: Press,
+    phase: CadSelectionDrag['phase'],
+    reason?: 'escape',
+  ): CadSelectionDrag {
+    return {
+      start: { ...press.start },
+      end: { ...press.end },
+      shiftKey: press.shiftKey,
+      ctrlKey: press.ctrlKey,
+      phase,
+      ...(reason === undefined ? {} : { reason }),
+    };
+  }
+  private pick(point: CadPoint, shiftKey: boolean): void {
+    const entityId = this.host.pick(point);
+    this.options.onPick?.({ point, shiftKey, ...(entityId === undefined ? {} : { entityId }) });
+  }
+  private readonly onWheel = (event: WheelEvent): void => {
+    event.preventDefault();
+    if (!Number.isFinite(event.deltaY) || event.deltaY === 0) return;
+    const settings = this.options.getNavigationSettings?.();
+    const factor = Math.max(3, Math.min(100, settings?.zoomFactor ?? 60));
+    const direction = settings?.zoomWheel === 1 ? -1 : 1;
+    const divisor = event.deltaMode === 1 ? 3 : event.deltaMode === 2 ? 1 : 100;
+    const steps = Math.max(-10, Math.min(10, event.deltaY / divisor)) * direction;
+    const local = this.localPoint(event);
+    const view = this.host.view();
+    const scale = Math.max(1e-6, Math.min(1e6, view.scale * (1 + factor / 100) ** -steps));
+    const ratio = scale / view.scale;
+    const { x: width, y: height } = this.host.viewport();
+    this.host.changeView({
+      scale,
+      tx: local.x - width / 2 - (local.x - width / 2 - view.tx) * ratio,
+      ty: local.y - height / 2 - (local.y - height / 2 - view.ty) * ratio,
+    });
+    if (this.pan) this.pan = { ...this.pan, local, view: this.host.view() };
+  };
+  private readonly onPointerDown = (event: PointerEvent): void => {
+    if (event.button !== 0 && event.button !== 1) return;
+    event.preventDefault();
+    if (event.button === 1 && this.options.getNavigationSettings?.().middleButtonPan === 0) return;
+    this.canvas.focus?.({ preventScroll: true });
+    const local = this.localPoint(event);
+    if (event.button === 0) {
+      const point = this.host.worldPoint(local);
+      if (!this.options.canSelectArea?.()) {
+        this.pick(point, event.shiftKey);
+        return;
+      }
+      this.cancel();
+      this.press = {
+        pointerId: event.pointerId,
+        local,
+        start: point,
+        end: point,
+        shiftKey: event.shiftKey,
+        ctrlKey: event.ctrlKey,
+        suppressBox: !event.shiftKey && (this.options.suppressSelectionBox?.(point) ?? false),
+        dragging: false,
+      };
+    } else {
+      const previous = this.middleClick;
+      this.middleClick = undefined;
+      if (
+        previous &&
+        event.timeStamp - previous.time <= 500 &&
+        Math.hypot(local.x - previous.local.x, local.y - previous.local.y) <= 6
+      ) {
+        this.host.fit();
+        return;
+      }
+      this.cancel();
+      this.pan = { pointerId: event.pointerId, local, view: this.host.view(), moved: false };
+    }
+    this.canvas.setPointerCapture?.(event.pointerId);
+  };
+  private readonly onPointerMove = (event: PointerEvent): void => {
+    const local = this.localPoint(event);
+    if (this.pan && (event.pointerId === undefined || event.pointerId === this.pan.pointerId)) {
+      if (event.buttons !== undefined && !(event.buttons & 4)) this.cancel();
+      else {
+        const dx = local.x - this.pan.local.x;
+        const dy = local.y - this.pan.local.y;
+        this.pan.moved ||= Math.hypot(dx, dy) >= 4;
+        this.host.changeView({
+          ...this.pan.view,
+          tx: this.pan.view.tx + dx,
+          ty: this.pan.view.ty + dy,
+        });
+      }
+    }
+    const point = this.host.worldPoint(local);
+    const press = this.press;
+    if (press && (event.pointerId === undefined || event.pointerId === press.pointerId)) {
+      if (event.buttons !== undefined && !(event.buttons & 1)) this.cancel();
+      else {
+        press.end = point;
+        press.ctrlKey = event.ctrlKey;
+        if (press.dragging || Math.hypot(local.x - press.local.x, local.y - press.local.y) >= 4) {
+          const phase = press.dragging ? 'move' : 'start';
+          press.dragging = true;
+          this.options.onSelectionDrag?.(this.selectionEvent(press, phase));
+          this.host.invalidate();
+        }
+      }
+    }
+    this.host.coordinates(point);
+  };
+  private readonly onPointerUp = (event: PointerEvent): void => {
+    const pan = this.pan;
+    if (pan && event.pointerId === pan.pointerId && event.button === 1) {
+      this.pan = undefined;
+      if (!pan.moved) this.middleClick = { time: event.timeStamp, local: this.localPoint(event) };
+      this.release(pan.pointerId);
+    }
+    const press = this.press;
+    if (!press || event.pointerId !== press.pointerId || event.button !== 0) return;
+    this.press = undefined;
+    press.end = this.host.worldPoint(this.localPoint(event));
+    press.ctrlKey = event.ctrlKey;
+    this.release(press.pointerId);
+    if (press.dragging) {
+      this.options.onSelectionDrag?.(this.selectionEvent(press, 'end'));
+      this.host.invalidate();
+    } else this.pick(press.start, press.shiftKey);
+  };
+  private readonly onPointerCancel = (event: PointerEvent): void => {
+    if (event.pointerId === this.press?.pointerId || event.pointerId === this.pan?.pointerId)
+      this.cancel();
+  };
+  private readonly onKeyDown = (event: KeyboardEvent): void => {
+    if (event.code !== 'Escape') return;
+    if (this.press || this.pan) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    this.cancel('escape');
+  };
+  private readonly onBlur = (): void => this.cancel();
+  private readonly onAuxClick = (event: MouseEvent): void => {
+    if (event.button === 1) event.preventDefault();
+  };
+}

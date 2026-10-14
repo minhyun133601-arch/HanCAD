@@ -11,6 +11,13 @@ command is not an implemented command.
 - [ ] Verify command prefixes, last-command repeat, cancellation and transparent commands.
 - [ ] Verify Korean IME command entry and Korean free-text composition on Windows.
 - [ ] Verify selection with PICKAUTO/PICKDRAG and lasso/window/crossing settings.
+- [ ] Compare rectangular drag window/crossing and Shift removal; implement lasso, click-click and full PICKAUTO/PICKDRAG behavior.
+- [ ] Verify selected-object drag/Ctrl-copy, snapped targets with Ortho, PICKADD/PICKFIRST and whole-command COPY undo.
+- [ ] Complete COPYMODE, Array, Undo and Displacement beyond repeated two-point copies.
+- [ ] Compare APERTURE/AUTOSNAP feedback, exact endpoints/intersections at large coordinates and dense zoom levels.
+- [ ] Verify real mouse/trackpad wheel deltas, ZOOMFACTOR/ZOOMWHEEL, MBUTTONPAN and double-middle extents; complete MBUTTONPAN=0 shortcut menu.
+- [ ] Verify DIST decimal values/angle settings; implement other unit formats, Multiple and transparent nesting.
+- [ ] Verify direct-distance bases at dimension placement prompts and empty object-pick behavior.
 - [ ] Verify block insertion and drawing opening use distinct drop targets.
 - [ ] Verify one completed command corresponds to one undo group.
 - [ ] Review transitional auto-fit after LAYON when all imported layers were off.

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { DraftSession, appendCadEntities, deleteCadEntities } from '@hancad/draft';
-import type { DraftSnapshot, DraftTool } from '@hancad/draft';
+import type { DraftPointOptions, DraftSnapshot, DraftTool } from '@hancad/draft';
 import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import type { CommandRegistry } from '@hancad/commands';
 import type { SystemVariables } from '@hancad/sysvars';
@@ -20,6 +20,7 @@ interface PickInput {
   point: CadPoint;
   entityId?: string;
   shiftKey: boolean;
+  snapped?: boolean;
 }
 const tools: readonly [DraftTool, MessageKey][] = [
   ['LINE', 'line'],
@@ -47,6 +48,7 @@ export function useDrafting(options: DraftingOptions) {
   const eraseSelection = useRef(false);
   const selectionMode = useRef(false);
   const cursorRef = useRef<CadPoint | null>(null);
+  const cursorOptions = useRef<DraftPointOptions>({});
   const ortho = options.sysvars.getNumber('ORTHOMODE') === 1;
 
   function settings() {
@@ -63,7 +65,7 @@ export function useDrafting(options: DraftingOptions) {
     const active = activeSession.current;
     if (active) {
       active.setSettings(settings());
-      if (cursorRef.current) active.moveCursor(cursorRef.current);
+      if (cursorRef.current) active.moveCursor(cursorRef.current, cursorOptions.current);
     }
   }, [ortho, state.settings]);
 
@@ -134,7 +136,9 @@ export function useDrafting(options: DraftingOptions) {
   }
   function pick(event: PickInput): void {
     if (activeSession.current) {
-      const result = activeSession.current.acceptPoint(event.point);
+      const result = activeSession.current.acceptPoint(event.point, {
+        snapped: event.snapped === true,
+      });
       if (result.status === 'error') showError(result.error ?? 'point');
       return;
     }
@@ -142,14 +146,21 @@ export function useDrafting(options: DraftingOptions) {
       if (!eraseSelection.current) select([]);
       return;
     }
-    const ids = event.shiftKey
-      ? selectionRef.current.filter((id) => id !== event.entityId)
-      : [...new Set([...selectionRef.current, event.entityId])];
-    select(ids);
+    selectIds([event.entityId], event.shiftKey);
   }
-  function cursor(point: CadPoint): void {
+  function cursor(point: CadPoint, pointOptions: DraftPointOptions = {}): void {
     cursorRef.current = point;
-    activeSession.current?.moveCursor(point);
+    cursorOptions.current = pointOptions;
+    activeSession.current?.moveCursor(point, pointOptions);
+  }
+  function selectIds(ids: readonly string[], remove = false): void {
+    const wanted = new Set(ids);
+    const current = latest.current.sysvars.getNumber('PICKADD') === 0 ? [] : selectionRef.current;
+    select(
+      remove
+        ? selectionRef.current.filter((id) => !wanted.has(id))
+        : [...new Set([...current, ...ids])],
+    );
   }
   function submit(value: string): boolean {
     if (activeSession.current) {
@@ -229,6 +240,10 @@ export function useDrafting(options: DraftingOptions) {
     submit,
     erase,
     selectAll,
+    selectIds,
+    clearSelection: () => select([]),
+    getSelectedIds: () => selectionRef.current,
+    getSnapEntities: () => activeSession.current?.getSnapEntities() ?? [],
     isActive: () => activeSession.current !== null || selectionMode.current,
     isDrafting: () => activeSession.current !== null,
   };

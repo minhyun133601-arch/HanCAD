@@ -3,7 +3,7 @@ import { getMessages, type Locale } from '@hancad/ui';
 import { CommandLine } from './CommandLine';
 import { DrawingSurface, type LayoutId } from './DrawingSurface';
 import { FileTabs, Ribbon, TitleBar, type RibbonTab } from './ShellChrome';
-import { changeToggle, statusToggles, StatusBar, type StatusToggle } from './StatusBar';
+import { changeToggle, StatusBar, type StatusToggle } from './StatusBar';
 import { createPlatform } from './platform';
 import { useCommandSession } from './useCommandSession';
 import { useDrawingFiles } from './useDrawingFiles';
@@ -13,9 +13,11 @@ import type { CanvasSurface } from './canvas-surface';
 import { useDrafting } from './useDrafting';
 import { useDimensions } from './useDimensions';
 import { DimensionStyleDialog } from './DimensionStyleDialog';
-import { snapDraftPoint } from '@hancad/draft';
-import type { CadEntity, CadPoint } from '@hancad/legacy-bridge';
-import type { CadPointerPick } from '@hancad/render';
+import { useModification } from './useModification';
+import { useMeasurement } from './useMeasurement';
+import { useCanvasInteraction } from './useCanvasInteraction';
+import { useWorkspaceShortcuts } from './useWorkspaceShortcuts';
+import type { CadEntity } from '@hancad/legacy-bridge';
 
 const emptyPreview: readonly CadEntity[] = [];
 
@@ -54,33 +56,91 @@ export function App() {
     cancelDraft: () => draft.cancel(false),
     print: session.print,
   });
-  const interaction = useRef({ files, draft, dimensions, session, progressOpen });
-  interaction.current = { files, draft, dimensions, session, progressOpen };
   const canvasSurface = useRef<CanvasSurface | null>(null);
+  const modification = useModification({
+    registry: session.registry,
+    sysvars: session.sysvars,
+    messages,
+    getState: files.getState,
+    getSelectedIds: draft.getSelectedIds,
+    clearSelection: draft.clearSelection,
+    commitState: files.commitState,
+    print: session.print,
+    cancelOthers: () => {
+      if (draft.isActive()) draft.cancel(false);
+      dimensions.cancel(false);
+      measurement.cancel(false);
+    },
+  });
+  const measurement = useMeasurement({
+    registry: session.registry,
+    sysvars: session.sysvars,
+    messages,
+    getState: files.getState,
+    print: session.print,
+    cancelOthers: () => {
+      if (draft.isActive()) draft.cancel(false);
+      dimensions.cancel(false);
+      modification.cancel(false);
+    },
+  });
+  const interaction = useCanvasInteraction({
+    files,
+    draft,
+    dimensions,
+    modification,
+    measurement,
+    session,
+    progressOpen,
+    messages,
+    surface: canvasSurface,
+  });
   const inputRef = useRef<HTMLDivElement | HTMLInputElement>(null);
 
   function focusCommand(): void {
     inputRef.current?.focus({ preventScroll: true });
   }
   function execute(command: string): void {
+    canvasSurface.current?.cancelPointerInteraction();
     if (files.restoring) files.cancelRestore(false);
     if (draft.isActive()) draft.cancel(false);
     if (dimensions.isActive()) dimensions.cancel(false);
+    if (modification.isActive()) modification.cancel(false);
+    if (measurement.isActive()) measurement.cancel(false);
     canvasSurface.current?.setSnapMarker();
     setCommandVisible(true);
     session.startCommand(command);
     focusCommand();
   }
   async function submit(value: string): Promise<void> {
-    if (dimensions.submit(value) || draft.submit(value)) {
+    if (
+      dimensions.submit(value) ||
+      modification.submit(value) ||
+      measurement.submit(value) ||
+      draft.submit(value)
+    ) {
       session.changeInput('');
-      if (!draft.isDrafting() && !dimensions.isActive()) canvasSurface.current?.setSnapMarker();
+      if (
+        !draft.isDrafting() &&
+        !dimensions.isActive() &&
+        !modification.isActive() &&
+        !measurement.isActive()
+      )
+        canvasSurface.current?.setSnapMarker();
       return;
     }
+    canvasSurface.current?.cancelPointerInteraction();
     await session.execute(value);
   }
   function cancel(): void {
-    if (dimensions.isActive()) {
+    canvasSurface.current?.cancelPointerInteraction();
+    if (modification.isActive()) {
+      modification.cancel();
+      session.changeInput('');
+    } else if (measurement.isActive()) {
+      measurement.cancel();
+      session.changeInput('');
+    } else if (dimensions.isActive()) {
       dimensions.cancel();
       session.changeInput('');
     } else if (draft.isActive() || draft.selectedIds.length) {
@@ -89,42 +149,11 @@ export function App() {
     } else session.cancel();
     canvasSurface.current?.setSnapMarker();
   }
-  function snapped(point: CadPoint): CadPoint {
-    const live = interaction.current;
-    const result =
-      live.draft.isDrafting() || live.dimensions.needsPoint()
-        ? snapDraftPoint(
-            live.files.getState(),
-            point,
-            10 / (canvasSurface.current?.getView().scale ?? 1),
-            live.session.sysvars.getNumber('OSMODE'),
-          )
-        : undefined;
-    canvasSurface.current?.setSnapMarker(result?.point);
-    return result?.point ?? point;
-  }
-  function pick(event: CadPointerPick): void {
-    const live = interaction.current;
-    if (live.files.reading || live.files.restoring || live.progressOpen) return;
-    if (live.dimensions.isActive()) {
-      const entity = event.entityId
-        ? live.files.getState().entities.find((item) => item.id === event.entityId)
-        : undefined;
-      live.dimensions.pick(snapped(event.point), entity);
-    } else live.draft.pick({ ...event, point: snapped(event.point) });
-  }
-  function cursor(point: CadPoint): void {
-    const live = interaction.current;
-    if (live.files.reading || live.files.restoring || live.progressOpen) return;
-    if (live.dimensions.isActive()) {
-      const id = live.dimensions.needsEntity() ? canvasSurface.current?.pick(point) : undefined;
-      const entity = id ? live.files.getState().entities.find((item) => item.id === id) : undefined;
-      live.dimensions.cursor(snapped(point), entity);
-    } else live.draft.cursor(snapped(point));
-  }
   function openFile(file: File): void {
     if (draft.isActive()) draft.cancel(false);
     if (dimensions.isActive()) dimensions.cancel(false);
+    modification.cancel(false);
+    measurement.cancel(false);
     void files.openFile(file);
   }
   function toggle(item: StatusToggle): void {
@@ -170,10 +199,13 @@ export function App() {
   useEffect(() => {
     draft.cancel(false);
     dimensions.cancel(false);
+    modification.cancel(false);
+    measurement.cancel(false);
   }, [files.fitRevision]);
   useEffect(() => {
-    if (!draft.active && !dimensions.active) canvasSurface.current?.setSnapMarker();
-  }, [draft.active, dimensions.active]);
+    if (!draft.active && !dimensions.active && !modification.active && !measurement.active)
+      canvasSurface.current?.setSnapMarker();
+  }, [draft.active, dimensions.active, modification.active, measurement.active]);
   useEffect(() => {
     void platform.info().catch((error: unknown) => {
       session.print(
@@ -182,63 +214,21 @@ export function App() {
     });
   }, [platform]);
 
-  useEffect(() => {
-    function handleShortcut(event: KeyboardEvent): void {
-      if (document.querySelector('dialog[open], [data-file-menu-open]')) return;
-      if (files.restoring && event.code === 'Escape') {
-        event.preventDefault();
-        files.cancelRestore();
-        return;
-      }
-      if (files.reading) {
-        if (event.code === 'Escape') {
-          event.preventDefault();
-          files.cancelImport();
-        }
-        return;
-      }
-      const target = event.target;
-      if (
-        target instanceof HTMLElement &&
-        (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
-      )
-        return;
-      if (event.ctrlKey && event.code === 'KeyO') {
-        event.preventDefault();
-        execute('OPEN');
-      } else if (event.ctrlKey && event.code === 'KeyS') {
-        event.preventDefault();
-        execute('QSAVE');
-      } else if (event.ctrlKey && (event.code === 'KeyZ' || event.code === 'KeyY')) {
-        event.preventDefault();
-        execute(event.code === 'KeyY' || event.shiftKey ? 'REDO' : 'U');
-      } else if (event.ctrlKey && event.code === 'KeyA') {
-        event.preventDefault();
-        if (draft.isActive()) draft.cancel(false);
-        if (dimensions.isActive()) dimensions.cancel(false);
-        draft.selectAll();
-        focusCommand();
-      } else if (event.code === 'Delete' && !draft.isActive() && !dimensions.isActive()) {
-        event.preventDefault();
-        execute('ERASE');
-      } else if (event.code === 'F2') {
-        event.preventDefault();
-        setCommandVisible(true);
-        setExpanded((value) => !value);
-      } else if (event.ctrlKey && event.code === 'Digit9') {
-        event.preventDefault();
-        setCommandVisible((value) => !value);
-      } else {
-        const item = statusToggles.find((item) => item.key === event.code);
-        if (item) {
-          event.preventDefault();
-          if (item.implemented === false) session.print(messages.draftingAidsPending);
-          else toggle(item);
-        }
-      }
-    }
-    document.addEventListener('keydown', handleShortcut);
-    return () => document.removeEventListener('keydown', handleShortcut);
+  useWorkspaceShortcuts({
+    files,
+    draft,
+    dimensions,
+    modification,
+    measurement,
+    messages,
+    print: session.print,
+    execute,
+    focusCommand,
+    toggle,
+    cancelPointer: () => canvasSurface.current?.cancelPointerInteraction(),
+    showCommand: () => setCommandVisible(true),
+    toggleCommand: () => setCommandVisible((value) => !value),
+    toggleExpanded: () => setExpanded((value) => !value),
   });
 
   return (
@@ -280,11 +270,22 @@ export function App() {
           }}
           execute={execute}
           fitRevision={files.fitRevision}
-          preview={dimensions.snapshot?.preview ?? draft.snapshot?.preview ?? emptyPreview}
+          preview={
+            interaction.dragPreview ??
+            dimensions.snapshot?.preview ??
+            modification.snapshot?.preview ??
+            measurement.snapshot?.preview ??
+            draft.snapshot?.preview ??
+            emptyPreview
+          }
           selectedIds={draft.selectedIds}
-          active={draft.active || dimensions.active}
-          onPick={pick}
-          onCoordinates={cursor}
+          active={draft.active || dimensions.active || modification.active || measurement.active}
+          onPick={interaction.pick}
+          onCoordinates={interaction.cursor}
+          canSelectArea={interaction.canSelectArea}
+          onSelectionDrag={interaction.selectionDrag}
+          suppressSelectionBox={interaction.suppressSelectionBox}
+          getNavigationSettings={interaction.getNavigationSettings}
         />
         <div className="drawing-tools">
           <span>
@@ -328,7 +329,13 @@ export function App() {
             messages={messages}
             history={session.history}
             input={session.input}
-            prompt={dimensions.prompt ?? draft.prompt ?? session.prompt}
+            prompt={
+              dimensions.prompt ??
+              modification.prompt ??
+              measurement.prompt ??
+              draft.prompt ??
+              session.prompt
+            }
             editable={dimensions.active ? dimensions.editable : !draft.active && session.editable}
             busy={session.busy}
             blocked={files.reading || files.restoring}

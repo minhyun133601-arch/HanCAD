@@ -1,5 +1,5 @@
 import { CadCanvasSurface } from '@hancad/render';
-import type { CadCanvasOptions } from '@hancad/render';
+import type { CadCanvasOptions, CadSnapKind } from '@hancad/render';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 
 /** Owns the DOM canvas; React only provides the host element. */
@@ -29,8 +29,11 @@ export class CanvasSurface {
   setSelection(ids: readonly string[]): void {
     this.renderer.setSelection(ids);
   }
-  setSnapMarker(point?: CadPoint): void {
-    this.renderer.setSnapMarker(point);
+  setSnapMarker(point?: CadPoint, kind?: CadSnapKind, label?: string, showMarker = true): void {
+    this.renderer.setSnapMarker(point, kind, label, showMarker);
+  }
+  cancelPointerInteraction(): void {
+    this.renderer.cancelPointerInteraction();
   }
   getView() {
     return this.renderer.getView();

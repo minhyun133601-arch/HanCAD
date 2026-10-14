@@ -12,6 +12,24 @@ Current adapter: @hancad/legacy-bridge. Future renderer: @hancad/db, @hancad/geo
 
 The imperative Canvas2D adapter renders real imported and drafted 2D geometry, with fit, cursor-centered wheel zoom, middle-button pan and resize handling. Editing updates can preserve the view; rubber-band previews, selected objects, geometric click picking and a fixed-size snap marker are supported. A new empty drawing starts at metric 0,0 to 420,297 limits. The custom WebGL2 renderer, million-entity performance budget and instancing remain pending Phase 2.
 
+Pointer handling is isolated in `pointer-controller.ts`. Live navigation settings
+read ZOOMFACTOR, ZOOMWHEEL and MBUTTONPAN through the application boundary. Wheel
+steps retain the cursor's model position and equal forward/backward steps restore
+the view; middle-button double-click fits the drawing. Browser pixel/line/page
+wheel events normalize to 100 pixels, three lines or one page per wheel notch.
+This browser mapping remains a documented comparison item for physical devices.
+
+Idle clicks are distinguished from drags at four CSS pixels. Drag callbacks carry
+model start/end points and modifier state; the overlay draws a blue solid window
+or green dashed crossing box. The application can suppress that box for selected
+object moving/copying. Active point prompts keep immediate pointer-down input.
+Pointer capture, Escape, window blur, lost capture and cancellation clear gestures
+without delivering an extra pick. Full PICKAUTO/PICKDRAG and lasso parity is pending.
+
+Snap overlays use original endpoint, midpoint, center, quadrant, intersection and
+nearest symbols, plus an optional localized tooltip. Marker and tooltip display
+can be controlled independently while snapping remains active.
+
 `setDrawing` borrows an immutable drawing snapshot; callers must replace the snapshot for edits and must not mutate its geometry in place. The renderer changes only its own view, preview and selection, which avoids duplicating a large drawing for every visibility change.
 
 Visible geometry is retained in `Path2D` batches of at most 256 adjacent entities with matching layer, color and width. Text and dimensions keep the existing drawing implementation. Bounds culling includes stroke and text margins, and CPU floating origins preserve small coordinates around large drawing origins. Selection keeps nonselected colors and painter order. Click picking filters cached bounds before exact geometry checks.

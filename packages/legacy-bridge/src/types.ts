@@ -152,6 +152,13 @@ export interface LegacyCadRuntime {
         point: CadPoint,
         tolerance?: number,
       ): CadEntity | null;
+      boxSelect(
+        entities: readonly CadEntity[],
+        a: CadPoint,
+        b: CadPoint,
+        crossing?: boolean,
+      ): string[];
+      transformEntity(entity: CadEntity, options: { type: 'move'; delta: CadPoint }): CadEntity;
     };
     cadImporters: {
       read(

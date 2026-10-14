@@ -70,6 +70,7 @@ const homePanels: readonly Panel[] = [
   },
   { label: 'layers', tools: [{ label: 'layerProperties', command: 'LAYER', icon: 'layer' }] },
   { label: 'properties', tools: [{ label: 'properties', command: 'PROPERTIES', icon: 'options' }] },
+  { label: 'utilities', tools: [{ label: 'measure', command: 'DIST', icon: 'dimension' }] },
 ];
 const panels: Record<RibbonTab, readonly Panel[]> = {
   home: homePanels,

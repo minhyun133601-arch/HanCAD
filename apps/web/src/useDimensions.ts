@@ -139,10 +139,7 @@ export function useDimensions(options: DimensionOptions) {
   function pick(point: CadPoint, entity?: CadEntity): void {
     const active = controller.current;
     if (!active) return;
-    const result =
-      active.getSnapshot().inputMode === 'entity' && entity
-        ? active.acceptEntity(entity, point)
-        : active.acceptPoint(point);
+    const result = active.acceptPick(point, entity);
     report(result.error);
   }
   function cursor(point: CadPoint, entity?: CadEntity): void {

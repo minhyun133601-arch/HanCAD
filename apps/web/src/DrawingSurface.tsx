@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from 'react';
 import type { Messages } from '@hancad/ui';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
-import type { CadPointerPick } from '@hancad/render';
+import type { CadCanvasOptions, CadPointerPick } from '@hancad/render';
 import { CanvasSurface } from './canvas-surface';
 
 export type LayoutId = 'model' | 'layoutOne' | 'layoutTwo';
@@ -19,6 +19,10 @@ export function DrawingSurface({
   active,
   onPick,
   onCoordinates,
+  canSelectArea,
+  onSelectionDrag,
+  suppressSelectionBox,
+  getNavigationSettings,
 }: {
   messages: Messages;
   layout: LayoutId;
@@ -32,6 +36,10 @@ export function DrawingSurface({
   active: boolean;
   onPick: (event: CadPointerPick) => void;
   onCoordinates: (point: CadPoint) => void;
+  canSelectArea: NonNullable<CadCanvasOptions['canSelectArea']>;
+  onSelectionDrag: NonNullable<CadCanvasOptions['onSelectionDrag']>;
+  suppressSelectionBox: NonNullable<CadCanvasOptions['suppressSelectionBox']>;
+  getNavigationSettings: NonNullable<CadCanvasOptions['getNavigationSettings']>;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const surface = useRef<CanvasSurface | null>(null);
@@ -41,6 +49,10 @@ export function DrawingSurface({
     const canvas = new CanvasSurface(host.current, messages.drawingCanvas, {
       onPick,
       onCoordinates,
+      canSelectArea,
+      onSelectionDrag,
+      suppressSelectionBox,
+      getNavigationSettings,
     });
     surface.current = canvas;
     onReady(canvas);

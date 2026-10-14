@@ -3,22 +3,18 @@ import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge'
 import { RetainedScene } from './scene';
 import type { SceneStats } from './scene';
 import { relativeEntity } from './geometry';
-
-export interface CadView {
-  scale: number;
-  tx: number;
-  ty: number;
-}
-export interface CadCanvasOptions {
-  onCoordinates?: (point: CadPoint) => void;
-  onPick?: (pick: CadPointerPick) => void;
-  observeResize?: boolean;
-}
-export interface CadPointerPick {
-  point: CadPoint;
-  entityId?: string;
-  shiftKey: boolean;
-}
+import { CadPointerController } from './pointer-controller';
+import type { CadCanvasOptions, CadView } from './pointer-controller';
+import { drawSnapOverlay } from './snap-overlay';
+import type { CadSnapKind, CadSnapMarker } from './snap-overlay';
+export type { CadSnapKind } from './snap-overlay';
+export type {
+  CadCanvasOptions,
+  CadNavigationSettings,
+  CadPointerPick,
+  CadSelectionDrag,
+  CadView,
+} from './pointer-controller';
 
 /** Input drawing snapshots must be immutable. This renderer never edits the caller's model. */
 export class CadCanvasSurface {
@@ -28,11 +24,11 @@ export class CadCanvasSurface {
   private width = 1;
   private height = 1;
   private observer: ResizeObserver | undefined;
-  private pan: { x: number; y: number; tx: number; ty: number } | undefined;
+  private readonly pointer: CadPointerController;
   private disposed = false;
   private preview: readonly CadEntity[] = [];
   private selected = new Set<string>();
-  private snapMarker: CadPoint | undefined;
+  private snapMarker: CadSnapMarker | undefined;
   private scene: RetainedScene | undefined;
   private readonly base: HTMLCanvasElement | undefined;
   private readonly overlay: HTMLCanvasElement | undefined;
@@ -61,15 +57,29 @@ export class CadCanvasSurface {
       });
       this.observer.observe(canvas);
     }
-    canvas.addEventListener('wheel', this.onWheel, { passive: false });
-    canvas.addEventListener('pointerdown', this.onPointerDown);
-    canvas.addEventListener('pointermove', this.onPointerMove);
-    canvas.addEventListener('pointerup', this.onPointerUp);
-    canvas.addEventListener('pointercancel', this.onPointerUp);
+    this.pointer = new CadPointerController(canvas, options, {
+      view: () => this.getView(),
+      viewport: () => ({ x: this.width, y: this.height }),
+      changeView: (view) => {
+        this.view = view;
+        this.requestRender(true);
+      },
+      worldPoint: (point) => this.worldPoint(point),
+      pick: (point) => this.pick(point),
+      coordinates: (point) => {
+        if (typeof requestAnimationFrame === 'function' && options.onCoordinates) {
+          this.pendingCoordinates = point;
+          this.requestRender();
+        } else options.onCoordinates?.(point);
+      },
+      fit: () => this.fit(),
+      invalidate: () => this.requestRender(),
+    });
     this.render();
   }
 
   setDrawing(state: LegacyCadState, options: { fit?: boolean } = {}): void {
+    this.pointer.cancel();
     this.state = state;
     this.scene = new RetainedScene(state);
     this.baseDirty = true;
@@ -89,13 +99,27 @@ export class CadCanvasSurface {
     this.baseDirty = true;
     this.render();
   }
-  setSnapMarker(point?: CadPoint): void {
+  setSnapMarker(
+    point?: CadPoint,
+    kind: CadSnapKind = 'endpoint',
+    label?: string,
+    showMarker = true,
+  ): void {
     if (
       (!point && !this.snapMarker) ||
-      (point && this.snapMarker && point.x === this.snapMarker.x && point.y === this.snapMarker.y)
+      (point &&
+        this.snapMarker &&
+        point.x === this.snapMarker.point.x &&
+        point.y === this.snapMarker.point.y &&
+        kind === this.snapMarker.kind &&
+        label === this.snapMarker.label &&
+        showMarker === this.snapMarker.showMarker)
     )
       return;
-    this.snapMarker = point === undefined ? undefined : { ...point };
+    this.snapMarker =
+      point === undefined
+        ? undefined
+        : { point: { ...point }, kind, showMarker, ...(label === undefined ? {} : { label }) };
     this.requestRender();
   }
   pick(point: CadPoint): string | undefined {
@@ -104,8 +128,12 @@ export class CadCanvasSurface {
   getView(): CadView {
     return { ...this.view };
   }
+  cancelPointerInteraction(): void {
+    this.pointer.cancel();
+  }
 
   fit(): void {
+    this.pointer.cancel();
     this.baseDirty = true;
     this.resize();
     if (this.state) {
@@ -176,6 +204,7 @@ export class CadCanvasSurface {
     this.canvas.dataset.previewCount = String(this.preview.length);
     this.canvas.dataset.selectionCount = String(this.selected.size);
     this.canvas.dataset.snapActive = this.snapMarker ? '1' : '0';
+    this.canvas.dataset.snapKind = this.snapMarker?.kind ?? '';
     this.canvas.dataset.zoom = String(this.view.scale);
     context.save();
     context.setTransform(
@@ -193,16 +222,25 @@ export class CadCanvasSurface {
         unit: this.state?.settings.unit ?? '',
         color: '#fbbf24',
       });
-    if (this.snapMarker) {
-      const size = 5 / this.view.scale;
-      context.strokeStyle = '#4ade80';
+    if (this.snapMarker) drawSnapOverlay(context, this.snapMarker, this.origin, this.view.scale);
+    const area = this.pointer.getSelectionArea();
+    this.canvas.dataset.selectionArea = area
+      ? area.end.x >= area.start.x
+        ? 'window'
+        : 'crossing'
+      : '';
+    if (area) {
+      const crossing = area.end.x < area.start.x;
+      context.strokeStyle = crossing ? '#4ade80' : '#60a5fa';
+      context.fillStyle = crossing ? 'rgba(74,222,128,0.15)' : 'rgba(96,165,250,0.15)';
       context.lineWidth = 1 / this.view.scale;
-      context.strokeRect(
-        this.snapMarker.x - this.origin.x - size,
-        this.snapMarker.y - this.origin.y - size,
-        size * 2,
-        size * 2,
-      );
+      context.setLineDash(crossing ? [5 / this.view.scale, 3 / this.view.scale] : []);
+      const x = Math.min(area.start.x, area.end.x) - this.origin.x;
+      const y = Math.min(area.start.y, area.end.y) - this.origin.y;
+      const width = Math.abs(area.end.x - area.start.x);
+      const height = Math.abs(area.end.y - area.start.y);
+      context.fillRect(x, y, width, height);
+      context.strokeRect(x, y, width, height);
     }
     context.restore();
     this.canvas.dataset.drawnEntities = String(this.stats.entities);
@@ -216,11 +254,7 @@ export class CadCanvasSurface {
     this.overlay?.remove();
     if (this.animationFrame !== undefined) cancelAnimationFrame(this.animationFrame);
     this.observer?.disconnect();
-    this.canvas.removeEventListener('wheel', this.onWheel);
-    this.canvas.removeEventListener('pointerdown', this.onPointerDown);
-    this.canvas.removeEventListener('pointermove', this.onPointerMove);
-    this.canvas.removeEventListener('pointerup', this.onPointerUp);
-    this.canvas.removeEventListener('pointercancel', this.onPointerUp);
+    this.pointer.dispose();
   }
 
   private resize(): void {
@@ -284,62 +318,10 @@ export class CadCanvasSurface {
       this.render();
     });
   }
-  private localPoint(event: MouseEvent): CadPoint {
-    const rect = this.canvas.getBoundingClientRect();
-    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
-  }
   private worldPoint(point: CadPoint): CadPoint {
     return {
       x: this.origin.x + (point.x - this.width / 2 - this.view.tx) / this.view.scale,
       y: this.origin.y + (point.y - this.height / 2 - this.view.ty) / this.view.scale,
     };
   }
-  private readonly onWheel = (event: WheelEvent): void => {
-    event.preventDefault();
-    const local = this.localPoint(event);
-    const world = this.worldPoint(local);
-    this.view.scale = Math.max(
-      1e-6,
-      Math.min(
-        1e6,
-        this.view.scale * Math.exp(-Math.max(-1000, Math.min(1000, event.deltaY)) * 0.001),
-      ),
-    );
-    this.view.tx = local.x - this.width / 2 - (world.x - this.origin.x) * this.view.scale;
-    this.view.ty = local.y - this.height / 2 - (world.y - this.origin.y) * this.view.scale;
-    this.requestRender(true);
-  };
-  private readonly onPointerDown = (event: PointerEvent): void => {
-    if (event.button === 0) {
-      event.preventDefault();
-      this.canvas.focus?.({ preventScroll: true });
-      const point = this.worldPoint(this.localPoint(event));
-      const entityId = this.pick(point);
-      const pick: CadPointerPick = { point, shiftKey: event.shiftKey };
-      if (entityId !== undefined) pick.entityId = entityId;
-      this.options.onPick?.(pick);
-      return;
-    }
-    if (event.button !== 1) return;
-    event.preventDefault();
-    this.pan = { x: event.clientX, y: event.clientY, tx: this.view.tx, ty: this.view.ty };
-    this.canvas.setPointerCapture?.(event.pointerId);
-  };
-  private readonly onPointerMove = (event: PointerEvent): void => {
-    if (this.pan) {
-      this.view.tx = this.pan.tx + event.clientX - this.pan.x;
-      this.view.ty = this.pan.ty + event.clientY - this.pan.y;
-      this.requestRender(true);
-    }
-    const point = this.worldPoint(this.localPoint(event));
-    if (typeof requestAnimationFrame === 'function' && this.options.onCoordinates) {
-      this.pendingCoordinates = point;
-      this.requestRender();
-    } else this.options.onCoordinates?.(point);
-  };
-  private readonly onPointerUp = (event: PointerEvent): void => {
-    this.pan = undefined;
-    if (this.canvas.hasPointerCapture?.(event.pointerId))
-      this.canvas.releasePointerCapture(event.pointerId);
-  };
 }

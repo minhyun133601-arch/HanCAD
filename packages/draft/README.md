@@ -12,7 +12,14 @@ DimensionSession supplies DIMLINEAR, DIMALIGNED, DIMRADIUS, DIMDIAMETER, DIMANGU
 
 ## Current status
 
-Mouse/coordinate drafting, relative Cartesian/polar coordinates, direct distance along the cursor, circle radius entry, line/polyline close and local undo, Enter finish, Escape cancellation, preview geometry and safe append/delete are implemented. Escape keeps accepted LINE/PLINE segments in one commit and discards only the current preview; an incomplete first point creates nothing. Preview coordinates use legacy model Y down; user coordinate entry uses Y up. Full AutoCAD option sets, associativity, grips and modification commands remain planned.
+Mouse/coordinate drafting, relative Cartesian/polar coordinates, direct distance along the cursor, circle radius entry, line/polyline close and local undo, Enter finish, Escape cancellation, preview geometry and safe append/delete are implemented. Escape keeps accepted LINE/PLINE segments in one commit and discards only the current preview; an incomplete first point creates nothing. Preview coordinates use legacy model Y down; user coordinate entry uses Y up. Full AutoCAD options, associativity, grips and advanced modifications remain planned.
+
+Running snaps cover endpoints, midpoints, centers, quadrants, nearest points and
+true intersections with local primitive/bounds pruning. Exact snap flags bypass
+grid/Ortho constraints. Selection helpers distinguish containment and crossing
+geometry and protect hidden/locked layers. ModifySession supplies MOVE/COPY input
+and previews; immutable translations preserve originals and give copies fresh IDs.
+MeasureSession supplies read-only DIST and disposable distance previews.
 
 The basic dimension subset supports horizontal, vertical and rotated linear dimensions, aligned distances, circle/arc radius and diameter, and angular dimensions from two lines, an arc, a circle or three points. Smart DIM previews/selects line → linear, circle → diameter, arc → radius. Placement offers Text with `<>` measurement substitution and text Angle; DIMLINEAR also offers Horizontal, Vertical and Rotated. A cancelled dimension never commits construction geometry.
 

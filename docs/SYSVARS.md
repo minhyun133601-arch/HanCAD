@@ -2,6 +2,13 @@
 
 Generated from `packages/sysvars/src/registry.ts`. Only implemented definitions are listed; full header/500+ parity is pending.
 
+The basic-workflow follow-up reads APERTURE for snap search, AUTOSNAP bits 1/2
+for markers/tooltips, OSMODE including intersection bit 32, ORTHOMODE for unsnapped
+mouse constraints, PICKADD/PICKFIRST for selection/edit entry and live
+ZOOMFACTOR/ZOOMWHEEL/MBUTTONPAN for navigation. DIST reads LUPREC/AUPREC/ANGBASE/ANGDIR.
+Registration alone does not implement the other selection/snap/unit-format controls;
+full PICKAUTO/PICKDRAG/lasso and COPYMODE remain pending.
+
 | Name                 | Type    | Default      | Scope   | Read-only | Korean description              |
 | -------------------- | ------- | ------------ | ------- | --------- | ------------------------------- |
 | OSMODE               | integer | 4133         | profile | No        | 실행 중인 객체 스냅 설정        |

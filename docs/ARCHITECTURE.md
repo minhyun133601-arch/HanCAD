@@ -51,11 +51,20 @@ fresh history baseline. Selection remains ephemeral; hidden/locked geometry cann
 be erased. Drawing edits preserve the current view; imports/new documents fit it.
 
 Running object snaps respect the supported OSMODE bits and its suppression bit.
-The first implementation supports endpoints, midpoints, centers, quadrants and
-nearest points. Advanced modes, tracking and grid/display toggles remain explicit
+The implementation supports endpoints, midpoints, centers, quadrants, nearest
+points and true intersections. Snap input carries an exact-point flag through the
+drafting session, taking precedence over grid and Ortho. Intersection candidates
+are limited to aperture-near primitives and pruned by overlapping bounds; the full
+dynamic spatial index remains pending. APERTURE is screen-relative, and AUTOSNAP
+controls marker/tooltip visibility. Advanced modes, tracking and grid/display toggles remain explicit
 future work. Shared adapter entity-capacity guards reject oversized inputs instead
 of silently truncating them. Bounds accumulate incrementally to limit peak memory
 for large drawings, and visible-layer filtering uses a set.
+
+Accepted LINE/PLINE segments participate in snaps before their command commits.
+The session supplies only accepted geometry as a separate candidate source; the
+live cursor leg is excluded, preventing self-snapping to a rubber band. This
+does not copy the complete drawing or create premature undo entries.
 
 DimensionSession uses the same immutable-batch boundary as DraftSession. A
 dimension definition is committed once after placement; cancelled construction
@@ -88,3 +97,20 @@ external cache data still parse and fully validate. The local reader transfers
 its per-call owned graph rather than cloning it again. Strings above 2M code units
 go directly to chunked IndexedDB, avoiding a predictably oversized Web Storage
 write. Per-document UUIDs keep tiny current-style overlays from crossing documents.
+
+The canvas pointer controller owns captured mouse gestures and releases them on
+up, cancellation, Escape, capture loss and window blur. Idle left drags emit
+directional selection events; selected-object drags emit provisional transforms
+and commit once on release. Ctrl copies with fresh identities. Window selection
+requires whole-object containment; crossing selection tests supported geometry.
+Hidden/locked layers are excluded from edits. PICKADD/PICKFIRST are read by selection
+and command entry; full PICKAUTO/PICKDRAG/lasso behavior remains pending. Navigation
+reads ZOOMFACTOR/ZOOMWHEEL/MBUTTONPAN live.
+
+ModifySession separates MOVE/COPY point input from provisional previews. MOVE
+commits one displacement. Repeated COPY placements remain provisional until
+Enter/Exit/Escape ends the command and enter the database as one undo group.
+Esc retains accepted copies and drops the current preview. Selected dimensions
+move as independent definitions; associativity remains pending. MeasureSession
+implements read-only DIST with exact snaps, relative/polar/direct distance input
+and a disposable rubber band/label. Measurement never enters the drawing journal.

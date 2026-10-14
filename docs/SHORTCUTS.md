@@ -1,6 +1,16 @@
 # Reference B — Shortcuts, aliases, mouse behavior, input syntax
 (Save as docs/SHORTCUTS.md. Every binding here must work. Bindings whose command is not built yet must still be registered and print the Korean not-implemented message.)
 
+## Verified basic-workflow slice (2026-10-15)
+
+L/C/REC/PL draw; DLI/DAL/DRA/DDI/DAN dimension; DI measures two points; M moves;
+CO/CP copy repeatedly until Enter/Esc. F3 toggles running snaps, F8 toggles Ortho.
+Left drag selects complete objects left-to-right or crossing objects right-to-left;
+Shift removes. Drag a selected object to move it; Ctrl+drag copies. Wheel zooms at
+the pointer; middle drag pans; double-middle fits. Escape/capture loss cancels an
+unfinished drag. Ctrl+Z/Ctrl+Y undo/redo whole edits. The remaining reference below
+is the target contract; lasso/grips/clipboard and full command options are pending.
+
 ## Function keys
 F1 Help · F2 expanded command history · F3 running object snaps · F4 3D object snap · F5 cycle isoplane · F6 dynamic UCS · F7 grid · F8 ortho · F9 snap · F10 polar tracking · F11 object snap tracking · F12 dynamic input
 

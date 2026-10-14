@@ -96,6 +96,11 @@ export interface Messages {
   dimSelectObjectError: string;
   dimParallelLinesError: string;
   dimInvalidAngleError: string;
+  measure: string;
+  measureUsage: string;
+  measureFirstPointPrompt: string;
+  measureSecondPointPrompt: string;
+  measureResult: (distance: string, deltaX: string, deltaY: string, angle: string) => string;
   layerProperties: string;
   byLayer: string;
   insertBlock: string;
@@ -203,6 +208,15 @@ export interface Messages {
   center: string;
   radius: string;
   selectObjects: string;
+  modifyBasePoint: string;
+  modifySecondPoint: string;
+  copyNextPoint: string;
+  snapEndpoint: string;
+  snapMidpoint: string;
+  snapCenter: string;
+  snapQuadrant: string;
+  snapNearest: string;
+  snapIntersection: string;
   noSelection: string;
   invalidPoint: string;
   positiveRadius: string;

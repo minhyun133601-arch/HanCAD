@@ -4,6 +4,7 @@ import { draftCircle, draftLine, draftPolyline, rectanglePoints } from './entiti
 import type {
   DraftError,
   DraftInputResult,
+  DraftPointOptions,
   DraftSessionOptions,
   DraftSnapshot,
   DraftTool,
@@ -31,8 +32,8 @@ export class DraftSession {
     this.notify();
   }
 
-  acceptPoint(point: CadPoint): DraftInputResult {
-    return this.addPoint(this.constrain(point));
+  acceptPoint(point: CadPoint, options: DraftPointOptions = {}): DraftInputResult {
+    return this.addPoint(options.snapped ? point : this.constrain(point));
   }
 
   acceptText(input: string): DraftInputResult {
@@ -70,9 +71,9 @@ export class DraftSession {
       : failure(this.tool === 'CIRCLE' && this.points.length === 1 ? 'positiveRadius' : 'point');
   }
 
-  moveCursor(point: CadPoint): void {
+  moveCursor(point: CadPoint, options: DraftPointOptions = {}): void {
     if (this.status !== 'active' || !validDraftPoint(point)) return;
-    this.cursor = this.constrain(point);
+    this.cursor = options.snapped ? { ...point } : this.constrain(point);
     this.notify();
   }
 
@@ -127,6 +128,15 @@ export class DraftSession {
       preview: this.preview(),
       canClose: (this.tool === 'LINE' || this.tool === 'PLINE') && this.points.length >= 2,
     };
+  }
+
+  /** Accepted segments remain snap targets before this command enters the journal. */
+  getSnapEntities(): CadEntity[] {
+    if (this.status !== 'active' || this.points.length < 2) return [];
+    if (this.tool === 'LINE') return this.lineSegments(this.points, true);
+    if (this.tool === 'PLINE')
+      return [draftPolyline(this.settings, this.points, false, false, 'snap-polyline')];
+    return [];
   }
 
   private addPoint(point: CadPoint): DraftInputResult {

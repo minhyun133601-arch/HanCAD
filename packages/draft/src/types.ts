@@ -19,3 +19,7 @@ export interface DraftSessionOptions {
   onCommit: (entities: CadEntity[]) => void;
   onChange?: (snapshot: DraftSnapshot) => void;
 }
+export interface DraftPointOptions {
+  /** Exact object snaps take precedence over grid and Ortho constraints. */
+  snapped?: boolean;
+}

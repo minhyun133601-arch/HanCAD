@@ -7,3 +7,6 @@ export * from './dimension-types';
 export * from './dimension-style';
 export * from './dimension-geometry';
 export * from './dimension-session';
+export * from './selection';
+export * from './modify-session';
+export * from './measure-session';

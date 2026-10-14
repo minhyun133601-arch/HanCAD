@@ -1,5 +1,43 @@
 # Decisions
 
+## 2026-10-15: Make the basic drawing workflow reliable
+
+The user's priority is dimensions, endpoint recognition, dragging and wheel
+navigation. This slice adds exact snaps, true intersections, directional rectangular
+selection, selected-object drag/move/Ctrl-copy, MOVE/COPY and read-only DIST. It
+does not claim complete Phases 2/4/5/7/11/15 acceptance.
+
+Autodesk's [Korean object-snap reference](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-50383F73-4F23-4F70-B4FC-52D5748D80AF.htm)
+defines endpoint/corner, midpoint, center, quadrant and true intersection modes.
+Exact object snaps bypass grid and Ortho. APERTURE controls the screen-space search
+radius; AUTOSNAP bits 1/2 control markers/tooltips. Candidate selection remains
+nearest-distance based. Advanced snap modes and Tab cycling require reference QA.
+Intersection scanning is locally pruned, not the complete R-tree/four-ms budget.
+
+The [pointing-device reference](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-LT-Customization/files/GUID-B1CDEE41-F8BF-48A4-A895-273DBB295378.htm)
+documents cursor-centered wheel zoom, middle pan and double-middle extents.
+Browser wheel events normalize 100 pixel-delta units, three line units or one page
+unit to one notch, then apply reciprocal ZOOMFACTOR scaling. Mouse/browser delta
+differences need reference QA. MBUTTONPAN=0 disables pan; its full snap-menu
+alternative is pending. Left drag starts after four CSS pixels. This increment
+implements rectangular window/crossing; default lasso, PICKAUTO/PICKDRAG, grips
+and click-click selection remain pending.
+
+Autodesk documents [selected-object dragging and Ctrl copying](https://help.autodesk.com/cloudhelp/2025/ENG/AutoCAD-Core/files/GUID-0BFF5C5E-B1B4-4996-9AA4-57396FD6F6F2.htm)
+and [two-point COPY](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1CF9287F-06E8-4D03-8377-2E130862FE02.htm).
+Initial MOVE/COPY supports selection, base/second points, exact coordinates, Ortho,
+snaps, direct distance and repeated copies. COPY placements are one undo group,
+retained when Esc ends accepted placements. Full COPYMODE/Array/Undo/Displacement
+options are pending. Coordinates remain exact; dimensions remain non-associative.
+
+[DIST](https://help.autodesk.com/cloudhelp/2024/KOR/AutoCAD-Core/files/GUID-A72EADC7-EF79-463C-B4F1-862C6139B004.htm)
+reports two-point distance, WCS deltas and XY angle without document mutation.
+LUPREC/AUPREC/ANGBASE/ANGDIR are read; display is initially decimal millimeters and
+degrees. Other unit formats/Multiple/transparent nesting remain pending. Dimension
+point input also accepts direct distance along the cursor, relative to the most
+recent definition point; verify that reference for each placement prompt. Empty
+clicks at dimension entity prompts leave the prompt active.
+
 ## 2026-10-14: Measure complete paint and remove repeated drawing allocation
 
 The first retained-path benchmark exposed a misleadingly small geometry submission
