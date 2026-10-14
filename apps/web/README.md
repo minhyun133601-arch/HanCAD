@@ -44,6 +44,30 @@ commit as one undo group on Enter, close, or Escape; a lone first point cancels.
 `NEW` and successful `OPEN` establish a fresh journal boundary. DXF save and
 local geometry restoration include these edits.
 
+Dimensions support `DIMLINEAR` (`DLI`), `DIMALIGNED` (`DAL`), `DIMRADIUS` (`DRA`),
+`DIMDIAMETER` (`DDI`), `DIMANGULAR` (`DAN`), and the point/object subset of `DIM`.
+Pick a line/circle/arc or enter definition points, then place the dimension.
+Linear placement accepts H/V/R, and supported placements accept T for Korean
+text overrides with `<>` retaining the measured value and A for text rotation.
+Angular input accepts two lines, arc/circle selection, or a three-point vertex.
+Smart DIM previews a line, circle diameter, or arc radius on hover. One complete
+dimension is one undo group; Escape discards its uncommitted preview.
+
+`DIMSTYLE` (`D`) opens the explicitly limited basic-settings dialog. It reads the
+actual DIM variables and changes new dimension defaults. Applying to existing
+selected dimensions requires the visible checkbox; unselected annotations retain
+their original geometry and appearance. DIMSCALE changes display sizes, while
+DIMLFAC changes the reported measurement factor. Standalone dimension-variable
+changes persist through a small cache record bound to the drawing's UUID;
+NEW/OPEN starts another identity and failed/cancelled reads preserve the current
+identity. Older geometry caches migrate once before accepting this record.
+
+Complete style-manager tabs, associative updates, annotative layouts, leaders,
+tolerances, advanced DIM options, and fixed-height-font DIMTXT=0 are pending.
+Angular precision currently shares DIMDEC; separate DIMADEC/DIMAZIN handling
+remains pending. DIMSCALE=0 uses 1 in model space, and negative DIMGAP currently
+uses its spacing without a text box.
+
 `SETVAR` and `GETVAR` collect variable names and values one prompt at a time.
 Direct system variable names prompt for their next value. String values switch
 to a real editable input for Korean IME composition; command syntax stays on a

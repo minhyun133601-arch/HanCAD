@@ -8,6 +8,15 @@ call pnpm build:web
 if errorlevel 1 goto failed
 node scripts\launch-app.mjs
 if errorlevel 1 goto failed
+if "%HANCAD_TEST_NO_BROWSER%"=="1" exit /b 0
+if exist "%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe" (
+  start "" "%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe" --new-window "http://127.0.0.1:1420/"
+) else if exist "%ProgramFiles%\Microsoft\Edge\Application\msedge.exe" (
+  start "" "%ProgramFiles%\Microsoft\Edge\Application\msedge.exe" --new-window "http://127.0.0.1:1420/"
+) else (
+  start "" "http://127.0.0.1:1420/"
+)
+if errorlevel 1 goto failed
 exit /b 0
 :failed
 echo.

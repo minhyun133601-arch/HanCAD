@@ -11,6 +11,8 @@ import { ImportReport } from './ImportReport';
 import { ProgressDialog } from './ProgressDialog';
 import type { CanvasSurface } from './canvas-surface';
 import { useDrafting } from './useDrafting';
+import { useDimensions } from './useDimensions';
+import { DimensionStyleDialog } from './DimensionStyleDialog';
 import { snapDraftPoint } from '@hancad/draft';
 import type { CadEntity, CadPoint } from '@hancad/legacy-bridge';
 import type { CadPointerPick } from '@hancad/render';
@@ -42,8 +44,18 @@ export function App() {
     commitState: files.commitState,
     print: session.print,
   });
-  const interaction = useRef({ files, draft, session, progressOpen });
-  interaction.current = { files, draft, session, progressOpen };
+  const dimensions = useDimensions({
+    registry: session.registry,
+    sysvars: session.sysvars,
+    messages,
+    getState: files.getState,
+    commitState: files.commitState,
+    selectedIds: draft.selectedIds,
+    cancelDraft: () => draft.cancel(false),
+    print: session.print,
+  });
+  const interaction = useRef({ files, draft, dimensions, session, progressOpen });
+  interaction.current = { files, draft, dimensions, session, progressOpen };
   const canvasSurface = useRef<CanvasSurface | null>(null);
   const inputRef = useRef<HTMLDivElement | HTMLInputElement>(null);
 
@@ -53,21 +65,25 @@ export function App() {
   function execute(command: string): void {
     if (files.restoring) files.cancelRestore(false);
     if (draft.isActive()) draft.cancel(false);
+    if (dimensions.isActive()) dimensions.cancel(false);
     canvasSurface.current?.setSnapMarker();
     setCommandVisible(true);
     session.startCommand(command);
     focusCommand();
   }
   async function submit(value: string): Promise<void> {
-    if (draft.submit(value)) {
+    if (dimensions.submit(value) || draft.submit(value)) {
       session.changeInput('');
-      if (!draft.isDrafting()) canvasSurface.current?.setSnapMarker();
+      if (!draft.isDrafting() && !dimensions.isActive()) canvasSurface.current?.setSnapMarker();
       return;
     }
     await session.execute(value);
   }
   function cancel(): void {
-    if (draft.isActive() || draft.selectedIds.length) {
+    if (dimensions.isActive()) {
+      dimensions.cancel();
+      session.changeInput('');
+    } else if (draft.isActive() || draft.selectedIds.length) {
       draft.cancel();
       session.changeInput('');
     } else session.cancel();
@@ -75,29 +91,40 @@ export function App() {
   }
   function snapped(point: CadPoint): CadPoint {
     const live = interaction.current;
-    const result = live.draft.isDrafting()
-      ? snapDraftPoint(
-          live.files.getState(),
-          point,
-          10 / (canvasSurface.current?.getView().scale ?? 1),
-          live.session.sysvars.getNumber('OSMODE'),
-        )
-      : undefined;
+    const result =
+      live.draft.isDrafting() || live.dimensions.needsPoint()
+        ? snapDraftPoint(
+            live.files.getState(),
+            point,
+            10 / (canvasSurface.current?.getView().scale ?? 1),
+            live.session.sysvars.getNumber('OSMODE'),
+          )
+        : undefined;
     canvasSurface.current?.setSnapMarker(result?.point);
     return result?.point ?? point;
   }
   function pick(event: CadPointerPick): void {
     const live = interaction.current;
     if (live.files.reading || live.files.restoring || live.progressOpen) return;
-    live.draft.pick({ ...event, point: snapped(event.point) });
+    if (live.dimensions.isActive()) {
+      const entity = event.entityId
+        ? live.files.getState().entities.find((item) => item.id === event.entityId)
+        : undefined;
+      live.dimensions.pick(snapped(event.point), entity);
+    } else live.draft.pick({ ...event, point: snapped(event.point) });
   }
   function cursor(point: CadPoint): void {
     const live = interaction.current;
-    if (!live.files.reading && !live.files.restoring && !live.progressOpen)
-      live.draft.cursor(snapped(point));
+    if (live.files.reading || live.files.restoring || live.progressOpen) return;
+    if (live.dimensions.isActive()) {
+      const id = live.dimensions.needsEntity() ? canvasSurface.current?.pick(point) : undefined;
+      const entity = id ? live.files.getState().entities.find((item) => item.id === id) : undefined;
+      live.dimensions.cursor(snapped(point), entity);
+    } else live.draft.cursor(snapped(point));
   }
   function openFile(file: File): void {
     if (draft.isActive()) draft.cancel(false);
+    if (dimensions.isActive()) dimensions.cancel(false);
     void files.openFile(file);
   }
   function toggle(item: StatusToggle): void {
@@ -139,13 +166,14 @@ export function App() {
   }, [session.registry, messages]);
   useEffect(() => {
     focusCommand();
-  }, [commandVisible, session.editable]);
+  }, [commandVisible, session.editable, dimensions.editable]);
   useEffect(() => {
     draft.cancel(false);
+    dimensions.cancel(false);
   }, [files.fitRevision]);
   useEffect(() => {
-    if (!draft.active) canvasSurface.current?.setSnapMarker();
-  }, [draft.active]);
+    if (!draft.active && !dimensions.active) canvasSurface.current?.setSnapMarker();
+  }, [draft.active, dimensions.active]);
   useEffect(() => {
     void platform.info().catch((error: unknown) => {
       session.print(
@@ -187,9 +215,10 @@ export function App() {
       } else if (event.ctrlKey && event.code === 'KeyA') {
         event.preventDefault();
         if (draft.isActive()) draft.cancel(false);
+        if (dimensions.isActive()) dimensions.cancel(false);
         draft.selectAll();
         focusCommand();
-      } else if (event.code === 'Delete' && !draft.isActive()) {
+      } else if (event.code === 'Delete' && !draft.isActive() && !dimensions.isActive()) {
         event.preventDefault();
         execute('ERASE');
       } else if (event.code === 'F2') {
@@ -251,9 +280,9 @@ export function App() {
           }}
           execute={execute}
           fitRevision={files.fitRevision}
-          preview={draft.snapshot?.preview ?? emptyPreview}
+          preview={dimensions.snapshot?.preview ?? draft.snapshot?.preview ?? emptyPreview}
           selectedIds={draft.selectedIds}
-          active={draft.active}
+          active={draft.active || dimensions.active}
           onPick={pick}
           onCoordinates={cursor}
         />
@@ -267,7 +296,9 @@ export function App() {
           </span>
           <button onClick={() => execute('ZOOM E')}>{messages.fitDrawing}</button>
         </div>
-        <div className="drafting-usage">{messages.draftingUsage}</div>
+        <div className="drafting-usage">
+          {dimensions.active ? messages.dimensionUsage : messages.draftingUsage}
+        </div>
         {draft.selectedIds.length > 0 && (
           <div className="draft-selection-count">
             {messages.selectedObjects(draft.selectedIds.length)}
@@ -297,8 +328,8 @@ export function App() {
             messages={messages}
             history={session.history}
             input={session.input}
-            prompt={draft.prompt ?? session.prompt}
-            editable={!draft.active && session.editable}
+            prompt={dimensions.prompt ?? draft.prompt ?? session.prompt}
+            editable={dimensions.active ? dimensions.editable : !draft.active && session.editable}
             busy={session.busy}
             blocked={files.reading || files.restoring}
             expanded={expanded}
@@ -336,6 +367,20 @@ export function App() {
         open={progressOpen}
         onClose={() => {
           setProgressOpen(false);
+          focusCommand();
+        }}
+      />
+      <DimensionStyleDialog
+        messages={messages}
+        open={dimensions.styleOpen}
+        sysvars={session.sysvars}
+        selectedCount={dimensions.selectedDimensionCount}
+        onApply={(values, selected) => {
+          dimensions.applyStyle(values, selected);
+          session.refresh();
+        }}
+        onClose={() => {
+          dimensions.closeStyle();
           focusCommand();
         }}
       />

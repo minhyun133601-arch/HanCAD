@@ -2,6 +2,7 @@
 @import './workspace.css';
 @import './status.css';
 @import './drawing-files.css';
+@import './dimensions.css';
 
 :root {
   font-family: 'Malgun Gothic', 'Segoe UI', sans-serif;

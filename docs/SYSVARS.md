@@ -99,6 +99,8 @@ Generated from `packages/sysvars/src/registry.ts`. Only implemented definitions 
 | DIMGAP               | real    | 0.625        | drawing | No        | 치수 문자 주변 간격             |
 | DIMEXO               | real    | 0.625        | drawing | No        | 치수보조선 원점 간격            |
 | DIMEXE               | real    | 1.25         | drawing | No        | 치수보조선 연장                 |
+| DIMZIN               | integer | 8            | drawing | No        | 치수 선행·후행 0 억제           |
+| DIMPOST              | string  | ""           | drawing | No        | 치수 측정값 접두·접미 문자      |
 | TILEMODE             | integer | 1            | drawing | No        | 모형 공간 활성                  |
 | CTAB                 | string  | "Model"      | drawing | No        | 현재 배치                       |
 | OSNAPCOORD           | integer | 2            | profile | No        | 좌표 입력과 객체 스냅 우선순위  |
@@ -107,3 +109,5 @@ Generated from `packages/sysvars/src/registry.ts`. Only implemented definitions 
 | UNDOCTL              | integer | 53           | session | Yes       | 실행 취소 제어                  |
 | CMDACTIVE            | integer | 0            | session | Yes       | 활성 명령 상태                  |
 | CMDNAMES             | string  | ""           | session | Yes       | 활성 명령 이름                  |
+
+The basic dimension UI uses DIMTXT, DIMASZ, DIMDEC, DIMSCALE, DIMEXO, DIMEXE, DIMGAP, DIMLFAC, DIMZIN and DIMPOST. Registration of DIMASSOC does not implement associative geometry references. Current dimensions are independent definitions.

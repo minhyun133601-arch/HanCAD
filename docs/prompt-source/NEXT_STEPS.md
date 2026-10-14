@@ -2,14 +2,17 @@
 
 ## Current delivery boundary
 
-The user explicitly ends this increment at DWG opening, basic drawing and project
-folder cleanup. Keep the main app runnable and preserve the original prompt set.
-Do not add optional or 3D features as part of this increment.
+The user first requested DWG opening, basic drawing and project folder cleanup,
+then extended the usable slice with reliable browser launching, large-file
+navigation improvements and dimension creation/display. Keep the main app runnable
+and preserve the original prompt set. Optional and 3D features remain deferred.
 
 Implemented workflows include local DWG/DXF opening, view navigation, LINE,
 CIRCLE, RECTANG, straight PLINE, mouse/coordinate input, basic pick/Shift/all
 selection, erase, command-level undo/redo, basic Ortho/object snaps, DXF save and
-PDF/PNG/JPG/SVG output. The top file menu/open icon contains file actions rather
+PDF/PNG/JPG/SVG output. Initial dimensions cover linear/aligned/radius/diameter/
+angular and smart DIM, with ten basic style fields and Korean text overrides.
+The top file menu/open icon contains file actions rather
 than a permanent action row. `HanCAD 실행.cmd` is the only root launcher; it opens
 the local address in Edge and keeps the local server in the background.
 
@@ -19,20 +22,24 @@ all layers explicitly if the imported layer flags hide the entire drawing. The
 file can contain remote geometry, so Zoom Extents may show its main frame small;
 zoom toward the frame or pan it into the middle before zooming further.
 
-The final menu build and actual private-drawing verification passed, including
-layer visibility, pan/zoom, chunked large-data caching and reload restoration.
-General verification passed 138 unit, 23 compatibility and 19 browser tests;
-the actual private-file test passed separately. Read `../PROGRESS.md` for the
-evidence and remaining limitations.
+The launcher now opens the browser directly from the interactive CMD after local
+server health; the user confirmed a new window appears. Read `../PROGRESS.md`
+for the current verification evidence, measured large-file performance and
+remaining limitations. The final follow-up passes 157 unit, 23 compatibility and
+23 general production browser tests, plus 20 renderer golden scenes. The actual
+private-file benchmark passed separately: import 11.889 s, six paint/readback
+samples 33.0-402.4 ms, dimension creation/undo, all four IndexedDB checkpoints and
+2.222 s reload restoration of 286,996 visible objects. Full WebGL rendering,
+16 ms edit and complete dimension acceptance remain pending.
 
 ## Essential work for the next increment
 
 | Order | Work | Original prompts | Acceptance evidence |
 | --- | --- | --- | --- |
-| 1 | Smooth large-drawing pan/zoom and faster edits | Phases 02, 24 | Profile the 286,996-entity file; reduce full redraws and cloning; preserve geometry/visibility and measure latency |
+| 1 | Complete large-drawing rendering and faster edits | Phases 02, 24 | Extend retained/cached rendering toward the WebGL/floating-origin budgets; preserve geometry/visibility and measure actual paint latency |
 | 2 | Window/crossing selection and properties | Phases 05, 08 | Directional selections, hidden/locked rules, accurate multi-selection and undoable property changes |
 | 3 | MOVE/COPY, TRIM/EXTEND, OFFSET | Phase 07 | Mouse/coordinate options, preview, one-command undo, exports retain modified geometry |
-| 4 | TEXT and basic DIMLINEAR/DIMALIGNED | Phases 10, 11 | Korean free-text composition, measured values, unit handling, DIMSCALE changes display size only |
+| 4 | TEXT and complete dimension workflows | Phases 10, 11 | Korean text editing, associative geometry references, seven-tab styles, fit rules, baseline/continued dimensions, leaders and tolerances |
 | 5 | Better geometry snapping and drafting aids | Phase 04 | Intersection/perpendicular/tangent snaps, markers, variable-driven modes, large-coordinate precision |
 | 6 | Better layer controls and save/recovery | Phases 08, 09 | Individual layers, local backups, reliable interrupted-write recovery, restore races and quota handling |
 | 7 | Improve real-file fidelity and plotting | Phases 09, 14, 24 | Attributes, SHX/CJK, preserved unsupported records, exact plot scale and vector PDF |

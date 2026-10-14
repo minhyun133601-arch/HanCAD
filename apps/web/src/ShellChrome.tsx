@@ -63,7 +63,7 @@ const homePanels: readonly Panel[] = [
   {
     label: 'annotation',
     tools: [
-      { label: 'text', command: 'MTEXT', icon: 'text' },
+      { label: 'dimensionSmart', command: 'DIM', icon: 'dimension' },
       { label: 'dimension', command: 'DIMLINEAR', icon: 'dimension' },
       { label: 'dimensionStyle', command: 'DIMSTYLE', icon: 'dimension' },
     ],
@@ -82,7 +82,21 @@ const panels: Record<RibbonTab, readonly Panel[]> = {
       ],
     },
   ],
-  annotate: [homePanels[2]!],
+  annotate: [
+    {
+      label: 'annotation',
+      tools: [
+        { label: 'dimensionSmart', command: 'DIM', icon: 'dimension' },
+        { label: 'dimension', command: 'DIMLINEAR', icon: 'dimension' },
+        { label: 'dimensionAligned', command: 'DIMALIGNED', icon: 'dimension' },
+        { label: 'dimensionRadius', command: 'DIMRADIUS', icon: 'dimension' },
+        { label: 'dimensionDiameter', command: 'DIMDIAMETER', icon: 'dimension' },
+        { label: 'dimensionAngular', command: 'DIMANGULAR', icon: 'dimension' },
+        { label: 'dimensionStyle', command: 'DIMSTYLE', icon: 'dimension' },
+      ],
+    },
+    { label: 'text', tools: [{ label: 'text', command: 'MTEXT', icon: 'text' }] },
+  ],
   parametric: [
     {
       label: 'parametric',

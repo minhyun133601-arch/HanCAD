@@ -19,9 +19,12 @@ Refresh the browser after a new build to try the latest features.
 The current app supports:
 
 - LINE, CIRCLE, RECTANG and straight PLINE drafting with mouse/coordinate input.
+- Linear, aligned, radius, diameter and angular dimensions, with smart DIM previews.
+- Basic DIMSTYLE settings, Korean dimension text and explicit selected-dimension updates.
 - Pick/Shift/Ctrl+A selection, erase, whole-command undo/redo and NEW.
 - Absolute/relative/polar/direct-distance input, F8 Ortho and initial F3 object snaps.
 - Local DWG/DXF opening, visible geometry, pan/zoom and Zoom Extents.
+- Retained display paths, offscreen culling and separate preview rendering for large drawings.
 - Import results listing skipped, approximated and unsupported objects.
 - Explicit LAYON for drawings whose layers are all off.
 - PDF, PNG, JPG, SVG and supported-entity DXF downloads.
@@ -36,9 +39,22 @@ covers model-space 2D geometry; unsupported data is reported. The original bytes
 are retained during the session, but current DXF export is not a lossless round
 trip and DWG saving is not implemented. PDF currently embeds a high-resolution
 raster on A4. Vector/searchable PDF, exact plot scales and multi-layout plotting
-remain pending. Move/copy, trim/extend/offset, text and dimension creation are the
-next essential 2D additions. Advanced selection/grips and drawing-command options
+remain pending. Move/copy, trim/extend/offset and general text creation are the
+next essential 2D additions. Associative dimensions, leaders, tolerances, the full
+DIMSTYLE manager, advanced selection/grips and drawing-command options
 remain pending. Unconnected drafting-aid controls are visibly unavailable.
+
+For dimensions, use the ribbon or DLI (linear), DAL (aligned), DRA (radius), DDI
+(diameter) and DAN (angular). DIM chooses an initial type from the selected object.
+D opens the basic dimension settings. DIMSCALE changes annotation size only;
+DIMLFAC is the separate displayed-measurement factor. Existing dimensions change
+style only when explicitly selected for application. See `docs/COMMANDS.md` for
+the supported input sequences and remaining options.
+
+The supplied 286,996-object drawing was verified on this PC: import about 12 s,
+six tested zoom/pan paint responses 0.03-0.40 s, and local-cache reload about 2.2 s.
+Creating and undoing a dimension on that file also passed. These are measured
+samples, not the complete million-entity/60 fps budget. See `docs/PROGRESS.md`.
 
 ## Develop and verify
 

@@ -1,75 +1,51 @@
-import { createEmptyCadState, normalizeCadState } from '@hancad/legacy-bridge';
-import type { CadImportReport, LegacyCadState } from '@hancad/legacy-bridge';
+import { createEmptyCadState } from '@hancad/legacy-bridge';
+import { cachedDimensionStyle } from './dimension-style';
+import { parseDrawingSession } from './drawing-session';
+import type { DrawingSession } from './drawing-session';
+export { parseDrawingSession } from './drawing-session';
+export type { DrawingSession } from './drawing-session';
 
 export const drawingStorageKey = 'hancad.active-drawing.v1';
 export const drawingViewVariable = 'HANCAD_VIEW_STATE';
 const cacheLocationKey = 'hancad.active-drawing.location.v1';
 type CacheLocation = 'local' | 'pending' | 'indexed' | 'failed';
 const cacheChunkLength = 512 * 1024;
-export interface DrawingSession {
-  state: LegacyCadState;
-  report: CadImportReport | null;
-  fileName: string;
-}
-
-function restoreReport(value: unknown): CadImportReport | null {
-  if (value === undefined || value === null) return null;
-  if (typeof value !== 'object') throw new Error('Invalid stored import report.');
-  const record = value as Record<string, unknown>;
-  if (
-    typeof record.format !== 'string' ||
-    typeof record.version !== 'string' ||
-    !['imported', 'sourceEntities', 'skipped', 'approximated'].every(
-      (key) =>
-        typeof record[key] === 'number' &&
-        Number.isFinite(record[key]) &&
-        (record[key] as number) >= 0,
-    ) ||
-    !Array.isArray(record.warnings) ||
-    !record.warnings.every((item: unknown) => typeof item === 'string') ||
-    !Array.isArray(record.unsupported) ||
-    !record.unsupported.every((item: unknown) => {
-      if (typeof item !== 'object' || item === null) return false;
-      const entry = item as Record<string, unknown>;
-      return (
-        typeof entry.type === 'string' &&
-        typeof entry.count === 'number' &&
-        Number.isFinite(entry.count) &&
-        entry.count >= 0
-      );
-    })
-  )
-    throw new Error('Invalid stored import report.');
-  return value as CadImportReport;
-}
-
-export function parseDrawingSession(json: string): DrawingSession {
-  const value: unknown = JSON.parse(json);
-  if (
-    typeof value !== 'object' ||
-    value === null ||
-    !('fileName' in value) ||
-    typeof value.fileName !== 'string' ||
-    !('state' in value)
-  )
-    throw new Error('Invalid stored drawing.');
-  return {
-    state: normalizeCadState(value.state),
-    fileName: value.fileName,
-    report: restoreReport('report' in value ? value.report : undefined),
+export function restoreDrawing(): {
+  drawing: DrawingSession;
+  restored: boolean;
+  failed: boolean;
+  identityMigrated: boolean;
+} {
+  const empty = {
+    state: createEmptyCadState(),
+    report: null,
+    fileName: '',
+    documentId: crypto.randomUUID(),
   };
-}
-
-export function restoreDrawing(): { drawing: DrawingSession; restored: boolean; failed: boolean } {
-  const empty = { state: createEmptyCadState(), report: null, fileName: '' };
   try {
     const stored = localStorage.getItem(drawingStorageKey);
     return stored
-      ? { drawing: parseDrawingSession(stored), restored: true, failed: false }
-      : { drawing: empty, restored: false, failed: false };
+      ? { ...restoreCachedDrawingSession(stored), restored: true, failed: false }
+      : { drawing: empty, restored: false, failed: false, identityMigrated: false };
   } catch {
-    return { drawing: empty, restored: false, failed: true };
+    return { drawing: empty, restored: false, failed: true, identityMigrated: false };
   }
+}
+
+export function restoreCachedDrawingSession(serialized: string): {
+  drawing: DrawingSession;
+  identityMigrated: boolean;
+} {
+  const drawing = parseDrawingSession(serialized);
+  const dimensionStyle = cachedDimensionStyle(drawing.dimensionStyle, drawing.documentId);
+  return {
+    drawing: {
+      ...drawing,
+      documentId: drawing.documentId ?? crypto.randomUUID(),
+      ...(dimensionStyle ? { dimensionStyle } : {}),
+    },
+    identityMigrated: !drawing.documentId,
+  };
 }
 
 export function getDrawingCacheLocation(): CacheLocation | undefined {

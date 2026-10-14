@@ -1,5 +1,83 @@
 # Decisions
 
+## 2026-10-14: Measure complete paint and remove repeated drawing allocation
+
+The first retained-path benchmark exposed a misleadingly small geometry submission
+time: some frames submitted in 7-42 ms but took several seconds to reach paint and
+readback. Copying the backing canvas synchronized expensive queued raster work;
+initial transient JavaScript allocation also exceeded 2 GB. A callback or path
+submission timer alone is insufficient performance evidence.
+
+Static drawing now renders directly to the main canvas, with a transparent canvas
+for previews/snaps. Display-only adaptive paths bound geometric deviation to
+0.25 CSS pixels and retain only the current zoom bucket. All model entities and
+export geometry remain unchanged and reappear at finer detail when zooming.
+This remains a Canvas2D transition; the complete WebGL/R-tree performance budgets
+are pending.
+
+Owned reader results no longer receive another full deep clone. Direct commits
+validate/normalize once, serialize once, and reuse the exact prepared session in
+the synchronous journal observer. A finally block releases the temporary reference;
+untrusted caches and undo/redo retain full parsing/validation. Composite metadata
+remains independently copied. Large strings bypass Web Storage's likely quota
+failure and use the existing atomic chunked IndexedDB path. The mandatory command
+journal is retained; recovery still has one additional normalization pass.
+
+## 2026-10-14: Deliver the initial dimension subset from Phase 11
+
+The user requested dimension creation/display now, extending the previous usable
+2D slice. DIMLINEAR, DIMALIGNED, DIMRADIUS, DIMDIAMETER, DIMANGULAR, smart DIM and a
+basic DIMSTYLE dialog are implemented ahead of complete Phases 7-10. This does not
+declare those prerequisites or the complete Phase 11 acceptance criteria done.
+The original aliases remain authoritative: D opens DIMSTYLE; DLI/DAL/DRA/DDI/DAN
+start dimension tools. Full named-style management, associativity, leaders,
+tolerances, fit rules and additional dimension commands remain pending.
+
+The ten supported style values are captured per dimension. Editing defaults does
+not silently restyle imported dimensions. Explicit selected application is an
+undoable operation and preserves definition coordinates and text overrides.
+Measured model geometry remains independent of annotation size: [DIMSCALE](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AEA309F0-B831-4432-8085-FB6CD49CDC78.htm)
+scales text/arrows/offsets, while [DIMLFAC](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B6063785-B199-4A9A-8BD7-2108EB0AB7ED.htm)
+formats linear/radial measurements and does not affect angular measurements.
+DIMSCALE 0 resolves to 1 in the current model-only application; annotative and
+paper-space scaling remain pending. Negative DIMLFAC is ignored in model space,
+following the documented paper-space-only meaning.
+
+[DIMZIN](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A1860981-FE1C-4947-927B-7CD6B8CEF8EE.htm)
+defaults to metric trailing-zero suppression (8); the initial implementation
+supports decimal leading/trailing-zero bits, not feet/inch formatting.
+[DIMPOST](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-79CCF9B1-BE33-4158-891C-50E4BF795D8E.htm)
+and explicit Text overrides use the measurement placeholder `<>`. Korean free
+text uses editable IME input. DIMTXT 0 fixed-font-height behavior, negative DIMGAP
+text boxing and complete text fitting need later font/style work and reference QA.
+
+DXF stores editable DIMENSION definitions, their supported style values and *D
+graphics blocks. This is a supported-geometry round trip, not full original DWG
+or unsupported-table preservation. Current definitions are non-associative even
+though DIMASSOC is a registered system variable.
+
+The emitted style fields were checked against Autodesk's [DIMSTYLE group codes](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-F2FAD36F-0CE3-4943-9DAD-A9BCD2AE81DA.htm)
+and [linear/rotated dimension codes](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-F0004556-493C-48D5-8619-61D6ADF05C04.htm).
+Independent tag assertions cover degree/sign conversion for rotation and text,
+dimension-kind flags, supported style values, graphics-block references and
+HEADER DIMASSOC = 1. Text rotation assumes World UCS; arbitrary UCS and associative
+OBJECTS records remain pending. No installed AutoCAD regeneration test was performed.
+
+## 2026-10-14: Launch from the interactive CMD
+
+The user reported that a healthy local server still did not produce a new browser
+window. The detached launcher/port-reuse path delegated browser opening to a short
+lived child process and only checked HTTP, which is insufficient evidence of GUI
+launch. `HanCAD 실행.cmd` now directly invokes Windows `start` after server health,
+using the installed Edge path or the default URL handler. Server scripts only
+manage the local server. The user executed the changed CMD and confirmed that the
+new browser window appeared. Headless/server checks explicitly skip GUI launch;
+they must not be reported as proof of a visible window.
+
+Native Edge launch verification through a shell was rejected by automatic approval
+review with "blocked by policy". No alternate automated native launch was used
+to bypass it; GUI confirmation came from the user running the reviewed launcher.
+
 ## 2026-10-14: Adopt the full supplied specification
 
 The user's latest instructions authorize all phases and resolve overlapping

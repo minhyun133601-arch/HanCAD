@@ -11,13 +11,16 @@ import {
   drawingViewVariable,
   deleteIndexedDrawing,
   getDrawingCacheLocation,
-  parseDrawingSession,
   readIndexedDrawing,
   restoreDrawing,
+  restoreCachedDrawingSession,
   setDrawingCacheLocation,
   writeIndexedDrawing,
 } from './drawing-storage';
 import type { DrawingSession } from './drawing-storage';
+import { dimensionStyleFields, readDimensionStyle, saveDimensionStyle } from './dimension-style';
+import type { DimensionStyleValues } from './dimension-style';
+import { canUseLocalDrawingCache, DrawingSessionTransfer } from './drawing-session';
 
 type ExportFormat = 'pdf' | 'png' | 'jpg' | 'svg' | 'dxf';
 interface DrawingFilesOptions {
@@ -29,6 +32,7 @@ interface DrawingFilesOptions {
 
 export function useDrawingFiles({ registry, database, messages, print }: DrawingFilesOptions) {
   const [initial] = useState(restoreDrawing);
+  const [transfer] = useState(() => new DrawingSessionTransfer());
   const [drawing, setDrawing] = useState<DrawingSession>(initial.drawing);
   const [reading, setReading] = useState(false);
   const [restoring, setRestoring] = useState(false);
@@ -46,6 +50,7 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
   const documentGeneration = useRef(0);
   const cacheQueue = useRef<Promise<void>>(Promise.resolve());
   const skipPersistence = useRef(false);
+  const hasCachedGeometry = useRef(initial.restored);
   const actions = useRef({ messages, print, drawing });
   actions.current = { messages, print, drawing };
 
@@ -58,13 +63,19 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
   useEffect(() => () => controller.current?.abort(), []);
 
   function persist(serialized: string): void {
+    hasCachedGeometry.current = true;
     const version = ++cacheVersion.current;
     let savedLocally = false;
     try {
-      localStorage.setItem(drawingStorageKey, serialized);
-      setDrawingCacheLocation('local');
-      storageWarning.current = false;
-      savedLocally = true;
+      if (canUseLocalDrawingCache(serialized)) {
+        localStorage.setItem(drawingStorageKey, serialized);
+        setDrawingCacheLocation('local');
+        storageWarning.current = false;
+        savedLocally = true;
+      } else {
+        localStorage.removeItem(drawingStorageKey);
+        setDrawingCacheLocation('pending');
+      }
     } catch {
       try {
         localStorage.removeItem(drawingStorageKey);
@@ -72,6 +83,15 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
         // The browser may deny Web Storage entirely.
       }
       setDrawingCacheLocation('pending');
+    }
+    try {
+      saveDimensionStyle(
+        readDimensionStyle((name) => database.getVariable(name)),
+        drawingRef.current.documentId,
+      );
+    } catch {
+      if (!storageWarning.current) actions.current.print(actions.current.messages.autosaveFailed);
+      storageWarning.current = true;
     }
     cacheQueue.current = cacheQueue.current.then(async () => {
       if (savedLocally) {
@@ -99,14 +119,48 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
   useEffect(() => {
     let initializing = true;
     let disposed = false;
+    let styleQueued = false;
+    function scheduleStyle(): void {
+      if (initializing || styleQueued) return;
+      styleQueued = true;
+      queueMicrotask(() => {
+        styleQueued = false;
+        if (disposed) return;
+        const dimensionStyle = readDimensionStyle((name) => database.getVariable(name));
+        if (JSON.stringify(drawingRef.current.dimensionStyle) === JSON.stringify(dimensionStyle))
+          return;
+        const next = { ...drawingRef.current, dimensionStyle };
+        drawingRef.current = next;
+        setDrawing(next);
+        documentGeneration.current++;
+        if (!hasCachedGeometry.current) {
+          const serialized = database.getVariable(drawingViewVariable);
+          if (typeof serialized === 'string') persist(serialized);
+        }
+        try {
+          saveDimensionStyle(dimensionStyle, next.documentId);
+        } catch {
+          if (!storageWarning.current)
+            actions.current.print(actions.current.messages.autosaveFailed);
+          storageWarning.current = true;
+        }
+      });
+    }
     const unsubscribe = database.events.subscribe((event) => {
+      if (
+        event.type === 'sysvar-changed' &&
+        dimensionStyleFields.some(([name]) => name === event.name)
+      ) {
+        scheduleStyle();
+        return;
+      }
       if (
         event.type !== 'sysvar-changed' ||
         event.name !== drawingViewVariable ||
         typeof event.value !== 'string'
       )
         return;
-      const next = parseDrawingSession(event.value);
+      const next = transfer.read(event.value);
       drawingRef.current = next;
       setDrawing(next);
       if (fitNext.current) {
@@ -116,15 +170,24 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
       if (!initializing) {
         documentGeneration.current++;
         if (!skipPersistence.current) persist(event.value);
+        scheduleStyle();
       }
     });
     if (typeof database.getVariable(drawingViewVariable) !== 'string') {
-      database.transaction('INITIAL_VIEW', (transaction) =>
-        transaction.setVariable(drawingViewVariable, JSON.stringify(initial.drawing)),
-      );
+      transfer.write(initial.drawing, (serialized) => {
+        database.transaction('INITIAL_VIEW', (transaction) => {
+          for (const [name, value] of Object.entries(initial.drawing.dimensionStyle ?? {}))
+            transaction.setVariable(name, value);
+          transaction.setVariable(drawingViewVariable, serialized);
+        });
+      });
       database.clearHistory();
     }
     initializing = false;
+    if (initial.identityMigrated) {
+      const serialized = database.getVariable(drawingViewVariable);
+      if (typeof serialized === 'string') persist(serialized);
+    }
     const generation = documentGeneration.current;
     if (!initial.restored) {
       const location = getDrawingCacheLocation();
@@ -135,10 +198,11 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
         void readIndexedDrawing()
           .then((serialized) => {
             if (!serialized || disposed || documentGeneration.current !== generation) return;
-            const restored = parseDrawingSession(serialized);
-            skipPersistence.current = true;
+            const restored = restoreCachedDrawingSession(serialized);
+            skipPersistence.current = !restored.identityMigrated;
             try {
-              commitDrawing('RESTORE', restored, true);
+              commitDrawing('RESTORE', restored.drawing, true);
+              hasCachedGeometry.current = true;
               actions.current.print(actions.current.messages.restoredDrawing);
             } finally {
               skipPersistence.current = false;
@@ -159,18 +223,43 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
     };
   }, [database]);
 
-  function commitDrawing(label: string, next: DrawingSession, newBase = false, fit = false): void {
-    const serialized = JSON.stringify(next);
-    // Validate before the transaction; listener failures cannot roll back its journal.
-    parseDrawingSession(serialized);
-    fitNext.current = newBase || fit;
-    database.transaction(label, (transaction) =>
-      transaction.setVariable(drawingViewVariable, serialized),
-    );
+  function commitDrawing(
+    label: string,
+    next: DrawingSession,
+    newBase = false,
+    fit = false,
+    variables?: DimensionStyleValues,
+  ): void {
+    if (!next.documentId || (newBase && label !== 'RESTORE'))
+      next = { ...next, documentId: crypto.randomUUID() };
+    if (newBase && !next.dimensionStyle)
+      next = { ...next, dimensionStyle: readDimensionStyle(() => undefined) };
+    const previousFit = fitNext.current;
+    try {
+      // Validate before writing; the synchronous journal observer reuses this exact validated graph.
+      transfer.write(next, (serialized) => {
+        fitNext.current = newBase || fit;
+        database.transaction(label, (transaction) => {
+          for (const [name, value] of Object.entries(
+            variables ?? (newBase ? (next.dimensionStyle ?? {}) : {}),
+          ))
+            transaction.setVariable(name, value);
+          transaction.setVariable(drawingViewVariable, serialized);
+        });
+      });
+    } catch (error) {
+      fitNext.current = previousFit;
+      throw error;
+    }
     if (newBase) database.clearHistory();
   }
-  function commitState(label: string, state: LegacyCadState): void {
-    commitDrawing(label, { ...drawingRef.current, state });
+  function commitState(
+    label: string,
+    state: LegacyCadState,
+    variables?: DimensionStyleValues,
+  ): void {
+    const dimensionStyle = variables ?? readDimensionStyle((name) => database.getVariable(name));
+    commitDrawing(label, { ...drawingRef.current, state, dimensionStyle }, false, false, variables);
   }
 
   async function openFile(file: File): Promise<void> {

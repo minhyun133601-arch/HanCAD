@@ -1,9 +1,7 @@
 import http from 'node:http';
 import path from 'node:path';
 import { readFile, stat } from 'node:fs/promises';
-import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { existsSync } from 'node:fs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'apps', 'web', 'dist');
@@ -23,28 +21,6 @@ const types = {
 await stat(path.join(dist, 'index.html')).catch(() => {
   throw new Error('최신 실행 파일을 먼저 빌드하세요: pnpm build');
 });
-
-function openBrowser() {
-  if (!process.argv.includes('--open')) return;
-  if (process.platform !== 'win32') {
-    console.log(address);
-    return;
-  }
-  const edge = [process.env['ProgramFiles(x86)'], process.env.ProgramFiles]
-    .filter(Boolean)
-    .map((directory) => path.join(directory, 'Microsoft', 'Edge', 'Application', 'msedge.exe'))
-    .find(existsSync);
-  const browser = spawn(
-    edge || 'rundll32.exe',
-    edge ? ['--new-window', address] : ['url.dll,FileProtocolHandler', address],
-    {
-      stdio: 'ignore',
-      windowsHide: true,
-    },
-  );
-  browser.on('error', () => console.log(`브라우저에서 ${address}를 여세요.`));
-  browser.unref();
-}
 
 const server = http.createServer(async (request, response) => {
   response.setHeader('X-HanCAD-Preview', '1');
@@ -83,7 +59,6 @@ server.on('error', async (error) => {
       const running = await fetch(address, { signal: AbortSignal.timeout(2000) });
       if (running.headers.get('x-hancad-preview') === '1') {
         console.log(`HanCAD 실행 중: ${address}`);
-        openBrowser();
         return;
       }
     } catch {
@@ -97,5 +72,4 @@ server.on('error', async (error) => {
 server.listen(port, '127.0.0.1', () => {
   console.log(`HanCAD 실행 중: ${address}`);
   console.log('최신 기능을 확인하려면 브라우저를 새로고침하세요. 종료: Ctrl+C');
-  openBrowser();
 });

@@ -17,5 +17,11 @@ command is not an implemented command.
 - [ ] Verify advanced LINE/CIRCLE/RECTANG/PLINE options beyond the initial usable subset.
 - [ ] Verify complete opaque-object and reference preservation across I/O.
 - [ ] Verify DIMSCALE changes annotation sizes without changing measurements.
+- [ ] Verify DIMLINEAR H/V/Rotated and text-angle placement against the reference.
+- [ ] Verify angular quadrant/reflex selection for two lines, arcs and three points.
+- [ ] Verify smart DIM hover choices, placement and repeated-command behavior.
+- [ ] Verify DIMZIN/DIMPOST/DIMLFAC and the supported basic style fields against ISO-25.
+- [ ] Implement and verify DIMASSOC 2 geometry references; current dimensions are independent definitions.
+- [ ] Complete the seven DIMSTYLE tabs, fit rules, leaders, tolerances and remaining Phase 11 commands.
 - [ ] Verify large survey coordinates, floating origin, snapping latency and rendering budgets.
 - [ ] Verify all phase acceptance criteria before changing phase status to complete.

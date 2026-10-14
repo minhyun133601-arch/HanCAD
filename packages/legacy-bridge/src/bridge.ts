@@ -57,8 +57,8 @@ export async function readCadFile(
     options,
   );
   checkCancelled(options.signal);
-  const state = structuredClone(result.state);
-  state.name = file.name.replace(/[\u0000-\u001f]/g, '').slice(0, 240);
+  // The offline reader creates a unique normalized graph per invocation; transfer its ownership.
+  const state = { ...result.state, name: file.name.replace(/[\u0000-\u001f]/g, '').slice(0, 240) };
   return {
     state,
     report: structuredClone(result.report),

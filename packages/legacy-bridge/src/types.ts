@@ -63,6 +63,11 @@ export interface CadDimension extends CadEntityBase {
   extensionOvershoot: number;
   unit: string;
   text?: string;
+  textGap?: number;
+  measurementFactor?: number;
+  zeroSuppression?: number;
+  post?: string;
+  textRotation?: number;
 }
 export type CadEntity = CadLine | CadPolyline | CadCircle | CadArc | CadText | CadDimension;
 export interface CadLayer {
@@ -89,6 +94,10 @@ export interface CadSettings {
   extensionGap: number;
   extensionOvershoot: number;
   dimUnit: '' | 'mm' | 'cm' | 'm';
+  dimGap?: number;
+  dimMeasurementFactor?: number;
+  dimZeroSuppression?: number;
+  dimPost?: string;
 }
 /** Transitional imported model: Y down. The new @hancad/db model uses Y up. */
 export interface LegacyCadState {
@@ -135,6 +144,7 @@ export interface LegacyCadRuntime {
   core: {
     cadEngine: {
       readonly ENTITY_LIMIT: number;
+      dimensionGeometry(entity: CadDimension, unit?: string): CadDimensionGeometry | null;
       normalizeState(raw?: unknown): LegacyCadState;
       bounds(entities: readonly CadEntity[] | CadEntity): CadBounds | null;
       hitTest(
@@ -164,4 +174,30 @@ export interface LegacyCadRuntime {
       toDxf(state: LegacyCadState): string;
     };
   };
+}
+
+export interface CadDimensionGeometry {
+  kind: CadDimension['kind'];
+  q1: CadPoint;
+  q2: CadPoint;
+  measurement: number;
+  displayMeasurement: number;
+  label: string;
+  textPoint: CadPoint;
+  labelPoint: CadPoint;
+  textSize: number;
+  arrowSize: number;
+  rotation: number;
+  lines: [CadPoint, CadPoint][];
+  arrows: CadPoint[][];
+  arcs: {
+    center: CadPoint;
+    radius: number;
+    startAngle: number;
+    endAngle: number;
+    clockwise: boolean;
+  }[];
+  points: CadPoint[];
+  snapPoints: CadPoint[];
+  textCorners: CadPoint[];
 }

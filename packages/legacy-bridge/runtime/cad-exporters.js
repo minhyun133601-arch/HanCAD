@@ -229,12 +229,14 @@
       const entity = Tool.core.cadEngine.normalizeEntity(raw, snapshot.settings || Tool.core.cadEngine.DEFAULT_SETTINGS);
       if (!entity) return;
       const styleUnit = entity.kind === "angular" ? "" : entity.unit;
-      const key = JSON.stringify([entity.dimScale, entity.textSize, entity.arrowSize, entity.extensionGap, entity.extensionOvershoot, entity.precision, styleUnit]);
+      const key = JSON.stringify([entity.dimScale, entity.textSize, entity.arrowSize, entity.extensionGap, entity.extensionOvershoot, entity.precision, styleUnit, entity.textGap, entity.measurementFactor, entity.zeroSuppression, entity.post]);
       if (!dimStyles.has(key)) dimStyles.set(key, { name: `CAD_DIM_${dimStyles.size + 1}`, handle: handle(), entity: { ...entity, unit: styleUnit } });
       const block = { name: `*D${index + 1}`, handle: handle(), entity, geometry: dimensionGeometry(entity, unit) };
       blockRecords.push(block); dimensions.set(raw, { ...block, style: dimStyles.get(key) });
     });
     push(0, "SECTION"); push(2, "HEADER"); push(9, "$ACADVER"); push(1, "AC1021"); push(9, "$INSUNITS"); push(70, ({ mm: 4, cm: 5, m: 6, in: 1, ft: 2 })[unit] || 0);
+    // Definitions are editable, but no AcDbDimAssoc geometry links are written yet.
+    push(9, "$DIMASSOC"); push(280, 1);
     push(9, "$HANDSEED"); push(5, "__HANDSEED__");
     push(9, "$EXTMIN"); push(10, cleanNumber(bounds.minX)); push(20, cleanNumber(-bounds.maxY)); push(30, 0);
     push(9, "$EXTMAX"); push(10, cleanNumber(bounds.maxX)); push(20, cleanNumber(-bounds.minY)); push(30, 0); push(0, "ENDSEC");
@@ -249,10 +251,11 @@
     dimStyles.forEach((style) => {
       const entity = style.entity;
       record("DIMSTYLE", tableHandles.DIMSTYLE, "AcDbDimStyleTableRecord", style.handle, 105); push(2, style.name); push(70, 0);
-      push(3, entity.unit ? `<>${safeString(entity.unit)}` : "");
+      const post = entity.post ? (entity.post.includes("<>") ? entity.post : `<>${entity.post}`) : "<>";
+      push(3, entity.post || entity.unit ? safeString(post.replace(/<>/g, entity.unit ? `<>${entity.unit}` : "<>")) : "");
       push(40, entity.dimScale); push(41, entity.arrowSize); push(42, entity.extensionGap); push(44, entity.extensionOvershoot);
-      push(140, entity.textSize); push(144, 1); push(147, entity.textSize * 0.35);
-      push(73, 0); push(74, 0); push(77, 1); push(78, 0); push(179, entity.precision);
+      push(140, entity.textSize); push(144, entity.measurementFactor ?? 1); push(147, entity.textGap ?? entity.textSize * 0.25);
+      push(73, 0); push(74, 0); push(77, 1); push(78, entity.zeroSuppression || 0); push(179, entity.precision);
       push(271, entity.precision); push(275, 0); push(277, 2); push(278, 46); push(279, 2); push(289, 3); push(340, textStyleHandle);
     });
     push(0, "ENDTAB"); table("BLOCK_RECORD", blockRecords.length);
@@ -308,6 +311,7 @@
         start("DIMENSION", normalized, modelOwner); push(100, "AcDbDimension"); push(2, dimension.name);
         position(kind === "radius" ? normalized.center : kind === "angular" ? geometry.labelPoint : kind === "diameter" ? geometry.q1 : geometry.q2);
         position(geometry.textPoint, 11); push(70, dimensionType + 32); push(71, 5); push(42, cleanNumber(kind === "angular" ? geometry.measurement * Math.PI / 180 : geometry.measurement)); push(1, safeString(normalized.text || "<>")); push(3, dimension.style.name);
+        if (normalized.textRotation !== undefined) push(53, cleanNumber(normalAngle(-normalized.textRotation) * 180 / Math.PI));
         if (["aligned", "horizontal", "vertical"].includes(kind)) {
           push(100, "AcDbAlignedDimension"); position(normalized.a, 13); position(normalized.b, 14);
           const angle = kind === "aligned" ? Math.atan2(normalized.b.y - normalized.a.y, normalized.b.x - normalized.a.x) : (normalized.axisAngle ?? (kind === "vertical" ? -Math.PI / 2 : 0));

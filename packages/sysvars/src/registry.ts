@@ -183,6 +183,8 @@ export const systemVariableDefinitions: readonly SystemVariableDefinition[] = Ob
   real('DIMGAP', 0.625, -Number.MAX_VALUE, '치수 문자 주변 간격'),
   real('DIMEXO', 0.625, 0, '치수보조선 원점 간격'),
   real('DIMEXE', 1.25, 0, '치수보조선 연장'),
+  integer('DIMZIN', 8, 0, 15, '치수 선행·후행 0 억제'),
+  text('DIMPOST', '', '치수 측정값 접두·접미 문자'),
   integer('TILEMODE', 1, 0, 1, '모형 공간 활성'),
   text('CTAB', 'Model', '현재 배치'),
   integer('OSNAPCOORD', 2, 0, 2, '좌표 입력과 객체 스냅 우선순위', 'profile'),

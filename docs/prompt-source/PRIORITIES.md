@@ -14,7 +14,8 @@ Overlapping behavior still follows these original prompts.
 | --- | --- | --- |
 | Now | 00–03, 09, 14 | Runnable main app, local DWG/DXF opening, view navigation, Korean command input, DXF saving, PDF/image output |
 | Now | 04–07 | Mouse/coordinate drawing, LINE/CIRCLE/RECTANG/PLINE, basic selection and erase, one-command undo/redo |
-| Next | 04–08, 10–11 | Accurate snapping and drafting aids, move/copy, trim/extend/offset, text, dimensions and basic layer/property editing |
+| Now | 02, 11, 24–25 | Reliable browser launch, practical large-file navigation and initial dimension creation/basic styles |
+| Next | 04–08, 10–11 | Accurate snapping, move/copy, trim/extend/offset, text, complete dimension workflows and basic layer/property editing |
 | Later | 09, 12–16, 24–25 | Better real-file preservation, blocks/hatches, precise plotting, compatibility, performance and packaging |
 | Deferred | 17–23 | Dynamic blocks, constraints, automation/customization and 3D |
 

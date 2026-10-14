@@ -3,3 +3,7 @@ export * from './coordinates';
 export * from './entities';
 export * from './session';
 export * from './snapping';
+export * from './dimension-types';
+export * from './dimension-style';
+export * from './dimension-geometry';
+export * from './dimension-session';

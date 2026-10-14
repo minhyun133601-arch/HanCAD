@@ -59,14 +59,41 @@
   function attachDimStyles(text, document) {
     const lines = text.replace(/\r\n?/g,"\n").split("\n");
     document.dimStyles = new Map();
+    const overrides = new Map(), anonymous = new Map();
+    const recordTypes = new Set(["DIMSTYLE", "DIMENSION", "BLOCK", "ENDBLK"]);
+    let activeBlock = null;
     for (let i=0;i<lines.length-1;i+=2) {
-      if (lines[i].trim() !== "0" || lines[i+1].trim() !== "DIMSTYLE") continue;
+      if (lines[i].trim() !== "0" || !recordTypes.has(lines[i+1].trim())) continue;
+      const recordType = lines[i+1].trim();
       const tags = new Map();
-      for (i+=2;i<lines.length-1 && lines[i].trim() !== "0";i+=2) tags.set(Number(lines[i]),lines[i+1].trim());
+      // Numeric/identifier whitespace is padding; dimension text and DIMPOST whitespace is data.
+      for (i+=2;i<lines.length-1 && lines[i].trim() !== "0";i+=2) {
+        const code = Number(lines[i]);
+        tags.set(code, code === 1 || code === 3 ? lines[i+1] : lines[i+1].trim());
+      }
       i-=2;
+      if (recordType === "BLOCK") { activeBlock = tags.get(2); continue; }
+      if (recordType === "ENDBLK") { activeBlock = null; continue; }
+      if (recordType === "DIMENSION") {
+        const value = {};
+        if (tags.has(53)) value.explicitTextRotation = Number(tags.get(53));
+        if (tags.has(1)) value.textOverride = tags.get(1);
+        if (tags.has(5)) overrides.set(tags.get(5), value);
+        else { const queue = anonymous.get(activeBlock) || []; queue.push(value); anonymous.set(activeBlock, queue); }
+        continue;
+      }
       const name=tags.get(2);
-      if (name) document.dimStyles.set(name,{dimScale:Number(tags.get(40)) || 1,textSize:Number(tags.get(140)) || 2.5,arrowSize:Number(tags.get(41)) || 2.5,extensionGap:Number(tags.get(42)) || 0,extensionOvershoot:Number(tags.get(44)) || 0,precision:tags.has(271)?Number(tags.get(271)):2,post:tags.get(3) || ""});
+      if (name) document.dimStyles.set(name,{dimScale:Number(tags.get(40)) || 1,textSize:Number(tags.get(140)) || 2.5,arrowSize:tags.has(41)?Number(tags.get(41)):2.5,extensionGap:Number(tags.get(42)) || 0,extensionOvershoot:Number(tags.get(44)) || 0,precision:tags.has(271)?Number(tags.get(271)):2,measurementFactor:tags.has(144)?Number(tags.get(144)):1,textGap:tags.has(147)?Number(tags.get(147)):undefined,zeroSuppression:Number(tags.get(78)) || 0,post:tags.get(3) || ""});
     }
+    const applyOverrides = (entities, blockName = null) => {
+      const queue = anonymous.get(blockName) || []; let index = 0;
+      for (const entity of entities) if (entity.type === "DIMENSION") {
+        const value = entity.handle ? overrides.get(entity.handle) : queue[index++];
+        if (value) Object.assign(entity, value);
+      }
+    };
+    applyOverrides(document.entities);
+    for (const [name, block] of document.blocks) applyOverrides(block.entities, name);
     return document;
   }
   function convertDocument(document, options = {}) {
@@ -169,10 +196,11 @@
           const type=e.dimType & 7;
           const ds=document.dimStyles?.get(e.dimStyle) || {};
           const scale=Math.hypot(m[0],m[1]);
-          const native={...s,type:"dimension",dimScale:(ds.dimScale || 1)*scale,textSize:ds.textSize || 2.5,arrowSize:ds.arrowSize || 2.5,extensionGap:ds.extensionGap ?? 1,extensionOvershoot:ds.extensionOvershoot ?? 2,precision:ds.precision ?? 2,unit:""};
+          const native={...s,type:"dimension",dimScale:(ds.dimScale || 1)*scale,textSize:ds.textSize || 2.5,arrowSize:ds.arrowSize ?? 2.5,extensionGap:ds.extensionGap ?? 1,extensionOvershoot:ds.extensionOvershoot ?? 2,precision:ds.precision ?? 2,unit:"",textGap:ds.textGap,measurementFactor:ds.measurementFactor ?? 1,zeroSuppression:ds.zeroSuppression || 0};
+          if (Number.isFinite(e.explicitTextRotation)) { const angle=e.explicitTextRotation*Math.PI/180; native.textRotation=Math.atan2(-(m[1]*Math.cos(angle)+m[3]*Math.sin(angle)),m[0]*Math.cos(angle)+m[2]*Math.sin(angle)); }
           const override=plainText(e.textOverride || ""), post=plainText(ds.post || "");
           if (override && override !== "<>") native.text=override;
-          else if (post) native.text=post;
+          if (post && post !== "<>") native.post=post;
           if ([0,1].includes(type) && validPoint(e.defPoint2) && validPoint(e.defPoint3)) {
             const a=transform(e.defPoint2,m),b=transform(e.defPoint3,m),d=transform(e.defPoint,m);
             const angle=type===1 ? Math.atan2(b.y-a.y,b.x-a.x) : Math.atan2(-(m[1]*Math.cos(e.rotation*Math.PI/180)+m[3]*Math.sin(e.rotation*Math.PI/180)),m[0]*Math.cos(e.rotation*Math.PI/180)+m[2]*Math.sin(e.rotation*Math.PI/180));

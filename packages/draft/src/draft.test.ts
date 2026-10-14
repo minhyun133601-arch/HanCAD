@@ -32,6 +32,14 @@ describe('2D drafting command sessions', () => {
     expect(result.entities).toHaveLength(2);
     expect(drawing.entities).toHaveLength(0);
     expect(new Set(result.entities.map((entity) => entity.id)).size).toBe(2);
+    const originalLine = commits[0]?.[0];
+    const addedLine = result.entities[0];
+    if (originalLine?.type === 'line' && addedLine?.type === 'line') {
+      addedLine.a.x = -10;
+      expect(originalLine.a.x).toBe(100);
+    }
+    result.settings.color = '#ffffff';
+    expect(drawing.settings.color).not.toBe('#ffffff');
   });
 
   it('supports LINE local Undo/Close and preserves accepted segments when Escape cancels the preview', () => {

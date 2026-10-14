@@ -56,3 +56,35 @@ nearest points. Advanced modes, tracking and grid/display toggles remain explici
 future work. Shared adapter entity-capacity guards reject oversized inputs instead
 of silently truncating them. Bounds accumulate incrementally to limit peak memory
 for large drawings, and visible-layer filtering uses a set.
+
+DimensionSession uses the same immutable-batch boundary as DraftSession. A
+dimension definition is committed once after placement; cancelled construction
+points and previews do not enter history. Definition coordinates remain model
+geometry, DIMSCALE changes annotation sizes, and DIMLFAC separately formats linear
+measurements. Supported style fields are copied into each dimension, preserving
+imported styles until an explicit selected-dimension application. Local recovery
+stores the supported current style variables alongside the drawing. DXF output
+writes editable DIMENSION records, anonymous *D graphics blocks and per-definition
+style records; full associativity and lossless style-table preservation are pending.
+
+The transitional Canvas2D renderer retains adjacent same-style Path2D runs while
+preserving painter order. Bounds skip offscreen runs/entities; text and dimensions
+keep the shared geometry implementation. CPU relative origins reduce transform
+precision loss at large coordinates. The main canvas retains the static scene;
+a separate transparent canvas draws previews and snaps without copying that scene.
+View/drawing/selection/resize changes invalidate it, and input updates coalesce
+through requestAnimationFrame. Display paths use one zoom bucket with at most
+0.25 CSS-pixel geometric deviation; source and export geometry remain unchanged.
+Diagnostic
+frame/geometry timers distinguish real drawing work from deferred event callbacks.
+This is practical transitional optimization, not the complete WebGL/R-tree engine
+or million-entity/60 fps acceptance. Native path memory grows with visible geometry;
+the additional overlay costs about four bytes per physical viewport pixel.
+
+Direct commits validate/normalize one owned session and serialize it once. The
+synchronous database observer can reuse that prepared graph only for the exact
+journal string, with its temporary reference cleared in finally. Undo/redo and
+external cache data still parse and fully validate. The local reader transfers
+its per-call owned graph rather than cloning it again. Strings above 2M code units
+go directly to chunked IndexedDB, avoiding a predictably oversized Web Storage
+write. Per-document UUIDs keep tiny current-style overlays from crossing documents.

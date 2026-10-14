@@ -63,10 +63,14 @@
     settings.dimPrecision = precision(raw.dimPrecision);
     settings.dimScale = positive(raw.dimScale, settings.dimScale, 10000);
     settings.dimTextSize = positive(raw.dimTextSize, settings.dimTextSize, 1000);
-    settings.arrowSize = positive(raw.arrowSize, settings.arrowSize, 1000);
+    settings.arrowSize = nonnegative(raw.arrowSize, settings.arrowSize, 1000);
     settings.extensionGap = nonnegative(raw.extensionGap, settings.extensionGap);
     settings.extensionOvershoot = nonnegative(raw.extensionOvershoot, settings.extensionOvershoot);
     settings.dimUnit = ["", "mm", "cm", "m"].includes(raw.dimUnit) ? raw.dimUnit : settings.dimUnit;
+    if (finite(raw.dimGap)) settings.dimGap = raw.dimGap;
+    if (finite(raw.dimMeasurementFactor)) settings.dimMeasurementFactor = raw.dimMeasurementFactor;
+    if (Number.isInteger(raw.dimZeroSuppression)) settings.dimZeroSuppression = raw.dimZeroSuppression & 15;
+    if (typeof raw.dimPost === "string") settings.dimPost = raw.dimPost.slice(0, 2000);
     settings.layer = layerName(raw.layer);
     return settings;
   }
@@ -86,11 +90,17 @@
       entity.precision = precision(raw.precision, settings.dimPrecision ?? 2);
       entity.dimScale = positive(raw.dimScale, settings.dimScale ?? 1, 10000);
       entity.textSize = positive(raw.textSize, settings.dimTextSize ?? 3.5, 1000);
-      entity.arrowSize = positive(raw.arrowSize, settings.arrowSize ?? 2.5, 1000);
+      entity.arrowSize = nonnegative(raw.arrowSize, settings.arrowSize ?? 2.5, 1000);
       entity.extensionGap = nonnegative(raw.extensionGap, settings.extensionGap ?? 1);
       entity.extensionOvershoot = nonnegative(raw.extensionOvershoot, settings.extensionOvershoot ?? 2);
       entity.unit = typeof raw.unit === "string" ? raw.unit.slice(0, 32) : (settings.dimUnit ?? "");
       if (typeof raw.text === "string") entity.text = raw.text.slice(0, 2000);
+      // Factories snapshot current defaults. Missing fields on existing dimensions keep legacy behavior.
+      if (finite(raw.textGap)) entity.textGap = raw.textGap;
+      if (finite(raw.measurementFactor)) entity.measurementFactor = raw.measurementFactor;
+      if (Number.isInteger(raw.zeroSuppression)) entity.zeroSuppression = raw.zeroSuppression & 15;
+      if (typeof raw.post === "string") entity.post = raw.post.slice(0, 2000);
+      if (finite(raw.textRotation)) entity.textRotation = raw.textRotation;
       if (["radius", "diameter"].includes(entity.kind)) {
         entity.center = point(raw.center); entity.radius = raw.radius;
         if (!entity.center || !finite(entity.radius) || entity.radius <= EPSILON) return null;
@@ -194,10 +204,12 @@
     const kind = entity.kind;
     const scale = entity.dimScale;
     const textSize = entity.textSize * scale, arrowSize = entity.arrowSize * scale;
+    const textOffset = entity.textGap === undefined ? textSize * 0.85 : textSize * 0.6 + Math.abs(entity.textGap) * scale;
     const gap = entity.extensionGap * scale, overshoot = entity.extensionOvershoot * scale;
     const lines = [], arrows = [], arcs = [], snapPoints = [];
     let q1, q2, normal, labelPoint, textPoint, rotation, measurement, direction;
     const arrow = (tip, into) => {
+      if (arrowSize <= EPSILON) return;
       const side = { x: -into.y, y: into.x };
       const base = addPoint(tip, multiply(into, arrowSize));
       arrows.push([tip, addPoint(base, multiply(side, arrowSize * 0.32)), addPoint(base, multiply(side, -arrowSize * 0.32))]);
@@ -228,7 +240,7 @@
       direction = multiply(subtract(q2, q1), 1 / (distance(q1, q2) || 1));
       extension(entity.a, q1); extension(entity.b, q2);
       labelPoint = midpoint(q1, q2);
-      textPoint = addPoint(labelPoint, multiply(normal, (entity.offset < 0 ? -1 : 1) * textSize * 0.85));
+      textPoint = addPoint(labelPoint, multiply(normal, (entity.offset < 0 ? -1 : 1) * textOffset));
       rotation = readable(Math.atan2(direction.y, direction.x));
       const outside = measurement < arrowSize * 3;
       lines.push([outside ? addPoint(q1, multiply(direction, -arrowSize * 1.8)) : q1, outside ? addPoint(q2, multiply(direction, arrowSize * 1.8)) : q2]);
@@ -241,7 +253,7 @@
       q2 = addPoint(entity.center, multiply(direction, entity.radius));
       measurement = entity.radius * (kind === "diameter" ? 2 : 1);
       labelPoint = entity.placement;
-      textPoint = addPoint(labelPoint, multiply(normal, -textSize * 0.85));
+      textPoint = addPoint(labelPoint, multiply(normal, -textOffset));
       rotation = readable(Math.atan2(direction.y, direction.x));
       lines.push([q1, q2]);
       if (distance(entity.placement, entity.center) > entity.radius) lines.push([q2, entity.placement]);
@@ -259,7 +271,7 @@
       const midAngle = startAngle + sweep / 2;
       normal = { x: Math.cos(midAngle), y: Math.sin(midAngle) };
       labelPoint = circlePoint(arc, midAngle);
-      textPoint = addPoint(labelPoint, multiply(normal, textSize * 0.85));
+      textPoint = addPoint(labelPoint, multiply(normal, textOffset));
       rotation = readable(midAngle + Math.PI / 2);
       measurement = Math.abs(sweep) * 180 / Math.PI;
       const tangent = (angle) => ({ x: -Math.sin(angle) * Math.sign(sweep), y: Math.cos(angle) * Math.sign(sweep) });
@@ -268,13 +280,20 @@
     }
     const suffix = kind === "angular" ? "°" : (Object.prototype.hasOwnProperty.call(raw, "unit") ? entity.unit : (unit ?? entity.unit));
     const prefix = kind === "radius" ? "R" : kind === "diameter" ? "⌀" : "";
-    const measured = `${prefix}${measurement.toFixed(entity.precision)}${suffix}`;
+    const displayMeasurement = kind === "angular" ? measurement : measurement * (entity.measurementFactor === undefined || entity.measurementFactor < 0 ? 1 : entity.measurementFactor);
+    let formatted = displayMeasurement.toFixed(entity.precision);
+    const zeroSuppression = kind === "angular" ? 0 : (entity.zeroSuppression || 0);
+    if (zeroSuppression & 8) formatted = formatted.replace(/(\.\d*?[1-9])0+$|\.0+$/, "$1");
+    if (zeroSuppression & 4) formatted = formatted.replace(/^(-?)0\./, "$1.");
+    let measured = `${prefix}${formatted}${suffix}`;
+    if (entity.post) measured = entity.post.includes("<>") ? entity.post.replace(/<>/g, measured) : measured + entity.post;
     const label = entity.text ? entity.text.replace(/<>/g, measured) : measured;
+    if (entity.textRotation !== undefined) rotation = entity.textRotation;
     const points = [...snapPoints, ...lines.flat(), ...arrows.flat()];
     arcs.forEach((arc) => points.push(...[0, Math.PI / 2, Math.PI, Math.PI * 1.5].filter((angle) => arcContains(arc, angle)).map((angle) => circlePoint(arc, angle))));
     const labelCorners = textCorners({ point: textPoint, text: label, textSize, rotation }, true);
     points.push(...labelCorners);
-    return { kind, q1, q2, a: entity.a || q1, b: entity.b || q2, normal, direction, length: measurement, measurement,
+    return { kind, q1, q2, a: entity.a || q1, b: entity.b || q2, normal, direction, length: measurement, measurement, displayMeasurement,
       labelPoint, textPoint, textSize, arrowSize, rotation, label, lines, arrows, arcs, points, snapPoints, textCorners: labelCorners };
   }
 

@@ -35,6 +35,9 @@ export class CanvasSurface {
   getView() {
     return this.renderer.getView();
   }
+  pick(point: CadPoint): string | undefined {
+    return this.renderer.pick(point);
+  }
   fit(): void {
     this.renderer.fit();
   }

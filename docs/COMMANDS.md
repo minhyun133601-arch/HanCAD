@@ -40,23 +40,23 @@ Registered canonical names and aliases from the supplied reference. Registration
 | DATAEXTRACTION     | DX         | Not implemented; explicit message                                        |
 | DDVPOINT           | VP         | Not implemented; explicit message                                        |
 | DELCONSTRAINT      | DELCON     | Not implemented; explicit message                                        |
-| DIMALIGNED         | DAL        | Not implemented; explicit message                                        |
-| DIMANGULAR         | DAN        | Not implemented; explicit message                                        |
+| DIMALIGNED         | DAL        | Two points or object, placement, Text and text Angle                     |
+| DIMANGULAR         | DAN        | Three points, two lines, arc or circle; placement, Text and text Angle   |
 | DIMARC             | DAR        | Not implemented; explicit message                                        |
 | DIMBASELINE        | DBA        | Not implemented; explicit message                                        |
 | DIMCENTER          | DCE        | Not implemented; explicit message                                        |
 | DIMCONSTRAINT      | DCON       | Not implemented; explicit message                                        |
 | DIMCONTINUE        | DCO        | Not implemented; explicit message                                        |
-| DIMDIAMETER        | DDI        | Not implemented; explicit message                                        |
+| DIMDIAMETER        | DDI        | Circle/arc selection, placement, Text and text Angle                     |
 | DIMEDIT            | DED        | Not implemented; explicit message                                        |
 | DIMJOGGED          | DJO, JOG   | Not implemented; explicit message                                        |
 | DIMJOGLINE         | DJL        | Not implemented; explicit message                                        |
-| DIMLINEAR          | DLI        | Not implemented; explicit message                                        |
+| DIMLINEAR          | DLI        | Two points or object, H/V/Rotated, placement, Text and text Angle        |
 | DIMORDINATE        | DOR        | Not implemented; explicit message                                        |
 | DIMOVERRIDE        | DOV        | Not implemented; explicit message                                        |
-| DIMRADIUS          | DRA        | Not implemented; explicit message                                        |
+| DIMRADIUS          | DRA        | Circle/arc selection, placement, Text and text Angle                     |
 | DIMREASSOCIATE     | DRE        | Not implemented; explicit message                                        |
-| DIMSTYLE           | D, DST     | Not implemented; explicit message                                        |
+| DIMSTYLE           | D, DST     | Basic supported-variable dialog; explicit selected-dimension application |
 | DIMTEDIT           | DIMTED     | Not implemented; explicit message                                        |
 | DIST               | DI         | Not implemented; explicit message                                        |
 | DIVIDE             | DIV        | Not implemented; explicit message                                        |
@@ -252,3 +252,41 @@ F8 Ortho and F3 running object snaps are connected. The initial snap modes are
 endpoint, midpoint, center, quadrant and nearest according to OSMODE. Unsupported
 modes are not substituted with another mode. Grid, polar/object tracking, dynamic
 input and full lineweight display controls are visibly unavailable until implemented.
+
+## Usable dimension subset
+
+The ribbon and command line use the same registered handlers. DIM is additionally
+connected as a smart initial dimension tool: line/polyline edge produces a linear
+dimension, circle produces diameter, and arc produces radius. Hover previews use
+the same definitions as placement. This is a partial Phase 11 implementation.
+
+| Command                            | Supported sequence                                                                                                              | Remaining options                                                       |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| DIMLINEAR / DLI                    | Two extension origins, placement; Enter at first prompt selects an object; H, V, R + rotation; T + free text; A + text rotation | Mtext editor, full placement/fit rules                                  |
+| DIMALIGNED / DAL                   | Two origins or Enter then object; placement; T/A                                                                                | Full placement/fit rules                                                |
+| DIMRADIUS / DRA, DIMDIAMETER / DDI | Select circle/arc, place dimension; T/A                                                                                         | Fit/multi-segment leader behavior, arrowhead families                   |
+| DIMANGULAR / DAN                   | Select two lines, an arc or a circle; Enter for vertex/first-ray/second-ray; placement; T/A                                     | Explicit Quadrant option and full text fit                              |
+| DIM                                | Hover/select line, circle or arc, then place; A selects three-point angular input                                               | Layer, baseline, continue, align, distribute and complete smart choices |
+| DIMSTYLE / D / DST                 | Edit ten supported variables; optionally apply to selected editable dimensions                                                  | Complete manager, seven tabs, named-style management and compare        |
+
+Example exact coordinate input: `DLI` → `0,0` → `100,0` → `50,20` makes a
+100-unit linear dimension. `DAL` → `0,0` → `30,40` → `30,60` measures 50.
+`DAN` → Enter → `0,0` → `20,0` → `0,20` → `20,20` measures 90 degrees.
+At placement, `T` enters editable Korean text; `검사 <> mm` substitutes the current
+formatted measurement for `<>`. Empty text restores the generated value.
+
+The basic settings cover DIMTXT, DIMASZ, DIMDEC, DIMSCALE, DIMEXO, DIMEXE, DIMGAP,
+DIMLFAC, DIMZIN and DIMPOST. DIMSCALE affects annotation sizes, not definition
+points or measurements. DIMLFAC affects displayed linear/radial measurements,
+not angular measurement. Current DIMZIN support is decimal leading/trailing zero
+suppression. Changing defaults affects new dimensions; existing dimension styles
+only change through explicit selected application. One placement or style application
+is one undo group. Cancel preserves the existing drawing and creates no dimension.
+Local reload and supported DXF output retain these definitions and style values.
+Angular dimensions currently share DIMDEC precision; separate DIMADEC/DIMAZIN
+controls are pending. Fixed-height text styles, negative DIMGAP boxes and full
+annotation fit behavior are also pending.
+
+DIMASSOC is registered but geometry associativity is not implemented. Dimensions
+do not yet update from geometry edits. Leaders, tolerances, arc-length/ordinate/
+jogged/baseline/continued dimensions and advanced Phase 11 commands remain pending.

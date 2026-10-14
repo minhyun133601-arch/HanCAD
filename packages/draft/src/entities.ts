@@ -47,8 +47,8 @@ export function appendCadEntities(
   entities: readonly CadEntity[],
 ): LegacyCadState {
   return normalizeCadState({
-    ...structuredClone(state),
-    entities: [...state.entities, ...structuredClone(entities)],
+    ...state,
+    entities: [...state.entities, ...entities],
     selectedIds: [],
   });
 }

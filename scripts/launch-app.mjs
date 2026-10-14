@@ -10,7 +10,7 @@ mkdirSync(logDirectory, { recursive: true });
 const logPath = path.join(logDirectory, 'local-server.log');
 const log = openSync(logPath, 'a');
 try {
-  const server = spawn(process.execPath, [path.join(root, 'scripts', 'serve-app.mjs'), '--open'], {
+  const server = spawn(process.execPath, [path.join(root, 'scripts', 'serve-app.mjs')], {
     cwd: root,
     detached: true,
     windowsHide: true,
@@ -38,7 +38,7 @@ for (let attempt = 0; attempt < 25; attempt++) {
   }
   await new Promise((resolve) => setTimeout(resolve, 200));
 }
-if (connected) console.log(`HanCAD opened: ${address}`);
+if (connected) console.log(`HanCAD server ready: ${address}`);
 else {
   console.error(`HanCAD could not connect. Startup log: ${logPath}`);
   process.exitCode = 1;
