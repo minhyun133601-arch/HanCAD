@@ -120,6 +120,7 @@ it('rejects corrupt geometry, reports, style variables and identities before any
     { ...input, documentId: '' },
     { ...input, state: { ...input.state, entities: [{ type: 'unknown' }] } },
     { ...input, dimensionStyle: { DIMDEC: 999 } },
+    { ...input, draftingVariables: { TEXTSIZE: -1 } },
     {
       ...input,
       report: {
@@ -142,4 +143,13 @@ it('rejects corrupt geometry, reports, style variables and identities before any
   expect(() => transfer.read('{')).toThrow();
   expect(transfer.write(input, write).documentId).toBe('drawing-A');
   expect(write).toHaveBeenCalledOnce();
+});
+
+it('round-trips remembered text height and rejects damaged cache values without touching geometry', () => {
+  const input = { ...session(), draftingVariables: { TEXTSIZE: 5 } };
+  const parsed = parseDrawingSession(JSON.stringify(input));
+  expect(parsed.draftingVariables).toEqual({ TEXTSIZE: 5 });
+  expect(parsed.state).toEqual(input.state);
+  expect(parseDrawingSession(JSON.stringify(session())).draftingVariables).toBeUndefined();
+  expect(() => parseDrawingSession(JSON.stringify({ ...input, draftingVariables: [] }))).toThrow();
 });

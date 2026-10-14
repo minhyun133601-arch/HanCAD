@@ -17,6 +17,7 @@ interface Options {
   dimensions: Pick<ReturnType<typeof useDimensions>, 'isActive' | 'cancel'>;
   modification: Pick<ReturnType<typeof useModification>, 'isActive' | 'cancel'>;
   measurement: Pick<ReturnType<typeof useMeasurement>, 'isActive' | 'cancel'>;
+  additional?: readonly { isActive: () => boolean; cancel: (notify?: boolean) => boolean }[];
   messages: Pick<Messages, 'draftingAidsPending'>;
   print: (message: string) => void;
   execute: (command: string) => void;
@@ -68,6 +69,7 @@ export function useWorkspaceShortcuts(options: Options): void {
         if (dimensions.isActive()) dimensions.cancel(false);
         modification.cancel(false);
         measurement.cancel(false);
+        for (const item of options.additional ?? []) if (item.isActive()) item.cancel(false);
         draft.selectAll();
         options.focusCommand();
       } else if (
@@ -75,7 +77,8 @@ export function useWorkspaceShortcuts(options: Options): void {
         !draft.isActive() &&
         !dimensions.isActive() &&
         !modification.isActive() &&
-        !measurement.isActive()
+        !measurement.isActive() &&
+        !(options.additional ?? []).some((item) => item.isActive())
       ) {
         event.preventDefault();
         options.execute('ERASE');

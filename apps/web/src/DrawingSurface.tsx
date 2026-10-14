@@ -15,6 +15,7 @@ export function DrawingSurface({
   execute,
   fitRevision,
   preview,
+  previewHiddenIds,
   selectedIds,
   active,
   onPick,
@@ -23,6 +24,7 @@ export function DrawingSurface({
   onSelectionDrag,
   suppressSelectionBox,
   getNavigationSettings,
+  selectionGesture,
 }: {
   messages: Messages;
   layout: LayoutId;
@@ -32,6 +34,7 @@ export function DrawingSurface({
   execute: (command: string) => void;
   fitRevision: number;
   preview: readonly CadEntity[];
+  previewHiddenIds: readonly string[];
   selectedIds: readonly string[];
   active: boolean;
   onPick: (event: CadPointerPick) => void;
@@ -40,6 +43,7 @@ export function DrawingSurface({
   onSelectionDrag: NonNullable<CadCanvasOptions['onSelectionDrag']>;
   suppressSelectionBox: NonNullable<CadCanvasOptions['suppressSelectionBox']>;
   getNavigationSettings: NonNullable<CadCanvasOptions['getNavigationSettings']>;
+  selectionGesture: NonNullable<CadCanvasOptions['selectionGesture']>;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const surface = useRef<CanvasSurface | null>(null);
@@ -53,6 +57,7 @@ export function DrawingSurface({
       onSelectionDrag,
       suppressSelectionBox,
       getNavigationSettings,
+      selectionGesture,
     });
     surface.current = canvas;
     onReady(canvas);
@@ -74,6 +79,9 @@ export function DrawingSurface({
   useLayoutEffect(() => {
     surface.current?.setPreview(preview);
   }, [preview]);
+  useLayoutEffect(() => {
+    surface.current?.setPreviewHiddenIds(previewHiddenIds);
+  }, [previewHiddenIds]);
   useLayoutEffect(() => {
     surface.current?.setSelection(selectedIds);
   }, [selectedIds, drawing]);

@@ -2,6 +2,8 @@ import { normalizeCadState } from '@hancad/legacy-bridge';
 import type { CadImportReport, LegacyCadState } from '@hancad/legacy-bridge';
 import { restoreDimensionStyle } from './dimension-style';
 import type { DimensionStyleValues } from './dimension-style';
+import { restoreDraftingVariables } from './drafting-variables';
+import type { DraftingVariableValues } from './drafting-variables';
 
 /** The app and renderer treat validated sessions as immutable replacement snapshots. */
 export interface DrawingSession {
@@ -10,6 +12,7 @@ export interface DrawingSession {
   report: CadImportReport | null;
   fileName: string;
   dimensionStyle?: DimensionStyleValues;
+  draftingVariables?: DraftingVariableValues;
 }
 
 function restoreReport(value: unknown): CadImportReport | null {
@@ -56,6 +59,9 @@ export function normalizeDrawingSession(value: unknown): DrawingSession {
   const dimensionStyle = restoreDimensionStyle(
     'dimensionStyle' in value ? value.dimensionStyle : undefined,
   );
+  const draftingVariables = restoreDraftingVariables(
+    'draftingVariables' in value ? value.draftingVariables : undefined,
+  );
   if ('documentId' in value && (typeof value.documentId !== 'string' || !value.documentId.length))
     throw new Error('Invalid stored drawing identity.');
   return {
@@ -63,6 +69,7 @@ export function normalizeDrawingSession(value: unknown): DrawingSession {
     fileName: value.fileName,
     report: restoreReport('report' in value ? value.report : undefined),
     ...(dimensionStyle ? { dimensionStyle } : {}),
+    ...(draftingVariables ? { draftingVariables } : {}),
     ...('documentId' in value && typeof value.documentId === 'string'
       ? { documentId: value.documentId }
       : {}),

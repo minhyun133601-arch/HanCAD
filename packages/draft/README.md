@@ -12,6 +12,15 @@ DimensionSession supplies DIMLINEAR, DIMALIGNED, DIMRADIUS, DIMDIAMETER, DIMANGU
 
 ## Current status
 
+TrimExtendSession owns Quick/Standard LINE edits against supported visible 2D
+boundaries, Shift alternate operations, finite fences and local Undo. OffsetSession
+owns distance/Through, Erase/Layer/Multiple and safe exact offsets of lines, circles,
+arcs and straight miter polylines. Unsupported or collapsed geometry is explicitly
+rejected. Both sessions expose provisional drawing snapshots and publish a single
+completed command through their consumer. TextSession owns left-baseline independent
+TEXT lines and a pending inline text entry, keeping Korean free text separate from
+physical command input. Capacity and validation errors preserve accepted geometry.
+
 Mouse/coordinate drafting, relative Cartesian/polar coordinates, direct distance along the cursor, circle radius entry, line/polyline close and local undo, Enter finish, Escape cancellation, preview geometry and safe append/delete are implemented. Escape keeps accepted LINE/PLINE segments in one commit and discards only the current preview; an incomplete first point creates nothing. Preview coordinates use legacy model Y down; user coordinate entry uses Y up. Full AutoCAD options, associativity, grips and advanced modifications remain planned.
 
 Running snaps cover endpoints, midpoints, centers, quadrants, nearest points and

@@ -29,6 +29,7 @@ export interface SceneStats {
   entities: number;
   calls: number;
 }
+const noHiddenIds: ReadonlySet<string> = new Set<string>();
 
 /** Only adjacent equal-style geometry is batched, so painter order remains unchanged. */
 export class RetainedScene {
@@ -100,6 +101,7 @@ export class RetainedScene {
     scale: number,
     selected: ReadonlySet<string>,
     transform?: SceneTransform,
+    hidden: ReadonlySet<string> = noHiddenIds,
   ): SceneStats {
     const stats = { entities: 0, calls: 0 };
     const draw = getLegacyRuntime().core.cadExporters.drawEntity;
@@ -109,6 +111,7 @@ export class RetainedScene {
       const padding = ('path' in item ? item.width : item.entity.lineWidth) / scale + 2 / scale;
       if (item.bounds && !overlaps(item.bounds, viewport, padding)) continue;
       if (!('path' in item)) {
+        if (hidden.has(item.entity.id)) continue;
         if (transform) this.setTransform(context, transform, transform.origin);
         draw(context, transform ? relativeEntity(item.entity, transform.origin) : item.entity, {
           scale,
@@ -124,13 +127,18 @@ export class RetainedScene {
       else context.translate(item.origin.x, item.origin.y);
       context.lineWidth = item.width / scale;
       context.strokeStyle = item.color;
-      if (selected.size && item.entities.some((entity) => selected.has(entity.id))) {
+      if (
+        (selected.size && item.entities.some((entity) => selected.has(entity.id))) ||
+        (hidden.size && item.entities.some((entity) => hidden.has(entity.id)))
+      ) {
         for (const entity of item.entities) {
+          if (hidden.has(entity.id)) continue;
           const path = new Path2D();
           appendStroke(path, entity, item.origin);
           context.strokeStyle = selected.has(entity.id) ? '#38bdf8' : item.color;
           context.stroke(path);
           stats.calls++;
+          stats.entities++;
         }
       } else {
         const bucketScale = 2 ** Math.ceil(Math.log2(scale));
@@ -142,8 +150,8 @@ export class RetainedScene {
         }
         context.stroke(item.lodPath!);
         stats.calls++;
+        stats.entities += item.entities.length;
       }
-      stats.entities += item.entities.length;
       context.restore();
     }
     return stats;

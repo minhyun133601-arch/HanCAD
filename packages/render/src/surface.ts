@@ -6,6 +6,7 @@ import { relativeEntity } from './geometry';
 import { CadPointerController } from './pointer-controller';
 import type { CadCanvasOptions, CadView } from './pointer-controller';
 import { drawSnapOverlay } from './snap-overlay';
+import { drawSelectionOverlay } from './selection-overlay';
 import type { CadSnapKind, CadSnapMarker } from './snap-overlay';
 export type { CadSnapKind } from './snap-overlay';
 export type {
@@ -28,6 +29,7 @@ export class CadCanvasSurface {
   private disposed = false;
   private preview: readonly CadEntity[] = [];
   private selected = new Set<string>();
+  private previewHiddenIds = new Set<string>();
   private snapMarker: CadSnapMarker | undefined;
   private scene: RetainedScene | undefined;
   private readonly base: HTMLCanvasElement | undefined;
@@ -92,6 +94,16 @@ export class CadCanvasSurface {
     this.preview = structuredClone(entities);
     this.requestRender();
   }
+  setPreviewHiddenIds(ids: readonly string[]): void {
+    const next = new Set(ids);
+    if (
+      next.size === this.previewHiddenIds.size &&
+      [...next].every((id) => this.previewHiddenIds.has(id))
+    )
+      return;
+    this.previewHiddenIds = next;
+    this.requestRender(true);
+  }
   setSelection(ids: readonly string[]): void {
     const next = new Set(ids);
     if (next.size === this.selected.size && [...next].every((id) => this.selected.has(id))) return;
@@ -127,6 +139,12 @@ export class CadCanvasSurface {
   }
   getView(): CadView {
     return { ...this.view };
+  }
+  worldToScreen(point: CadPoint): CadPoint {
+    return {
+      x: this.width / 2 + this.view.tx + (point.x - this.origin.x) * this.view.scale,
+      y: this.height / 2 + this.view.ty + (point.y - this.origin.y) * this.view.scale,
+    };
   }
   cancelPointerInteraction(): void {
     this.pointer.cancel();
@@ -202,6 +220,7 @@ export class CadCanvasSurface {
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     this.canvas.dataset.entityCount = String(this.scene?.entities.length ?? 0);
     this.canvas.dataset.previewCount = String(this.preview.length);
+    this.canvas.dataset.previewHiddenCount = String(this.previewHiddenIds.size);
     this.canvas.dataset.selectionCount = String(this.selected.size);
     this.canvas.dataset.snapActive = this.snapMarker ? '1' : '0';
     this.canvas.dataset.snapKind = this.snapMarker?.kind ?? '';
@@ -225,23 +244,13 @@ export class CadCanvasSurface {
     if (this.snapMarker) drawSnapOverlay(context, this.snapMarker, this.origin, this.view.scale);
     const area = this.pointer.getSelectionArea();
     this.canvas.dataset.selectionArea = area
-      ? area.end.x >= area.start.x
-        ? 'window'
-        : 'crossing'
+      ? area.gesture === 'fence'
+        ? 'fence'
+        : area.end.x >= area.start.x
+          ? 'window'
+          : 'crossing'
       : '';
-    if (area) {
-      const crossing = area.end.x < area.start.x;
-      context.strokeStyle = crossing ? '#4ade80' : '#60a5fa';
-      context.fillStyle = crossing ? 'rgba(74,222,128,0.15)' : 'rgba(96,165,250,0.15)';
-      context.lineWidth = 1 / this.view.scale;
-      context.setLineDash(crossing ? [5 / this.view.scale, 3 / this.view.scale] : []);
-      const x = Math.min(area.start.x, area.end.x) - this.origin.x;
-      const y = Math.min(area.start.y, area.end.y) - this.origin.y;
-      const width = Math.abs(area.end.x - area.start.x);
-      const height = Math.abs(area.end.y - area.start.y);
-      context.fillRect(x, y, width, height);
-      context.strokeRect(x, y, width, height);
-    }
+    if (area) drawSelectionOverlay(context, area, this.origin, this.view.scale);
     context.restore();
     this.canvas.dataset.drawnEntities = String(this.stats.entities);
     this.canvas.dataset.drawCalls = String(this.stats.calls);
@@ -296,6 +305,7 @@ export class CadCanvasSurface {
         tx: this.width / 2 + this.view.tx,
         ty: this.height / 2 + this.view.ty,
       },
+      this.previewHiddenIds,
     ) ?? { entities: 0, calls: 0 };
     context.restore();
     this.baseDirty = false;

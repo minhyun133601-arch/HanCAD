@@ -55,6 +55,7 @@ const homePanels: readonly Panel[] = [
       { label: 'copy', command: 'COPY', icon: 'copy' },
       { label: 'rotate', command: 'ROTATE', icon: 'rotate' },
       { label: 'trim', command: 'TRIM', icon: 'trim' },
+      { label: 'extend', command: 'EXTEND', icon: 'trim' },
       { label: 'offset', command: 'OFFSET', icon: 'offset' },
       { label: 'fillet', command: 'FILLET', icon: 'fillet' },
       { label: 'erase', command: 'ERASE', icon: 'trim' },
@@ -66,6 +67,7 @@ const homePanels: readonly Panel[] = [
       { label: 'dimensionSmart', command: 'DIM', icon: 'dimension' },
       { label: 'dimension', command: 'DIMLINEAR', icon: 'dimension' },
       { label: 'dimensionStyle', command: 'DIMSTYLE', icon: 'dimension' },
+      { label: 'singleLineText', command: 'TEXT', icon: 'text' },
     ],
   },
   { label: 'layers', tools: [{ label: 'layerProperties', command: 'LAYER', icon: 'layer' }] },
@@ -96,7 +98,13 @@ const panels: Record<RibbonTab, readonly Panel[]> = {
         { label: 'dimensionStyle', command: 'DIMSTYLE', icon: 'dimension' },
       ],
     },
-    { label: 'text', tools: [{ label: 'text', command: 'MTEXT', icon: 'text' }] },
+    {
+      label: 'text',
+      tools: [
+        { label: 'singleLineText', command: 'TEXT', icon: 'text' },
+        { label: 'text', command: 'MTEXT', icon: 'text' },
+      ],
+    },
   ],
   parametric: [
     {

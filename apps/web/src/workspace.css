@@ -19,6 +19,21 @@
   height: 100%;
   display: block;
 }
+.inline-text-editor {
+  position: absolute;
+  z-index: 5;
+  min-width: 160px;
+  padding: 2px 4px;
+  border: 1px solid #60a5fa;
+  border-radius: 0;
+  background: #212830;
+  color: #e2e8f0;
+  caret-color: #ffffff;
+  font-family: Arial, 'Malgun Gothic', sans-serif;
+  line-height: 1.25;
+  outline: none;
+  cursor: text;
+}
 .viewport-label {
   position: absolute;
   top: 11px;

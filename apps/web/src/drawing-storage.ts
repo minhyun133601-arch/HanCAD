@@ -1,5 +1,6 @@
 import { createEmptyCadState } from '@hancad/legacy-bridge';
 import { cachedDimensionStyle } from './dimension-style';
+import { cachedDraftingVariables } from './drafting-variables';
 import { parseDrawingSession } from './drawing-session';
 import type { DrawingSession } from './drawing-session';
 export { parseDrawingSession } from './drawing-session';
@@ -38,11 +39,13 @@ export function restoreCachedDrawingSession(serialized: string): {
 } {
   const drawing = parseDrawingSession(serialized);
   const dimensionStyle = cachedDimensionStyle(drawing.dimensionStyle, drawing.documentId);
+  const draftingVariables = cachedDraftingVariables(drawing.draftingVariables, drawing.documentId);
   return {
     drawing: {
       ...drawing,
       documentId: drawing.documentId ?? crypto.randomUUID(),
       ...(dimensionStyle ? { dimensionStyle } : {}),
+      ...(draftingVariables ? { draftingVariables } : {}),
     },
     identityMigrated: !drawing.documentId,
   };

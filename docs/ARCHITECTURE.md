@@ -1,5 +1,34 @@
 # Architecture
 
+The essential-editing continuation adds TrimExtendSession and OffsetSession.
+They borrow the immutable baseline and own replacement shadow states for accepted
+operations. The canvas displays the shadow while the recovery cache/database stay
+at the previous committed command. Enter/Escape publishes the final state once;
+U restores command-local operations, including an entire fence gesture. A generic
+controller facade coordinates command cancellation, prompts, preview, selection
+and provisional drawing ownership. Unsupported geometry is rejected explicitly.
+
+Trim previews suppress the hovered original via a separate hidden-ID set in the
+retained renderer without rebuilding its scene or making the source unpickable.
+The pointer controller emits actual fence paths separately from rectangular
+selection. Standard boundaries may include visible locked entities; targets remain
+protected. Offset operations create fresh IDs and preserve source attributes.
+
+TextSession owns accepted independent TEXT lines; only the current unaccepted
+line lives in the inline editable DOM input. Numeric/point prompts retain physical
+key input. The input follows the renderer's model-to-screen mapping, keeps Korean
+composition at the caret and ignores composing Enter. Accepted lines and TEXTSIZE
+share one journal transaction. Drawing-scoped text defaults use a small validated
+per-document recovery overlay, avoiding a large drawing reserialization for an
+isolated setting. OFFSETDIST is session-only and excluded from drawing recovery.
+
+Browser profile settings are validated against known profile-scoped definitions
+before loading from the small profile preference cache. Drawing/session/read-only
+values cannot enter that cache; restoration does not create undo records. Profile
+storage is independent of drawing recovery. Every complete drawing-cache publication
+also refreshes the text-default overlay, so an older standalone/Undo value cannot
+override a newer snapshot after Redo/reload.
+
 HanCAD follows the supplied master prompt. `apps/web` is the browser application;
 `apps/desktop/src-tauri` wraps the same frontend in Tauri. React renders application
 chrome. The drawing surface is owned by an imperative renderer, not React.

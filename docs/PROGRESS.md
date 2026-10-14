@@ -1,5 +1,40 @@
 # HanCAD progress
 
+## Delivered continuation: essential editing and Korean text (2026-10-15)
+
+The user requested continuation according to the saved prompts. Resume from the
+previous exact next step using Phase 07 and Phase 10; their full acceptance remains
+separate from this practical subset. Baseline passes 183 unit, 23 compatibility and
+34 production Edge tests, with the opt-in private-file test skipped.
+
+| Milestone                            | Status | Acceptance                                                                                       |
+| ------------------------------------ | ------ | ------------------------------------------------------------------------------------------------ |
+| 7.1 Trim and extend                  | Done   | Quick/Standard line editing, finite boundaries, Shift, local Undo, fence and one-command journal |
+| 7.2 Basic offset                     | Done   | Line/circle/arc and safe straight-polylines, distance/Through/repetition, preview and undo       |
+| 10.1 Korean single-line text         | Done   | Point-height-angle, inline Korean input, repeated lines, atomic height/geometry, reload/DXF      |
+| 24.3 Integrated editing verification | Done   | Full production checks, pointer/keyboard workflows, visual/golden QA and current handoff         |
+
+Final `HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=1 pnpm verify` passes WASM, ESLint,
+formatting, strict TypeScript, 220 unit tests, 23 compatibility tests, the refreshed
+production build and 41 Edge E2E tests (50.1 seconds). The opt-in private-file
+benchmark is skipped and was not repeated. Twenty renderer golden scenes pass.
+
+Actual browser visual QA shows two exact offset rectangles, a trimmed LINE,
+readable Korean TEXT and a 140-unit dimension. Artifacts are ignored under
+`test-artifacts/essential-editing/`, general E2E and renderer golden directories.
+Synthetic composition and actual DXF save/reopen are verified; native Windows IME,
+Hanja and installed-reference font parity remain pending.
+
+Full regression exposed a stale TEXTSIZE overlay after Undo/Redo/reload. Complete
+cache publication now refreshes that overlay; normal/empty TEXT, standalone height
+and foreign-document isolation tests pass. The tiny DWG cancellation fixture raced
+decoding completion; its test now pauses real reader input until cancellation,
+while separate tests verify actual DWG decoding and worker disposal.
+
+Exact next step: Phase 7.3 ROTATE/SCALE with Copy/Reference and one-command undo,
+then MIRROR/FILLET. Non-LINE trim targets, additional OFFSET joins/curved polylines
+and complete TEXT styles/justification/MTEXT remain explicit original-phase work.
+
 ## Delivered follow-up: reliable basic drafting (2026-10-15)
 
 Baseline before changes: 157 unit, 23 compatibility and 23 Edge browser tests
@@ -107,7 +142,7 @@ See `FOLDERS.md` for the project layout.
 | 0.4 Full production verification           | Done     | 138 unit + 23 compatibility + 19 general Edge E2E; separate actual private DWG test                                                                    |
 | 0.5 Native desktop acceptance              | Deferred | C++ installation rejected by automatic approval review; native startup/window-state tests pending                                                      |
 | 1.1 Database journal and scoped variables  | Done     | Handles, atomic transactions, 1,000-operation undo/redo and composite data isolation                                                                   |
-| 1.2 Full schemas/sysvars                   | Partial  | HCD ZIP and 105 variables implemented; complete schemas and advanced UNDO/OOPS pending                                                                 |
+| 1.2 Full schemas/sysvars                   | Partial  | HCD ZIP and 107 variables implemented; complete schemas and advanced UNDO/OOPS pending                                                                 |
 | 4/5/6.1 Basic interactive 2D               | Done     | LINE/CIRCLE/RECTANG/PLINE, coordinate/mouse input, preview, local Undo/Close, Esc semantics, pick/Shift/all selection, erase, shared command undo/redo |
 | 9.1 Local DWG/DXF opening                  | Done     | Official and actual large DWG; failure/cancel/replacement races; import reports and original file bytes preserved during session                       |
 | 9.2 Large browser recovery                 | Done     | 155,404,934-character cache in 297 IndexedDB chunks; actual reload restores 286,996 entities                                                           |
@@ -131,7 +166,7 @@ accepted merely because a subset works.
 | 07    | 2D modification                                              | In progress |
 | 08    | Layers/properties                                            | In progress |
 | 09    | DWG/DXF/recovery                                             | In progress |
-| 10    | Text/fonts                                                   | Planned     |
+| 10    | Text/fonts                                                   | In progress |
 | 11    | Dimensions/leaders                                           | In progress |
 | 12    | Hatch/boundary/regions                                       | Planned     |
 | 13    | Blocks/references/images                                     | Planned     |
@@ -197,13 +232,14 @@ DWG saving and lossless unsupported-object preservation are pending. Current I/O
 covers supported 2D model-space geometry, with omissions/approximations reported.
 PDF is raster A4; exact plot scales/window selection/vector CJK output are pending.
 Canvas2D is transitional; full rendering budgets and AutoCAD prompt/option parity
-remain unmet. Lasso/grips, trim, offset, general text creation,
-associative dimensions, the complete DIMSTYLE manager and optional drafting aids
-are future work. Initial dimension creation is part of the active follow-up above.
+remain unmet. Lasso/grips, non-LINE trim/extend targets, additional offset topology,
+SHX/BigFont/MTEXT, associative dimensions, the complete DIMSTYLE manager and optional
+drafting aids remain future work. Basic trim/extend/offset and TEXT creation are
+implemented in the current continuation above.
 
 The current follow-up is verified. The next usable increment starts from
-`prompt-source/NEXT_STEPS.md`: prioritize essential 2D editing, general text,
-associative/full dimension workflows, accurate snapping and real-file fidelity.
+`prompt-source/NEXT_STEPS.md`: prioritize remaining essential 2D edit options,
+font/text editing, associative/full dimensions and real-file fidelity.
 Keep the app runnable; defer 3D and secondary features.
 
 ## Basic-workflow manual acceptance (2026-10-15)
@@ -227,3 +263,28 @@ Keep the app runnable; defer 3D and secondary features.
    Esc retains completed copy placements and discards the next preview.
 6. Save DXF from File and reload the page. Completed geometry/dimension definitions
    remain; temporary selection, preview and measurement objects do not persist.
+
+## Essential editing manual acceptance (2026-10-15)
+
+1. Start NEW. Enter `L`, `0,0`, `100,0`, Enter. Enter `L`, `50,-20`, `50,20`,
+   Enter. Use Fit before entering TRIM, then `TR`, click the right half of the
+   horizontal line and Enter. U restores it; REDO reapplies the entire command.
+2. Start `TR` again. Hold Shift and click near the shortened endpoint to extend
+   instead. Drag a path across several LINE targets to trim by fence. During the
+   command U reverses the last pick/fence; Enter/Esc retains accepted edits.
+3. Set `TRIMEXTENDMODE` to `0`, start TR, select a boundary, Enter, then select
+   the target portion. Only selected boundaries act as cutters. Set the variable
+   back to `1` for Quick. `EX` starts the same flow with extension as its main tool.
+4. Enter `O`, `10`, click a line and then a side point. Click another object to
+   repeat, or choose M at the side prompt for repeated offsets. U reverses the
+   latest operation. Enter in Multiple returns to selection; Enter/Esc there ends
+   the command. One global U removes all offsets from that command.
+5. Enter `O`, `T`, select a circle and click its desired new radius point for
+   Through. E at the initial prompt configures source deletion; L chooses the
+   current/source layer. Unsupported polyline joins produce an explicit message.
+6. Enter `DT`, `10,20`, `5`, `0`. Type Korean into the canvas input and Enter;
+   type another line and Enter; empty Enter finishes. Esc discards only the current
+   unaccepted line. U/REDO acts on the accepted line batch and remembered height.
+7. Save DXF, reopen it and reload the app. Verify Unicode text and edited geometry.
+   TEXTSIZE and profile editing modes persist, while OFFSETDIST resets to Through
+   only when the app reloads. Actual Windows IME/Hanja parity still needs manual QA.

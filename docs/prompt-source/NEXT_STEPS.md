@@ -2,6 +2,18 @@
 
 ## Current delivery boundary
 
+The 2026-10-15 continuation also delivers directional selection, MOVE/COPY and
+selected-object drags, exact endpoint/intersection snapping, DIST, Quick/Standard
+LINE TRIM/EXTEND with Shift/fences/local Undo, basic OFFSET and inline Korean
+TEXT/DTEXT. The complete Phase 07/10 acceptance remains pending. Use the latest
+verification section in `../PROGRESS.md`; the older benchmark below is historical.
+
+Exact next step: Phase 7.3 ROTATE/SCALE with Copy/Reference input and one-command
+undo, followed by MIRROR/FILLET. Expand TRIM beyond LINE targets, add curved and
+additional-join OFFSET through the planned geometry engine, then complete TEXT
+justification/styles and existing-text editing. Keep main-app builds runnable and
+preserve current dimension/import/export/recovery regressions.
+
 The user first requested DWG opening, basic drawing and project folder cleanup,
 then extended the usable slice with reliable browser launching, large-file
 navigation improvements and dimension creation/display. Keep the main app runnable

@@ -32,3 +32,9 @@ command is not an implemented command.
 - [ ] Complete the seven DIMSTYLE tabs, fit rules, leaders, tolerances and remaining Phase 11 commands.
 - [ ] Verify large survey coordinates, floating origin, snapping latency and rendering budgets.
 - [ ] Verify all phase acceptance criteria before changing phase status to complete.
+- [ ] Compare TRIM/EXTEND Quick/Standard line picks, finite fences, Shift switching, local Undo, implied EDGEMODE boundaries and locked boundary selection.
+- [ ] Complete TRIM/EXTEND non-LINE targets, hatch boundaries, Project, Crossing and Erase options before full Phase 07 acceptance.
+- [ ] Compare OFFSET Through/Multiple/Erase/Layer defaults, session-only OFFSETDIST and exact miter results; implement GAPTYPE 1/2, curved/concave polylines and remaining curve types.
+- [ ] Compare TEXT baseline, 1.25-height line advance, text cap-height/font metrics, rotation and readable in-place editing against the Windows reference.
+- [ ] Verify actual Windows Korean IME candidate-window placement and Hanja; synthetic browser composition tests do not certify those native behaviors.
+- [ ] Complete TEXT justification/styles/control codes, existing-text editing, SHX/BigFont and full MTEXT; verify original Phase 10 acceptance independently.

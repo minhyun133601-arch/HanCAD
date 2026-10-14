@@ -1,5 +1,55 @@
 # Decisions
 
+## 2026-10-15: Continue essential editing and single-line Korean text
+
+The continuation follows the exact next step in PROGRESS and the saved Phase 07
+and Phase 10 prompts. Their complete original acceptance is still pending. The
+delivered subset is TRIM/EXTEND for LINE targets, supported finite 2D boundaries,
+basic OFFSET and left-baseline TEXT/DTEXT. No new dependency or converter is needed.
+
+Autodesk's [Korean TRIM reference](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-B1A185EF-07C6-4C53-A76F-05ADE11F5C32.htm)
+defines Quick/Standard, all-boundary defaults, Shift alternate operation, fences
+and local Undo. Quick trim deletes an otherwise untrimmable supported LINE;
+Standard reports no intersection. Actual dragged paths are finite fences. LINE,
+polyline, rectangle, circle and arc boundaries are supported, including visible
+locked boundaries. Only editable LINE targets are modified. Project, Crossing,
+Erase, hatch boundaries and non-LINE targets remain pending; no 3D projection is
+implied by this model-space subset. EDGEMODE permits implied straight boundary
+extensions. The new [TRIMEXTENDMODE](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-52B3803E-FADC-4D7B-9BF2-A176C7FB7535.htm)
+uses profile scope/default 1 (Quick), with 0 selecting Standard.
+
+[OFFSET](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-LT/files/GUID-C0E4246D-C420-42BD-A6FC-8B1852EFD005.htm)
+uses remembered distance/Through, Erase, Source/Current layer, Multiple and Undo.
+Supported lines/circles/arcs are exact; straight open and convex closed polylines
+support miter joins with OFFSETGAPTYPE 0. Self-crossing/concave/collapsed/topology-
+changing results and gap types 1/2 are explicitly rejected. Curved polylines,
+cavalier_contours integration, ellipses/splines/xlines/rays remain pending.
+Multiple uses the most recent result as its next source; Enter returns to object
+selection. Accepted offsets enter one command transaction. Autodesk documents
+[OFFSETDIST](https://help.autodesk.com/cloudhelp/2020/ENU/AutoCAD-Core/files/GUID-4296AA53-76EF-4BDA-8B73-1AF08EA0B523.htm)
+as not saved, default -1/Through. The prior drawing-scoped definition is corrected
+to session scope; NEW keeps it and application reload resets it.
+
+[TEXT](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-D1C664DD-63D9-467E-8EC1-2F5A1777A924.htm)
+creates independent lines at a baseline point, height and rotation. The current
+subset uses an inline Korean composition input and existing local TrueType/browser
+fallback rendering. Readable editing size is clamped to 12-64 CSS pixels and is
+horizontal; final model rotation/height remain unchanged. The provisional 1.25-height
+line advance and cap-height/font metrics require installed-reference comparisons.
+Height is limited to the transitional model's 0 < height <= 1000 and each line to
+2000 UTF-16 code units; invalid entries and capacity overflow are rejected before
+mutation. Justification/style options, TEXTED/DTEXTED alternatives, SHX/BigFont,
+control codes, in-place existing-text editing and full MTEXT remain pending.
+Esc discards current text while retaining accepted lines; a height accepted before
+Esc is remembered atomically even if no lines were created.
+
+Browser profile scope persists in a separate validated local preference cache,
+including TRIMEXTENDMODE/EDGEMODE/OFFSETGAPTYPE. It neither saves drawing/session
+values nor creates drawing undo records. TEXTSIZE uses a document-ID-scoped overlay
+for standalone edits and is refreshed on complete cache publications. A regression
+found that an Undo overlay could otherwise override a newer Redo snapshot; browser
+tests now cover both normal/empty TEXT and foreign-document overlay isolation.
+
 ## 2026-10-15: Make the basic drawing workflow reliable
 
 The user's priority is dimensions, endpoint recognition, dragging and wheel

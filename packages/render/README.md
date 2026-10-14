@@ -30,6 +30,12 @@ Snap overlays use original endpoint, midpoint, center, quadrant, intersection an
 nearest symbols, plus an optional localized tooltip. Marker and tooltip display
 can be controlled independently while snapping remains active.
 
+An optional fence gesture emits sampled model points and draws a dotted path;
+ordinary window/crossing selection remains separate. Edit previews can suppress
+original IDs in retained scene drawing without hiding them from picking or
+rebuilding the scene. `worldToScreen` maps model points into local CSS pixels for
+the Korean inline text input. Renderer tests cover those contracts.
+
 `setDrawing` borrows an immutable drawing snapshot; callers must replace the snapshot for edits and must not mutate its geometry in place. The renderer changes only its own view, preview and selection, which avoids duplicating a large drawing for every visibility change.
 
 Visible geometry is retained in `Path2D` batches of at most 256 adjacent entities with matching layer, color and width. Text and dimensions keep the existing drawing implementation. Bounds culling includes stroke and text margins, and CPU floating origins preserve small coordinates around large drawing origins. Selection keeps nonselected colors and painter order. Click picking filters cached bounds before exact geometry checks.

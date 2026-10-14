@@ -10,16 +10,11 @@ import { useDrawingFiles } from './useDrawingFiles';
 import { ImportReport } from './ImportReport';
 import { ProgressDialog } from './ProgressDialog';
 import type { CanvasSurface } from './canvas-surface';
-import { useDrafting } from './useDrafting';
-import { useDimensions } from './useDimensions';
 import { DimensionStyleDialog } from './DimensionStyleDialog';
-import { useModification } from './useModification';
-import { useMeasurement } from './useMeasurement';
 import { useCanvasInteraction } from './useCanvasInteraction';
 import { useWorkspaceShortcuts } from './useWorkspaceShortcuts';
-import type { CadEntity } from '@hancad/legacy-bridge';
-
-const emptyPreview: readonly CadEntity[] = [];
+import { useDrawingCommands } from './useDrawingCommands';
+import { InlineTextEditor } from './InlineTextEditor';
 
 export function App() {
   const [locale, setLocale] = useState<Locale>('ko-KR');
@@ -37,59 +32,17 @@ export function App() {
     messages,
     print: session.print,
   });
-  const draft = useDrafting({
-    registry: session.registry,
-    sysvars: session.sysvars,
-    messages,
-    state: files.state,
-    getState: files.getState,
-    commitState: files.commitState,
-    print: session.print,
-  });
-  const dimensions = useDimensions({
-    registry: session.registry,
-    sysvars: session.sysvars,
-    messages,
-    getState: files.getState,
-    commitState: files.commitState,
-    selectedIds: draft.selectedIds,
-    cancelDraft: () => draft.cancel(false),
-    print: session.print,
-  });
+  const tools = useDrawingCommands({ session, files, messages });
+  const { draft, dimensions, modification, measurement, editing, text } = tools;
   const canvasSurface = useRef<CanvasSurface | null>(null);
-  const modification = useModification({
-    registry: session.registry,
-    sysvars: session.sysvars,
-    messages,
-    getState: files.getState,
-    getSelectedIds: draft.getSelectedIds,
-    clearSelection: draft.clearSelection,
-    commitState: files.commitState,
-    print: session.print,
-    cancelOthers: () => {
-      if (draft.isActive()) draft.cancel(false);
-      dimensions.cancel(false);
-      measurement.cancel(false);
-    },
-  });
-  const measurement = useMeasurement({
-    registry: session.registry,
-    sysvars: session.sysvars,
-    messages,
-    getState: files.getState,
-    print: session.print,
-    cancelOthers: () => {
-      if (draft.isActive()) draft.cancel(false);
-      dimensions.cancel(false);
-      modification.cancel(false);
-    },
-  });
   const interaction = useCanvasInteraction({
     files,
     draft,
     dimensions,
     modification,
     measurement,
+    editing,
+    text,
     session,
     progressOpen,
     messages,
@@ -98,35 +51,21 @@ export function App() {
   const inputRef = useRef<HTMLDivElement | HTMLInputElement>(null);
 
   function focusCommand(): void {
-    inputRef.current?.focus({ preventScroll: true });
+    if (!text.editable) inputRef.current?.focus({ preventScroll: true });
   }
   function execute(command: string): void {
     canvasSurface.current?.cancelPointerInteraction();
     if (files.restoring) files.cancelRestore(false);
-    if (draft.isActive()) draft.cancel(false);
-    if (dimensions.isActive()) dimensions.cancel(false);
-    if (modification.isActive()) modification.cancel(false);
-    if (measurement.isActive()) measurement.cancel(false);
+    tools.cancelAll();
     canvasSurface.current?.setSnapMarker();
     setCommandVisible(true);
     session.startCommand(command);
     focusCommand();
   }
   async function submit(value: string): Promise<void> {
-    if (
-      dimensions.submit(value) ||
-      modification.submit(value) ||
-      measurement.submit(value) ||
-      draft.submit(value)
-    ) {
+    if (tools.submit(value)) {
       session.changeInput('');
-      if (
-        !draft.isDrafting() &&
-        !dimensions.isActive() &&
-        !modification.isActive() &&
-        !measurement.isActive()
-      )
-        canvasSurface.current?.setSnapMarker();
+      if (!tools.isActive()) canvasSurface.current?.setSnapMarker();
       return;
     }
     canvasSurface.current?.cancelPointerInteraction();
@@ -134,26 +73,12 @@ export function App() {
   }
   function cancel(): void {
     canvasSurface.current?.cancelPointerInteraction();
-    if (modification.isActive()) {
-      modification.cancel();
-      session.changeInput('');
-    } else if (measurement.isActive()) {
-      measurement.cancel();
-      session.changeInput('');
-    } else if (dimensions.isActive()) {
-      dimensions.cancel();
-      session.changeInput('');
-    } else if (draft.isActive() || draft.selectedIds.length) {
-      draft.cancel();
-      session.changeInput('');
-    } else session.cancel();
+    if (!tools.cancel()) session.cancel();
+    session.changeInput('');
     canvasSurface.current?.setSnapMarker();
   }
   function openFile(file: File): void {
-    if (draft.isActive()) draft.cancel(false);
-    if (dimensions.isActive()) dimensions.cancel(false);
-    modification.cancel(false);
-    measurement.cancel(false);
+    tools.cancelAll();
     void files.openFile(file);
   }
   function toggle(item: StatusToggle): void {
@@ -195,17 +120,13 @@ export function App() {
   }, [session.registry, messages]);
   useEffect(() => {
     focusCommand();
-  }, [commandVisible, session.editable, dimensions.editable]);
+  }, [commandVisible, session.editable, dimensions.editable, text.editable]);
   useEffect(() => {
-    draft.cancel(false);
-    dimensions.cancel(false);
-    modification.cancel(false);
-    measurement.cancel(false);
+    tools.cancelAll();
   }, [files.fitRevision]);
   useEffect(() => {
-    if (!draft.active && !dimensions.active && !modification.active && !measurement.active)
-      canvasSurface.current?.setSnapMarker();
-  }, [draft.active, dimensions.active, modification.active, measurement.active]);
+    if (!tools.active) canvasSurface.current?.setSnapMarker();
+  }, [tools.active]);
   useEffect(() => {
     void platform.info().catch((error: unknown) => {
       session.print(
@@ -220,6 +141,7 @@ export function App() {
     dimensions,
     modification,
     measurement,
+    additional: [editing, text],
     messages,
     print: session.print,
     execute,
@@ -264,22 +186,17 @@ export function App() {
           messages={messages}
           layout={layout}
           onFocus={focusCommand}
-          drawing={files.state}
+          drawing={tools.state}
           onReady={(surface) => {
             canvasSurface.current = surface;
           }}
           execute={execute}
           fitRevision={files.fitRevision}
-          preview={
-            interaction.dragPreview ??
-            dimensions.snapshot?.preview ??
-            modification.snapshot?.preview ??
-            measurement.snapshot?.preview ??
-            draft.snapshot?.preview ??
-            emptyPreview
-          }
-          selectedIds={draft.selectedIds}
-          active={draft.active || dimensions.active || modification.active || measurement.active}
+          preview={interaction.dragPreview ?? tools.preview}
+          previewHiddenIds={tools.previewHiddenIds}
+          selectedIds={tools.selectedIds}
+          active={tools.active}
+          selectionGesture={interaction.selectionGesture}
           onPick={interaction.pick}
           onCoordinates={interaction.cursor}
           canSelectArea={interaction.canSelectArea}
@@ -297,9 +214,17 @@ export function App() {
           </span>
           <button onClick={() => execute('ZOOM E')}>{messages.fitDrawing}</button>
         </div>
-        <div className="drafting-usage">
-          {dimensions.active ? messages.dimensionUsage : messages.draftingUsage}
-        </div>
+        <div className="drafting-usage">{tools.usage}</div>
+        <InlineTextEditor
+          messages={messages}
+          entry={text.textEntry}
+          surface={canvasSurface}
+          changeText={text.changeText}
+          submit={(value) => {
+            text.submit(value);
+          }}
+          cancel={cancel}
+        />
         {draft.selectedIds.length > 0 && (
           <div className="draft-selection-count">
             {messages.selectedObjects(draft.selectedIds.length)}
@@ -329,14 +254,8 @@ export function App() {
             messages={messages}
             history={session.history}
             input={session.input}
-            prompt={
-              dimensions.prompt ??
-              modification.prompt ??
-              measurement.prompt ??
-              draft.prompt ??
-              session.prompt
-            }
-            editable={dimensions.active ? dimensions.editable : !draft.active && session.editable}
+            prompt={tools.prompt}
+            editable={tools.editable}
             busy={session.busy}
             blocked={files.reading || files.restoring}
             expanded={expanded}

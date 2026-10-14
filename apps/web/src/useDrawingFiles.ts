@@ -19,7 +19,12 @@ import {
 } from './drawing-storage';
 import type { DrawingSession } from './drawing-storage';
 import { dimensionStyleFields, readDimensionStyle, saveDimensionStyle } from './dimension-style';
-import type { DimensionStyleValues } from './dimension-style';
+import {
+  draftingVariableNames,
+  readDraftingVariables,
+  saveDraftingVariables,
+} from './drafting-variables';
+import type { SysvarValue } from '@hancad/sysvars';
 import { canUseLocalDrawingCache, DrawingSessionTransfer } from './drawing-session';
 
 type ExportFormat = 'pdf' | 'png' | 'jpg' | 'svg' | 'dxf';
@@ -89,6 +94,10 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
         readDimensionStyle((name) => database.getVariable(name)),
         drawingRef.current.documentId,
       );
+      saveDraftingVariables(
+        readDraftingVariables((name) => database.getVariable(name)),
+        drawingRef.current.documentId,
+      );
     } catch {
       if (!storageWarning.current) actions.current.print(actions.current.messages.autosaveFailed);
       storageWarning.current = true;
@@ -127,9 +136,13 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
         styleQueued = false;
         if (disposed) return;
         const dimensionStyle = readDimensionStyle((name) => database.getVariable(name));
-        if (JSON.stringify(drawingRef.current.dimensionStyle) === JSON.stringify(dimensionStyle))
+        const draftingVariables = readDraftingVariables((name) => database.getVariable(name));
+        if (
+          JSON.stringify(drawingRef.current.dimensionStyle) === JSON.stringify(dimensionStyle) &&
+          JSON.stringify(drawingRef.current.draftingVariables) === JSON.stringify(draftingVariables)
+        )
           return;
-        const next = { ...drawingRef.current, dimensionStyle };
+        const next = { ...drawingRef.current, dimensionStyle, draftingVariables };
         drawingRef.current = next;
         setDrawing(next);
         documentGeneration.current++;
@@ -139,6 +152,7 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
         }
         try {
           saveDimensionStyle(dimensionStyle, next.documentId);
+          saveDraftingVariables(draftingVariables, next.documentId);
         } catch {
           if (!storageWarning.current)
             actions.current.print(actions.current.messages.autosaveFailed);
@@ -149,7 +163,8 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
     const unsubscribe = database.events.subscribe((event) => {
       if (
         event.type === 'sysvar-changed' &&
-        dimensionStyleFields.some(([name]) => name === event.name)
+        (dimensionStyleFields.some(([name]) => name === event.name) ||
+          draftingVariableNames.some((name) => name === event.name))
       ) {
         scheduleStyle();
         return;
@@ -177,6 +192,8 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
       transfer.write(initial.drawing, (serialized) => {
         database.transaction('INITIAL_VIEW', (transaction) => {
           for (const [name, value] of Object.entries(initial.drawing.dimensionStyle ?? {}))
+            transaction.setVariable(name, value);
+          for (const [name, value] of Object.entries(initial.drawing.draftingVariables ?? {}))
             transaction.setVariable(name, value);
           transaction.setVariable(drawingViewVariable, serialized);
         });
@@ -228,12 +245,14 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
     next: DrawingSession,
     newBase = false,
     fit = false,
-    variables?: DimensionStyleValues,
+    variables?: Readonly<Record<string, SysvarValue>>,
   ): void {
     if (!next.documentId || (newBase && label !== 'RESTORE'))
       next = { ...next, documentId: crypto.randomUUID() };
     if (newBase && !next.dimensionStyle)
       next = { ...next, dimensionStyle: readDimensionStyle(() => undefined) };
+    if (newBase && !next.draftingVariables)
+      next = { ...next, draftingVariables: readDraftingVariables(() => undefined) };
     const previousFit = fitNext.current;
     try {
       // Validate before writing; the synchronous journal observer reuses this exact validated graph.
@@ -241,7 +260,7 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
         fitNext.current = newBase || fit;
         database.transaction(label, (transaction) => {
           for (const [name, value] of Object.entries(
-            variables ?? (newBase ? (next.dimensionStyle ?? {}) : {}),
+            variables ?? (newBase ? { ...next.dimensionStyle, ...next.draftingVariables } : {}),
           ))
             transaction.setVariable(name, value);
           transaction.setVariable(drawingViewVariable, serialized);
@@ -256,10 +275,18 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
   function commitState(
     label: string,
     state: LegacyCadState,
-    variables?: DimensionStyleValues,
+    variables?: Readonly<Record<string, SysvarValue>>,
   ): void {
-    const dimensionStyle = variables ?? readDimensionStyle((name) => database.getVariable(name));
-    commitDrawing(label, { ...drawingRef.current, state, dimensionStyle }, false, false, variables);
+    const get = (name: string): unknown => variables?.[name] ?? database.getVariable(name);
+    const dimensionStyle = readDimensionStyle(get);
+    const draftingVariables = readDraftingVariables(get);
+    commitDrawing(
+      label,
+      { ...drawingRef.current, state, dimensionStyle, draftingVariables },
+      false,
+      false,
+      variables,
+    );
   }
 
   async function openFile(file: File): Promise<void> {

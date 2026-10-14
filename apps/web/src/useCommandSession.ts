@@ -1,9 +1,10 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { CommandRegistry, HeadlessCommandRunner } from '@hancad/commands';
 import type { CommandResult } from '@hancad/commands';
 import { DrawingDatabase } from '@hancad/db';
 import { getSystemVariableDefinition, SystemVariables } from '@hancad/sysvars';
 import { getMessages, type Locale } from '@hancad/ui';
+import { restoreProfileVariables, subscribeProfileVariables } from './profile-storage';
 
 export interface HistoryLine {
   id: number;
@@ -20,12 +21,15 @@ export function useCommandSession(locale: Locale) {
   const messages = getMessages(locale);
   const [runtime] = useState(() => {
     const database = new DrawingDatabase();
+    const sysvars = new SystemVariables({ database });
+    restoreProfileVariables(sysvars.profile);
     return {
       database,
-      sysvars: new SystemVariables({ database }),
+      sysvars,
       registry: new CommandRegistry(),
     };
   });
+  useEffect(() => subscribeProfileVariables(runtime.sysvars.profile), [runtime]);
   const runner = useMemo(
     () => new HeadlessCommandRunner({ ...runtime, locale }),
     [runtime, locale],

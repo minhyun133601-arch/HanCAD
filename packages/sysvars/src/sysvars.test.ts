@@ -12,6 +12,8 @@ describe('declarative system variables', () => {
     expect(variables.get('osmode')).toBe(4133);
     expect(variables.get('INSUNITS')).toBe(4);
     expect(variables.get('DIMSTYLE')).toBe('ISO-25');
+    expect(variables.get('TRIMEXTENDMODE')).toBe(1);
+    expect(variables.get('EDGEMODE')).toBe(0);
     expect(() => variables.set('OSMODE', 99999)).toThrow('유효하지');
     expect(variables.get('OSMODE')).toBe(4133);
     expect(() => variables.set('LUPREC', 2.5)).toThrow();
@@ -37,6 +39,8 @@ describe('declarative system variables', () => {
     first.sysvars.set('LUPREC', 2);
     expect(second.sysvars.get('LUPREC')).toBe(4);
     first.sysvars.set('MODEMACRO', 'first');
+    first.sysvars.set('OFFSETDIST', 12);
+    expect(second.sysvars.get('OFFSETDIST')).toBe(-1);
     expect(second.sysvars.get('MODEMACRO')).toBe('');
     first.database.undo();
     expect(second.sysvars.get('OSMODE')).toBe(32);

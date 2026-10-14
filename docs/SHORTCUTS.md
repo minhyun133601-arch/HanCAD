@@ -3,6 +3,15 @@
 
 ## Verified basic-workflow slice (2026-10-15)
 
+The next verified editing slice adds TR/TRIM and EX/EXTEND: click a LINE or drag
+a finite fence; Shift uses the opposite tool, U reverses the latest local edit,
+and Enter/Esc finishes the whole command. TRIMEXTENDMODE 0 first asks for explicit
+boundaries; 1 starts Quick mode. O/OFFSET accepts distance or T/Through, then an
+object and a side/through point; M repeats, U reverses and Enter/Esc finishes.
+DT/TEXT/DTEXT takes insertion point, height and angle, then editable Korean text
+on the canvas. Enter accepts a line; empty Enter finishes. T/MT remains MTEXT,
+which is not yet implemented. This avoids changing existing aliases.
+
 L/C/REC/PL draw; DLI/DAL/DRA/DDI/DAN dimension; DI measures two points; M moves;
 CO/CP copy repeatedly until Enter/Esc. F3 toggles running snaps, F8 toggles Ortho.
 Left drag selects complete objects left-to-right or crossing objects right-to-left;

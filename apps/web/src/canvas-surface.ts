@@ -26,6 +26,12 @@ export class CanvasSurface {
   setPreview(entities: readonly CadEntity[]): void {
     this.renderer.setPreview(entities);
   }
+  setPreviewHiddenIds(ids: readonly string[]): void {
+    this.renderer.setPreviewHiddenIds(ids);
+  }
+  worldToScreen(point: CadPoint): CadPoint {
+    return this.renderer.worldToScreen(point);
+  }
   setSelection(ids: readonly string[]): void {
     this.renderer.setSelection(ids);
   }

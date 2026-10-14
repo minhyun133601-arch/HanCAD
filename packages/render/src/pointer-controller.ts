@@ -17,6 +17,8 @@ export interface CadSelectionDrag {
   ctrlKey: boolean;
   phase: 'start' | 'move' | 'end' | 'cancel';
   reason?: 'escape';
+  gesture?: 'area' | 'fence';
+  points?: readonly CadPoint[];
 }
 export interface CadNavigationSettings {
   zoomFactor: number;
@@ -27,6 +29,7 @@ export interface CadCanvasOptions {
   onCoordinates?: (point: CadPoint) => void;
   onPick?: (pick: CadPointerPick) => void;
   canSelectArea?: () => boolean;
+  selectionGesture?: () => 'area' | 'fence';
   suppressSelectionBox?: (start: CadPoint) => boolean;
   onSelectionDrag?: (event: CadSelectionDrag) => void;
   getNavigationSettings?: () => CadNavigationSettings;
@@ -51,6 +54,8 @@ interface Press {
   ctrlKey: boolean;
   suppressBox: boolean;
   dragging: boolean;
+  gesture: 'area' | 'fence';
+  points: CadPoint[];
 }
 
 /** Keeps canvas capture, selection gestures and view navigation out of drawing code. */
@@ -123,6 +128,8 @@ export class CadPointerController {
       shiftKey: press.shiftKey,
       ctrlKey: press.ctrlKey,
       phase,
+      gesture: press.gesture,
+      ...(press.gesture === 'fence' ? { points: press.points.map((point) => ({ ...point })) } : {}),
       ...(reason === undefined ? {} : { reason }),
     };
   }
@@ -172,6 +179,8 @@ export class CadPointerController {
         ctrlKey: event.ctrlKey,
         suppressBox: !event.shiftKey && (this.options.suppressSelectionBox?.(point) ?? false),
         dragging: false,
+        gesture: this.options.selectionGesture?.() ?? 'area',
+        points: [{ ...point }],
       };
     } else {
       const previous = this.middleClick;
@@ -211,6 +220,7 @@ export class CadPointerController {
       else {
         press.end = point;
         press.ctrlKey = event.ctrlKey;
+        if (press.gesture === 'fence') this.appendFencePoint(press, point);
         if (press.dragging || Math.hypot(local.x - press.local.x, local.y - press.local.y) >= 4) {
           const phase = press.dragging ? 'move' : 'start';
           press.dragging = true;
@@ -233,6 +243,7 @@ export class CadPointerController {
     this.press = undefined;
     press.end = this.host.worldPoint(this.localPoint(event));
     press.ctrlKey = event.ctrlKey;
+    if (press.gesture === 'fence') this.appendFencePoint(press, press.end);
     this.release(press.pointerId);
     if (press.dragging) {
       this.options.onSelectionDrag?.(this.selectionEvent(press, 'end'));
@@ -243,6 +254,10 @@ export class CadPointerController {
     if (event.pointerId === this.press?.pointerId || event.pointerId === this.pan?.pointerId)
       this.cancel();
   };
+  private appendFencePoint(press: Press, point: CadPoint): void {
+    const last = press.points.at(-1);
+    if (!last || point.x !== last.x || point.y !== last.y) press.points.push({ ...point });
+  }
   private readonly onKeyDown = (event: KeyboardEvent): void => {
     if (event.code !== 'Escape') return;
     if (this.press || this.pan) {

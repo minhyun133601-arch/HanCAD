@@ -46,6 +46,7 @@ export const ko: Messages = {
   offset: '간격띄우기',
   fillet: '모깎기',
   text: '여러 줄 문자',
+  singleLineText: '단일 행 문자',
   dimension: '선형',
   dimensionStyle: '치수 스타일',
   dimensionAligned: '정렬 치수',
@@ -214,6 +215,53 @@ export const ko: Messages = {
   modifyBasePoint: '기준점 지정:',
   modifySecondPoint: '두 번째 점 지정 또는 <첫 번째 점을 변위로 사용>:',
   copyNextPoint: '두 번째 점 지정 또는 [종료(E)] <종료>:',
+  extend: '연장',
+  editingUsage:
+    'TR 자르기 · EX 연장 · Shift 반대 동작 · 끌어서 울타리 · U 직전 작업 취소 · Enter/Esc 완료 · O 간격띄우기',
+  trimBoundaryPrompt: '절단 모서리 선택... 객체 선택 또는 <모두 선택>:',
+  extendBoundaryPrompt: '경계 모서리 선택... 객체 선택 또는 <모두 선택>:',
+  trimTargetPrompt:
+    '자를 객체 선택 또는 Shift 키를 누른 채 선택하여 연장 [모드(MO)/모서리(E)/명령 취소(U)]:',
+  extendTargetPrompt:
+    '연장할 객체 선택 또는 Shift 키를 누른 채 선택하여 자르기 [모드(MO)/모서리(E)/명령 취소(U)]:',
+  trimModePrompt: (quick) =>
+    `자르기/연장 모드 입력 [빠른 작업(Q)/표준(S)] <${quick ? '빠른 작업' : '표준'}>:`,
+  trimEdgePrompt: (extend) =>
+    `내재된 모서리 연장 모드 입력 [연장(E)/연장 안함(N)] <${extend ? '연장' : '연장 안함'}>:`,
+  editLocked: '잠기거나 꺼진 도면층의 객체는 수정할 수 없습니다.',
+  editUnsupported: '선택한 객체 유형은 현재 이 편집 명령에서 지원하지 않습니다.',
+  editNoIntersection: '객체가 경계 모서리와 교차하지 않습니다.',
+  editInvalidInput: '점 또는 프롬프트에 표시된 옵션을 지정하세요.',
+  editEntityLimit: '편집 결과가 현재 지원하는 객체 수 한도를 초과합니다.',
+  editNothingToUndo: '취소할 이전 작업이 없습니다.',
+  offsetPositiveDistance: '간격띄우기 거리는 0보다 큰 값을 지정하세요.',
+  offsetThroughDefault: '통과점',
+  offsetDistancePrompt: (value) =>
+    `간격띄우기 거리 지정 또는 [통과점(T)/지우기(E)/도면층(L)] <${value}>:`,
+  offsetSecondPointPrompt: '두 번째 점 지정:',
+  offsetSelectPrompt: '간격띄우기할 객체 선택 또는 [종료(E)/명령 취소(U)] <종료>:',
+  offsetSidePrompt: '간격띄우기할 면의 점 지정 또는 [종료(E)/다중(M)/명령 취소(U)] <종료>:',
+  offsetThroughPrompt: '통과점 지정 또는 [종료(E)/다중(M)/명령 취소(U)] <종료>:',
+  offsetErasePrompt: (erase) =>
+    `간격띄우기 후 원본 객체 지우기 [예(Y)/아니오(N)] <${erase ? '예' : '아니오'}>:`,
+  offsetLayerPrompt: (current) =>
+    `간격띄우기 객체 도면층 입력 [현재(C)/원본(S)] <${current ? '현재' : '원본'}>:`,
+  offsetMultipleSidePrompt: '간격띄우기할 면의 점 지정 또는 [종료(E)/명령 취소(U)] <다음 객체>:',
+  offsetMultipleThroughPrompt: '통과점 지정 또는 [종료(E)/명령 취소(U)] <다음 객체>:',
+  offsetInvalidGeometry: '지정한 간격띄우기를 작성할 수 없습니다. 거리와 방향을 확인하세요.',
+  offsetUnsupportedGap:
+    '이 폴리선의 모서리 처리 방식은 아직 지원하지 않습니다. OFFSETGAPTYPE 0을 사용하세요.',
+  textStartPrompt: '문자의 시작점 지정:',
+  textHeightPrompt: (value) => `높이 지정 <${value}>:`,
+  textRotationPrompt: '문자의 회전 각도 지정 <0>:',
+  textContentPrompt: '문자 입력:',
+  textUnsupportedOption:
+    '현재 TEXT는 왼쪽 기준선 자리맞추기를 지원합니다. 다른 자리맞추기와 문자 스타일 옵션은 구현 예정입니다.',
+  textPositiveHeightError: '문자 높이는 0보다 크고 1000 이하여야 합니다.',
+  textContentError: '한 행에 2000자 이하의 문자를 입력하세요. 줄바꿈은 Enter로 지정하세요.',
+  textUsage:
+    'DT 문자 · 위치 → 높이 → 각도 → 도면 위 한글 입력 · Enter 다음 행 · 빈 행 Enter 완료 · Esc 현재 입력 취소',
+  inlineTextLabel: '도면 문자 입력',
   snapEndpoint: '끝점',
   snapMidpoint: '중간점',
   snapCenter: '중심점',

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   editableSelection,
   selectCadArea,
@@ -16,6 +16,8 @@ import type { useModification } from './useModification';
 import type { useMeasurement } from './useMeasurement';
 import type { useDrawingFiles } from './useDrawingFiles';
 import type { useCommandSession } from './useCommandSession';
+import type { useEditingTools } from './useEditingTools';
+import type { useTextCreation } from './useTextCreation';
 
 interface Options {
   files: ReturnType<typeof useDrawingFiles>;
@@ -23,6 +25,8 @@ interface Options {
   dimensions: ReturnType<typeof useDimensions>;
   modification: ReturnType<typeof useModification>;
   measurement: ReturnType<typeof useMeasurement>;
+  editing: ReturnType<typeof useEditingTools>;
+  text: ReturnType<typeof useTextCreation>;
   session: ReturnType<typeof useCommandSession>;
   progressOpen: boolean;
   messages: Messages;
@@ -47,6 +51,26 @@ export function useCanvasInteraction(options: Options) {
     delta: CadPoint;
   } | null>(null);
   const [dragPreview, setDragPreview] = useState<readonly CadEntity[] | null>(null);
+  const shift = useRef(false);
+  const lastCursor = useRef<CadPoint | null>(null);
+  useEffect(() => {
+    const changed = (event: KeyboardEvent): void => {
+      if (event.code !== 'ShiftLeft' && event.code !== 'ShiftRight') return;
+      shift.current = event.type === 'keydown';
+      if (lastCursor.current) cursor(lastCursor.current);
+    };
+    document.addEventListener('keydown', changed);
+    document.addEventListener('keyup', changed);
+    const reset = (): void => {
+      shift.current = false;
+    };
+    window.addEventListener('blur', reset);
+    return () => {
+      document.removeEventListener('keydown', changed);
+      document.removeEventListener('keyup', changed);
+      window.removeEventListener('blur', reset);
+    };
+  }, []);
   function blocked(): boolean {
     const live = latest.current;
     return live.files.reading || live.files.restoring || live.progressOpen;
@@ -58,7 +82,9 @@ export function useCanvasInteraction(options: Options) {
       !live.draft.isDrafting() &&
       !live.dimensions.isActive() &&
       !live.modification.needsPoint() &&
-      !live.measurement.isActive()
+      !live.measurement.isActive() &&
+      !live.text.isActive() &&
+      (!live.editing.isActive() || live.editing.canSelectArea())
     );
   }
   function resolve(point: CadPoint, force = false) {
@@ -68,10 +94,12 @@ export function useCanvasInteraction(options: Options) {
       live.draft.isDrafting() ||
       live.dimensions.needsPoint() ||
       live.modification.needsPoint() ||
-      live.measurement.isActive();
+      live.measurement.isActive() ||
+      live.editing.needsPoint() ||
+      live.text.needsPoint();
     const result = enabled
       ? snapDraftPoint(
-          live.files.getState(),
+          live.editing.getState(),
           point,
           live.session.sysvars.getNumber('APERTURE') / (live.surface.current?.getView().scale ?? 1),
           live.session.sysvars.getNumber('OSMODE'),
@@ -91,7 +119,14 @@ export function useCanvasInteraction(options: Options) {
     if (blocked()) return;
     const live = latest.current;
     const target = resolve(event.point);
-    if (live.dimensions.isActive()) {
+    if (live.editing.isActive()) {
+      const entity = live.editing.entityAt(
+        event.point,
+        8 / (live.surface.current?.getView().scale ?? 1),
+      );
+      live.editing.pick(target.point, entity, event.shiftKey);
+    } else if (live.text.isActive()) live.text.pick(target.point);
+    else if (live.dimensions.isActive()) {
       const entity = event.entityId
         ? live.files.getState().entities.find((item) => item.id === event.entityId)
         : undefined;
@@ -101,10 +136,15 @@ export function useCanvasInteraction(options: Options) {
     else live.draft.pick({ ...event, ...target });
   }
   function cursor(point: CadPoint): void {
+    lastCursor.current = point;
     if (blocked() || moving.current) return;
     const live = latest.current,
       target = resolve(point);
-    if (live.dimensions.isActive()) {
+    if (live.editing.isActive()) {
+      const entity = live.editing.entityAt(point, 8 / (live.surface.current?.getView().scale ?? 1));
+      live.editing.cursor(target.point, entity, shift.current);
+    } else if (live.text.isActive()) live.text.cursor(target.point);
+    else if (live.dimensions.isActive()) {
       const id = live.dimensions.needsEntity() ? live.surface.current?.pick(point) : undefined;
       const entity = id ? live.files.getState().entities.find((item) => item.id === id) : undefined;
       live.dimensions.cursor(target.point, entity);
@@ -118,6 +158,8 @@ export function useCanvasInteraction(options: Options) {
     return (
       !live.draft.isActive() &&
       !live.modification.isActive() &&
+      !live.editing.isActive() &&
+      !live.text.isActive() &&
       Boolean(id && live.draft.getSelectedIds().includes(id))
     );
   }
@@ -128,6 +170,16 @@ export function useCanvasInteraction(options: Options) {
       moving.current = null;
       setDragPreview(null);
       live.surface.current?.setSnapMarker();
+      return;
+    }
+    if (live.editing.isActive()) {
+      if (event.phase === 'end')
+        live.editing.area(
+          event.start,
+          event.end,
+          event.points ?? [event.start, event.end],
+          event.shiftKey,
+        );
       return;
     }
     if (event.phase === 'start' && !event.shiftKey && suppressSelectionBox(event.start)) {
@@ -185,5 +237,7 @@ export function useCanvasInteraction(options: Options) {
         middleButtonPan: vars.getNumber('MBUTTONPAN'),
       };
     },
+    selectionGesture: (): 'area' | 'fence' =>
+      latest.current.editing.needsFence() ? 'fence' : 'area',
   };
 }

@@ -124,6 +124,26 @@ test('official DWG opens locally, zooms, persists, and exports real PDF and imag
 });
 
 test('cancelling a DWG import keeps the previous drawing', async ({ page }) => {
+  await page.addInitScript(() => {
+    const NativeWorker = Worker;
+    class PausedDwgWorker extends NativeWorker {
+      private readonly paused: boolean;
+      constructor(url: string | URL, options?: WorkerOptions) {
+        super(url, options);
+        this.paused = options?.name === 'local-dwg-reader';
+      }
+      override postMessage(
+        message: unknown,
+        transfer: Transferable[] | StructuredSerializeOptions = [],
+      ): void {
+        // Keep the actual reader cancellable instead of racing its tiny fixture's decoding time.
+        if (this.paused) return;
+        if (Array.isArray(transfer)) super.postMessage(message, transfer);
+        else super.postMessage(message, transfer);
+      }
+    }
+    globalThis.Worker = PausedDwgWorker;
+  });
   await page.goto('/');
   const dxf =
     '0\nSECTION\n2\nENTITIES\n0\nLINE\n8\n0\n10\n0\n20\n0\n11\n100\n21\n30\n0\nENDSEC\n0\nEOF\n';

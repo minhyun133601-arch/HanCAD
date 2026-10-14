@@ -9,6 +9,13 @@ ZOOMFACTOR/ZOOMWHEEL/MBUTTONPAN for navigation. DIST reads LUPREC/AUPREC/ANGBASE
 Registration alone does not implement the other selection/snap/unit-format controls;
 full PICKAUTO/PICKDRAG/lasso and COPYMODE remain pending.
 
+TRIMEXTENDMODE (profile, default 1) selects Quick/Standard editing. EDGEMODE
+(profile, default 0) enables implied boundary extension. Browser profile values
+persist separately after validation. OFFSETDIST is corrected to session-only
+(default -1/Through), survives NEW in the same app and resets on reload. TEXTSIZE
+is drawing-scoped; accepted TEXT heights and standalone changes survive recovery,
+with command edits and their height stored atomically for Undo/Redo.
+
 | Name                 | Type    | Default      | Scope   | Read-only | Korean description              |
 | -------------------- | ------- | ------------ | ------- | --------- | ------------------------------- |
 | OSMODE               | integer | 4133         | profile | No        | 실행 중인 객체 스냅 설정        |
@@ -88,7 +95,9 @@ full PICKAUTO/PICKDRAG/lasso and COPYMODE remain pending.
 | CHAMFERB             | real    | 0            | drawing | No        | 두 번째 모따기 거리             |
 | CHAMFERC             | real    | 0            | drawing | No        | 모따기 길이                     |
 | CHAMFERD             | real    | 0            | drawing | No        | 모따기 각도                     |
-| OFFSETDIST           | real    | -1           | drawing | No        | 간격띄우기 거리                 |
+| OFFSETDIST           | real    | -1           | session | No        | 간격띄우기 거리                 |
+| TRIMEXTENDMODE       | integer | 1            | profile | No        | 자르기 및 연장 빠른 모드        |
+| EDGEMODE             | integer | 0            | profile | No        | 가상 경계 연장 사용             |
 | OFFSETGAPTYPE        | integer | 0            | profile | No        | 간격띄우기 모서리 처리          |
 | CIRCLERAD            | real    | 0            | drawing | No        | 마지막 원 반지름                |
 | PLINEWID             | real    | 0            | drawing | No        | 새 폴리선 폭                    |
