@@ -5,6 +5,7 @@ import { reverseHangulInput } from '@hancad/input';
 import { getSystemVariableDefinition, SystemVariables } from '@hancad/sysvars';
 import { registerCoreCommands, setVariableFromInput } from './core';
 import { commandMessages } from './messages';
+import { commandErrorMessage } from './diagnostics';
 import { CommandRegistry } from './registry';
 import type { CommandContext, CommandLocale, CommandResult } from './types';
 
@@ -86,7 +87,7 @@ export class HeadlessCommandRunner {
       return {
         status: 'error',
         command,
-        messages: [...messages, error instanceof Error ? error.message : String(error)],
+        messages: [...messages, commandErrorMessage(error, this.locale)],
       };
     }
   }

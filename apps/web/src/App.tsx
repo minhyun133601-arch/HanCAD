@@ -15,6 +15,7 @@ import { useCanvasInteraction } from './useCanvasInteraction';
 import { useWorkspaceShortcuts } from './useWorkspaceShortcuts';
 import { useDrawingCommands } from './useDrawingCommands';
 import { InlineTextEditor } from './InlineTextEditor';
+import { errorMessage } from './error-presenter';
 
 export function App() {
   const [locale, setLocale] = useState<Locale>('ko-KR');
@@ -87,9 +88,7 @@ export function App() {
       session.print(messages.statusChanged(messages[item.label], enabled));
       session.refresh();
     } catch (error) {
-      session.print(
-        messages.commandFailure(error instanceof Error ? error.message : String(error)),
-      );
+      session.print(messages.commandFailure(errorMessage(error, messages)));
     }
     focusCommand();
   }
@@ -129,9 +128,7 @@ export function App() {
   }, [tools.active]);
   useEffect(() => {
     void platform.info().catch((error: unknown) => {
-      session.print(
-        messages.commandFailure(error instanceof Error ? error.message : String(error)),
-      );
+      session.print(messages.commandFailure(errorMessage(error, messages)));
     });
   }, [platform]);
 
@@ -290,6 +287,7 @@ export function App() {
       />
       <ProgressDialog
         messages={messages}
+        locale={locale}
         open={progressOpen}
         onClose={() => {
           setProgressOpen(false);

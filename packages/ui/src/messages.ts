@@ -271,6 +271,15 @@ export interface Messages {
   commandFailure: (value: string) => string;
   statusChanged: (name: string, enabled: boolean) => string;
   sysvarValuePrompt: (name: string, value: string) => string;
+  sysvarUnknown: (name: string) => string;
+  sysvarReadonly: (name: string) => string;
+  sysvarInvalid: (name: string, range: string) => string;
+  sysvarNotNumber: (name: string) => string;
+  sysvarNotToggleable: (name: string) => string;
+  sysvarMissingSymbol: (name: string, reference: string) => string;
+  sysvarRangeMinimum: (minimum: number) => string;
+  sysvarRangeMaximum: (maximum: number) => string;
+  sysvarRangeBetween: (minimum: number, maximum: number) => string;
   importFinished: (name: string, count: number) => string;
   exportFinished: (name: string) => string;
 }

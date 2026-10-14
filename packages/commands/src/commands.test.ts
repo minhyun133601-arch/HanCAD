@@ -72,4 +72,41 @@ describe('ZIP-first canonical commands and aliases', () => {
     const english = new HeadlessCommandRunner({ locale: 'en-US' });
     expect((await english.run('unknown')).messages[0]).toContain('Unknown command');
   });
+
+  it('localizes typed sysvar failures without changing values or creating undo entries', async () => {
+    for (const locale of ['ko-KR', 'en-US'] as const) {
+      const runner = new HeadlessCommandRunner({ locale });
+      const before = runner.database.serialize();
+      const cases = [
+        {
+          line: 'SETVAR OSMODE 99999',
+          korean: 'OSMODE의 값이 유효하지 않습니다 (0~32767).',
+          english: 'Invalid value for OSMODE (0–32767).',
+        },
+        {
+          line: 'SETVAR CMDACTIVE 1',
+          korean: 'CMDACTIVE은(는) 읽기 전용 시스템 변수입니다.',
+          english: 'CMDACTIVE is a read-only system variable.',
+        },
+        {
+          line: 'GETVAR nonexistent',
+          korean: '알 수 없는 시스템 변수 "NONEXISTENT".',
+          english: 'Unknown system variable "NONEXISTENT".',
+        },
+        {
+          line: 'SETVAR CLAYER "없는 도면층"',
+          korean: 'CLAYER의 값이 유효하지 않습니다. 이름 "없는 도면층"이(가) 도면에 없습니다.',
+          english: 'Invalid value for CLAYER. Name "없는 도면층" does not exist in the drawing.',
+        },
+      ];
+      for (const failure of cases) {
+        const result = await runner.run(failure.line);
+        expect(result.status).toBe('error');
+        expect(result.messages.at(-1)).toBe(locale === 'ko-KR' ? failure.korean : failure.english);
+      }
+      expect(runner.sysvars.get('OSMODE')).toBe(4133);
+      expect(runner.database.serialize()).toBe(before);
+      expect(runner.database.undoCount).toBe(0);
+    }
+  });
 });

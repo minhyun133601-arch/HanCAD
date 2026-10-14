@@ -4,6 +4,7 @@ import type { SystemVariables } from '@hancad/sysvars';
 import type { Messages } from '@hancad/ui';
 import { dimensionStyleFields } from './dimension-style';
 import type { DimensionStyleValues } from './dimension-style';
+import { errorMessage } from './error-presenter';
 
 export function DimensionStyleDialog({
   open,
@@ -62,9 +63,7 @@ export function DimensionStyleDialog({
             onApply(numeric, applySelected);
             onClose();
           } catch (failure) {
-            setError(
-              messages.commandFailure(failure instanceof Error ? failure.message : String(failure)),
-            );
+            setError(messages.commandFailure(errorMessage(failure, messages)));
           }
         }}
       >

@@ -2,6 +2,11 @@
 
 Generated from `packages/sysvars/src/registry.ts`. Only implemented definitions are listed; full header/500+ parity is pending.
 
+Typed validation failures carry a code and structured range/reason/reference
+details. Commands and UI display these in the current ko-KR/en-US language while
+preserving variable names and user-entered symbol names. This presentation change
+does not alter variable definitions, validation, storage or undo behavior.
+
 The basic-workflow follow-up reads APERTURE for snap search, AUTOSNAP bits 1/2
 for markers/tooltips, OSMODE including intersection bit 32, ORTHOMODE for unsnapped
 mouse constraints, PICKADD/PICKFIRST for selection/edit entry and live

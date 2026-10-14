@@ -286,6 +286,16 @@ export const ko: Messages = {
   commandFailure: (value) => `명령 실행 오류: ${value}`,
   statusChanged: (name, enabled) => `${name} ${enabled ? '켜기' : '끄기'}`,
   sysvarValuePrompt: (name, value) => `${name}에 대한 새 값 입력 <${value}>:`,
+  sysvarUnknown: (name) => `알 수 없는 시스템 변수 "${name}".`,
+  sysvarReadonly: (name) => `${name}은(는) 읽기 전용 시스템 변수입니다.`,
+  sysvarInvalid: (name, range) => `${name}의 값이 유효하지 않습니다${range}.`,
+  sysvarNotNumber: (name) => `${name}은(는) 숫자 변수가 아닙니다.`,
+  sysvarNotToggleable: (name) => `${name}은(는) 직접 전환할 수 없습니다.`,
+  sysvarMissingSymbol: (name, reference) =>
+    `${name}의 값이 유효하지 않습니다. 이름 "${reference}"이(가) 도면에 없습니다.`,
+  sysvarRangeMinimum: (minimum) => ` (${minimum} 이상)`,
+  sysvarRangeMaximum: (maximum) => ` (${maximum} 이하)`,
+  sysvarRangeBetween: (minimum, maximum) => ` (${minimum}~${maximum})`,
   importFinished: (name, count) =>
     `${name}: ${count}개 객체를 읽었습니다. 읽기 결과에서 생략·근사 내역을 확인하세요.`,
   exportFinished: (name) => `${name} 저장을 시작했습니다.`,

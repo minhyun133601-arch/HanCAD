@@ -11,7 +11,11 @@ window-state plugin, and serialization for native IPC. Geometry belongs in
 `packages/geom` and `crates/geometry-wasm`, not the desktop process.
 
 With the MSVC C++ build tools and Windows SDK installed, run `pnpm tauri dev`
-from the repository root. It starts the web development server on port 1420 and
+from the repository root. The shared read-only prerequisite check runs first,
+verifying installed tools, Rust targets and actual MSVC/SDK files and tools.
+If anything is missing, it exits with Korean repair instructions before starting
+Tauri, Vite or Cargo. Help/info commands remain available.
+Once ready, it starts the web development server on port 1420 and
 opens the native HanCAD window. `pnpm tauri build --no-bundle` builds a local
 executable without creating an installer. Packaging
 and installer configuration belong to Phase 25.

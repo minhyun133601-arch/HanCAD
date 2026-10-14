@@ -1,5 +1,64 @@
 # HanCAD progress
 
+## Active order: original Phase 00 through Phase 25 (2026-10-15)
+
+The latest user instruction supersedes the earlier feature-priority delivery
+order. Preserve all delivered features, but complete the earliest unfinished
+original phase before implementing the next one. Historical milestones below are
+verified subsets, not permission to skip original phase requirements.
+
+Current phase: **00 Bootstrap**. Baseline unit/compatibility checks pass (220/23).
+The first production E2E run passed 40, skipped one private-file case and failed
+one root navigation with an HTTP error; all six shell tests passed on immediate
+isolated rerun. That HTTP failure did not recur in the complete correction runs.
+
+| Milestone                             | Status  | Acceptance                                                                                                                           |
+| ------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 0.6 Ordered bootstrap readiness       | Done    | Original order and 26-phase docs; complete desktop preflight, early launch failure, bilingual progress and typed variable errors     |
+| 0.7 Remaining diagnostic localization | Pending | Structured importer errors/progress/warnings and renderer initialization failure presentation                                        |
+| 0.8 Original Phase 00 acceptance      | Pending | Full verification; actual native Korean shell launch, minimum size and saved position/size; audit remaining user-visible diagnostics |
+
+Native MSVC C++ tools and the Windows SDK are absent. The earlier automatic
+approval review rejected their installation with `blocked by policy`; no alternate
+installation route is being attempted. Native startup and window restoration stay
+unverified. Browser success cannot complete this acceptance item.
+
+Final checks pass: real WASM round trip, ESLint, formatting, strict TypeScript,
+223 unit tests, 29 compatibility tests and refreshed production build. The first
+integrated E2E run found one obsolete expectation that English progress still
+contained Korean. Correcting that expectation and rerunning the complete Edge
+suite passes 43 tests in 52.9 seconds; one opt-in private-file test is skipped.
+No private drawing benchmark was repeated. Consolidated
+`HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=1 pnpm verify` also passes all stages,
+including 43 Edge tests in 53.4 seconds and one opt-in skip.
+
+An actual 1280x720 dev-server browser session also passes Korean shell, physical
+command input, unknown command, 26-row progress and English progress checks, with
+no page errors. Visual evidence is ignored under `test-artifacts/bootstrap/`.
+`pnpm check:desktop` reports only MSVC/Windows SDK missing; `pnpm tauri dev`
+exits with repair instructions before CLI/Vite/Cargo and `pnpm tauri --help` works.
+No tool was installed, and no native launch was attempted or claimed.
+
+Exact next step: continue Phase 00 i18n with structured importer
+errors/progress/warnings and renderer initialization failure presentation; retain
+arbitrary external diagnostics until they have typed identities. In parallel the
+native prerequisite must be supplied before actual Korean shell, minimum size and
+saved size/position acceptance. Do not start new Phase 01 work or resume Phase 7.3
+while Phase 00 is incomplete. The completed progress/typed-variable localization
+does not certify all application text.
+
+Manual checks for this increment:
+
+1. Launch the current browser app and type `HANPROGRESS`, Enter. Check 26 phases,
+   then close the dialog and select English in the language selector.
+2. Type `HANPROGRESS`, Enter again. Features, limitations, phase names and details
+   use English. Close it and switch back to Korean to confirm the return path.
+3. In English, enter `SETVAR`, Enter, `OSMODE`, Enter, `99999`, Enter. The English
+   range error leaves OSMODE unchanged. Esc, `GETVAR`, Enter, `OSMODE`, Enter
+   reports 4133 in a new drawing/profile with defaults.
+4. Run `pnpm check:desktop` to inspect prerequisites; native acceptance is pending
+   until its missing entries are resolved and the actual window is exercised.
+
 ## Delivered continuation: essential editing and Korean text (2026-10-15)
 
 The user requested continuation according to the saved prompts. Resume from the
@@ -31,9 +90,10 @@ and foreign-document isolation tests pass. The tiny DWG cancellation fixture rac
 decoding completion; its test now pauses real reader input until cancellation,
 while separate tests verify actual DWG decoding and worker disposal.
 
-Exact next step: Phase 7.3 ROTATE/SCALE with Copy/Reference and one-command undo,
-then MIRROR/FILLET. Non-LINE trim targets, additional OFFSET joins/curved polylines
-and complete TEXT styles/justification/MTEXT remain explicit original-phase work.
+The next step recorded at delivery was Phase 7.3 ROTATE/SCALE, then MIRROR/FILLET.
+That feature-priority handoff is superseded by the active original-order section
+above. Non-LINE trim targets, additional OFFSET joins/curved polylines and complete
+TEXT styles/justification/MTEXT remain explicit original-phase work.
 
 ## Delivered follow-up: reliable basic drafting (2026-10-15)
 
@@ -134,48 +194,54 @@ See `FOLDERS.md` for the project layout.
 
 ## Verified runnable milestones
 
-| Milestone                                  | Status   | Evidence / remaining work                                                                                                                              |
-| ------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 0.1 Preserve baseline and organize prompts | Done     | Backup; original ZIP, 26 phases, five utilities and references; priority/continuation documents                                                        |
-| 0.2 Pin/install tools                      | Partial  | Node/pnpm/Rust/WASM/lint tooling ready; native MSVC/SDK missing                                                                                        |
-| 0.3 Strict browser workspace               | Done     | Typed packages, Korean/English chrome, physical command input, Platform boundary                                                                       |
-| 0.4 Full production verification           | Done     | 138 unit + 23 compatibility + 19 general Edge E2E; separate actual private DWG test                                                                    |
-| 0.5 Native desktop acceptance              | Deferred | C++ installation rejected by automatic approval review; native startup/window-state tests pending                                                      |
-| 1.1 Database journal and scoped variables  | Done     | Handles, atomic transactions, 1,000-operation undo/redo and composite data isolation                                                                   |
-| 1.2 Full schemas/sysvars                   | Partial  | HCD ZIP and 107 variables implemented; complete schemas and advanced UNDO/OOPS pending                                                                 |
-| 4/5/6.1 Basic interactive 2D               | Done     | LINE/CIRCLE/RECTANG/PLINE, coordinate/mouse input, preview, local Undo/Close, Esc semantics, pick/Shift/all selection, erase, shared command undo/redo |
-| 9.1 Local DWG/DXF opening                  | Done     | Official and actual large DWG; failure/cancel/replacement races; import reports and original file bytes preserved during session                       |
-| 9.2 Large browser recovery                 | Done     | 155,404,934-character cache in 297 IndexedDB chunks; actual reload restores 286,996 entities                                                           |
-| 14.1 PDF/image/vector downloads            | Done     | Actual PDF/PNG/JPG/SVG/DXF downloads; independent PDF/SVG/image validation and visual QA                                                               |
-| 25.1 Current main launcher and cleanup     | Done     | One CMD, automatic address opening, background server, obsolete active paths retired                                                                   |
+| Milestone                                  | Status  | Evidence / remaining work                                                                                                                              |
+| ------------------------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0.1 Preserve baseline and organize prompts | Done    | Backup; original ZIP, 26 phases, five utilities and references; priority/continuation documents                                                        |
+| 0.2 Pin/install tools                      | Partial | Node/pnpm/Rust/WASM/lint tooling ready; native MSVC/SDK missing                                                                                        |
+| 0.3 Strict browser workspace               | Done    | Typed packages, Korean/English chrome, physical command input, Platform boundary                                                                       |
+| 0.4 Full production verification           | Done    | 138 unit + 23 compatibility + 19 general Edge E2E; separate actual private DWG test                                                                    |
+| 0.5 Native desktop acceptance              | Pending | C++ installation rejected by automatic approval review; native startup/window-state tests pending                                                      |
+| 1.1 Database journal and scoped variables  | Done    | Handles, atomic transactions, 1,000-operation undo/redo and composite data isolation                                                                   |
+| 1.2 Full schemas/sysvars                   | Partial | HCD ZIP and 107 variables implemented; complete schemas and advanced UNDO/OOPS pending                                                                 |
+| 4/5/6.1 Basic interactive 2D               | Done    | LINE/CIRCLE/RECTANG/PLINE, coordinate/mouse input, preview, local Undo/Close, Esc semantics, pick/Shift/all selection, erase, shared command undo/redo |
+| 9.1 Local DWG/DXF opening                  | Done    | Official and actual large DWG; failure/cancel/replacement races; import reports and original file bytes preserved during session                       |
+| 9.2 Large browser recovery                 | Done    | 155,404,934-character cache in 297 IndexedDB chunks; actual reload restores 286,996 entities                                                           |
+| 14.1 PDF/image/vector downloads            | Done    | Actual PDF/PNG/JPG/SVG/DXF downloads; independent PDF/SVG/image validation and visual QA                                                               |
+| 25.1 Current main launcher and cleanup     | Done    | One CMD, automatic address opening, background server, obsolete active paths retired                                                                   |
 
 ## Full phase acceptance status
 
 Milestones are verified slices. None of the complete original phases is claimed
 accepted merely because a subset works.
 
-| Phase | Name                                                         | Status      |
-| ----- | ------------------------------------------------------------ | ----------- |
-| 00    | Bootstrap                                                    | In progress |
-| 01    | Database, sysvars, undo and documents                        | In progress |
-| 02    | Rendering/navigation                                         | In progress |
-| 03    | Commands/Korean IME                                          | In progress |
-| 04    | Coordinates/drafting aids                                    | In progress |
-| 05    | Selection/grips/clipboard                                    | In progress |
-| 06    | 2D drawing                                                   | In progress |
-| 07    | 2D modification                                              | In progress |
-| 08    | Layers/properties                                            | In progress |
-| 09    | DWG/DXF/recovery                                             | In progress |
-| 10    | Text/fonts                                                   | In progress |
-| 11    | Dimensions/leaders                                           | In progress |
-| 12    | Hatch/boundary/regions                                       | Planned     |
-| 13    | Blocks/references/images                                     | Planned     |
-| 14    | Layouts/plotting                                             | In progress |
-| 15    | Inquiry/settings                                             | In progress |
-| 16    | Advanced 2D                                                  | Planned     |
-| 17–23 | Dynamic blocks, constraints, automation/customization and 3D | Deferred    |
-| 24    | Performance/compatibility                                    | In progress |
-| 25    | Packaging/release                                            | In progress |
+| Phase | Name                                  | Status      |
+| ----- | ------------------------------------- | ----------- |
+| 00    | Bootstrap                             | In progress |
+| 01    | Database, sysvars, undo and documents | In progress |
+| 02    | Rendering/navigation                  | In progress |
+| 03    | Commands/Korean IME                   | In progress |
+| 04    | Coordinates/drafting aids             | In progress |
+| 05    | Selection/grips/clipboard             | In progress |
+| 06    | 2D drawing                            | In progress |
+| 07    | 2D modification                       | In progress |
+| 08    | Layers/properties                     | In progress |
+| 09    | DWG/DXF/recovery                      | In progress |
+| 10    | Text/fonts                            | In progress |
+| 11    | Dimensions/leaders                    | In progress |
+| 12    | Hatch/boundary/regions                | Planned     |
+| 13    | Blocks/references/images              | Planned     |
+| 14    | Layouts/plotting                      | In progress |
+| 15    | Inquiry/settings                      | In progress |
+| 16    | Advanced 2D                           | Planned     |
+| 17    | Dynamic blocks                        | Planned     |
+| 18    | Parametric constraints                | Planned     |
+| 19    | AutoLISP, scripts and DCL             | Planned     |
+| 20    | Customization and Express Tools       | Planned     |
+| 21    | 3D foundation                         | Planned     |
+| 22    | 3D modeling                           | Planned     |
+| 23    | Visualization and 3D documentation    | Planned     |
+| 24    | Performance/compatibility             | In progress |
+| 25    | Packaging/release                     | In progress |
 
 ## Earlier usable-CAD baseline verification on 2026-10-14
 

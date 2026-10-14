@@ -1,25 +1,27 @@
-# Prompt archive and implementation order
+# Original implementation order
 
-This folder contains the original supplied ZIP, organized without changing its
-requirements. `AGENTS.md` is the master specification, `HanCAD_prompts_full.md` is
+This folder preserves the supplied prompts without changing their requirements.
+`AGENTS.md` is the master specification, `HanCAD_prompts_full.md` is
 the combined version, `prompts/` contains all 26 phase prompts and five utility
 prompts, and `docs/` contains the original terminology and shortcut references.
 The original `README_KO.md` explains how to use the prompt set.
 
-On 2026-10-14 the user prioritized a usable simple 2D application. Advanced features,
-including 3D, remain accepted future scope but must not delay essential drawing.
-Overlapping behavior still follows these original prompts.
+The user's latest instruction on 2026-10-15 is to follow the supplied prompts in
+order. This supersedes the earlier essential-2D feature priorities. Original
+prompts and their acceptance requirements remain unchanged.
 
-| Priority | Prompt phases | Deliverable |
-| --- | --- | --- |
-| Now | 00–03, 09, 14 | Runnable main app, local DWG/DXF opening, view navigation, Korean command input, DXF saving, PDF/image output |
-| Now | 04–07 | Mouse/coordinate drawing, LINE/CIRCLE/RECTANG/PLINE, basic selection and erase, one-command undo/redo |
-| Now | 02, 11, 24–25 | Reliable browser launch, practical large-file navigation and initial dimension creation/basic styles |
-| Next | 04–08, 10–11 | Accurate snapping, move/copy, trim/extend/offset, text, complete dimension workflows and basic layer/property editing |
-| Later | 09, 12–16, 24–25 | Better real-file preservation, blocks/hatches, precise plotting, compatibility, performance and packaging |
-| Deferred | 17–23 | Dynamic blocks, constraints, automation/customization and 3D |
+1. Finish Phase 00 Bootstrap, including actual Tauri startup and window-state
+   acceptance. Browser verification alone is insufficient.
+2. Complete Phase 01, then 02, continuing numerically through Phase 25. Run each
+   phase's acceptance before starting implementation of the next phase.
+3. Preserve previously delivered later-phase features and their regression tests.
+   Those working subsets do not complete the containing original phases.
 
-This is a delivery order, not a claim that an entire phase is complete. The exact
-implemented command/options and verification evidence live in `../COMMANDS.md` and
-`../PROGRESS.md`; the in-app progress dialog reads `../development-progress.json`.
-Each usable increment refreshes the same main application.
+The current earliest gap is Phase 00. MSVC and the Windows SDK are missing, and
+their earlier automatic installation was rejected by approval review. Keep native
+acceptance pending until the prerequisite is available and the app is exercised.
+
+`../PROGRESS.md` records the active milestones, exact next step and test evidence.
+`NEXT_STEPS.md` is the continuation handoff. The in-app progress dialog reads
+`../development-progress.json`; it reports implementation status, not a different
+delivery order.

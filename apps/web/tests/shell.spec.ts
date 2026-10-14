@@ -195,3 +195,35 @@ test('focused ribbon controls keep their normal keyboard activation', async ({ p
   await page.keyboard.press('Space');
   await expect(page.getByRole('button', { name: '페이지 설정 관리자', exact: true })).toBeVisible();
 });
+
+test('English command diagnostics localize invalid, read-only, and unknown system variables', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('combobox', { name: '언어' }).selectOption('en-US');
+  const input = page.getByRole('textbox', { name: 'Type a command', exact: true });
+  const output = page.getByRole('log', { name: 'Command history' }).locator('.history-line').last();
+  const submit = async (value: string) => {
+    await input.focus();
+    await page.keyboard.type(value);
+    await page.keyboard.press('Enter');
+  };
+  await submit('SETVAR');
+  await submit('OSMODE');
+  await submit('99999');
+  await expect(output).toHaveText('Invalid value for OSMODE (0–32767).');
+  await page.keyboard.press('Escape');
+  await submit('GETVAR');
+  await submit('OSMODE');
+  await expect(output).toHaveText('OSMODE = 4133');
+  await submit('SETVAR');
+  await submit('CMDACTIVE');
+  await submit('1');
+  await expect(output).toHaveText('CMDACTIVE is a read-only system variable.');
+  await page.keyboard.press('Escape');
+  await submit('GETVAR');
+  await submit('NONEXISTENT');
+  await expect(output).toHaveText('Unknown system variable "NONEXISTENT".');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.command-prompt')).toHaveText('Command:');
+});

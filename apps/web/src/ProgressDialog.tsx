@@ -1,22 +1,25 @@
 import { useEffect, useRef } from 'react';
-import type { Messages } from '@hancad/ui';
-import progress from '../../../docs/development-progress.json';
+import type { Locale, Messages } from '@hancad/ui';
+import { getDevelopmentProgress, type ProgressStatus } from './development-progress';
 
 export function ProgressDialog({
   messages,
+  locale,
   open,
   onClose,
 }: {
   messages: Messages;
+  locale: Locale;
   open: boolean;
   onClose: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const progress = getDevelopmentProgress(locale);
   useEffect(() => {
     if (open && !dialog.current?.open) dialog.current?.showModal();
     else if (!open && dialog.current?.open) dialog.current?.close();
   }, [open]);
-  const statuses: Record<string, string> = {
+  const statuses: Record<ProgressStatus, string> = {
     'in-progress': messages.progressWorking,
     planned: messages.progressPlanned,
     complete: messages.progressComplete,

@@ -3,6 +3,8 @@
 These checks track reference behavior and unresolved compatibility. A registered
 command is not an implemented command.
 
+- [ ] Complete original Phase 00 native Korean shell startup, minimum 1280x720 and size/position restoration before new Phase 01 implementation.
+- [ ] Audit all user-visible diagnostics against typed ko-KR/en-US catalogs; bilingual progress content alone does not complete i18n.
 - [ ] Choose and document one installed AutoCAD reference release and template.
 - [ ] Verify Korean prompts against the reference release.
 - [ ] Verify the original shortcut table against the reference/user PGP profile.

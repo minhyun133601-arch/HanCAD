@@ -1,5 +1,27 @@
 # Architecture
 
+The active implementation sequence is the original Phase 00 through Phase 25.
+Previously delivered later-phase adapters remain supported, but their presence
+does not imply acceptance of the preceding phases.
+
+Desktop startup uses one read-only prerequisite inventory shared by
+`check:desktop` and the `tauri dev/build` wrapper. It inspects the installed tools,
+Rust targets, actual compiler/linker and SDK files before dispatching the Tauri
+CLI. A missing native prerequisite produces an actionable failure before Vite or
+Cargo starts; help/info remain available. This is discovery rather than a proof
+of native compilation or window-state restoration.
+
+Development progress data contains a mandatory ko-KR/en-US entry for each visible
+feature, limitation, phase name and phase detail. A typed frontend selector resolves
+the current locale; phase IDs and implementation statuses remain language-neutral.
+
+SystemVariableError retains its code and diagnostic fallback while carrying
+structured reason/range/reference details. A pure formatter accepts a typed
+message contract; command and UI catalogs provide the chosen locale without
+introducing a sysvars dependency on UI. Unknown external diagnostics retain their
+original text. Importer progress/warnings and renderer failures still need the
+same structured boundary before universal i18n can be accepted.
+
 The essential-editing continuation adds TrimExtendSession and OffsetSession.
 They borrow the immutable baseline and own replacement shadow states for accepted
 operations. The canvas displays the shadow while the recovery cache/database stay

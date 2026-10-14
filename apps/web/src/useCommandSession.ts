@@ -5,6 +5,7 @@ import { DrawingDatabase } from '@hancad/db';
 import { getSystemVariableDefinition, SystemVariables } from '@hancad/sysvars';
 import { getMessages, type Locale } from '@hancad/ui';
 import { restoreProfileVariables, subscribeProfileVariables } from './profile-storage';
+import { errorMessage } from './error-presenter';
 
 export interface HistoryLine {
   id: number;
@@ -159,7 +160,7 @@ export function useCommandSession(locale: Locale) {
       for (const output of result.messages) print(output);
       return result;
     } catch (error) {
-      print(messages.commandFailure(error instanceof Error ? error.message : String(error)));
+      print(messages.commandFailure(errorMessage(error, messages)));
       return { status: 'error', messages: [] };
     } finally {
       pending.current = false;

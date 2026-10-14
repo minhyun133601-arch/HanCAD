@@ -1,5 +1,36 @@
 # Decisions
 
+## 2026-10-15: Restore strict original phase order
+
+The latest user instruction explicitly requests the supplied prompt order. It
+supersedes the earlier practical feature priorities and the recorded Phase 7.3
+handoff. Keep existing later-phase functionality and tests; implement new work
+only in the earliest unfinished phase. Phase 00 remains open until its actual
+native acceptance and remaining i18n requirements are verified.
+
+Read-only inspection confirms no installed MSVC instance or Windows SDK on this
+PC. The existing automatic installation rejection (`blocked by policy`) is still
+respected. No packages are installed in this reconciliation. Bootstrap work can
+improve prerequisite detection and localize the progress dialog while native
+acceptance remains pending. Later diagnostic strings still require localization;
+neither these corrections nor browser tests complete the whole phase.
+
+Bootstrap localization also covers known SystemVariableError diagnostics in
+headless commands and browser UI. Keep validation and storage unchanged, retain
+Korean fallback diagnostics for existing API consumers, and carry reason/range/
+symbol-reference data to typed message catalogs. Unrecognized exceptions remain
+unchanged; do not translate arbitrary strings or erase their diagnostic content.
+Importer errors/progress/warnings and renderer failure presentation remain open
+Phase 00 i18n work. Their remaining hardcoded text prevents a universal-language
+acceptance claim even though normal shell and typed variable errors are bilingual.
+
+The pinned window-state 2.5.0 implementation restores and shows the initially
+hidden main window by default; the official
+[window-state usage](https://github.com/tauri-apps/plugins-workspace/tree/v2/plugins/window-state)
+documents automatic restoration after plugin registration. Keep the existing
+plugin setup rather than adding an unverified second restoration path. Actual
+startup and saved position/size require the missing native toolchain.
+
 ## 2026-10-15: Continue essential editing and single-line Korean text
 
 The continuation follows the exact next step in PROGRESS and the saved Phase 07

@@ -1,11 +1,10 @@
 ﻿# HanCAD
 
 HanCAD is the main application replacing the previous standalone CAD. The current
-priority is a usable simple 2D CAD. All 26 phases in
-`docs/prompt-source/HanCAD_prompts.zip` remain
-accepted future scope; overlapping behavior follows that specification. Advanced
-features, including 3D, are deferred while essential drafting is delivered.
-Each implemented workflow is provided in the current runnable build.
+instruction is to complete the original Phase 00 through Phase 25 in numeric
+order. Saved prompts are in `docs/prompt-source/prompts/`. Phase 00 native desktop
+acceptance is still pending; previously delivered 2D features remain available in
+the runnable browser build. A working feature subset does not complete its phase.
 
 ## Run the current app
 
@@ -22,6 +21,8 @@ The current app supports:
 - Linear, aligned, radius, diameter and angular dimensions, with smart DIM previews.
 - Basic DIMSTYLE settings, Korean dimension text and explicit selected-dimension updates.
 - Pick/Shift/Ctrl+A selection, erase, whole-command undo/redo and NEW.
+- Window/crossing selection, selected-object dragging, MOVE/COPY and DIST.
+- LINE TRIM/EXTEND, basic OFFSET and inline Korean TEXT/DTEXT creation.
 - Absolute/relative/polar/direct-distance input, F8 Ortho and initial F3 object snaps.
 - Local DWG/DXF opening, visible geometry, pan/zoom and Zoom Extents.
 - Retained display paths, offscreen culling and separate preview rendering for large drawings.
@@ -39,8 +40,8 @@ covers model-space 2D geometry; unsupported data is reported. The original bytes
 are retained during the session, but current DXF export is not a lossless round
 trip and DWG saving is not implemented. PDF currently embeds a high-resolution
 raster on A4. Vector/searchable PDF, exact plot scales and multi-layout plotting
-remain pending. Move/copy, trim/extend/offset and general text creation are the
-next essential 2D additions. Associative dimensions, leaders, tolerances, the full
+remain pending. Full modification options, curved-polyline offsets, text
+styles/justification and MTEXT remain incomplete. Associative dimensions, leaders, tolerances, the full
 DIMSTYLE manager, advanced selection/grips and drawing-command options
 remain pending. Unconnected drafting-aid controls are visibly unavailable.
 
@@ -76,6 +77,19 @@ using the same local server as the main launcher.
 Native Windows development additionally requires Microsoft C++ Build Tools and a
 Windows SDK. This prerequisite remains unavailable, so the native build and window
 state restoration have not been verified. The browser build is usable independently.
+
+`pnpm check:desktop` inventories tools, Rust targets, actual MSVC compiler/linker
+files and Windows SDK headers/libraries/tools, returning a nonzero exit code with
+`ready: false` when anything is missing. `pnpm tauri dev` and `pnpm tauri build`
+run this check before starting the frontend or native build. CLI help remains
+available without the native prerequisites.
+
+To provide the missing components, use Visual Studio Installer's **Desktop
+development with C++** workload with MSVC C++ build tools and a Windows 10/11 SDK,
+as described in the [Tauri Windows prerequisites](https://v2.tauri.app/start/prerequisites/#windows).
+Reopen the terminal, run `pnpm check:desktop`, then `pnpm tauri dev`. Native
+acceptance requires the Korean shell to open, enforce 1280x720 minimum size and
+restore its changed size/position after closing and reopening.
 
 The original app was backed up in `archive/pre-hancad-20261014.zip`. Obsolete
 standalone screens, scripts and launch files were moved into

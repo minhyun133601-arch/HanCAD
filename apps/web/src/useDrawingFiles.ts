@@ -26,6 +26,7 @@ import {
 } from './drafting-variables';
 import type { SysvarValue } from '@hancad/sysvars';
 import { canUseLocalDrawingCache, DrawingSessionTransfer } from './drawing-session';
+import { errorMessage } from './error-presenter';
 
 type ExportFormat = 'pdf' | 'png' | 'jpg' | 'svg' | 'dxf';
 interface DrawingFilesOptions {
@@ -314,7 +315,7 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
       print(
         error instanceof Error && error.name === 'AbortError'
           ? messages.importCancelled
-          : messages.commandFailure(error instanceof Error ? error.message : String(error)),
+          : messages.commandFailure(errorMessage(error, messages)),
       );
     } finally {
       if (controller.current === current) {

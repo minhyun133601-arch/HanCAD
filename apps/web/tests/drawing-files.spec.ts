@@ -277,7 +277,8 @@ test('a small Korean drawing exports readable text and circle geometry', async (
   await page.getByRole('button', { name: 'Development progress', exact: true }).click();
   const progress = page.getByRole('dialog', { name: 'Development progress', exact: true });
   await expect(progress.locator('tbody tr')).toHaveCount(26);
-  expect(await progress.locator('tbody tr').first().innerText()).toMatch(/[가-힣]/);
+  await expect(progress.locator('tbody tr').first()).toContainText('Bootstrap');
+  expect(await progress.locator('tbody tr').first().innerText()).not.toMatch(/[가-힣]/);
   await page.keyboard.press('Escape');
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('6');
 });

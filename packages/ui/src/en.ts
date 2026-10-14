@@ -287,6 +287,16 @@ export const en: Messages = {
   commandFailure: (value) => `Command error: ${value}`,
   statusChanged: (name, enabled) => `${name} ${enabled ? 'On' : 'Off'}`,
   sysvarValuePrompt: (name, value) => `Enter new value for ${name} <${value}>:`,
+  sysvarUnknown: (name) => `Unknown system variable "${name}".`,
+  sysvarReadonly: (name) => `${name} is a read-only system variable.`,
+  sysvarInvalid: (name, range) => `Invalid value for ${name}${range}.`,
+  sysvarNotNumber: (name) => `${name} is not a numeric variable.`,
+  sysvarNotToggleable: (name) => `${name} cannot be toggled directly.`,
+  sysvarMissingSymbol: (name, reference) =>
+    `Invalid value for ${name}. Name "${reference}" does not exist in the drawing.`,
+  sysvarRangeMinimum: (minimum) => ` (${minimum} or greater)`,
+  sysvarRangeMaximum: (maximum) => ` (${maximum} or less)`,
+  sysvarRangeBetween: (minimum, maximum) => ` (${minimum}–${maximum})`,
   importFinished: (name, count) =>
     `${name}: imported ${count} objects. Review the import report for skipped and approximated objects.`,
   exportFinished: (name) => `Started saving ${name}.`,

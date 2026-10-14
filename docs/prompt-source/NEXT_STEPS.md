@@ -1,4 +1,31 @@
-# Usable 2D CAD: handoff and next work
+# HanCAD: original-order handoff
+
+## Active next step
+
+The latest user instruction on 2026-10-15 supersedes the earlier feature-first
+handoff: complete Phase 00, then Phase 01 through Phase 25 in numeric order.
+Read `../PROGRESS.md`'s active-order section first. Preserve delivered later-phase
+features, but do not implement new later-phase work while an earlier phase is
+incomplete.
+
+Bootstrap milestone 0.6 is implemented and tested: original-order docs,
+complete desktop prerequisite diagnostics, bilingual progress content and typed
+system-variable error presentation. Continue milestone 0.7 by replacing
+raw importer errors/progress/warnings and renderer initialization failures with
+structured identities and locale-catalog presentation. Preserve diagnostic
+fallbacks and add actual language-switch/error-path coverage.
+
+MSVC C++ tools and the Windows SDK remain unavailable. Their
+earlier installation was rejected by automatic approval review with
+`blocked by policy`. Actual Tauri startup, minimum size and window-state
+restoration remain pending; do not substitute the browser launch for that proof.
+
+After those corrections, audit remaining user-visible text against typed locales
+and rerun complete verification. Resolve the native prerequisite and exercise
+actual Tauri startup/window restoration before marking Phase 00 complete.
+Phase 01 requires complete schemas/sysvars, geometry behavior, advanced Undo and
+document/HCD integration beyond the already-tested subsets. Start that phase only
+after original Phase 00 acceptance passes.
 
 ## Current delivery boundary
 
@@ -8,8 +35,9 @@ LINE TRIM/EXTEND with Shift/fences/local Undo, basic OFFSET and inline Korean
 TEXT/DTEXT. The complete Phase 07/10 acceptance remains pending. Use the latest
 verification section in `../PROGRESS.md`; the older benchmark below is historical.
 
-Exact next step: Phase 7.3 ROTATE/SCALE with Copy/Reference input and one-command
-undo, followed by MIRROR/FILLET. Expand TRIM beyond LINE targets, add curved and
+The historical feature handoff was Phase 7.3 ROTATE/SCALE with Copy/Reference and
+one-command undo, followed by MIRROR/FILLET. It is superseded by the active next
+step above. Later Phase 07 work must expand TRIM beyond LINE targets, add curved and
 additional-join OFFSET through the planned geometry engine, then complete TEXT
 justification/styles and existing-text editing. Keep main-app builds runnable and
 preserve current dimension/import/export/recovery regressions.
@@ -44,7 +72,9 @@ samples 33.0-402.4 ms, dimension creation/undo, all four IndexedDB checkpoints a
 2.222 s reload restoration of 286,996 visible objects. Full WebGL rendering,
 16 ms edit and complete dimension acceptance remain pending.
 
-## Essential work for the next increment
+## Historical essential-feature backlog
+
+This table is a retained backlog, not the active implementation order.
 
 | Order | Work | Original prompts | Acceptance evidence |
 | --- | --- | --- | --- |
@@ -60,10 +90,10 @@ Follow the original command names, aliases, prompt options and coordinate rules.
 Document any reference ambiguity in `../DECISIONS.md` and `../PARITY_CHECKLIST.md`.
 Do not claim a full phase is complete until every original acceptance item passes.
 
-## Deferred work
+## Later original phases
 
 Advanced blocks/hatches/references, constraints, automation, customization, 3D and
-native installer packaging follow the essential 2D work. The native Tauri build
+native installer packaging follow their original phase numbers. The native Tauri build
 also needs the unavailable MSVC/Windows SDK prerequisites; its startup/window
 restoration has not been accepted.
 
@@ -72,7 +102,8 @@ restoration has not been accepted.
 1. Read the root `AGENTS.md`, `../PROGRESS.md`, this document and the relevant
    original phase prompt in `prompts/`.
 2. Run the required calculation/I/O tests and UI smoke checks before changing code.
-3. Implement one usable feature group, keeping the only launcher working.
+3. Complete one small milestone within the earliest incomplete phase, keeping the
+   existing app runnable. Do not skip phases.
 4. Test real user-facing behavior and local exports; keep original files untouched
    and do not upload drawing data. Use ignored `test-artifacts/` for evidence.
 5. Update progress, commands, decisions and in-app status; rebuild the main app and

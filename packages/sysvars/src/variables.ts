@@ -3,15 +3,58 @@ import type { SymbolTableName } from '@hancad/db';
 import { getSystemVariableDefinition, systemVariableDefinitions } from './registry';
 import type { SystemVariableDefinition, SysvarValue } from './registry';
 
+export interface SystemVariableErrorDetails {
+  reason?: 'not-number' | 'not-toggleable' | 'missing-symbol';
+  reference?: string;
+  min?: number;
+  max?: number;
+}
+
+export interface SystemVariableErrorMessages {
+  sysvarUnknown: (name: string) => string;
+  sysvarReadonly: (name: string) => string;
+  sysvarInvalid: (name: string, range: string) => string;
+  sysvarNotNumber: (name: string) => string;
+  sysvarNotToggleable: (name: string) => string;
+  sysvarMissingSymbol: (name: string, reference: string) => string;
+  sysvarRangeMinimum: (minimum: number) => string;
+  sysvarRangeMaximum: (maximum: number) => string;
+  sysvarRangeBetween: (minimum: number, maximum: number) => string;
+}
+
 export class SystemVariableError extends Error {
   constructor(
     readonly variable: string,
     readonly code: 'unknown' | 'readonly' | 'invalid',
     message: string,
+    readonly details: SystemVariableErrorDetails = {},
   ) {
     super(message);
     this.name = 'SystemVariableError';
   }
+}
+
+/** Presentation stays at the command/UI boundary; validation has no locale. */
+export function formatSystemVariableError(
+  error: SystemVariableError,
+  messages: SystemVariableErrorMessages,
+): string {
+  const { variable, code, details } = error;
+  if (code === 'unknown') return messages.sysvarUnknown(variable);
+  if (code === 'readonly') return messages.sysvarReadonly(variable);
+  if (details.reason === 'not-number') return messages.sysvarNotNumber(variable);
+  if (details.reason === 'not-toggleable') return messages.sysvarNotToggleable(variable);
+  if (details.reason === 'missing-symbol')
+    return messages.sysvarMissingSymbol(variable, details.reference ?? '');
+  const range =
+    details.min !== undefined && details.max !== undefined
+      ? messages.sysvarRangeBetween(details.min, details.max)
+      : details.min !== undefined
+        ? messages.sysvarRangeMinimum(details.min)
+        : details.max !== undefined
+          ? messages.sysvarRangeMaximum(details.max)
+          : '';
+  return messages.sysvarInvalid(variable, range);
 }
 
 export class SystemVariableProfile {
@@ -63,7 +106,9 @@ export class SystemVariables {
   getNumber(name: string): number {
     const value = this.get(name);
     if (typeof value !== 'number')
-      throw new SystemVariableError(name, 'invalid', `${name}은(는) 숫자 변수가 아닙니다.`);
+      throw new SystemVariableError(name, 'invalid', `${name}은(는) 숫자 변수가 아닙니다.`, {
+        reason: 'not-number',
+      });
     return value;
   }
 
@@ -105,6 +150,7 @@ export class SystemVariables {
         definition.name,
         'invalid',
         `${definition.name}은(는) 직접 전환할 수 없습니다.`,
+        { reason: 'not-toggleable' },
       );
     this.set(definition.name, value);
     return value;
@@ -149,6 +195,7 @@ export class SystemVariables {
         name,
         'invalid',
         `${name}의 값이 유효하지 않습니다. 이름 "${value}"이(가) 도면에 없습니다.`,
+        { reason: 'missing-symbol', reference: value },
       );
     return symbol.name;
   }
@@ -184,6 +231,10 @@ export function validateSystemVariable(definition: SystemVariableDefinition, val
       definition.name,
       'invalid',
       `${definition.name}의 값이 유효하지 않습니다${range}.`,
+      {
+        ...(definition.min === undefined ? {} : { min: definition.min }),
+        ...(definition.max === undefined ? {} : { max: definition.max }),
+      },
     );
   }
 }
