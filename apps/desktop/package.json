@@ -1,0 +1,7 @@
+{
+  "name": "@hancad/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local Tauri desktop shell; shares the browser UI."
+}

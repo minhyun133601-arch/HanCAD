@@ -1,0 +1,19 @@
+[package]
+name = "hancad-desktop"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "HanCAD local desktop shell"
+
+[lib]
+name = "hancad_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "=2.7.2", features = [] }
+
+[dependencies]
+tauri = { version = "=2.12.3", features = [] }
+tauri-plugin-window-state = "=2.5.0"
+serde.workspace = true

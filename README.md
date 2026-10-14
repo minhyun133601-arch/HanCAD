@@ -1,0 +1,75 @@
+﻿# HanCAD
+
+HanCAD is the main application replacing the previous standalone CAD. The current
+priority is a usable simple 2D CAD. All 26 phases in
+`docs/prompt-source/HanCAD_prompts.zip` remain
+accepted future scope; overlapping behavior follows that specification. Advanced
+features, including 3D, are deferred while essential drafting is delivered.
+Each implemented workflow is provided in the current runnable build.
+
+## Run the current app
+
+Double-click **HanCAD 실행.cmd**. The launcher refreshes the
+web build, serves it locally at `http://127.0.0.1:1420` and opens that address in Edge.
+Node.js is already installed on this PC. The local server runs in the background,
+so closing the launch console does not disconnect the app. Build/start errors keep
+the console open for inspection; startup output is in `test-artifacts/local-server.log`.
+Refresh the browser after a new build to try the latest features.
+
+The current app supports:
+
+- LINE, CIRCLE, RECTANG and straight PLINE drafting with mouse/coordinate input.
+- Pick/Shift/Ctrl+A selection, erase, whole-command undo/redo and NEW.
+- Absolute/relative/polar/direct-distance input, F8 Ortho and initial F3 object snaps.
+- Local DWG/DXF opening, visible geometry, pan/zoom and Zoom Extents.
+- Import results listing skipped, approximated and unsupported objects.
+- Explicit LAYON for drawings whose layers are all off.
+- PDF, PNG, JPG, SVG and supported-entity DXF downloads.
+- Restoring the last displayed drawing and its import report after reload.
+- Browser-local IndexedDB fallback when a large drawing exceeds localStorage quota.
+- Korean/English chrome, IME-safe command input and typed system variable prompts.
+- An in-app development progress dialog covering all 26 phases.
+
+DWG input supports R13 through R2018-format files up to 64 MB and 500,000 normalized
+entities. Current conversion
+covers model-space 2D geometry; unsupported data is reported. The original bytes
+are retained during the session, but current DXF export is not a lossless round
+trip and DWG saving is not implemented. PDF currently embeds a high-resolution
+raster on A4. Vector/searchable PDF, exact plot scales and multi-layout plotting
+remain pending. Move/copy, trim/extend/offset, text and dimension creation are the
+next essential 2D additions. Advanced selection/grips and drawing-command options
+remain pending. Unconnected drafting-aid controls are visibly unavailable.
+
+## Develop and verify
+
+```powershell
+pnpm install
+pnpm dev:web
+pnpm build
+pnpm verify
+pnpm smoke
+pnpm check:desktop
+pnpm tauri dev
+```
+
+`pnpm dev:web` launches the live development server. `pnpm verify` builds
+WASM, checks lint/format/types, runs unit and compatibility tests, builds the web
+app and tests it in Edge. Set `HANCAD_PRODUCTION=1` to test the actual compiled app
+using the same local server as the main launcher.
+
+Native Windows development additionally requires Microsoft C++ Build Tools and a
+Windows SDK. This prerequisite remains unavailable, so the native build and window
+state restoration have not been verified. The browser build is usable independently.
+
+The original app was backed up in `archive/pre-hancad-20261014.zip`. Obsolete
+standalone screens, scripts and launch files were moved into
+`archive/retired-standalone/` and removed from active build paths. Required source
+was migrated to `packages/legacy-bridge/runtime/`; vendor source and licenses remain
+in `vendor/`. `pnpm test:compat` validates those migrated functions.
+
+The master prompt is `AGENTS.md`; all original prompts are organized separately in
+`docs/prompt-source/`, with the revised order in `docs/prompt-source/PRIORITIES.md`.
+The next-work handoff is `docs/prompt-source/NEXT_STEPS.md`.
+See `docs/PROGRESS.md` for implementation status and next
+steps. Planned phases are not completed features. Drawings are processed locally
+and are never uploaded. User drawings belong in ignored `test-corpus/`.

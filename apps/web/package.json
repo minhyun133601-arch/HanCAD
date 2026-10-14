@@ -1,0 +1,25 @@
+{
+  "name": "@hancad/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@hancad/commands": "workspace:*",
+    "@hancad/db": "workspace:*",
+    "@hancad/draft": "workspace:*",
+    "@hancad/input": "workspace:*",
+    "@hancad/legacy-bridge": "workspace:*",
+    "@hancad/render": "workspace:*",
+    "@hancad/io-pdf": "workspace:*",
+    "@hancad/sysvars": "workspace:*",
+    "@hancad/ui": "workspace:*",
+    "@tauri-apps/api": "2.12.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  }
+}

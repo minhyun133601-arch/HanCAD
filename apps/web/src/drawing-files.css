@@ -1,0 +1,296 @@
+.development-button {
+  margin-right: 10px;
+  padding: 4px 9px;
+  font-size: 11px;
+  border: 1px solid #566371;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.drafting-usage {
+  position: absolute;
+  bottom: 127px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1050px, calc(100% - 180px));
+  text-align: center;
+  font-size: 10px;
+  color: #a4b7c8;
+  padding: 4px 8px;
+  background: #213143d9;
+  border: 1px solid #4c6174;
+  border-radius: 3px;
+  pointer-events: none;
+}
+.draft-selection-count {
+  position: absolute;
+  top: 10px;
+  left: 40%;
+  font-size: 11px;
+  color: #b4d8f4;
+}
+.foundation-note {
+  pointer-events: auto;
+}
+.foundation-note button {
+  margin-top: 12px;
+  padding: 9px 17px;
+  border: 1px solid #5a8db5;
+  border-radius: 4px;
+  background: #2f5c7d;
+  color: #e3f1fb;
+  font-size: 12px;
+}
+.canvas-host {
+  bottom: 127px;
+  height: auto;
+}
+.layout-placeholder-note {
+  position: absolute;
+  top: 32px;
+  left: 14px;
+  font-size: 11px;
+  color: #ccb68a;
+  max-width: calc(100% - 360px);
+}
+.drawing-tools {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: #c2ccd5;
+}
+.drawing-tools button {
+  padding: 5px 8px;
+  border: 1px solid #586b7c;
+  border-radius: 3px;
+  background: #2e4152;
+  font-size: 11px;
+}
+.drawing-import-report {
+  position: absolute;
+  top: 45px;
+  right: 14px;
+  width: 285px;
+  max-height: calc(100% - 190px);
+  overflow: auto;
+  background: #273747ed;
+  border: 1px solid #5b7690;
+  border-radius: 4px;
+  padding: 9px 12px;
+  box-shadow: 0 3px 12px #0003;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #c4d3e0;
+}
+.drawing-import-report summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.drawing-import-report > summary {
+  color: #e2edf6;
+}
+.drawing-import-report > summary span {
+  float: right;
+  font-size: 10px;
+  color: #a5c1d8;
+}
+.drawing-import-report dl {
+  margin: 10px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 12px;
+}
+.drawing-import-report dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.drawing-import-report dt {
+  color: #96acbf;
+}
+.drawing-import-report dd {
+  margin: 0;
+  color: #ecd5a7;
+}
+.drawing-import-report ul {
+  margin: 4px 0 7px;
+  padding-left: 16px;
+}
+.drawing-import-report p {
+  margin: 10px 0 0;
+  color: #c4b48e;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.drawing-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  background: #182838dc;
+  color: #e2edf6;
+  font-size: 13px;
+}
+.hidden-layers-notice {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 480px;
+  padding: 18px 22px;
+  text-align: center;
+  border: 1px solid #667e95;
+  border-radius: 5px;
+  background: #2b3c4ef2;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #d6e1eb;
+}
+.hidden-layers-notice button {
+  padding: 7px 12px;
+  border: 1px solid #5e8fb4;
+  border-radius: 3px;
+  background: #315c7c;
+  color: #e4eff7;
+  font-size: 12px;
+}
+.drawing-loading button {
+  padding: 7px 13px;
+  border: 1px solid #7492ac;
+  border-radius: 4px;
+  background: #394e62;
+  font-size: 12px;
+}
+.development-dialog {
+  width: min(950px, calc(100vw - 32px));
+  max-height: 86vh;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #687f94;
+  border-radius: 7px;
+  background: #263442;
+  color: #dbe6ee;
+}
+.development-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.development-dialog::backdrop {
+  background: #07121dcc;
+}
+.development-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #465a6b;
+}
+.development-dialog-header h2 {
+  margin: 0 0 7px;
+  font-size: 18px;
+}
+.development-dialog-header p {
+  margin: 0;
+  font-size: 11px;
+  color: #9eb2c4;
+}
+.development-dialog-header button {
+  padding: 5px 10px;
+  border: 1px solid #61768a;
+  border-radius: 3px;
+}
+.development-dialog-content {
+  min-height: 0;
+  overflow: auto;
+  padding: 18px 24px;
+  max-height: calc(86vh - 86px);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.development-dialog-content h3 {
+  font-size: 13px;
+  color: #b9d8f0;
+  margin: 20px 0 8px;
+}
+.development-dialog-content p {
+  font-size: 11px;
+  color: #9eb2c4;
+}
+.development-dialog-content ul {
+  padding-left: 19px;
+  margin: 7px 0 14px;
+}
+.development-dialog-content > details {
+  padding: 8px 12px;
+  border: 1px solid #65715f;
+  color: #d4c294;
+  border-radius: 3px;
+}
+.development-dialog-content summary {
+  cursor: pointer;
+}
+.development-summary {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.development-summary span {
+  padding: 5px 10px;
+  border: 1px solid #4c647a;
+  border-radius: 3px;
+  background: #2e455a;
+  font-size: 11px;
+}
+.development-summary b {
+  margin-left: 5px;
+  color: #b7d9f2;
+}
+.development-dialog table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.development-dialog td,
+.development-dialog th {
+  padding: 8px 9px;
+  border-bottom: 1px solid #445a6f;
+  text-align: left;
+  vertical-align: top;
+}
+.development-dialog thead th {
+  background: #30495e;
+  position: sticky;
+  top: -18px;
+  color: #b9d8f0;
+}
+.development-dialog tbody th {
+  min-width: 180px;
+  font-weight: 500;
+}
+.development-dialog td:first-child {
+  font:
+    11px/1.8 Consolas,
+    monospace;
+  color: #b0c9dd;
+}
+.development-dialog td:nth-child(3) {
+  white-space: nowrap;
+  color: #b6cee3;
+}
+@media (max-width: 1350px) {
+  .workspace-name {
+    max-width: 180px;
+    overflow: hidden;
+  }
+  .drawing-import-report {
+    width: 250px;
+  }
+}

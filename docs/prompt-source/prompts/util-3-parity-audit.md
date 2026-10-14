@@ -1,0 +1,2 @@
+Parity audit for these commands: <COMMAND NAMES>.
+Compare our implementation with Autodesk's official documentation (Korean-edition wording) for: every prompt string and its order, every option and keyword letter, defaults and remembered values, related system variables, grips, dynamic input, command preview, right-click menus, undo behavior, and error messages. Write a gap table in docs/parity/<command>.md, fix every gap, add a headless test for each prompt path, and report the fixed gaps to me in Korean.

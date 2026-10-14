@@ -1,0 +1,10 @@
+[package]
+name = "hancad-geometry-wasm"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Dependency-free double-precision geometry boundary for HanCAD"
+
+[lib]
+crate-type = ["cdylib", "rlib"]

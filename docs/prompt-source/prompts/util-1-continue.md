@@ -1,0 +1,1 @@
+Continue the current phase. Read AGENTS.md and docs/PROGRESS.md, run the full test suite, then resume exactly at the next step recorded in docs/PROGRESS.md. Follow the Standard Phase Protocol. When you stop, report to me in Korean: what you finished, what is left in this phase, and how I can test the new parts by hand.

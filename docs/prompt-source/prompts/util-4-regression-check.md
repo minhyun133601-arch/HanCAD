@@ -1,0 +1,1 @@
+Run a full regression pass: pnpm verify, the DXF round-trip corpus, renderer golden images, performance benchmarks, and an end-to-end script that draws, modifies, dimensions, hatches, saves, reopens, and plots a sample drawing. Fix every failure, then report the results to me in Korean as a table (area, status, notes).

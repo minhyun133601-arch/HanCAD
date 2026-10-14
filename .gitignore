@@ -1,0 +1,17 @@
+test-artifacts/
+node_modules/
+*.log
+.tools/
+**/dist/
+**/target/
+**/generated/
+packages/geom/wasm/
+apps/web/public/runtime/
+playwright-report/
+test-results/
+test-corpus/
+archive/pre-hancad-*.zip
+archive/retired-standalone/
+*.hcd
+배합실배치도12월16일.dwg
+HanCAD 실행.lnk

@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main",
+  "description": "Local HanCAD main window and its persisted window state.",
+  "windows": ["main"],
+  "local": true,
+  "permissions": ["core:default", "window-state:default"]
+}

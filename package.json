@@ -1,0 +1,50 @@
+{
+  "name": "hancad",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "HanCAD desktop and browser CAD workspace",
+  "packageManager": "pnpm@12.11.2",
+  "scripts": {
+    "dev:web": "node scripts/build-runtime.mjs && vite --config apps/web/vite.config.ts",
+    "build:web": "node scripts/build-runtime.mjs && vite build --config apps/web/vite.config.ts",
+    "preview:web": "vite preview --config apps/web/vite.config.ts",
+    "build:wasm": "node scripts/build-wasm.mjs",
+    "build": "pnpm build:wasm && pnpm build:web",
+    "build:desktop": "pnpm tauri build",
+    "tauri": "node scripts/run-tauri.mjs",
+    "check:desktop": "node scripts/check-desktop.mjs",
+    "lint": "eslint apps packages --max-warnings 0",
+    "format": "prettier --write apps packages crates docs/*.md docs/*.json *.json *.yaml *.toml scripts/*.mjs eslint.config.mjs playwright.config.ts vitest.config.ts",
+    "format:check": "prettier --check apps packages docs/*.md docs/*.json *.json *.yaml scripts/*.mjs eslint.config.mjs playwright.config.ts vitest.config.ts",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "test": "pnpm test:unit && pnpm test:compat",
+    "smoke": "pnpm test:e2e",
+    "verify": "pnpm build:wasm && pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build:web && pnpm test:e2e",
+    "test:compat": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@tauri-apps/api": "2.12.3",
+    "@tauri-apps/cli": "2.12.2",
+    "@tauri-apps/plugin-window-state": "2.5.0",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
+    "prettier": "3.9.10",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.4"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

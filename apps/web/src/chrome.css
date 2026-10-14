@@ -1,0 +1,246 @@
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 1000px;
+}
+.title-bar {
+  height: 36px;
+  flex: 0 0 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #252b32;
+  border-bottom: 1px solid #171d23;
+}
+.app-mark {
+  width: 51px;
+  height: 36px;
+  flex-shrink: 0;
+  color: white;
+  background: #34729f;
+  font:
+    600 13px 'Segoe UI',
+    sans-serif;
+}
+.app-mark:hover {
+  background: #4685b1;
+}
+.file-menu-host {
+  position: relative;
+  height: 36px;
+}
+.application-file-menu {
+  position: absolute;
+  top: 36px;
+  left: 0;
+  z-index: 30;
+  width: 230px;
+  padding: 6px;
+  background: #303a46;
+  border: 1px solid #697789;
+  box-shadow: 2px 5px 16px #0008;
+}
+.application-file-menu button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px;
+  text-align: left;
+  font-size: 12px;
+}
+.application-file-menu button:nth-child(3) {
+  border-top: 1px solid #566371;
+  margin-top: 5px;
+}
+.quick-access {
+  display: flex;
+  height: 30px;
+  align-items: center;
+  gap: 2px;
+}
+.icon-button {
+  width: 29px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 2px;
+}
+.tool-icon {
+  width: 31px;
+  height: 33px;
+  color: #9bcbed;
+  flex-shrink: 0;
+}
+.small-icon {
+  width: 18px;
+  height: 19px;
+  color: #ced8e3;
+}
+.workspace-name {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 11px;
+  padding-left: 12px;
+  border-left: 1px solid var(--border);
+  white-space: nowrap;
+  color: #d7dde5;
+}
+.window-title {
+  flex: 1;
+  text-align: center;
+  padding-right: 68px;
+  font-size: 12px;
+  color: #c9d0d9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.language-select {
+  height: 24px;
+  margin-right: 12px;
+  padding: 1px 7px;
+  font-size: 11px;
+  background: #343d47;
+  border: 1px solid #596473;
+  border-radius: 3px;
+}
+.ribbon {
+  background: var(--chrome);
+  flex: 0 0 151px;
+}
+.ribbon-tabs {
+  display: flex;
+  height: 30px;
+  gap: 1px;
+  padding-left: 51px;
+  background: #252c34;
+  border-bottom: 1px solid #4d5660;
+}
+.ribbon-tab {
+  height: 30px;
+  padding: 0 13px;
+  font-size: 12px;
+  white-space: nowrap;
+  border-radius: 3px 3px 0 0;
+}
+.ribbon-tab.active {
+  background: var(--chrome-light);
+  border: 1px solid #56606a;
+  border-bottom: 0;
+  color: #fff;
+}
+.ribbon-body {
+  display: flex;
+  height: 121px;
+  overflow: hidden;
+  padding-left: 5px;
+  border-bottom: 1px solid #171f27;
+}
+.ribbon-panel {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border-right: 1px solid #525a64;
+  padding: 8px 7px 0;
+  min-width: 85px;
+}
+.panel-tools {
+  display: flex;
+  gap: 3px;
+  min-height: 77px;
+  align-items: flex-start;
+}
+.ribbon-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 47px;
+  max-width: 105px;
+  height: 75px;
+  padding: 6px 6px;
+  font-size: 11px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+}
+.ribbon-tool:hover {
+  border-color: #748393;
+}
+.ribbon-tool span {
+  display: block;
+  max-width: 103px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.panel-label {
+  height: 23px;
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bac3cd;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.layer-placeholder {
+  height: 21px;
+  min-width: 133px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  margin-top: -14px;
+  color: #c3cbd5;
+}
+.layer-placeholder i {
+  width: 10px;
+  height: 10px;
+  background: white;
+  border: 1px solid #8993a0;
+}
+.file-tabs {
+  flex: 0 0 32px;
+  height: 32px;
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+  padding-left: 12px;
+  background: #20262d;
+  border-bottom: 1px solid #141b22;
+}
+.file-tab {
+  height: 29px;
+  min-width: 167px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 24px;
+  font-size: 12px;
+  border-radius: 6px 6px 0 0;
+}
+.file-tab.active {
+  color: #f1f5f9;
+  background: #3d4855;
+  border: 1px solid #566371;
+  border-bottom: 0;
+}
+.file-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #75b7e8;
+}
+.add-tab {
+  width: 31px;
+  height: 28px;
+  font-size: 22px;
+  font-weight: 300;
+  color: #bac4ce;
+}

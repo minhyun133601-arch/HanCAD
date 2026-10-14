@@ -1,0 +1,49 @@
+@import './chrome.css';
+@import './workspace.css';
+@import './status.css';
+@import './drawing-files.css';
+
+:root {
+  font-family: 'Malgun Gothic', 'Segoe UI', sans-serif;
+  color: #e3e7ed;
+  background: #212830;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --chrome: #303740;
+  --chrome-light: #3b424c;
+  --border: #49515b;
+  --muted: #a5aeb9;
+  --accent: #74b6ee;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+button,
+select {
+  font: inherit;
+  color: inherit;
+}
+button {
+  border: 0;
+  cursor: pointer;
+  background: transparent;
+}
+button:hover {
+  background: #4a5563;
+}
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+button:active {
+  background: #426d94;
+}

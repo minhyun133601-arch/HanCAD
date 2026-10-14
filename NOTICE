@@ -1,0 +1,10 @@
+HanCAD bootstrap contains original project code and uses third-party tools whose
+licenses are distributed with their packages. The retained standalone CAD vendor
+engine has separate original source and license material in vendor/.
+
+@cadview/core 0.5.0: MIT
+@cadview/dwg 0.2.0 and included LibreDWG: GPL-3.0-only
+
+Keep the original license and source material when distributing those engines.
+This file does not replace the full third-party licenses. No Autodesk fonts,
+icons, templates or bundled customization files are distributed with HanCAD.
