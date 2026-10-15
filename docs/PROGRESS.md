@@ -19,6 +19,71 @@ Graphics 730 (integrated), 1920x1080 at 60 Hz, 32 GB RAM.
 Each milestone ends with lint, typecheck, unit/compat tests, a production build,
 the Edge E2E suite and a real browser check, then a `feat(phase2.N)` commit.
 
+### Session handoff (2026-10-15, paused by the user after 2.1)
+
+Done: 2.1 committed (`32974dd`): `packages/render/src/style/` (aci.ts, lineweight.ts,
+linetype.ts, hancad-iso-lin.ts, style.test.ts), exported from the render index;
+decisions and parity items recorded. The working tree was clean at the pause.
+
+Exact next step: implement 2.2 in `packages/render/src/` with this design (agreed
+while planning, not yet written):
+
+- `display/types.ts`: renderer-neutral `DisplayEntity { id, geometry, layer,
+color: EntityColor, linetype, linetypeScale, lineweight, transparency, plinegen }`.
+  2D fast-path geometry: `line`, `arc` (cx, cy, r, start, sweep CCW; circle = full
+  sweep), `polyline` (Float64Array stride 5: x, y, bulge, startWidth, endWidth;
+  closed), `point`, `xline`/`ray`, `text` (baseline-left, em height, rotation,
+  `left`/`center` alignment, lines 1.25 em apart), `composite` (dimension parts +
+  filled arrow polygons), and generic `curve` (geom CurveGeometry: ellipse,
+  spline, non-planar arcs, projected to XY by dropping Z).
+- `display/tessellate.ts`: writes into a `GeometrySink` (begin/vertex/end run,
+  point, triangle, text) with a model-unit chord tolerance (0.25 px at the LOD
+  scale); arc segments `ceil(sweep / (2 acos(1 - tol/r)))`, minimum 4 for circles,
+  cap ~8192 (above the cap the renderer tessellates the visible part per view).
+  PLINEGEN 0 = one run per polyline segment, 1 = one run for the whole polyline.
+  Wide polylines become filled trapezoids with joint fills (FILLMODE 0 = outline).
+  Splines/ellipses: adaptive subdivision from geom `splineEvaluation`/
+  `conicEvaluation` starting at `splineBreakpoints`.
+- `display/point-symbols.ts`: PDMODE base 0 dot, 1 none, 2 plus, 3 X, 4 tick, +32
+  circle, +64 square; PDSIZE > 0 absolute, 0 = 5% and < 0 = |PDSIZE|% of the view
+  height captured at the last regen.
+- `display/infinite.ts` XLINE/RAY clipped to the view; `display/bounds.ts`;
+  `display/distance.ts` exact pick distance (inside text box/arrow/wide fill = 0;
+  ties go to the later entity, matching the legacy hit test).
+- `spatial/rtree.ts`: dynamic R-tree (rbush-style OMT bulk load, insert, remove,
+  search) and `pick(point, tolerance)` returning candidates sorted by distance.
+- `sources/legacy-source.ts`: legacy Y-down state to WCS (y -> -y; legacy arc
+  clockwise=true becomes CCW from -end to -start, otherwise CCW from -start to
+  -end; text rotation negated); hex colors -> true color; dimensions via
+  `cadEngine.dimensionGeometry`. `sources/database-source.ts`: native DB entity
+  fields through geom `geometryFromFields`, colors via `colorFromDxf`,
+  transparency via `transparencyFromDxf`.
+- Unit tests for every module, then mark 2.2 Done and commit `feat(phase2.2)`.
+
+Agreed 2.3 renderer design: WebGL2 context (fail with the existing localized
+renderer alert when unavailable); spatial chunks (STR bulk partition) each with a
+double-precision origin uploaded as `origin - eye` per draw (floating origin);
+vertex = x, y (float32 relative to chunk origin), run distance, run length, entity
+slot (20 bytes); thin 1 px pass with indexed GL_LINES, instanced quads only for
+objects wider than 1 px when LWDISPLAY is on; per-entity RGBA32UI texture (color
+mode/RGB, layer, linetype, lineweight, transparency, hidden/selected flags, draw
+rank) plus layer and linetype (R32F, 12 elements) textures so layer/selection
+changes never rebuild buffers; draw order via depth = rank (transparent objects in
+a sorted second pass); linetype dashes in the fragment shader using the 2.1 A-fit
+with dashes widened by half a pixel; per-chunk LOD re-tessellation within a frame
+budget; GPU glyph-atlas text (Arial/Malgun Gothic like the legacy drawer); the
+legacy adapter diffs entity ids per snapshot for incremental updates; previews,
+snap markers, selection box, crosshair stay on the Canvas2D overlay. The public
+`CadCanvasSurface` API keeps legacy Y-down coordinates. E2E tests that read the
+main canvas with `getContext('2d')` (shell.spec.ts background pixel,
+drawing-files.spec.ts ink count, diagnostic-i18n.spec.ts main-context failure)
+must switch to a renderer readback hook / `webgl2` failure injection.
+DEVSTRESS (2.6) fills a renderer-only, non-undoable dev dataset (the legacy model
+caps at 500,000 entities and journals JSON). Linetype definitions come from the
+native DB LTYPE table (fields from `linetypeFields`), so the legacy runtime must
+keep optional entity/layer `linetype`, `lineweight`, `linetypeScale`, ACI and
+transparency fields and drafting must apply CELTYPE/CELWEIGHT/CECOLOR/CELTSCALE.
+
 ## Completed phase: Phase 01 database foundations (2026-10-15)
 
 Phase 01 is complete. All four original acceptance checks pass and every build
