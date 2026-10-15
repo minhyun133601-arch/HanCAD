@@ -7,6 +7,9 @@ command is not an implemented command.
 - [ ] Audit all user-visible diagnostics against typed ko-KR/en-US catalogs; bilingual progress content alone does not complete i18n.
 - [ ] Compare localized importer line/limit errors, warnings after language switch/recovery and current-language cancellation against the installed Korean reference; preserve arbitrary external diagnostics verbatim.
 - [ ] Verify renderer startup failure retains the shell and command input in both locales; injected browser context failures do not prove native WebView2 behavior.
+- [ ] Phase 02 colors: compare the ACI table in the Select Color dialog (8, 9, 10-19, 109, 249 and 250-255) and how AutoCAD adjusts dark grays close to the model background; HanCAD only inverts color 7/top-level ByBlock.
+- [ ] Phase 02 lineweights: measure model-space pixel widths with LWDISPLAY on for 0.13/0.25/0.30/0.50/0.70/1.00/2.11 mm at the default display scale (HanCAD: 1/1/2/2/3/4/9 px).
+- [ ] Phase 02 linetypes: compare DASHED/CENTER/HIDDEN/PHANTOM dash placement on lines, arcs, circles (start angle) and polylines with PLINEGEN 0/1, short objects drawn continuous, DOT end dashes and LTSCALE/CELTSCALE/MSLTSCALE with an annotation scale.
 - [ ] Choose and document one installed AutoCAD reference release and template.
 - [ ] Verify Korean prompts against the reference release.
 - [ ] Verify the original shortcut table against the reference/user PGP profile.

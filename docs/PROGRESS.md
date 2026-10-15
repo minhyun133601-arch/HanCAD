@@ -1,5 +1,24 @@
 # HanCAD progress
 
+## Active phase: Phase 02 rendering engine and view navigation (started 2026-10-15)
+
+Source: `docs/prompt-source/prompts/phase-02-rendering-engine-and-view-navigation.md`.
+Baseline before changes: strict TypeScript, ESLint, 315 unit and 30 compatibility
+tests pass. Reference PC for the 60 fps budget: Intel Core i3-12100 with Intel UHD
+Graphics 730 (integrated), 1920x1080 at 60 Hz, 32 GB RAM.
+
+| Milestone                          | Status  | Acceptance                                                                                                                                                                    |
+| ---------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2.1 Display style foundations      | Done    | Exact ACI table, true color, ByLayer/ByBlock, color 7 by background, transparency; lineweight resolution and pixels; original .lin resource, parser, scales, end-dash fitting |
+| 2.2 Tessellation and spatial index | Planned | Adaptive arcs/circles/ellipses/bulges/widths/NURBS, POINT PDMODE/PDSIZE, XLINE/RAY clipping, text/dimension display geometry, dynamic R-tree with exact pick distances        |
+| 2.3 WebGL2 renderer core           | Planned | High-DPI chunked floating-origin buffers, style textures, thin/wide/linetype shaders, fills, GPU text, draw order, transparency, incremental updates replace Canvas2D         |
+| 2.4 View navigation commands       | Planned | ZOOM All/Center/Dynamic/Extents/Previous/Scale nX nXP/Window/Object/Realtime, PAN, -PAN, previous stack, VTENABLE/VTDURATION/VTFPS, REGEN/REGENALL/REDRAW/REDRAWALL           |
+| 2.5 Cursor and drafting aids       | Planned | Crosshair CURSORSIZE, pickbox PICKBOX, hidden outside canvas, UCS icon UCSICON, grid GRIDMODE/GRIDUNIT/GRIDMAJOR/GRIDDISPLAY/GRIDSTYLE, background option                     |
+| 2.6 Stress, precision and goldens  | Planned | DEVSTRESS N, 60 fps pan/zoom at 1,000,000 on the reference PC, no jitter at (200000000, 450000000), 20+ golden reference scenes, docs and phase report                        |
+
+Each milestone ends with lint, typecheck, unit/compat tests, a production build,
+the Edge E2E suite and a real browser check, then a `feat(phase2.N)` commit.
+
 ## Completed phase: Phase 01 database foundations (2026-10-15)
 
 Phase 01 is complete. All four original acceptance checks pass and every build

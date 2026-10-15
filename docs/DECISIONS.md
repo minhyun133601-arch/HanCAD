@@ -1,5 +1,38 @@
 # Decisions
 
+## 2026-10-15: Phase 02 display styles (milestone 2.1)
+
+Public ACI tables disagree (Autodesk forum posts, gohtx, ezdxf captures of AutoCAD
+2020 screens that already include background contrast adjustments). HanCAD uses the
+published construction that matches the AutoCAD 2020 sheet capture exactly for
+indices 10-249: 24 hues at 15 degrees, full and pale (halfway to white) variants at
+levels 1, 0.65, 0.5, 0.3 and 0.15, truncated. Fixed values are 1-7 primaries,
+8 = 128,128,128, 9 = 192,192,192 and the 250-255 ramp 51, 91, 132, 173, 214, 255.
+Color 7 and top-level ByBlock display white on a dark background and black on a
+light one (luminance threshold 0.5). True colors are never inverted. AutoCAD's
+additional contrast adjustment of dark ACI grays near the background is not
+applied; it is a parity item.
+
+Lineweights are hundredths of a millimeter with -1 ByLayer, -2 ByBlock and
+-3 Default. A top-level ByBlock entity and Default resolve through LWDEFAULT.
+Autodesk documents only that model-space lineweights are drawn in pixels in
+proportion to the plotted width and that 0 is one pixel. HanCAD draws 0.25 mm and
+below as one pixel and adds a pixel per started 0.25 mm (0.30 = 2, 0.70 = 3,
+1.00 = 4, 2.11 = 9), times the display scale (default 1). LWDISPLAY 0 draws all
+objects one pixel wide.
+
+`packages/render/src/style/hancad-iso-lin.ts` is an original metric linetype
+library with the conventional names and dash patterns (inch patterns x 25.4, ISO
+patterns in millimeters); no Autodesk file is bundled. The parser reads AutoCAD
+.lin syntax with ';;' comments, case-insensitive names, up to 12 elements and
+shape/text elements, which are retained for Phase 10 display. Dash fitting follows
+the documented A alignment: whole patterns fill the run and the first dash is split
+so the run starts and ends with equal dashes of at least half the first dash
+(lengthened as needed); a run shorter than one pattern draws continuous. Pattern
+scale = LTSCALE x object scale (CELTSCALE at creation) x 1/CANNOSCALEVALUE when
+MSLTSCALE is 1 in model space. Transparency uses DXF 440 encoding (0x02000000 |
+alpha explicit, 0x01000000 ByBlock, absent = ByLayer), clamped to 0-90 percent.
+
 ## 2026-10-15: Phase 01 milestone 1.6 closes the original build list
 
 Runtime values come from typed providers rather than invented defaults. DATE and
