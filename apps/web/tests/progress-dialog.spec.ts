@@ -16,7 +16,8 @@ test('progress features, limitations and all 26 phases follow the shell language
   await expect(korean.getByRole('heading', { name: '지금 사용할 수 있는 기능' })).toBeVisible();
   await expect(korean.locator('tbody tr')).toHaveCount(26);
   await expect(korean.locator('tbody th').first()).toHaveText('기반 구축');
-  await expect(korean.locator('tbody tr').first()).toContainText('Windows 네이티브 빌드 도구');
+  await expect(korean.locator('tbody tr').first()).toContainText('MSVC·Windows SDK');
+  await expect(korean.locator('tbody tr').first()).toContainText('진행 중');
   await korean.locator('summary').click();
   await expect(korean.locator('details li')).toHaveCount(6);
   await expect(korean.locator('details')).toContainText('벡터·정밀 축척 출력');
@@ -31,9 +32,8 @@ test('progress features, limitations and all 26 phases follow the shell language
   ).toBeVisible();
   await expect(english.locator('tbody tr')).toHaveCount(26);
   await expect(english.locator('tbody th').first()).toHaveText('Bootstrap');
-  await expect(english.locator('tbody tr').first()).toContainText(
-    'Native Windows build prerequisites',
-  );
+  await expect(english.locator('tbody tr').first()).toContainText('await MSVC and the Windows SDK');
+  await expect(english.locator('tbody tr').first()).toContainText('In progress');
   await expect(english.locator('.development-dialog-content > ul > li')).toHaveCount(9);
   await expect(english).toContainText('TRIM/EXTEND Quick and Standard modes');
   if ((await english.locator('details').getAttribute('open')) === null)

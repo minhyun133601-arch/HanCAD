@@ -2,6 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { SystemVariables } from '@hancad/sysvars';
 import { getMessages } from '@hancad/ui';
 import { errorMessage } from './error-presenter';
+import { CanvasContextError } from '@hancad/render';
+import { PdfExportError } from '@hancad/io-pdf';
+import { CommandInputError } from '@hancad/commands';
+import { InputValueError } from '@hancad/editor';
 
 describe('browser domain error presentation', () => {
   it('presents typed sysvar errors with their reason and range in the active UI language', () => {
@@ -46,5 +50,32 @@ describe('browser domain error presentation', () => {
     const messages = getMessages('en-US');
     expect(errorMessage(new Error('원본 진단'), messages)).toBe('원본 진단');
     expect(errorMessage('external failure', messages)).toBe('external failure');
+  });
+
+  it('uses current catalogs for renderer, export and command/input failures while retaining user values', () => {
+    const korean = getMessages('ko-KR'),
+      english = getMessages('en-US');
+    for (const error of [
+      new CanvasContextError('main'),
+      new CanvasContextError('preview'),
+      new CanvasContextError('cache'),
+      new PdfExportError('canvas-unavailable'),
+      new PdfExportError('invalid-jpeg'),
+      new CommandInputError('invalid-point', 'LASTPOINT'),
+      new InputValueError('finite-number-required'),
+    ]) {
+      expect(errorMessage(error, korean)).toMatch(/[가-힣]/);
+      expect(errorMessage(error, english)).not.toMatch(/[가-힣]/);
+      expect(errorMessage(error, english)).not.toBe(errorMessage(error, korean));
+    }
+    // Legacy runtime errors can originate in a VM rather than this Error realm.
+    const importedError: unknown = {
+      name: 'CadImportError',
+      message: 'legacy fallback',
+      diagnostic: { namespace: 'cad-import', code: 'dxf-number', line: 14 },
+    };
+    expect(errorMessage(importedError, english)).toContain('14');
+    expect(errorMessage(importedError, korean)).toContain('14');
+    expect(errorMessage(importedError, english)).not.toMatch(/[가-힣]/);
   });
 });

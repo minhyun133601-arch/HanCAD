@@ -1,3 +1,5 @@
+import type { CadImportDiagnostic, CadImportProgressDiagnostic } from './diagnostics';
+
 export interface CadPoint {
   x: number;
   y: number;
@@ -117,6 +119,8 @@ export interface CadImportReport {
   approximated: number;
   unsupported: { type: string; count: number }[];
   warnings: string[];
+  /** Aligned with warnings; null preserves an arbitrary external diagnostic verbatim. */
+  warningDiagnostics?: (CadImportDiagnostic | null)[];
 }
 export interface CadFile {
   name: string;
@@ -126,6 +130,7 @@ export interface CadFile {
 export interface CadReadOptions {
   signal?: AbortSignal;
   onProgress?: (message: string) => void;
+  onDiagnosticProgress?: (diagnostic: CadImportProgressDiagnostic) => void;
   timeoutMs?: number;
 }
 export interface CadReadResult {

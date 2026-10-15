@@ -9,12 +9,16 @@ import type {
   LegacyCadState,
 } from './types';
 import { CAD_ENTITY_LIMIT } from './limits';
+import { CadImportError } from './diagnostics';
 
 export function getLegacyRuntime(): LegacyCadRuntime {
   const runtime = (globalThis as typeof globalThis & { HeechangTool?: LegacyCadRuntime })
     .HeechangTool;
   if (!runtime?.core.cadEngine || !runtime.core.cadImporters || !runtime.core.cadExporters) {
-    throw new Error('로컬 CAD 실행 모듈을 불러오지 못했습니다. 앱을 다시 열어 주세요.');
+    throw new CadImportError(
+      { namespace: 'cad-import', code: 'runtime-unavailable' },
+      '로컬 CAD 실행 모듈을 불러오지 못했습니다. 앱을 다시 열어 주세요.',
+    );
   }
   return runtime;
 }
@@ -32,12 +36,21 @@ export function normalizeCadState(value: unknown): LegacyCadState {
     !('entities' in value) ||
     !Array.isArray(value.entities)
   )
-    throw new Error('저장된 도면 데이터가 올바르지 않습니다.');
+    throw new CadImportError(
+      { namespace: 'cad-import', code: 'stored-invalid' },
+      '저장된 도면 데이터가 올바르지 않습니다.',
+    );
   if (value.entities.length > CAD_ENTITY_LIMIT)
-    throw new Error(`도면 객체가 지원 한도 ${CAD_ENTITY_LIMIT.toLocaleString()}개를 초과합니다.`);
+    throw new CadImportError(
+      { namespace: 'cad-import', code: 'entity-limit', limit: CAD_ENTITY_LIMIT },
+      `도면 객체가 지원 한도 ${CAD_ENTITY_LIMIT.toLocaleString()}개를 초과합니다.`,
+    );
   const state = getLegacyRuntime().core.cadEngine.normalizeState(value);
   if (state.entities.length !== value.entities.length)
-    throw new Error('저장된 도면 객체 검증에 실패했습니다.');
+    throw new CadImportError(
+      { namespace: 'cad-import', code: 'stored-entities-invalid' },
+      '저장된 도면 객체 검증에 실패했습니다.',
+    );
   return state;
 }
 
@@ -48,8 +61,15 @@ export async function readCadFile(
 ): Promise<CadReadResult> {
   checkCancelled(options.signal);
   if (!file.size || file.size > 64 * 1024 * 1024)
-    throw new Error('64 MB 이하의 DWG / DXF 파일을 선택해 주세요.');
-  if (!/\.(dwg|dxf)$/i.test(file.name)) throw new Error('DWG 또는 DXF 파일만 가져올 수 있습니다.');
+    throw new CadImportError(
+      { namespace: 'cad-import', code: 'file-size' },
+      '64 MB 이하의 DWG / DXF 파일을 선택해 주세요.',
+    );
+  if (!/\.(dwg|dxf)$/i.test(file.name))
+    throw new CadImportError(
+      { namespace: 'cad-import', code: 'file-extension' },
+      'DWG 또는 DXF 파일만 가져올 수 있습니다.',
+    );
   const original = await file.arrayBuffer();
   checkCancelled(options.signal);
   const result = await getLegacyRuntime().core.cadImporters.read(
@@ -112,5 +132,9 @@ export function readableCadColor(color: string): string {
     .join('')}`;
 }
 function checkCancelled(signal?: AbortSignal): void {
-  if (signal?.aborted) throw new DOMException('가져오기를 취소했습니다.', 'AbortError');
+  if (signal?.aborted)
+    throw new CadImportError(
+      { namespace: 'cad-import', code: 'cancelled' },
+      '가져오기를 취소했습니다.',
+    );
 }

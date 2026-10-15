@@ -231,6 +231,14 @@ Registered canonical names and aliases from the supplied reference. Registration
 These commands are registered by the application against the same command registry.
 They are working slices, not complete AutoCAD parity claims.
 
+OPEN progress and known importer errors/warnings follow the current locale,
+including warnings restored from drawing recovery. Arbitrary external diagnostics
+remain unchanged. Export command failures use the same app presenter as direct
+UI errors, including language changes before an asynchronous image callback.
+`diagnostic-i18n.spec.ts` covers those paths and protects drawing/history state.
+Headless SETVAR point/string and UNDO/REDO count failures use typed bilingual
+diagnostics; command/input validation tests verify failure leaves history intact.
+
 | Command                         | Implemented options                                                             | Verification                                                                            |
 | ------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | EXPORTPDF                       | Visible supported geometry on A4 raster PDF                                     | Actual downloads, strict PDF parsing and independent render                             |

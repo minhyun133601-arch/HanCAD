@@ -8,21 +8,24 @@ Read `../PROGRESS.md`'s active-order section first. Preserve delivered later-pha
 features, but do not implement new later-phase work while an earlier phase is
 incomplete.
 
-Bootstrap milestone 0.6 is implemented and tested: original-order docs,
-complete desktop prerequisite diagnostics, bilingual progress content and typed
-system-variable error presentation. Continue milestone 0.7 by replacing
-raw importer errors/progress/warnings and renderer initialization failures with
-structured identities and locale-catalog presentation. Preserve diagnostic
-fallbacks and add actual language-switch/error-path coverage.
+Bootstrap milestones 0.6 and 0.7 are implemented and tested: original-order docs,
+complete desktop prerequisite diagnostics, bilingual progress/system-variable
+errors and structured importer errors/progress/warnings. Current-language
+presentation survives live reads, asynchronous export failures and warning-cache
+recovery; renderer startup failures retain the shell and release resources.
+The latest full verification passes 235 unit, 30 compatibility and 50 production
+Edge tests, with one opt-in private-file skip. Continue Phase 00 milestone 0.8
+with actual native acceptance after the missing prerequisites are supplied.
 
 MSVC C++ tools and the Windows SDK remain unavailable. Their
 earlier installation was rejected by automatic approval review with
 `blocked by policy`. Actual Tauri startup, minimum size and window-state
 restoration remain pending; do not substitute the browser launch for that proof.
 
-After those corrections, audit remaining user-visible text against typed locales
-and rerun complete verification. Resolve the native prerequisite and exercise
-actual Tauri startup/window restoration before marking Phase 00 complete.
+Browser text/error-path audit and 1280x720 visual checks pass. Resolve the native
+prerequisite and exercise actual Korean Tauri startup, minimum 1280x720, and saved
+position/size restoration. Inspect native runtime diagnostics in both languages
+and rerun complete verification after any correction before marking Phase 00 complete.
 Phase 01 requires complete schemas/sysvars, geometry behavior, advanced Undo and
 document/HCD integration beyond the already-tested subsets. Start that phase only
 after original Phase 00 acceptance passes.

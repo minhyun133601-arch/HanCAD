@@ -1,3 +1,5 @@
+import { PdfExportError } from './errors';
+
 export interface RasterPdfOptions {
   orientation?: 'auto' | 'portrait' | 'landscape';
   marginMm?: number;
@@ -21,7 +23,7 @@ export function createRasterPdf(
     jpeg[jpeg.length - 2] !== 0xff ||
     jpeg[jpeg.length - 1] !== 0xd9
   )
-    throw new Error('PDF에 넣을 JPEG 이미지가 올바르지 않습니다.');
+    throw new PdfExportError('invalid-jpeg');
   const landscape =
     options.orientation === 'landscape' ||
     (options.orientation !== 'portrait' && imageWidth >= imageHeight);
@@ -29,7 +31,7 @@ export function createRasterPdf(
   const pageHeight = ((landscape ? 210 : 297) * 72) / 25.4;
   const margin = ((options.marginMm ?? 10) * 72) / 25.4;
   if (!Number.isFinite(margin) || margin < 0 || margin * 2 >= Math.min(pageWidth, pageHeight))
-    throw new Error('PDF 여백이 올바르지 않습니다.');
+    throw new PdfExportError('invalid-pdf-margin');
   const scale = Math.min(
     (pageWidth - margin * 2) / imageWidth,
     (pageHeight - margin * 2) / imageHeight,

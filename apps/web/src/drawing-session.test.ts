@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { DrawingDatabase } from '@hancad/db';
 import { createEmptyCadState } from '@hancad/legacy-bridge';
+import { formatCadImportWarning, getMessages } from '@hancad/ui';
 import { createTestRuntime } from '../../../packages/legacy-bridge/src/test-runtime';
 import {
   canUseLocalDrawingCache,
@@ -152,4 +153,61 @@ it('round-trips remembered text height and rejects damaged cache values without 
   expect(parsed.state).toEqual(input.state);
   expect(parseDrawingSession(JSON.stringify(session())).draftingVariables).toBeUndefined();
   expect(() => parseDrawingSession(JSON.stringify({ ...input, draftingVariables: [] }))).toThrow();
+});
+
+it('retains typed warning identities through recovery and preserves legacy/external text', () => {
+  const report = {
+    format: 'DXF',
+    version: '',
+    imported: 1,
+    sourceEntities: 1,
+    skipped: 0,
+    approximated: 0,
+    unsupported: [],
+    warnings: ['unknown old warning', 'external 한글 diagnostic'],
+  };
+  const legacy = parseDrawingSession(JSON.stringify({ ...session(), report }));
+  expect(legacy.report).toEqual(report);
+  expect(
+    formatCadImportWarning(report.warnings[1]!, undefined, getMessages('en-US').importDiagnostics),
+  ).toBe('external 한글 diagnostic');
+  const typed = {
+    ...report,
+    warningDiagnostics: [{ namespace: 'cad-import', code: 'unit-unspecified' }, null],
+  };
+  const restored = parseDrawingSession(JSON.stringify({ ...session(), report: typed }));
+  expect(restored.report).toEqual(typed);
+  const warning = restored.report!;
+  const english = formatCadImportWarning(
+    warning.warnings[0]!,
+    warning.warningDiagnostics?.[0],
+    getMessages('en-US').importDiagnostics,
+  );
+  const korean = formatCadImportWarning(
+    warning.warnings[0]!,
+    warning.warningDiagnostics?.[0],
+    getMessages('ko-KR').importDiagnostics,
+  );
+  expect(english).not.toMatch(/[가-힣]/);
+  expect(korean).toMatch(/[가-힣]/);
+  expect(english).not.toBe(report.warnings[0]);
+  expect(
+    formatCadImportWarning(
+      warning.warnings[1]!,
+      warning.warningDiagnostics?.[1],
+      getMessages('en-US').importDiagnostics,
+    ),
+  ).toBe(report.warnings[1]);
+  for (const warningDiagnostics of [
+    [],
+    [null],
+    [{ namespace: 'cad-import', code: 'dxf-number', line: -1 }, null],
+    [{ namespace: 'foreign', code: 'unit-unspecified' }, null],
+  ]) {
+    expect(() =>
+      parseDrawingSession(
+        JSON.stringify({ ...session(), report: { ...typed, warningDiagnostics } }),
+      ),
+    ).toThrow('Invalid stored import diagnostics');
+  }
 });

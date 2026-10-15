@@ -107,9 +107,31 @@ test('DWG worker failure, timeout and cancellation dispose worker and object URL
     const controller=new AbortController();
     const promise=ctx.HeechangTool.core.cadImporters.read(namedFile('AC1015junk','broken.dwg'),{signal:controller.signal,timeoutMs:100});
     if(outcome==='cancel') setTimeout(()=>controller.abort(),10);
-    await assert.rejects(promise,outcome==='cancel'?{name:'AbortError'}:/실패|제한 시간/);
+    await assert.rejects(promise,error=>{
+      assert.equal(error.name,outcome==='cancel'?'AbortError':'CadImportError');
+      assert.equal(error.diagnostic.namespace,'cad-import');
+      assert.equal(error.diagnostic.code,{error:'dwg-decode-failed',timeout:'dwg-timeout',cancel:'cancelled'}[outcome]);
+      if(outcome==='error') assert.equal(error.diagnostic.detail,'corrupt');
+      return true;
+    });
     assert.equal(terminated,1);assert.equal(revoked,1);
   }
+});
+test('entity capacity propagation uses its identity even with English fallback and external phrases are not fatal', () => {
+  const ctx=setup(), original=ctx.HeechangTool.core.cadEngine;
+  const input=dxf(record('LINE',[10,0,20,0,11,10,21,10])+record('CIRCLE',[10,0,20,0,40,1]));
+  ctx.HeechangTool.core.cadEngine={...original,normalizeEntity(raw){
+    if(raw.type==='circle') throw Object.assign(new Error('Entity capacity exceeded'),{name:'CadImportError',diagnostic:{namespace:'cad-import',code:'entity-limit',limit:1}});
+    return original.normalizeEntity(raw);
+  }};
+  assert.throws(()=>ctx.HeechangTool.core.cadImporters.parseDxf(input),error=>error.message==='Entity capacity exceeded'&&error.diagnostic.code==='entity-limit');
+  ctx.HeechangTool.core.cadEngine={...original,normalizeEntity(raw){
+    if(raw.type==='circle') throw new Error('초과합니다: arbitrary external detail');
+    return original.normalizeEntity(raw);
+  }};
+  const {report}=ctx.HeechangTool.core.cadImporters.parseDxf(input);
+  assert.equal(report.imported,1);assert.equal(report.skipped,1);
+  assert.deepEqual(plain(report.warningDiagnostics[0]),{namespace:'cad-import',code:'entity-skipped',entityType:'CIRCLE',reason:'초과합니다: arbitrary external detail'});
 });
 test('real official LibreDWG DWG fixture converts offline and imports editable entities', {timeout:90000}, async () => {
   const blobs=new Map();let next=0,terminated=0;

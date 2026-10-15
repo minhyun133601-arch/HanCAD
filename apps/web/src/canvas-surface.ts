@@ -13,7 +13,12 @@ export class CanvasSurface {
     this.canvas.setAttribute('data-testid', 'drawing-canvas');
     this.canvas.className = 'drawing-canvas';
     host.append(this.canvas);
-    this.renderer = new CadCanvasSurface(this.canvas, options);
+    try {
+      this.renderer = new CadCanvasSurface(this.canvas, options);
+    } catch (error) {
+      this.canvas.remove();
+      throw error;
+    }
   }
 
   setLabel(label: string): void {

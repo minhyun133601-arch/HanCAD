@@ -1,5 +1,6 @@
 import { ko } from './ko';
 import { en } from './en';
+import type { CadImportMessages } from './import-diagnostics';
 
 export type Locale = 'ko-KR' | 'en-US';
 
@@ -158,6 +159,21 @@ export interface Messages {
   exportSvg: string;
   exportDxf: string;
   importing: string;
+  importDiagnostics: CadImportMessages;
+  rendererUnavailable: string;
+  rendererFailure: (reason: string) => string;
+  rendererContextUnavailable: (kind: 'main' | 'preview' | 'cache') => string;
+  exportNoVisibleEntities: string;
+  exportInvalidImageSize: string;
+  exportCanvasUnavailable: string;
+  exportImageConversionFailed: string;
+  exportInvalidJpeg: string;
+  exportInvalidPdfMargin: string;
+  commandHistoryCountInvalid: string;
+  commandInvalidPointValue: (name: string) => string;
+  commandStringValueRequired: (name: string) => string;
+  inputStringRequired: string;
+  inputFiniteNumberRequired: string;
   cancelImport: string;
   importReport: string;
   sourceObjects: string;

@@ -8,6 +8,7 @@ import {
 } from '@hancad/legacy-bridge';
 import type { LegacyCadState } from '@hancad/legacy-bridge';
 import { createRasterPdf } from './raster-pdf';
+import { PdfExportError } from './errors';
 
 export type CadExportFormat = 'pdf' | 'png' | 'jpg' | 'svg' | 'dxf';
 export interface CadExportResult {
@@ -19,8 +20,7 @@ export async function exportCadDrawing(
   state: LegacyCadState,
   format: CadExportFormat,
 ): Promise<CadExportResult> {
-  if (!visibleCadEntities(state).length)
-    throw new Error('변환할 도면 객체가 없습니다. 먼저 DWG / DXF 파일을 여세요.');
+  if (!visibleCadEntities(state).length) throw new PdfExportError('no-visible-entities');
   const fileName = `${exportBaseName(state.name)}.${format}`;
   if (format === 'svg')
     return {
@@ -49,7 +49,7 @@ export function createDrawingRaster(
   maximumDimension = 2400,
 ): HTMLCanvasElement {
   if (!Number.isFinite(maximumDimension) || maximumDimension < 128 || maximumDimension > 8192)
-    throw new Error('이미지 크기가 올바르지 않습니다.');
+    throw new PdfExportError('invalid-image-size');
   const bounds = drawingBounds(state);
   const modelWidth = Math.max(1, bounds.maxX - bounds.minX);
   const modelHeight = Math.max(1, bounds.maxY - bounds.minY);
@@ -59,7 +59,7 @@ export function createDrawingRaster(
   canvas.width = Math.max(128, Math.ceil(modelWidth * scale + margin * 2));
   canvas.height = Math.max(128, Math.ceil(modelHeight * scale + margin * 2));
   const context = canvas.getContext('2d');
-  if (!context) throw new Error('도면 이미지 캔버스를 만들지 못했습니다.');
+  if (!context) throw new PdfExportError('canvas-unavailable');
   context.fillStyle = '#ffffff';
   context.fillRect(0, 0, canvas.width, canvas.height);
   context.translate(margin, margin);
@@ -92,7 +92,7 @@ export function exportBaseName(name: string): string {
 function canvasBlob(canvas: HTMLCanvasElement, type: string, quality?: number): Promise<Blob> {
   return new Promise((resolve, reject) =>
     canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error('도면 이미지 변환에 실패했습니다.'))),
+      (blob) => (blob ? resolve(blob) : reject(new PdfExportError('image-conversion-failed'))),
       type,
       quality,
     ),

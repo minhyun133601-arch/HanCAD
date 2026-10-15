@@ -8,6 +8,7 @@ import type { CadCanvasOptions, CadView } from './pointer-controller';
 import { drawSnapOverlay } from './snap-overlay';
 import { drawSelectionOverlay } from './selection-overlay';
 import type { CadSnapKind, CadSnapMarker } from './snap-overlay';
+import { CanvasContextError } from './errors';
 export type { CadSnapKind } from './snap-overlay';
 export type {
   CadCanvasOptions,
@@ -25,7 +26,7 @@ export class CadCanvasSurface {
   private width = 1;
   private height = 1;
   private observer: ResizeObserver | undefined;
-  private readonly pointer: CadPointerController;
+  private readonly pointer!: CadPointerController;
   private disposed = false;
   private preview: readonly CadEntity[] = [];
   private selected = new Set<string>();
@@ -51,33 +52,38 @@ export class CadCanvasSurface {
       layer.setAttribute('aria-hidden', 'true');
       canvas.parentElement.append(layer);
     } else this.base = layer;
-    this.resize();
-    if (options.observeResize !== false && typeof ResizeObserver === 'function') {
-      this.observer = new ResizeObserver(() => {
-        this.resize();
-        this.render();
+    try {
+      this.resize();
+      if (options.observeResize !== false && typeof ResizeObserver === 'function') {
+        this.observer = new ResizeObserver(() => {
+          this.resize();
+          this.render();
+        });
+        this.observer.observe(canvas);
+      }
+      this.pointer = new CadPointerController(canvas, options, {
+        view: () => this.getView(),
+        viewport: () => ({ x: this.width, y: this.height }),
+        changeView: (view) => {
+          this.view = view;
+          this.requestRender(true);
+        },
+        worldPoint: (point) => this.worldPoint(point),
+        pick: (point) => this.pick(point),
+        coordinates: (point) => {
+          if (typeof requestAnimationFrame === 'function' && options.onCoordinates) {
+            this.pendingCoordinates = point;
+            this.requestRender();
+          } else options.onCoordinates?.(point);
+        },
+        fit: () => this.fit(),
+        invalidate: () => this.requestRender(),
       });
-      this.observer.observe(canvas);
+      this.render();
+    } catch (error) {
+      this.dispose();
+      throw error;
     }
-    this.pointer = new CadPointerController(canvas, options, {
-      view: () => this.getView(),
-      viewport: () => ({ x: this.width, y: this.height }),
-      changeView: (view) => {
-        this.view = view;
-        this.requestRender(true);
-      },
-      worldPoint: (point) => this.worldPoint(point),
-      pick: (point) => this.pick(point),
-      coordinates: (point) => {
-        if (typeof requestAnimationFrame === 'function' && options.onCoordinates) {
-          this.pendingCoordinates = point;
-          this.requestRender();
-        } else options.onCoordinates?.(point);
-      },
-      fit: () => this.fit(),
-      invalidate: () => this.requestRender(),
-    });
-    this.render();
   }
 
   setDrawing(state: LegacyCadState, options: { fit?: boolean } = {}): void {
@@ -189,7 +195,7 @@ export class CadCanvasSurface {
     const started = performance.now();
     const mainContext = this.canvas.getContext('2d');
     let context = mainContext;
-    if (!context) throw new Error('2D 캔버스를 사용할 수 없습니다.');
+    if (!context) throw new CanvasContextError('main');
     const ratio = this.canvas.width / this.width;
     if (this.overlay) {
       this.canvas.dataset.baseReused = this.baseDirty ? '0' : '1';
@@ -200,12 +206,12 @@ export class CadCanvasSurface {
         this.overlay.height = this.canvas.height;
       }
       context = this.overlay.getContext('2d');
-      if (!context) throw new Error('미리 보기 캔버스를 사용할 수 없습니다.');
+      if (!context) throw new CanvasContextError('preview');
       context.setTransform(1, 0, 0, 1, 0, 0);
       context.clearRect(0, 0, this.overlay.width, this.overlay.height);
     } else if (this.base) {
       const baseContext = this.base.getContext('2d');
-      if (!baseContext) throw new Error('도면 캐시 캔버스를 사용할 수 없습니다.');
+      if (!baseContext) throw new CanvasContextError('cache');
       if (this.base.width !== this.canvas.width || this.base.height !== this.canvas.height) {
         this.base.width = this.canvas.width;
         this.base.height = this.canvas.height;
@@ -263,7 +269,7 @@ export class CadCanvasSurface {
     this.overlay?.remove();
     if (this.animationFrame !== undefined) cancelAnimationFrame(this.animationFrame);
     this.observer?.disconnect();
-    this.pointer.dispose();
+    this.pointer?.dispose();
   }
 
   private resize(): void {

@@ -1,4 +1,4 @@
-import { normalizeCadState } from '@hancad/legacy-bridge';
+import { isCadImportDiagnostic, normalizeCadState } from '@hancad/legacy-bridge';
 import type { CadImportReport, LegacyCadState } from '@hancad/legacy-bridge';
 import { restoreDimensionStyle } from './dimension-style';
 import type { DimensionStyleValues } from './dimension-style';
@@ -43,6 +43,15 @@ function restoreReport(value: unknown): CadImportReport | null {
     })
   )
     throw new Error('Invalid stored import report.');
+  if (
+    record.warningDiagnostics !== undefined &&
+    (!Array.isArray(record.warningDiagnostics) ||
+      record.warningDiagnostics.length !== record.warnings.length ||
+      !record.warningDiagnostics.every(
+        (item: unknown) => item === null || isCadImportDiagnostic(item),
+      ))
+  )
+    throw new Error('Invalid stored import diagnostics.');
   return structuredClone(value as CadImportReport);
 }
 

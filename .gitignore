@@ -8,6 +8,7 @@ node_modules/
 packages/geom/wasm/
 apps/web/public/runtime/
 playwright-report/
+.playwright-mcp/
 test-results/
 test-corpus/
 archive/pre-hancad-*.zip

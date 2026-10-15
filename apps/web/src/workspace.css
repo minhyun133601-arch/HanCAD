@@ -65,6 +65,14 @@
   line-height: 1.7;
   white-space: nowrap;
 }
+.renderer-error {
+  width: min(700px, calc(100% - 40px));
+  color: #e2e8f0;
+}
+.renderer-error p {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 .ucs-icon {
   position: absolute;
   left: 26px;

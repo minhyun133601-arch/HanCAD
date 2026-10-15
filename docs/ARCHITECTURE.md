@@ -19,8 +19,20 @@ SystemVariableError retains its code and diagnostic fallback while carrying
 structured reason/range/reference details. A pure formatter accepts a typed
 message contract; command and UI catalogs provide the chosen locale without
 introducing a sysvars dependency on UI. Unknown external diagnostics retain their
-original text. Importer progress/warnings and renderer failures still need the
-same structured boundary before universal i18n can be accepted.
+original text. Importer diagnostics use a validated namespace/code union across
+the JavaScript runtime boundary. Legacy error/progress/warning strings remain
+available to existing consumers; the app stores progress identities and formats
+them with current catalogs. Import reports retain index-aligned optional warning
+identities through recovery, including explicit nulls for external diagnostics.
+Malformed identity metadata is rejected before a drawing is published.
+
+Renderer context failures carry main/preview/cache identities. Initialization
+releases overlay canvases, pointer handlers and ResizeObservers before rethrowing;
+the application removes its host canvas and displays a localized alert while
+keeping the shell and command line available. Command/input and export errors use
+independent typed formatters. The command runner accepts an optional presentation
+callback so application command failures reach the current catalogs without a
+commands dependency on UI or export packages.
 
 The essential-editing continuation adds TrimExtendSession and OffsetSession.
 They borrow the immutable baseline and own replacement shadow states for accepted

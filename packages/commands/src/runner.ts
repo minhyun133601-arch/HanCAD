@@ -14,6 +14,8 @@ export interface HeadlessCommandRunnerOptions {
   sysvars?: SystemVariables;
   database?: DrawingDatabase;
   locale?: CommandLocale;
+  /** The application may localize domain failures without adding UI dependencies here. */
+  errorFormatter?: (error: unknown) => string;
 }
 
 export class HeadlessCommandRunner {
@@ -21,6 +23,7 @@ export class HeadlessCommandRunner {
   readonly database: DrawingDatabase;
   readonly sysvars: SystemVariables;
   readonly locale: CommandLocale;
+  private readonly errorFormatter: (error: unknown) => string;
   private lastCommand = '';
 
   constructor(options: HeadlessCommandRunnerOptions = {}) {
@@ -30,6 +33,8 @@ export class HeadlessCommandRunner {
     if (this.sysvars.database !== this.database)
       throw new Error('Command runner database and system variable database must match.');
     this.locale = options.locale ?? 'ko-KR';
+    this.errorFormatter =
+      options.errorFormatter ?? ((error) => commandErrorMessage(error, this.locale));
     registerCoreCommands(this.registry);
   }
 
@@ -87,7 +92,7 @@ export class HeadlessCommandRunner {
       return {
         status: 'error',
         command,
-        messages: [...messages, commandErrorMessage(error, this.locale)],
+        messages: [...messages, this.errorFormatter(error)],
       };
     }
   }

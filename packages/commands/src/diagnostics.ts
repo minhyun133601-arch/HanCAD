@@ -1,6 +1,27 @@
 import { formatSystemVariableError, SystemVariableError } from '@hancad/sysvars';
 import type { SystemVariableErrorMessages } from '@hancad/sysvars';
 import type { CommandLocale } from './types';
+import { CommandInputError, formatCommandInputError } from './input-errors';
+import type { CommandInputErrorMessages } from './input-errors';
+import { formatInputValueError, InputValueError } from '@hancad/editor';
+import type { InputValueErrorMessages } from '@hancad/editor';
+
+const inputMessages: Record<CommandLocale, CommandInputErrorMessages & InputValueErrorMessages> = {
+  'ko-KR': {
+    commandInvalidPointValue: (name) => `${name}의 점 값이 올바르지 않습니다.`,
+    commandStringValueRequired: (name) => `${name}에는 문자 값이 필요합니다.`,
+    commandHistoryCountInvalid: '실행 취소/다시 실행 횟수는 양의 정수여야 합니다.',
+    inputStringRequired: '문자 입력이 필요합니다.',
+    inputFiniteNumberRequired: '유한한 숫자 입력이 필요합니다.',
+  },
+  'en-US': {
+    commandInvalidPointValue: (name) => `Invalid point value for ${name}.`,
+    commandStringValueRequired: (name) => `A string value is required for ${name}.`,
+    commandHistoryCountInvalid: 'Undo/redo count must be a positive integer.',
+    inputStringRequired: 'A string input is required.',
+    inputFiniteNumberRequired: 'A finite number input is required.',
+  },
+};
 
 const systemVariableMessages: Record<CommandLocale, SystemVariableErrorMessages> = {
   'ko-KR': {
@@ -30,6 +51,9 @@ const systemVariableMessages: Record<CommandLocale, SystemVariableErrorMessages>
 };
 
 export function commandErrorMessage(error: unknown, locale: CommandLocale): string {
+  if (error instanceof CommandInputError)
+    return formatCommandInputError(error, inputMessages[locale]);
+  if (error instanceof InputValueError) return formatInputValueError(error, inputMessages[locale]);
   return error instanceof SystemVariableError
     ? formatSystemVariableError(error, systemVariableMessages[locale])
     : error instanceof Error

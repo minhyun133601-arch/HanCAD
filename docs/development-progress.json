@@ -75,8 +75,8 @@
       },
       "status": "in-progress",
       "detail": {
-        "ko-KR": "웹·WASM 실행과 검사 완료. Windows 네이티브 빌드 도구와 앱 시작·창 상태 복원 검증이 남아 있습니다.",
-        "en-US": "Web/WASM execution and checks pass. Native Windows build prerequisites, app startup and window-state restoration still need verification."
+        "ko-KR": "웹·WASM 검사와 오류·진행·경고의 한영 전환 완료. MSVC·Windows SDK 준비 후 네이티브 시작·최소 창 크기·창 상태 복원 검증이 남아 있습니다.",
+        "en-US": "Web/WASM checks and bilingual error/progress/warning presentation pass. Native startup, minimum window size and window-state restoration await MSVC and the Windows SDK."
       }
     },
     {

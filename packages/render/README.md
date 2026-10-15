@@ -10,6 +10,10 @@ Current adapter: @hancad/legacy-bridge. Future renderer: @hancad/db, @hancad/geo
 
 ## Current status
 
+Canvas context failures expose `CanvasContextError` with main/preview/cache
+identities. Failed initialization releases the overlay, pointer listeners and
+resize observer; application chrome owns localized failure presentation.
+
 The imperative Canvas2D adapter renders real imported and drafted 2D geometry, with fit, cursor-centered wheel zoom, middle-button pan and resize handling. Editing updates can preserve the view; rubber-band previews, selected objects, geometric click picking and a fixed-size snap marker are supported. A new empty drawing starts at metric 0,0 to 420,297 limits. The custom WebGL2 renderer, million-entity performance budget and instancing remain pending Phase 2.
 
 Pointer handling is isolated in `pointer-controller.ts`. Live navigation settings

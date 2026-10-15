@@ -318,7 +318,11 @@ importers:
         specifier: workspace:*
         version: link:../db
 
-  packages/ui: {}
+  packages/ui:
+    dependencies:
+      '@hancad/legacy-bridge':
+        specifier: workspace:*
+        version: link:../legacy-bridge
 
 packages:
 

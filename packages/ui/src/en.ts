@@ -1,4 +1,5 @@
 import type { Messages } from './messages';
+import { importEn } from './import-en';
 
 export const en: Messages = {
   appName: 'HanCAD',
@@ -161,6 +162,26 @@ export const en: Messages = {
   exportSvg: 'Save SVG',
   exportDxf: 'Save DXF',
   importing: 'Reading drawing…',
+  importDiagnostics: importEn,
+  rendererUnavailable: 'The drawing display could not be initialized.',
+  rendererFailure: (reason) => `Drawing display initialization error: ${reason}`,
+  rendererContextUnavailable: (kind) =>
+    ({
+      main: 'The drawing canvas could not be created.',
+      preview: 'The preview canvas could not be created.',
+      cache: 'The drawing cache canvas could not be created.',
+    })[kind],
+  exportNoVisibleEntities: 'There are no drawing entities to export. Open a DWG / DXF file first.',
+  exportInvalidImageSize: 'The image dimensions are invalid.',
+  exportCanvasUnavailable: 'The drawing image canvas could not be created.',
+  exportImageConversionFailed: 'Drawing image conversion failed.',
+  exportInvalidJpeg: 'The JPEG image for the PDF is invalid.',
+  exportInvalidPdfMargin: 'The PDF margin is invalid.',
+  commandHistoryCountInvalid: 'Undo/redo count must be a positive integer.',
+  commandInvalidPointValue: (name) => `Invalid point value for ${name}.`,
+  commandStringValueRequired: (name) => `A string value is required for ${name}.`,
+  inputStringRequired: 'A string input is required.',
+  inputFiniteNumberRequired: 'A finite number input is required.',
   cancelImport: 'Cancel import',
   importReport: 'Drawing import report',
   sourceObjects: 'Source top-level objects',

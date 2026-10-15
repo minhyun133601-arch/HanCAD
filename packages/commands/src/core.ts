@@ -2,6 +2,7 @@ import { getSystemVariableDefinition } from '@hancad/sysvars';
 import type { SysvarValue } from '@hancad/sysvars';
 import type { CommandInput } from '@hancad/editor';
 import { commandMessages } from './messages';
+import { CommandInputError } from './input-errors';
 import type { CommandContext, CommandDefinition } from './types';
 import type { CommandRegistry } from './registry';
 
@@ -75,9 +76,9 @@ function parseSysvarInput(name: string, input: CommandInput): SysvarValue {
     if (Array.isArray(values) && values.length === 2) return [Number(values[0]), Number(values[1])];
     if (Array.isArray(values) && values.length === 3)
       return [Number(values[0]), Number(values[1]), Number(values[2])];
-    throw new Error(`Invalid point value for ${name}`);
+    throw new CommandInputError('invalid-point', name);
   }
-  if (typeof input !== 'string') throw new Error(`A string value is required for ${name}`);
+  if (typeof input !== 'string') throw new CommandInputError('string-required', name);
   return input;
 }
 
@@ -85,7 +86,7 @@ function parseCount(input: CommandInput): number {
   const value =
     typeof input === 'number' ? input : typeof input === 'string' ? Number(input) : Number.NaN;
   if (!Number.isSafeInteger(value) || value < 1)
-    throw new Error('Undo/redo count must be a positive integer.');
+    throw new CommandInputError('invalid-history-count');
   return value;
 }
 

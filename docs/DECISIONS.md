@@ -1,5 +1,38 @@
 # Decisions
 
+## 2026-10-15: Complete the next bootstrap diagnostic boundary
+
+Continue Phase 00 only, as the user explicitly reaffirmed sequential phase
+completion. Importer messages have stable namespace/code identities with typed
+parameters; dynamic line numbers, limits and nested geometry reasons are data,
+not parsed Korean strings. Preserve legacy fallback text and callbacks for
+existing importer consumers. Fatal entity limits use identities instead of a
+language-dependent regular expression.
+
+Format current progress and persisted warning identities at display time so
+changing the shell language also changes an ongoing read and a recovered report.
+Untyped external diagnostics and old warning-only caches retain their original
+text. Validate optional aligned warning metadata before publishing any recovered
+drawing. File failure/cancellation must preserve the existing drawing and view.
+
+Canvas initialization failures release resources and display a catalog-based
+alert while the command line remains available. Export, command value and Editor
+queue failures use typed domain errors. Inject app error presentation into the
+headless runner so registered export failures do not become untranslated strings
+before reaching the UI. UI catalogs may consume legacy-bridge diagnostic types
+and guards without invoking the CAD runtime. No dependency is installed and no
+parser, converter or drawing behavior is introduced by this diagnostic work.
+Visual QA at 1280x720 exposed overlapping English ribbon buttons. Retain the
+bootstrap ribbon's existing button/tooltip content while giving buttons a stable
+width and constraining label ellipsis to that width. Full adaptive ribbon
+customization remains its original later-phase requirement.
+
+The refreshed native prerequisite inventory still lacks MSVC and the Windows
+SDK. Respect the earlier automatic approval rejection (`blocked by policy`);
+do not install through another route. Native Korean shell startup, the 1280x720
+minimum and saved position/size remain Phase 00 acceptance blockers. Browser
+verification does not satisfy those items, and Phase 01 must not start.
+
 ## 2026-10-15: Restore strict original phase order
 
 The latest user instruction explicitly requests the supplied prompt order. It

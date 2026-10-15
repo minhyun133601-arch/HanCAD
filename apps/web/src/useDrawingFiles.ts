@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { createEmptyCadState, readCadFile, visibleCadEntities } from '@hancad/legacy-bridge';
-import type { LegacyCadState } from '@hancad/legacy-bridge';
+import type { CadImportDiagnostic, LegacyCadState } from '@hancad/legacy-bridge';
 import { exportCadDrawing } from '@hancad/io-pdf';
 import type { CommandRegistry } from '@hancad/commands';
-import { getMessages } from '@hancad/ui';
+import { formatCadImportDiagnostic, getMessages } from '@hancad/ui';
 import type { Messages } from '@hancad/ui';
 import type { DrawingDatabase } from '@hancad/db';
 import {
@@ -42,7 +42,7 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
   const [drawing, setDrawing] = useState<DrawingSession>(initial.drawing);
   const [reading, setReading] = useState(false);
   const [restoring, setRestoring] = useState(false);
-  const [progress, setProgress] = useState('');
+  const [progress, setProgress] = useState<string | CadImportDiagnostic>('');
   const [fitRevision, setFitRevision] = useState(0);
   const fitNext = useRef(false);
   const drawingRef = useRef(initial.drawing);
@@ -297,25 +297,33 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
     const current = new AbortController();
     controller.current = current;
     setReading(true);
-    setProgress(messages.importing);
+    setProgress('');
     try {
       const imported = await readCadFile(file, {
         signal: current.signal,
         onProgress: (message) => {
           if (controller.current === current) setProgress(message);
         },
+        onDiagnosticProgress: (diagnostic) => {
+          if (controller.current === current) setProgress(diagnostic);
+        },
       });
       if (current.signal.aborted || controller.current !== current) return;
       const next = { state: imported.state, report: imported.report, fileName: file.name };
       commitDrawing('OPEN', next, true);
       originalSource.current = imported.source;
-      print(messages.importFinished(file.name, imported.state.entities.length));
+      const active = actions.current;
+      active.print(active.messages.importFinished(file.name, imported.state.entities.length));
     } catch (error) {
       if (controller.current !== current) return;
-      print(
-        error instanceof Error && error.name === 'AbortError'
-          ? messages.importCancelled
-          : messages.commandFailure(errorMessage(error, messages)),
+      const active = actions.current;
+      active.print(
+        typeof error === 'object' &&
+          error !== null &&
+          'name' in error &&
+          error.name === 'AbortError'
+          ? active.messages.importCancelled
+          : active.messages.commandFailure(errorMessage(error, active.messages)),
       );
     } finally {
       if (controller.current === current) {
@@ -340,7 +348,8 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
     anchor.click();
     anchor.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 10000);
-    active.print(active.messages.exportFinished(result.fileName));
+    const current = actions.current;
+    current.print(current.messages.exportFinished(result.fileName));
   }
 
   useEffect(() => {
@@ -407,7 +416,10 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
     ...drawing,
     reading,
     restoring,
-    progress,
+    progress:
+      typeof progress === 'string'
+        ? progress
+        : formatCadImportDiagnostic(progress, messages.importDiagnostics),
     fileInput,
     openFile,
     commitState,

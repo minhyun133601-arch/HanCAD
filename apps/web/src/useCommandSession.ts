@@ -20,6 +20,8 @@ type PromptSession =
 
 export function useCommandSession(locale: Locale) {
   const messages = getMessages(locale);
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
   const [runtime] = useState(() => {
     const database = new DrawingDatabase();
     const sysvars = new SystemVariables({ database });
@@ -32,7 +34,12 @@ export function useCommandSession(locale: Locale) {
   });
   useEffect(() => subscribeProfileVariables(runtime.sysvars.profile), [runtime]);
   const runner = useMemo(
-    () => new HeadlessCommandRunner({ ...runtime, locale }),
+    () =>
+      new HeadlessCommandRunner({
+        ...runtime,
+        locale,
+        errorFormatter: (error) => errorMessage(error, messagesRef.current),
+      }),
     [runtime, locale],
   );
   const [history, setHistory] = useState<HistoryLine[]>([

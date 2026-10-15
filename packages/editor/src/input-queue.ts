@@ -1,3 +1,5 @@
+import { InputValueError } from './input-errors';
+
 export type CommandInput =
   string | number | boolean | readonly [number, number] | readonly [number, number, number];
 
@@ -27,7 +29,7 @@ export class InputQueue {
   }
   requireString(): string {
     const value = this.take();
-    if (typeof value !== 'string') throw new Error('A string input is required.');
+    if (typeof value !== 'string') throw new InputValueError('string-required');
     return value;
   }
   requireNumber(): number {
@@ -38,7 +40,7 @@ export class InputQueue {
         : typeof value === 'string' && value.trim() !== ''
           ? Number(value)
           : Number.NaN;
-    if (!Number.isFinite(number)) throw new Error('A finite number input is required.');
+    if (!Number.isFinite(number)) throw new InputValueError('finite-number-required');
     return number;
   }
 }

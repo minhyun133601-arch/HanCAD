@@ -7,20 +7,24 @@
   const finite = n => typeof n === "number" && Number.isFinite(n) && Math.abs(n) <= 1e12;
   const mod = n => ((n % TAU) + TAU) % TAU;
   const validPoint = p => p && finite(p.x) && finite(p.y);
-  const abort = () => Object.assign(new Error("가져오기를 취소했습니다."), { name: "AbortError" });
+  const diagnostic = (code, details = {}) => ({ namespace: "cad-import", code, ...details });
+  const failure = (code, message, details = {}) => Object.assign(new Error(message), { name: code === "cancelled" ? "AbortError" : "CadImportError", diagnostic: diagnostic(code, details) });
+  const invalid = (reason, message) => failure("invalid-geometry", message, { reason });
+  const abort = () => failure("cancelled", "가져오기를 취소했습니다.");
+  function progress(options, code, fallback, details = {}) { options.onProgress?.(fallback); options.onDiagnosticProgress?.(diagnostic(code, details)); }
   function check(signal) { if (signal?.aborted) throw abort(); }
   function multiply(a, b) {
     return [a[0]*b[0]+a[2]*b[1], a[1]*b[0]+a[3]*b[1], a[0]*b[2]+a[2]*b[3], a[1]*b[2]+a[3]*b[3], a[0]*b[4]+a[2]*b[5]+a[4], a[1]*b[4]+a[3]*b[5]+a[5]];
   }
   function transform(p, m) {
-    if (!validPoint(p)) throw new Error("올바르지 않은 좌표");
+    if (!validPoint(p)) throw invalid("point", "올바르지 않은 좌표");
     const result = { x: m[0]*p.x+m[2]*p.y+m[4], y: -(m[1]*p.x+m[3]*p.y+m[5]) };
-    if (!validPoint(result)) throw new Error("좌표 범위 초과");
+    if (!validPoint(result)) throw invalid("coordinate-range", "좌표 범위 초과");
     return result;
   }
   function decodeDxf(buffer) {
     const bytes = new Uint8Array(buffer);
-    if (new TextDecoder().decode(bytes.subarray(0, 22)).startsWith("AutoCAD Binary DXF")) throw new Error("바이너리 DXF는 지원하지 않습니다. CAD에서 ASCII DXF로 저장해 주세요.");
+    if (new TextDecoder().decode(bytes.subarray(0, 22)).startsWith("AutoCAD Binary DXF")) throw failure("binary-dxf", "바이너리 DXF는 지원하지 않습니다. CAD에서 ASCII DXF로 저장해 주세요.");
     let text = new TextDecoder("utf-8").decode(bytes).replace(/^\uFEFF/, "");
     const version = text.match(/\$ACADVER\s*\r?\n\s*1\s*\r?\n\s*(AC\d+)/)?.[1];
     if (version && version < "AC1021") {
@@ -31,25 +35,25 @@
     return text.replace(/\\U\+([\da-f]{4})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
   }
   function validateDxf(text) {
-    if (typeof text !== "string" || text.length > MAX_BYTES * 4) throw new Error("DXF 데이터가 너무 큽니다.");
+    if (typeof text !== "string" || text.length > MAX_BYTES * 4) throw failure("dxf-size", "DXF 데이터가 너무 큽니다.");
     const lines = text.replace(/\r\n?/g, "\n").split("\n");
     while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
-    if (lines.length % 2) throw new Error("DXF 그룹 코드와 값의 쌍이 손상되었습니다.");
+    if (lines.length % 2) throw failure("dxf-pairs", "DXF 그룹 코드와 값의 쌍이 손상되었습니다.");
     let section = "", entities = false, eof = false;
     for (let i = 0; i < lines.length; i += 2) {
       const codeText = lines[i].trim(), value = lines[i + 1].trim();
-      if (!/^\d+$/.test(codeText) || Number(codeText) > 1071) throw new Error(`DXF ${i + 1}행의 그룹 코드가 올바르지 않습니다.`);
+      if (!/^\d+$/.test(codeText) || Number(codeText) > 1071) throw failure("dxf-group-code", `DXF ${i + 1}행의 그룹 코드가 올바르지 않습니다.`, { line: i + 1 });
       const code = Number(codeText);
       if (code === 0 && value === "SECTION") {
-        if (section || lines[i + 2]?.trim() !== "2") throw new Error("DXF SECTION 구조가 손상되었습니다.");
+        if (section || lines[i + 2]?.trim() !== "2") throw failure("dxf-structure", "DXF SECTION 구조가 손상되었습니다.", { part: "SECTION" });
         section = lines[i + 3]?.trim() || ""; if (section === "ENTITIES") entities = true;
       }
-      if (code === 0 && value === "ENDSEC") { if (!section) throw new Error("DXF ENDSEC 구조가 손상되었습니다."); section = ""; }
-      if (code === 0 && value === "EOF") { eof = true; if (i !== lines.length - 2) throw new Error("DXF EOF 뒤에 데이터가 있습니다."); }
+      if (code === 0 && value === "ENDSEC") { if (!section) throw failure("dxf-structure", "DXF ENDSEC 구조가 손상되었습니다.", { part: "ENDSEC" }); section = ""; }
+      if (code === 0 && value === "EOF") { eof = true; if (i !== lines.length - 2) throw failure("dxf-structure", "DXF EOF 뒤에 데이터가 있습니다.", { part: "EOF-after" }); }
       // Reject malformed numbers instead of letting parser defaults alter geometry.
-      if (((code >= 10 && code <= 59) || (code >= 110 && code <= 149) || (code >= 210 && code <= 239)) && (!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(value) || !Number.isFinite(Number(value)))) throw new Error(`DXF ${i + 2}행에 유효하지 않은 숫자가 있습니다.`);
+      if (((code >= 10 && code <= 59) || (code >= 110 && code <= 149) || (code >= 210 && code <= 239)) && (!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(value) || !Number.isFinite(Number(value)))) throw failure("dxf-number", `DXF ${i + 2}행에 유효하지 않은 숫자가 있습니다.`, { line: i + 2 });
     }
-    if (section || !entities || !eof) throw new Error("완전한 DXF ENTITIES / ENDSEC / EOF 구조를 찾을 수 없습니다.");
+    if (section || !entities || !eof) throw failure("dxf-structure", "완전한 DXF ENTITIES / ENDSEC / EOF 구조를 찾을 수 없습니다.", { part: "complete" });
   }
   function plainText(value) {
     return String(value || "").replace(/%%d/gi, "°").replace(/%%p/gi, "±").replace(/%%c/gi, "Ø")
@@ -99,9 +103,9 @@
   function convertDocument(document, options = {}) {
     const parser = globalThis.CadDxf;
     const report = { format: options.format || "DXF", version: options.version || document.header?.acadVersion || "", imported: 0, sourceEntities: document.entities.length, skipped: 0, approximated: 0, unsupported: [], warnings: [] };
-    const missing = new Map(), warnings = new Set(), entities = [];
-    const addWarning = message => warnings.add(message);
-    const skip = (type, reason) => { report.skipped++; missing.set(type, (missing.get(type) || 0) + 1); if (reason) addWarning(reason); };
+    const missing = new Map(), warnings = new Map(), entities = [];
+    const addWarning = (message, identity) => warnings.set(message, identity || null);
+    const skip = (type, reason, identity) => { report.skipped++; missing.set(type, (missing.get(type) || 0) + 1); if (reason) addWarning(reason, identity); };
     function hex(aci, trueColor) {
       if (Number.isInteger(trueColor) && trueColor >= 0 && trueColor <= 0xffffff) return `#${trueColor.toString(16).padStart(6, "0")}`;
       return parser.aciToHex(Math.abs(aci)) || "#e2e8f0";
@@ -114,51 +118,51 @@
       return { layer, color, lineWidth: Math.max(0.25, Math.min(100, e.lineWeight > 0 ? e.lineWeight / 100 : table?.lineWeight > 0 ? table.lineWeight / 100 : 1.5)) };
     }
     function add(raw) {
-      if (entities.length >= LIMIT) throw new Error(`가져올 객체가 ${LIMIT.toLocaleString()}개를 초과합니다. CAD에서 필요한 영역만 분리해 주세요.`);
+      if (entities.length >= LIMIT) throw failure("entity-limit", `가져올 객체가 ${LIMIT.toLocaleString()}개를 초과합니다. CAD에서 필요한 영역만 분리해 주세요.`, { limit: LIMIT });
       const entity = Tool.core.cadEngine.normalizeEntity({ ...raw, id: `import-${entities.length + 1}` });
-      if (!entity) throw new Error("유효하지 않은 객체 데이터");
+      if (!entity) throw invalid("entity", "유효하지 않은 객체 데이터");
       entities.push(entity);
     }
     function poly(points, closed, m, s) {
-      if (!Array.isArray(points) || points.length < 2 || points.length > 10000) throw new Error("폴리선 정점 수가 올바르지 않습니다.");
+      if (!Array.isArray(points) || points.length < 2 || points.length > 10000) throw invalid("polyline-vertices", "폴리선 정점 수가 올바르지 않습니다.");
       add({ ...s, type: "polyline", points: points.map(p => transform(p, m)), closed });
     }
     function bulgePoints(vertices, closed) {
-      if (!Array.isArray(vertices) || vertices.length < 2 || vertices.length > 5000) throw new Error("폴리선 정점 수가 올바르지 않습니다.");
+      if (!Array.isArray(vertices) || vertices.length < 2 || vertices.length > 5000) throw invalid("polyline-vertices", "폴리선 정점 수가 올바르지 않습니다.");
       const result = [];
       for (let i = 0; i < vertices.length; i++) {
         const a = vertices[i], b = vertices[(i + 1) % vertices.length];
-        if (!validPoint(a) || !finite(a.bulge ?? 0)) throw new Error("폴리선 좌표가 올바르지 않습니다.");
+        if (!validPoint(a) || !finite(a.bulge ?? 0)) throw invalid("polyline-point", "폴리선 좌표가 올바르지 않습니다.");
         result.push(a);
         const bulge = a.bulge || 0;
         if ((!closed && i === vertices.length - 1) || Math.abs(bulge) < 1e-10) continue;
-        if (!validPoint(b)) throw new Error("폴리선 좌표가 올바르지 않습니다.");
+        if (!validPoint(b)) throw invalid("polyline-point", "폴리선 좌표가 올바르지 않습니다.");
         const dx = b.x-a.x, dy = b.y-a.y, chord = Math.hypot(dx, dy);
         if (chord < 1e-8) continue;
         const cx = (a.x+b.x)/2 - dy*(1-bulge*bulge)/(4*bulge), cy = (a.y+b.y)/2 + dx*(1-bulge*bulge)/(4*bulge);
         const radius = chord*(1+bulge*bulge)/(4*Math.abs(bulge)), start = Math.atan2(a.y-cy, a.x-cx), sweep = 4*Math.atan(bulge);
         const steps = Math.max(2, Math.min(256, Math.ceil(Math.abs(sweep)/(Math.PI/90))));
         for (let j = 1; j < steps; j++) result.push({ x: cx+radius*Math.cos(start+sweep*j/steps), y: cy+radius*Math.sin(start+sweep*j/steps) });
-        if (result.length > 10000) throw new Error("폴리선 곡선 정점 수가 너무 많습니다.");
+        if (result.length > 10000) throw invalid("polyline-curve-vertices", "폴리선 곡선 정점 수가 너무 많습니다.");
       }
       return result;
     }
     function ellipse(e, m, s) {
       const axis = e.majorAxis, center = e.center;
-      if (!validPoint(axis) || !validPoint(center) || !finite(e.minorRatio) || e.minorRatio <= 0 || !finite(e.startParam) || !finite(e.endParam)) throw new Error("타원 데이터가 올바르지 않습니다.");
+      if (!validPoint(axis) || !validPoint(center) || !finite(e.minorRatio) || e.minorRatio <= 0 || !finite(e.startParam) || !finite(e.endParam)) throw invalid("ellipse", "타원 데이터가 올바르지 않습니다.");
       const span = Math.abs(e.endParam-e.startParam) >= TAU-1e-8 ? TAU : mod(e.endParam-e.startParam);
-      if (!span || Math.hypot(axis.x, axis.y) < 1e-8) throw new Error("빈 타원");
+      if (!span || Math.hypot(axis.x, axis.y) < 1e-8) throw invalid("empty-ellipse", "빈 타원");
       const steps = Math.max(8, Math.ceil(span/(Math.PI/90))), points = [];
       for (let n = 0; n <= steps; n++) { const t = e.startParam+span*n/steps; points.push({ x: center.x+axis.x*Math.cos(t)-axis.y*e.minorRatio*Math.sin(t), y: center.y+axis.y*Math.cos(t)+axis.x*e.minorRatio*Math.sin(t) }); }
-      poly(points, span >= TAU-1e-8, m, s); report.approximated++; addWarning("곡선 폴리선 / 타원 / 비균일 축척의 원은 편집 가능한 폴리선으로 근사합니다.");
+      poly(points, span >= TAU-1e-8, m, s); report.approximated++; addWarning("곡선 폴리선 / 타원 / 비균일 축척의 원은 편집 가능한 폴리선으로 근사합니다.", diagnostic("curve-approximated"));
     }
     function spline(e, m, s) {
       const p = e.degree, cp = e.controlPoints, knots = e.knots;
-      if (!Number.isInteger(p) || p < 1 || p > 10 || !Array.isArray(cp) || cp.length <= p || cp.length > 1000 || cp.some(v => !validPoint(v)) || knots.length !== cp.length+p+1 || knots.some((v, i) => !finite(v) || i && v < knots[i-1])) throw new Error("스플라인의 차수 / 매듭 / 제어점이 올바르지 않습니다.");
+      if (!Number.isInteger(p) || p < 1 || p > 10 || !Array.isArray(cp) || cp.length <= p || cp.length > 1000 || cp.some(v => !validPoint(v)) || knots.length !== cp.length+p+1 || knots.some((v, i) => !finite(v) || i && v < knots[i-1])) throw invalid("spline", "스플라인의 차수 / 매듭 / 제어점이 올바르지 않습니다.");
       const start = knots[p], end = knots[cp.length];
-      if (end <= start) throw new Error("스플라인 구간이 없습니다.");
+      if (end <= start) throw invalid("spline-interval", "스플라인 구간이 없습니다.");
       const weights = e.weights.length ? e.weights : cp.map(() => 1);
-      if (weights.length !== cp.length || weights.some(v => !finite(v) || v <= 0)) throw new Error("스플라인 가중치가 올바르지 않습니다.");
+      if (weights.length !== cp.length || weights.some(v => !finite(v) || v <= 0)) throw invalid("spline-weights", "스플라인 가중치가 올바르지 않습니다.");
       const steps = Math.min(2000, Math.max(32, cp.length*12)), points = [];
       for (let step = 0; step <= steps; step++) {
         const t = start+(end-start)*step/steps;
@@ -168,20 +172,20 @@
         for (let r = 1; r <= p; r++) for (let j = p; j >= r; j--) { const i = k-p+j, den = knots[i+p-r+1]-knots[i], alpha = den ? (t-knots[i])/den : 0; d[j] = d[j].map((v, n) => (1-alpha)*d[j-1][n]+alpha*v); }
         points.push({ x: d[p][0]/d[p][2], y: d[p][1]/d[p][2] });
       }
-      poly(points, !!(e.flags & 1), m, s); report.approximated++; addWarning("스플라인은 편집 가능한 폴리선으로 근사합니다.");
+      poly(points, !!(e.flags & 1), m, s); report.approximated++; addWarning("스플라인은 편집 가능한 폴리선으로 근사합니다.", diagnostic("spline-approximated"));
     }
     function visit(e, m, inherited, stack = []) {
       check(options.signal);
-      if (e.paperSpace || e.visible === false) { report.skipped++; addWarning("배치 공간 또는 숨김 객체는 가져오지 않습니다. 레이어 숨김 / 잠금은 유지합니다."); return; }
+      if (e.paperSpace || e.visible === false) { report.skipped++; addWarning("배치 공간 또는 숨김 객체는 가져오지 않습니다. 레이어 숨김 / 잠금은 유지합니다.", diagnostic("hidden-skipped")); return; }
       const s = style(e, inherited);
-      if (e.extrusion && (Math.abs(e.extrusion.x) > 1e-8 || Math.abs(e.extrusion.y) > 1e-8)) { skip(e.type, "기울어진 3D 객체는 가져오지 않습니다."); return; }
+      if (e.extrusion && (Math.abs(e.extrusion.x) > 1e-8 || Math.abs(e.extrusion.y) > 1e-8)) { skip(e.type, "기울어진 3D 객체는 가져오지 않습니다.", diagnostic("tilted-skipped")); return; }
       if (e.extrusion?.z < 0 && !["LINE", "DIMENSION", "INSERT"].includes(e.type)) m = multiply(m, [-1,0,0,1,0,0]);
       try {
         if (e.type === "INSERT") {
           const block = document.blocks.get(e.blockName);
-          if (!block || stack.includes(e.blockName) || stack.length >= 32) { skip("INSERT", `블록 누락 또는 순환 참조: ${String(e.blockName).slice(0, 80)}`); return; }
+          if (!block || stack.includes(e.blockName) || stack.length >= 32) { const name = String(e.blockName).slice(0, 80); skip("INSERT", `블록 누락 또는 순환 참조: ${name}`, diagnostic("block-reference", { name })); return; }
           const { scaleX: sx, scaleY: sy, rotation, columnCount: cols, rowCount: rows } = e;
-          if (![sx, sy, rotation, e.columnSpacing, e.rowSpacing].every(finite) || !sx || !sy || !Number.isInteger(cols) || !Number.isInteger(rows) || cols < 1 || rows < 1 || cols*rows > 10000 || !validPoint(e.insertionPoint) || !validPoint(block.basePoint)) throw new Error("블록 변환 데이터가 올바르지 않습니다.");
+          if (![sx, sy, rotation, e.columnSpacing, e.rowSpacing].every(finite) || !sx || !sy || !Number.isInteger(cols) || !Number.isInteger(rows) || cols < 1 || rows < 1 || cols*rows > 10000 || !validPoint(e.insertionPoint) || !validPoint(block.basePoint)) throw invalid("block-transform", "블록 변환 데이터가 올바르지 않습니다.");
           const angle = rotation*Math.PI/180, c = Math.cos(angle), n = Math.sin(angle), b = block.basePoint;
           for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++) {
             const dx = col*e.columnSpacing, dy = row*e.rowSpacing;
@@ -190,7 +194,7 @@
             for (const child of block.entities) visit(child, next, s, [...stack,e.blockName]);
           }
           for (const attr of e.attribs || []) visit({ ...e, ...attr, type: "TEXT", widthFactor: 1, hAlign: 0, vAlign: 0, generationFlags: 0 }, m, s, stack);
-          addWarning("블록은 개별 편집 객체로 분해합니다."); return;
+          addWarning("블록은 개별 편집 객체로 분해합니다.", diagnostic("blocks-exploded")); return;
         }
         if (e.type === "DIMENSION") {
           const type=e.dimType & 7;
@@ -219,23 +223,23 @@
             add({...native,kind:"angular",a,b,center,offset:Math.hypot(arc.x-center.x,arc.y-center.y),clockwise:m[0]*m[3]-m[1]*m[2]<0});return;
           }
           const block = document.blocks.get(e.blockName);
-          if (block && !stack.includes(e.blockName) && stack.length < 32) { for (const child of block.entities) visit(child,m,s,[...stack,e.blockName]); report.approximated++; addWarning("기존 CAD 치수는 표시 형상을 개별 객체로 가져옵니다. 새 치수는 치수 도구로 작성합니다."); return; }
+          if (block && !stack.includes(e.blockName) && stack.length < 32) { for (const child of block.entities) visit(child,m,s,[...stack,e.blockName]); report.approximated++; addWarning("기존 CAD 치수는 표시 형상을 개별 객체로 가져옵니다. 새 치수는 치수 도구로 작성합니다.", diagnostic("dimensions-exploded")); return; }
           if ((e.dimType & 7) === 1 && validPoint(e.defPoint2) && validPoint(e.defPoint3)) {
             const a = transform(e.defPoint2,m), b = transform(e.defPoint3,m), d = transform(e.defPoint,m), len = Math.hypot(b.x-a.x,b.y-a.y);
             add({ ...s, type: "dimension", a,b,offset: ((d.x-a.x)*-(b.y-a.y)+(d.y-a.y)*(b.x-a.x))/len, textSize: 2.5, text: plainText(e.textOverride).replace(/<>/g, `${Math.round(len*1000)/1000}`) || undefined }); return;
           }
-          skip("DIMENSION", "표시 블록이 없는 비정렬 치수는 생략합니다."); return;
+          skip("DIMENSION", "표시 블록이 없는 비정렬 치수는 생략합니다.", diagnostic("dimension-skipped")); return;
         }
         if (e.type === "LINE") add({ ...s, type: "line", a: transform(e.start,m), b: transform(e.end,m) });
         else if (["LWPOLYLINE","POLYLINE"].includes(e.type)) {
           poly(bulgePoints(e.vertices,e.closed),e.closed,m,s);
-          if (e.vertices.some(v => Math.abs(v.bulge || 0) > 1e-10)) { report.approximated++; addWarning("곡선 폴리선 / 타원 / 비균일 축척의 원은 편집 가능한 폴리선으로 근사합니다."); }
-          if (e.is3d) addWarning("3D 폴리선은 XY 평면으로 투영합니다.");
+          if (e.vertices.some(v => Math.abs(v.bulge || 0) > 1e-10)) { report.approximated++; addWarning("곡선 폴리선 / 타원 / 비균일 축척의 원은 편집 가능한 폴리선으로 근사합니다.", diagnostic("curve-approximated")); }
+          if (e.is3d) addWarning("3D 폴리선은 XY 평면으로 투영합니다.", diagnostic("polyline-projected"));
         } else if (["CIRCLE","ARC"].includes(e.type)) {
-          if (!validPoint(e.center) || !finite(e.radius) || e.radius <= 1e-8) throw new Error("원 반지름이 올바르지 않습니다.");
+          if (!validPoint(e.center) || !finite(e.radius) || e.radius <= 1e-8) throw invalid("circle-radius", "원 반지름이 올바르지 않습니다.");
           const sx = Math.hypot(m[0],m[1]), sy = Math.hypot(m[2],m[3]), orthogonal = Math.abs(m[0]*m[2]+m[1]*m[3]) < 1e-8*Math.max(1,sx*sy);
           const start = e.type === "ARC" ? e.startAngle*Math.PI/180 : 0, end = e.type === "ARC" ? e.endAngle*Math.PI/180 : TAU;
-          if (![start,end].every(finite)) throw new Error("원호 각도가 올바르지 않습니다.");
+          if (![start,end].every(finite)) throw invalid("arc-angle", "원호 각도가 올바르지 않습니다.");
           if (Math.abs(sx-sy) < 1e-8*Math.max(1,sx,sy) && orthogonal) {
             const common = { ...s, type: e.type.toLowerCase(), center: transform(e.center,m), radius: e.radius*sx };
             const angle = t => Math.atan2(-(m[1]*Math.cos(t)+m[3]*Math.sin(t)),m[0]*Math.cos(t)+m[2]*Math.sin(t));
@@ -245,9 +249,9 @@
         else if (e.type === "SPLINE") spline(e,m,s);
         else if (["TEXT","MTEXT"].includes(e.type)) {
           const text = plainText(e.text), size = e.height*Math.hypot(m[2],m[3]);
-          if (!text.trim() || !finite(size) || size <= 0) throw new Error("문자 내용 / 크기가 올바르지 않습니다.");
+          if (!text.trim() || !finite(size) || size <= 0) throw invalid("text-content-size", "문자 내용 / 크기가 올바르지 않습니다.");
           const rotation = e.textDirection ? Math.atan2(e.textDirection.y,e.textDirection.x) : e.rotation*Math.PI/180;
-          if (!finite(rotation)) throw new Error("문자 회전이 올바르지 않습니다.");
+          if (!finite(rotation)) throw invalid("text-rotation", "문자 회전이 올바르지 않습니다.");
           const dir = { x:m[0]*Math.cos(rotation)+m[2]*Math.sin(rotation), y:-(m[1]*Math.cos(rotation)+m[3]*Math.sin(rotation)) };
           let p = transform(e.alignmentPoint && (e.hAlign || e.vAlign) ? e.alignmentPoint : e.insertionPoint,m);
           const angle = Math.atan2(dir.y,dir.x), width = Math.max(...text.split("\n").map(v => Array.from(v).length))*size*0.7;
@@ -255,12 +259,12 @@
           p = { x:p.x-Math.cos(angle)*width*horizontal/2, y:p.y-Math.sin(angle)*width*horizontal/2 };
           if (e.type === "MTEXT") p = { x:p.x-Math.sin(angle)*size, y:p.y+Math.cos(angle)*size };
           add({ ...s,type:"text",point:p,text,textSize:size,rotation:angle });
-          if (e.type === "MTEXT" || e.widthFactor !== 1 || e.obliqueAngle || e.generationFlags || e.hAlign || e.vAlign) { report.approximated++; addWarning("문자 서식 / 글꼴 / 정렬은 기본 문자로 근사합니다."); }
+          if (e.type === "MTEXT" || e.widthFactor !== 1 || e.obliqueAngle || e.generationFlags || e.hAlign || e.vAlign) { report.approximated++; addWarning("문자 서식 / 글꼴 / 정렬은 기본 문자로 근사합니다.", diagnostic("text-approximated")); }
         } else if (["SOLID","TRACE","3DFACE"].includes(e.type)) {
           const p = [...e.points]; if (e.type !== "3DFACE" && p.length === 4) [p[2],p[3]] = [p[3],p[2]];
-          poly(p,true,m,s); report.approximated++; addWarning("솔리드 / 해치 채움은 윤곽선으로 가져옵니다.");
+          poly(p,true,m,s); report.approximated++; addWarning("솔리드 / 해치 채움은 윤곽선으로 가져옵니다.", diagnostic("fill-outlined"));
         } else if (e.type === "HATCH") {
-          if (!e.boundaryPaths.length) throw new Error("해치 경계가 없습니다.");
+          if (!e.boundaryPaths.length) throw invalid("hatch-boundary", "해치 경계가 없습니다.");
           const before = entities.length;
           for (const boundary of e.boundaryPaths) {
             if (boundary.type === "polyline") poly(bulgePoints(boundary.vertices.map((v,i)=>({...v,bulge:boundary.bulges?.[i] || 0})),!!boundary.isClosed),!!boundary.isClosed,m,s);
@@ -268,34 +272,37 @@
               if (edge.type === "line") add({ ...s,type:"line",a:transform(edge.start,m),b:transform(edge.end,m) });
               else if (edge.type === "arc") visit({ ...e,...edge,type:"ARC",startAngle:edge.ccw ? edge.startAngle : edge.endAngle,endAngle:edge.ccw ? edge.endAngle : edge.startAngle },m,inherited,stack);
               else if (edge.type === "ellipse") ellipse({ ...edge,startParam:edge.startAngle,endParam:edge.endAngle },m,s);
-              else skip("HATCH SPLINE","스플라인 해치 경계는 생략합니다.");
+              else skip("HATCH SPLINE","스플라인 해치 경계는 생략합니다.", diagnostic("hatch-spline-skipped"));
             }
           }
-          if (before === entities.length) throw new Error("표시 가능한 해치 경계가 없습니다.");
-          report.approximated++; addWarning("솔리드 / 해치 채움은 윤곽선으로 가져옵니다.");
-        } else skip(e.type,"지원하지 않는 객체는 보고서에 표시하고 생략합니다.");
+          if (before === entities.length) throw invalid("hatch-visible-boundary", "표시 가능한 해치 경계가 없습니다.");
+          report.approximated++; addWarning("솔리드 / 해치 채움은 윤곽선으로 가져옵니다.", diagnostic("fill-outlined"));
+        } else skip(e.type,"지원하지 않는 객체는 보고서에 표시하고 생략합니다.", diagnostic("unsupported-skipped"));
       } catch (error) {
-        if (error.name === "AbortError" || /초과합니다/.test(error.message)) throw error;
-        skip(e.type,`${e.type}: ${error.message}`);
+        if (error?.name === "AbortError" || error?.name === "CadImportError" && error.diagnostic?.namespace === "cad-import" && error.diagnostic.code === "entity-limit" && Number.isSafeInteger(error.diagnostic.limit) && error.diagnostic.limit > 0) throw error;
+        const message = typeof error?.message === "string" ? error.message : String(error);
+        const reason = error?.name === "CadImportError" && error.diagnostic?.namespace === "cad-import" ? error.diagnostic : message;
+        skip(e.type,`${e.type}: ${message}`, diagnostic("entity-skipped", { entityType: e.type, reason }));
       }
     }
     for (const e of document.entities) visit(e,IDENTITY);
-    if (!entities.length) throw new Error("편집 가능한 2D 객체가 없습니다. 원래 도면은 그대로 유지됩니다.");
-    if (layers.length > 256) throw new Error("레이어가 256개를 초과합니다. 필요한 레이어만 분리해 주세요.");
+    if (!entities.length) throw failure("no-editable-entities", "편집 가능한 2D 객체가 없습니다. 원래 도면은 그대로 유지됩니다.");
+    if (layers.length > 256) throw failure("layer-limit", "레이어가 256개를 초과합니다. 필요한 레이어만 분리해 주세요.", { limit: 256 });
     const unit = ({4:"mm",5:"cm",6:"m"})[document.header?.insUnits] ?? "";
-    if (!unit) addWarning("도면 단위가 mm / cm / m로 지정되지 않아 단위 없는 좌표로 가져옵니다.");
+    if (!unit) addWarning("도면 단위가 mm / cm / m로 지정되지 않아 단위 없는 좌표로 가져옵니다.", diagnostic("unit-unspecified"));
     const state = Tool.core.cadEngine.normalizeState({ version:1,entities,layers,selectedIds:[],settings:{ unit,layer:"0" } });
-    if (state.entities.length !== entities.length) throw new Error("가져온 도면 검증에 실패했습니다.");
+    if (state.entities.length !== entities.length) throw failure("imported-invalid", "가져온 도면 검증에 실패했습니다.");
     report.imported = state.entities.length;
     report.unsupported = [...missing].map(([type,count])=>({type,count}));
-    report.warnings = [...warnings];
+    report.warnings = [...warnings.keys()];
+    report.warningDiagnostics = [...warnings.values()];
     return { state,report };
   }
   function convertDwg(buffer, { signal,timeoutMs = 90000 } = {}) {
     check(signal);
-    if (typeof Worker !== "function" || typeof WebAssembly !== "object") return Promise.reject(new Error("DWG 읽기를 지원하는 Chrome 또는 Edge에서 실행해 주세요."));
+    if (typeof Worker !== "function" || typeof WebAssembly !== "object") return Promise.reject(failure("dwg-browser-unavailable", "DWG 읽기를 지원하는 Chrome 또는 Edge에서 실행해 주세요."));
     const assets = globalThis.CadOfflineAssets;
-    if (!assets?.workerSource || !assets.wasmBase64) return Promise.reject(new Error("DWG 엔진을 불러오지 못했습니다. HanCAD 앱을 다시 실행하거나 최신 버전으로 빌드해 주세요."));
+    if (!assets?.workerSource || !assets.wasmBase64) return Promise.reject(failure("dwg-engine-unavailable", "DWG 엔진을 불러오지 못했습니다. HanCAD 앱을 다시 실행하거나 최신 버전으로 빌드해 주세요."));
     return new Promise((resolve,reject) => {
       let worker,url,timer,done = false;
       const finish = (error,value) => {
@@ -309,9 +316,9 @@
         const wasmBinary = Uint8Array.from(atob(assets.wasmBase64),c=>c.charCodeAt(0));
         url = URL.createObjectURL(new Blob([assets.workerSource],{type:"text/javascript"}));
         worker = new Worker(url,{name:"local-dwg-reader"});
-        worker.onmessage = event => event.data?.ok ? finish(null,event.data.dxf) : finish(new Error(`DWG 해석에 실패했습니다. 파일 버전 / 손상 여부를 확인해 주세요. ${String(event.data?.message || "").slice(0,200)}`));
-        worker.onerror = event => { event.preventDefault?.(); finish(new Error(`DWG 엔진 오류: ${event.message || "작업 중단"}`)); };
-        timer = setTimeout(()=>finish(new Error("DWG 읽기 제한 시간을 초과했습니다. 필요한 영역만 분리한 파일로 다시 시도해 주세요.")),Math.min(600000,Math.max(100,Number(timeoutMs) || 90000)));
+        worker.onmessage = event => { if (event.data?.ok) finish(null,event.data.dxf); else { const detail = String(event.data?.message || "").slice(0,200); finish(failure("dwg-decode-failed", `DWG 해석에 실패했습니다. 파일 버전 / 손상 여부를 확인해 주세요. ${detail}`, { detail })); } };
+        worker.onerror = event => { event.preventDefault?.(); const detail = String(event.message || ""); finish(failure("dwg-engine-failed", `DWG 엔진 오류: ${detail || "작업 중단"}`, { detail })); };
+        timer = setTimeout(()=>finish(failure("dwg-timeout", "DWG 읽기 제한 시간을 초과했습니다. 필요한 영역만 분리한 파일로 다시 시도해 주세요.")),Math.min(600000,Math.max(100,Number(timeoutMs) || 90000)));
         signal?.addEventListener("abort",cancel,{once:true}); check(signal);
         worker.postMessage({buffer,wasmBinary},[buffer,wasmBinary.buffer]);
       } catch (error) { finish(error); }
@@ -319,27 +326,27 @@
   }
   async function read(file, options = {}) {
     check(options.signal);
-    if (!file || typeof file.arrayBuffer !== "function" || !file.size || file.size > MAX_BYTES) throw new Error("64 MB 이하의 DWG / DXF 파일을 선택해 주세요.");
+    if (!file || typeof file.arrayBuffer !== "function" || !file.size || file.size > MAX_BYTES) throw failure("file-size", "64 MB 이하의 DWG / DXF 파일을 선택해 주세요.");
     const extension = String(file.name || "").split(".").pop().toLowerCase();
-    if (!["dwg","dxf"].includes(extension)) throw new Error("DWG 또는 DXF 파일만 가져올 수 있습니다.");
-    options.onProgress?.("파일 읽는 중");
+    if (!["dwg","dxf"].includes(extension)) throw failure("file-extension", "DWG 또는 DXF 파일만 가져올 수 있습니다.");
+    progress(options, "file-reading", "파일 읽는 중");
     const buffer = await file.arrayBuffer(); check(options.signal);
     let text,version = "";
     if (extension === "dwg") {
       version = new TextDecoder().decode(new Uint8Array(buffer,0,Math.min(6,buffer.byteLength)));
-      if (!/^AC10\d{2}$/.test(version)) throw new Error("DWG 파일 서명이 올바르지 않습니다.");
-      if (!["AC1012","AC1014","AC1015","AC1018","AC1021","AC1024","AC1027","AC1032"].includes(version)) throw new Error("R13 ~ R2018 형식의 DWG를 지원합니다. CAD에서 해당 형식으로 다시 저장해 주세요.");
-      options.onProgress?.("DWG 해석 중 (오프라인)"); text = await convertDwg(buffer,options);
+      if (!/^AC10\d{2}$/.test(version)) throw failure("dwg-signature", "DWG 파일 서명이 올바르지 않습니다.");
+      if (!["AC1012","AC1014","AC1015","AC1018","AC1021","AC1024","AC1027","AC1032"].includes(version)) throw failure("dwg-version", "R13 ~ R2018 형식의 DWG를 지원합니다. CAD에서 해당 형식으로 다시 저장해 주세요.", { version });
+      progress(options, "dwg-converting", "DWG 해석 중 (오프라인)"); text = await convertDwg(buffer,options);
     } else text = decodeDxf(buffer);
-    check(options.signal); options.onProgress?.("2D 객체 가져오는 중");
+    check(options.signal); progress(options, "entities-importing", "2D 객체 가져오는 중");
     await new Promise(resolve=>setTimeout(resolve,0)); check(options.signal);
     validateDxf(text);
-    if (!globalThis.CadDxf?.parseDxf) throw new Error("DXF 해석 엔진을 찾을 수 없습니다.");
+    if (!globalThis.CadDxf?.parseDxf) throw failure("dxf-engine-unavailable", "DXF 해석 엔진을 찾을 수 없습니다.");
     const document = attachDimStyles(text,globalThis.CadDxf.parseDxf(text));
-    options.onProgress?.(`원본 객체 ${document.entities.length.toLocaleString()}개 · 도면층 ${document.layers.size.toLocaleString()}개 · 블록 ${document.blocks.size.toLocaleString()}개: 표시할 객체 준비 중`);
+    progress(options, "entities-preparing", `원본 객체 ${document.entities.length.toLocaleString()}개 · 도면층 ${document.layers.size.toLocaleString()}개 · 블록 ${document.blocks.size.toLocaleString()}개: 표시할 객체 준비 중`, { sourceEntities: document.entities.length, layers: document.layers.size, blocks: document.blocks.size });
     await new Promise(resolve=>setTimeout(resolve,0)); check(options.signal);
     const result = convertDocument(document,{...options,format:extension.toUpperCase(),version});
-    if (extension === "dwg") result.report.warnings.unshift("DWG는 LibreDWG로 읽습니다. 프록시 / 전문 3D 객체 일부는 변환 엔진에서 누락될 수 있습니다.");
+    if (extension === "dwg") { result.report.warnings.unshift("DWG는 LibreDWG로 읽습니다. 프록시 / 전문 3D 객체 일부는 변환 엔진에서 누락될 수 있습니다."); result.report.warningDiagnostics.unshift(diagnostic("dwg-lossy")); }
     check(options.signal); return result;
   }
   Tool.core.cadImporters = Object.freeze({ read,parseDxf(text,options={}) { validateDxf(text);return convertDocument(attachDimStyles(text,globalThis.CadDxf.parseDxf(text)),options); },convertDocument });

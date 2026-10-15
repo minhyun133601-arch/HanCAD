@@ -1,4 +1,5 @@
 import type { Messages } from './messages';
+import { importKo } from './import-ko';
 
 export const ko: Messages = {
   appName: 'HanCAD',
@@ -158,6 +159,26 @@ export const ko: Messages = {
   exportSvg: 'SVG 저장',
   exportDxf: 'DXF 저장',
   importing: '도면을 읽는 중…',
+  importDiagnostics: importKo,
+  rendererUnavailable: '도면 화면을 초기화하지 못했습니다.',
+  rendererFailure: (reason) => `도면 화면 초기화 오류: ${reason}`,
+  rendererContextUnavailable: (kind) =>
+    ({
+      main: '도면 화면 캔버스를 만들지 못했습니다.',
+      preview: '미리보기 캔버스를 만들지 못했습니다.',
+      cache: '도면 캐시 캔버스를 만들지 못했습니다.',
+    })[kind],
+  exportNoVisibleEntities: '변환할 도면 객체가 없습니다. 먼저 DWG / DXF 파일을 여세요.',
+  exportInvalidImageSize: '이미지 크기가 올바르지 않습니다.',
+  exportCanvasUnavailable: '도면 이미지 캔버스를 만들지 못했습니다.',
+  exportImageConversionFailed: '도면 이미지 변환에 실패했습니다.',
+  exportInvalidJpeg: 'PDF에 넣을 JPEG 이미지가 올바르지 않습니다.',
+  exportInvalidPdfMargin: 'PDF 여백이 올바르지 않습니다.',
+  commandHistoryCountInvalid: '실행 취소/다시 실행 횟수는 양의 정수여야 합니다.',
+  commandInvalidPointValue: (name) => `${name}의 점 값이 올바르지 않습니다.`,
+  commandStringValueRequired: (name) => `${name}에는 문자 값이 필요합니다.`,
+  inputStringRequired: '문자 입력이 필요합니다.',
+  inputFiniteNumberRequired: '유한한 숫자 입력이 필요합니다.',
   cancelImport: '읽기 취소',
   importReport: '도면 읽기 결과',
   sourceObjects: '원본 최상위 객체',

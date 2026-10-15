@@ -1,5 +1,5 @@
 import type { CadImportReport } from '@hancad/legacy-bridge';
-import type { Messages } from '@hancad/ui';
+import { formatCadImportWarning, type Messages } from '@hancad/ui';
 
 export function ImportReport({
   report,
@@ -51,7 +51,13 @@ export function ImportReport({
           <summary>{messages.warnings}</summary>
           <ul>
             {report.warnings.map((warning, index) => (
-              <li key={index}>{warning}</li>
+              <li key={index}>
+                {formatCadImportWarning(
+                  warning,
+                  report.warningDiagnostics?.[index],
+                  messages.importDiagnostics,
+                )}
+              </li>
             ))}
           </ul>
         </details>

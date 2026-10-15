@@ -2,62 +2,78 @@
 
 ## Active order: original Phase 00 through Phase 25 (2026-10-15)
 
-The latest user instruction supersedes the earlier feature-priority delivery
-order. Preserve all delivered features, but complete the earliest unfinished
-original phase before implementing the next one. Historical milestones below are
-verified subsets, not permission to skip original phase requirements.
+The user explicitly reaffirmed completing one original phase at a time. Preserve
+all delivered features, but finish the earliest incomplete phase before starting
+new work in the next one. Historical milestones below are verified subsets, not
+permission to skip original phase requirements.
 
-Current phase: **00 Bootstrap**. Baseline unit/compatibility checks pass (220/23).
-The first production E2E run passed 40, skipped one private-file case and failed
-one root navigation with an HTTP error; all six shell tests passed on immediate
-isolated rerun. That HTTP failure did not recur in the complete correction runs.
+Current phase: **00 Bootstrap**. Current milestone: **0.8 native acceptance**.
+The fresh baseline passed 223 unit, 29 compatibility and 43 production Edge
+tests, with one opt-in private-file skip.
 
-| Milestone                             | Status  | Acceptance                                                                                                                           |
-| ------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 0.6 Ordered bootstrap readiness       | Done    | Original order and 26-phase docs; complete desktop preflight, early launch failure, bilingual progress and typed variable errors     |
-| 0.7 Remaining diagnostic localization | Pending | Structured importer errors/progress/warnings and renderer initialization failure presentation                                        |
-| 0.8 Original Phase 00 acceptance      | Pending | Full verification; actual native Korean shell launch, minimum size and saved position/size; audit remaining user-visible diagnostics |
+| Milestone                             | Status                      | Acceptance                                                                                                                                                   |
+| ------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0.6 Ordered bootstrap readiness       | Done                        | Original order and 26-phase docs; complete desktop preflight, early launch failure, bilingual progress and typed variable errors                             |
+| 0.7 Remaining diagnostic localization | Done                        | Structured importer errors/progress/warnings, recovery and live locale changes, renderer failure presentation/cleanup, command/input/export diagnostic audit |
+| 0.8 Original Phase 00 acceptance      | Pending native prerequisite | Browser and complete verification pass; actual native Korean shell, minimum size and saved position/size remain unverified                                   |
 
-Native MSVC C++ tools and the Windows SDK are absent. The earlier automatic
-approval review rejected their installation with `blocked by policy`; no alternate
-installation route is being attempted. Native startup and window restoration stay
-unverified. Browser success cannot complete this acceptance item.
+The completed session plan for 0.7 added stable importer diagnostic identities
+and typed catalogs, retained legacy fallback strings/callbacks, formatted live
+progress and recovered warnings in the current language, and preserved external
+diagnostic text. Failed renderer initialization now releases its resources and
+retains the shell/command line with a localized alert. The text audit also fixed
+reachable command/input and export errors, including a language change before an
+asynchronous image failure. Visual QA corrected overlapping English ribbon labels
+at 1280x720 without changing the commands or tooltips.
 
-Final checks pass: real WASM round trip, ESLint, formatting, strict TypeScript,
-223 unit tests, 29 compatibility tests and refreshed production build. The first
-integrated E2E run found one obsolete expectation that English progress still
-contained Korean. Correcting that expectation and rerunning the complete Edge
-suite passes 43 tests in 52.9 seconds; one opt-in private-file test is skipped.
-No private drawing benchmark was repeated. Consolidated
-`HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=1 pnpm verify` also passes all stages,
-including 43 Edge tests in 53.4 seconds and one opt-in skip.
+Final `HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=1 pnpm verify` passes real WASM
+round trip, ESLint, formatting, strict TypeScript, 235 unit tests, 30 compatibility
+tests, a refreshed production build and 50 Edge E2E tests in 48.8 seconds.
+The one opt-in private-file case is skipped; no private drawing benchmark was
+repeated. Seven new E2E cases exercise real diagnostic failure/cancellation paths
+and verify drawing/view/journal preservation. Existing drafting, editing,
+dimension, text, recovery and export regressions pass.
 
-An actual 1280x720 dev-server browser session also passes Korean shell, physical
-command input, unknown command, 26-row progress and English progress checks, with
-no page errors. Visual evidence is ignored under `test-artifacts/bootstrap/`.
-`pnpm check:desktop` reports only MSVC/Windows SDK missing; `pnpm tauri dev`
-exits with repair instructions before CLI/Vite/Cargo and `pnpm tauri --help` works.
-No tool was installed, and no native launch was attempted or claimed.
+Actual browser checks at 1280x720 verify Korean shell, physical command entry,
+unknown command, 26-row HANPROGRESS and English/Korean switching. Diagnostic
+screenshots cover visible localized warnings and main/preview context failures;
+English ribbon geometry has zero button overlaps. Evidence stays ignored under
+`test-artifacts/bootstrap-diagnostics/`. Old command-history entries and arbitrary
+external diagnostics intentionally keep their original text.
 
-Exact next step: continue Phase 00 i18n with structured importer
-errors/progress/warnings and renderer initialization failure presentation; retain
-arbitrary external diagnostics until they have typed identities. In parallel the
-native prerequisite must be supplied before actual Korean shell, minimum size and
-saved size/position acceptance. Do not start new Phase 01 work or resume Phase 7.3
-while Phase 00 is incomplete. The completed progress/typed-variable localization
-does not certify all application text.
+The refreshed `pnpm check:desktop` inventory reports only MSVC and Windows SDK
+missing. Their earlier installation was rejected by automatic approval review
+with `blocked by policy`; no alternate installation route is attempted. No
+external dependency or system tool was installed. The UI diagnostic guard's
+existing workspace dependency is declared and its lockfile updated offline.
+Actual native startup, 1280x720 minimum and window restoration remain unverified;
+browser success cannot complete these acceptance items.
+
+Exact next step: remain in Phase 00 milestone 0.8. Once a complete MSVC C++
+toolchain and Windows SDK are available, run `pnpm check:desktop`, launch
+`pnpm tauri dev`, confirm the Korean shell and unknown-command path, try resizing
+below 1280x720, then move/resize/close/relaunch to verify saved position and size.
+Inspect native startup/runtime diagnostics in both languages and rerun complete
+verification after any correction. Mark Phase 00 complete only when those actual
+native checks pass; then begin the original Phase 01 prompt. Do not start new
+Phase 01 or Phase 7.3 work while these checks remain pending.
 
 Manual checks for this increment:
 
-1. Launch the current browser app and type `HANPROGRESS`, Enter. Check 26 phases,
-   then close the dialog and select English in the language selector.
-2. Type `HANPROGRESS`, Enter again. Features, limitations, phase names and details
-   use English. Close it and switch back to Korean to confirm the return path.
-3. In English, enter `SETVAR`, Enter, `OSMODE`, Enter, `99999`, Enter. The English
-   range error leaves OSMODE unchanged. Esc, `GETVAR`, Enter, `OSMODE`, Enter
-   reports 4133 in a new drawing/profile with defaults.
-4. Run `pnpm check:desktop` to inspect prerequisites; native acceptance is pending
-   until its missing entries are resolved and the actual window is exercised.
+1. Run `pnpm dev:web`, open `http://127.0.0.1:1420`, type `NOTACAD`, Enter,
+   and check the Korean unknown-command message. Type `HANPROGRESS`, Enter,
+   check 26 phases, and press Esc.
+2. Open a local DXF with an unspecified unit, expand the report's warning section,
+   choose English, and check the translated warning. Reload, expand warnings,
+   and choose English again to verify recovery retains diagnostic identities.
+3. In English, attempt to open a malformed DXF and confirm its error uses English
+   while the previous drawing and zoom remain unchanged. Switch to Korean and
+   repeat to check the Korean error.
+4. Run `pnpm test:e2e apps/web/tests/diagnostic-i18n.spec.ts` for injected binary
+   DXF, paused DWG cancellation, PNG failure and renderer-context failures. The
+   renderer tests confirm command input remains usable and resources are released.
+5. Run `pnpm check:desktop`; native acceptance remains pending until its missing
+   prerequisites are resolved and the actual window is exercised.
 
 ## Delivered continuation: essential editing and Korean text (2026-10-15)
 

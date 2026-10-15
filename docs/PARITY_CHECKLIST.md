@@ -5,6 +5,8 @@ command is not an implemented command.
 
 - [ ] Complete original Phase 00 native Korean shell startup, minimum 1280x720 and size/position restoration before new Phase 01 implementation.
 - [ ] Audit all user-visible diagnostics against typed ko-KR/en-US catalogs; bilingual progress content alone does not complete i18n.
+- [ ] Compare localized importer line/limit errors, warnings after language switch/recovery and current-language cancellation against the installed Korean reference; preserve arbitrary external diagnostics verbatim.
+- [ ] Verify renderer startup failure retains the shell and command input in both locales; injected browser context failures do not prove native WebView2 behavior.
 - [ ] Choose and document one installed AutoCAD reference release and template.
 - [ ] Verify Korean prompts against the reference release.
 - [ ] Verify the original shortcut table against the reference/user PGP profile.

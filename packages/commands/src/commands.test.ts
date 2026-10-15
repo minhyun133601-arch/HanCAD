@@ -1,5 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { CommandRegistry, HeadlessCommandRunner } from './index';
+import { CommandInputError } from './index';
+import { setVariableFromInput } from './core';
+import { InputQueue } from '@hancad/editor';
+import { SystemVariables } from '@hancad/sysvars';
 
 describe('ZIP-first canonical commands and aliases', () => {
   it('resolves the full input prefix set and conflicting legacy aliases to the ZIP definitions', () => {
@@ -48,7 +52,7 @@ describe('ZIP-first canonical commands and aliases', () => {
     await runner.run('REDO');
     expect(runner.sysvars.get('LUPREC')).toBe(2);
     expect((await runner.run('GETVAR LUPREC')).messages).toEqual(['LUPREC = 2']);
-    expect((await runner.run('')).messages).toContain('A string input is required.');
+    expect((await runner.run('')).messages).toContain('문자 입력이 필요합니다.');
   });
 
   it('explicitly reports unknown, pending, cancelled and unsupported transparent commands', async () => {
@@ -108,5 +112,113 @@ describe('ZIP-first canonical commands and aliases', () => {
       expect(runner.database.serialize()).toBe(before);
       expect(runner.database.undoCount).toBe(0);
     }
+  });
+
+  it('provides typed variable input failures before a drawing transaction starts', () => {
+    const sysvars = new SystemVariables();
+    for (const [name, value, code, message] of [
+      ['LIMMIN', 12, 'invalid-point', 'Invalid point value for LIMMIN'],
+      ['CLAYER', 12, 'string-required', 'A string value is required for CLAYER'],
+    ] as const) {
+      try {
+        setVariableFromInput(name, {
+          sysvars,
+          database: sysvars.database,
+          input: new InputQueue([value]),
+          locale: 'ko-KR',
+          print: () => {},
+        });
+        expect.fail('Malformed variable inputs must be rejected.');
+      } catch (error) {
+        expect(error).toBeInstanceOf(CommandInputError);
+        expect(error).toMatchObject({ code, variable: name, message });
+      }
+    }
+    expect(sysvars.database.undoCount).toBe(0);
+  });
+
+  it('localizes malformed core inputs while retaining values and undo/redo history', async () => {
+    for (const locale of ['ko-KR', 'en-US'] as const) {
+      const runner = new HeadlessCommandRunner({ locale });
+      await runner.run('SETVAR', ['LUPREC', 2]);
+      await runner.run('U');
+      const before = runner.database.serialize();
+      const history = [runner.database.undoCount, runner.database.redoCount];
+      const failures = [
+        {
+          command: 'SETVAR',
+          inputs: ['LIMMIN', 42],
+          korean: 'LIMMIN의 점 값이 올바르지 않습니다.',
+          english: 'Invalid point value for LIMMIN.',
+        },
+        {
+          command: 'SETVAR',
+          inputs: ['CLAYER', 42],
+          korean: 'CLAYER에는 문자 값이 필요합니다.',
+          english: 'A string value is required for CLAYER.',
+        },
+        {
+          command: 'UNDO',
+          inputs: [0],
+          korean: '실행 취소/다시 실행 횟수는 양의 정수여야 합니다.',
+          english: 'Undo/redo count must be a positive integer.',
+        },
+        {
+          command: 'MREDO',
+          inputs: [Number.POSITIVE_INFINITY],
+          korean: '실행 취소/다시 실행 횟수는 양의 정수여야 합니다.',
+          english: 'Undo/redo count must be a positive integer.',
+        },
+        {
+          command: 'GETVAR',
+          inputs: [],
+          korean: '문자 입력이 필요합니다.',
+          english: 'A string input is required.',
+        },
+      ];
+      for (const failure of failures) {
+        const result = await runner.run(failure.command, failure.inputs);
+        expect(result.status).toBe('error');
+        expect(result.messages.at(-1)).toBe(locale === 'ko-KR' ? failure.korean : failure.english);
+      }
+      expect(runner.database.serialize()).toBe(before);
+      expect([runner.database.undoCount, runner.database.redoCount]).toEqual(history);
+      await runner.run('REDO');
+      expect(runner.sysvars.get('LUPREC')).toBe(2);
+    }
+  });
+
+  it('lets the application format registered-command failures without changing drawing/history', async () => {
+    const failure = new Error('External domain diagnostic');
+    const format = vi.fn((error: unknown) =>
+      error === failure ? 'Localized domain failure.' : 'Unexpected error.',
+    );
+    const runner = new HeadlessCommandRunner({ locale: 'en-US', errorFormatter: format });
+    runner.registry.register({
+      name: 'EXPORTTEST',
+      displayName: { 'ko-KR': 'EXPORTTEST', 'en-US': 'EXPORTTEST' },
+      description: { 'ko-KR': 'EXPORTTEST', 'en-US': 'EXPORTTEST' },
+      execute: async () => {
+        throw failure;
+      },
+    });
+    await runner.run('SETVAR', ['LUPREC', 2]);
+    await runner.run('U');
+    const drawing = runner.database.serialize();
+    const history = [runner.database.undoCount, runner.database.redoCount];
+    expect(await runner.run('EXPORTTEST')).toEqual({
+      status: 'error',
+      command: 'EXPORTTEST',
+      messages: ['Localized domain failure.'],
+    });
+    expect(format).toHaveBeenCalledExactlyOnceWith(failure);
+    expect(runner.database.serialize()).toBe(drawing);
+    expect([runner.database.undoCount, runner.database.redoCount]).toEqual(history);
+    await runner.run('REDO');
+    expect(runner.sysvars.get('LUPREC')).toBe(2);
+    expect(await new HeadlessCommandRunner().run('GETVAR')).toMatchObject({
+      status: 'error',
+      messages: ['문자 입력이 필요합니다.'],
+    });
   });
 });
