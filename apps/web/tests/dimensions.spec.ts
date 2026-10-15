@@ -201,6 +201,17 @@ test('basic dimension settings use live variables, apply selected styles once, a
   const previousIdentity = await page.evaluate(
     () => JSON.parse(localStorage.getItem('hancad.active-drawing.v1') ?? '{}').documentId,
   );
+  // Keep the reader pending so cancellation is independent of decoding speed.
+  await page.evaluate(() => {
+    const NativeWorker = Worker;
+    globalThis.Worker = new Proxy(NativeWorker, {
+      construct(target, args: [string | URL, WorkerOptions?]) {
+        const worker = new target(...args);
+        if (args[1]?.name === 'local-dwg-reader') worker.postMessage = () => {};
+        return worker;
+      },
+    });
+  });
   await page
     .getByTestId('cad-file-input')
     .setInputFiles(fileURLToPath(new URL('../../../vendor/example_2000.dwg', import.meta.url)));

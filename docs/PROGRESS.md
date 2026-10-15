@@ -19,7 +19,20 @@ Graphics 730 (integrated), 1920x1080 at 60 Hz, 32 GB RAM.
 Each milestone ends with lint, typecheck, unit/compat tests, a production build,
 the Edge E2E suite and a real browser check, then a `feat(phase2.N)` commit.
 
-### Session handoff (2026-10-15, paused by the user after 2.1)
+### Full Phase 02 continuation (2026-10-16)
+
+The user requested the entire next phase. Finish the active Phase 02 milestones
+2.2 through 2.6 before advancing to Phase 03. The existing milestone table is
+the implementation plan. Geometry/index, renderer sources, and navigation/aids
+are implemented in parallel with the WebGL2 backend, then integrated and verified.
+
+Fresh baseline: WASM, lint, format, strict TypeScript, 326 unit tests, 30
+compatibility tests, production build and 57 Edge E2E tests pass (one opt-in
+private-file test skipped). Fixed two baseline E2E defects before implementation:
+an outdated progress-text assertion and nondeterministic cancellation of a fast
+DWG reader. The cancellation test now deliberately keeps its worker pending.
+
+### Prior session handoff (2026-10-15, paused by the user after 2.1)
 
 Done: 2.1 committed (`32974dd`): `packages/render/src/style/` (aci.ts, lineweight.ts,
 linetype.ts, hancad-iso-lin.ts, style.test.ts), exported from the render index;

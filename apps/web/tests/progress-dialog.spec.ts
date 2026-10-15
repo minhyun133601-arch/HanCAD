@@ -48,5 +48,5 @@ test('progress features, limitations and all 26 phases follow the shell language
   await openProgress(page, '개발 현황');
   await expect(korean.locator('tbody th').last()).toHaveText('패키징·배포');
   await expect(korean).toContainText('TEXT/DTEXT 도면 위 한글 문자 입력');
-  await expect(korean.locator('details')).toContainText('원본 0~25단계 순서');
+  await expect(korean.locator('details')).toContainText('페이즈 1을 완료했습니다');
 });
