@@ -14,5 +14,6 @@ test-corpus/
 archive/pre-hancad-*.zip
 archive/retired-standalone/
 *.hcd
-배합실배치도12월16일.dwg
+# Private mixing-room drawing originals, copies, and exports.
+*배합*배치*
 HanCAD 실행.lnk
