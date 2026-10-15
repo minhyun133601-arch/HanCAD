@@ -1,0 +1,319 @@
+[
+  {
+    "name": "DIMTSZ",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "선형, 반지름 및 지름 치수기입을 위해 화살촉 대신 그려진 기울기 스트로크의 크기를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D225D167-A66B-4617-BC59-C1385069D152.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMTVP",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수 선 위쪽 또는 아래쪽 치수 문자의 수직 위치를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-248E5BFA-F355-4369-A889-291D77070B26.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMTXSTY",
+    "type": "string",
+    "default": "Standard",
+    "scope": "drawing",
+    "description": "치수의 문자 스타일을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2B91DF02-DF27-447D-A395-054814B1F305.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "Standard"
+    }
+  },
+  {
+    "name": "DIMTXT",
+    "type": "real",
+    "default": 2.5,
+    "scope": "drawing",
+    "description": "현재 문자 스타일이 고정 높이가 아닌 경우 치수 문자의 높이를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A17A69D7-25EF-4F57-B4EB-D53A56AB909C.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.1800 (imperial) or 2.5000 (metric)"
+    },
+    "min": 0
+  },
+  {
+    "name": "DIMTXTDIRECTION",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수 문자의 읽기 방향을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-06B9BE91-A2E9-45CB-9B3D-7D5BDD238F5B.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMTXTRULER",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "치수 문자를 편집할 때 눈금자의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-985FDB67-F6AD-448F-9B48-08FD3D093C8B.htm",
+      "type": "Switch",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMTZIN",
+    "type": "integer",
+    "default": 8,
+    "scope": "drawing",
+    "description": "공차 값에서 0의 억제를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-944FA6CB-1394-4523-9620-6B1350F0C40E.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0 (imperial) or 8 (metric)"
+    },
+    "min": 0,
+    "max": 15
+  },
+  {
+    "name": "DIMUPT",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "사용자 위치 지정 문자에 대한 옵션을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4B271261-0596-48DE-BA45-0AB0C7379FA4.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMZIN",
+    "type": "integer",
+    "default": 8,
+    "scope": "drawing",
+    "description": "1 차 단위 값에서 0의 억제를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A1860981-FE1C-4947-927B-7CD6B8CEF8EE.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0 (imperial) or 8 (metric)"
+    },
+    "min": 0,
+    "max": 15
+  },
+  {
+    "name": "DISPSILH",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "와이어프레임 또는 2D 와이어프레임 비주얼 스타일에서 3D 솔리드 및 표면 객체의 윤곽 모서리 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AFD89831-0DE8-4398-8774-0C3F8DB0D228.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DISPSILHBLOCKS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "2D 와이어프레임 비주얼 스타일에서 블록의 3D 솔리드 윤곽 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9E293ED4-1C00-4EF1-BD1D-338D2FEEC01B.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHBOXHEIGHT",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 상자에서 Z 축 방향 높이의 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-849A6E04-CA82-43E7-B54C-2D2ECFE6EA6B.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHBOXLENGTH",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 상자의 X 축 기준 길이에 대한 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9984F329-8A90-44F0-A7E9-94C888E892E0.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHBOXWIDTH",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 상자의 Y 축 기준 폭에 대한 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-238AECE7-5A2D-48A1-9B06-998FDA45DA0F.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHCONEAXIS",
+    "type": "integer",
+    "default": 8,
+    "scope": "profile",
+    "description": "메쉬 원추 밑면의 둘레에 대한 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FAEDC53C-13ED-4524-990F-844AAAF2E981.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "8"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHCONEBASE",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 원추 밑면의 둘레와 중심점 사이 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-55066131-D355-443E-AFDD-8804588F89A3.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHCONEHEIGHT",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 원추의 밑면과 점 또는 맨 위 사이 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-189C8C70-D652-46F5-B366-BAEE69FD5C27.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHCYLAXIS",
+    "type": "integer",
+    "default": 8,
+    "scope": "profile",
+    "description": "메쉬 원통 밑면의 둘레에 대한 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2752144D-579F-4B33-B6A1-CDCE49E9A626.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "8"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHCYLBASE",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 원통 밑면의 중심에서 둘레까지 반지름 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D3643D94-F3CA-4A57-B08C-C4037089A518.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHCYLHEIGHT",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 원통의 밑면과 맨 위 사이 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4CDA31C3-8D16-44A1-8DAE-4C0523D441A2.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHPYRBASE",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 피라미드 밑면의 중심과 둘레 사이 반지름 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6933B00B-1646-4A40-BFBB-EFEA4F47AB24.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHPYRHEIGHT",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 피라미드의 밑면과 맨 위 사이 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-94594A60-4CD0-4C72-9607-10EFEBF1A58B.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

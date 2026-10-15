@@ -1,0 +1,131 @@
+{
+  "title": "VISUALSTYLE (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-8A8BF2C4-FC56-44EC-A8C4-A60CE33A530C.htm",
+  "section": "object",
+  "documentedGroups": [
+    {
+      "codes": [65],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [75],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [175],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [42],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [92],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [66],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [43],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [76],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [77],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [78],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [67],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [79],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [170],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [171],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [290],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [174],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [93],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [44],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [173],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [291],
+      "subclasses": ["AcDbVisualStyle"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-2D71EE99-A6BE-4060-9B43-808CF1E201C6.htm"
+  ]
+}

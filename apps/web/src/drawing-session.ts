@@ -4,6 +4,8 @@ import { restoreDimensionStyle } from './dimension-style';
 import type { DimensionStyleValues } from './dimension-style';
 import { restoreDraftingVariables } from './drafting-variables';
 import type { DraftingVariableValues } from './drafting-variables';
+import { DrawingDatabase } from '@hancad/db';
+import type { DatabaseSnapshot } from '@hancad/db';
 
 /** The app and renderer treat validated sessions as immutable replacement snapshots. */
 export interface DrawingSession {
@@ -13,6 +15,9 @@ export interface DrawingSession {
   fileName: string;
   dimensionStyle?: DimensionStyleValues;
   draftingVariables?: DraftingVariableValues;
+  nativeDatabase?: DatabaseSnapshot;
+  nativeBlobs?: { name: string; data: number[] }[];
+  nativeTitled?: boolean;
 }
 
 function restoreReport(value: unknown): CadImportReport | null {
@@ -73,12 +78,51 @@ export function normalizeDrawingSession(value: unknown): DrawingSession {
   );
   if ('documentId' in value && (typeof value.documentId !== 'string' || !value.documentId.length))
     throw new Error('Invalid stored drawing identity.');
+  let nativeDatabase: DatabaseSnapshot | undefined;
+  if ('nativeTitled' in value && typeof value.nativeTitled !== 'boolean')
+    throw new Error('Invalid native drawing title state.');
+  if ('nativeDatabase' in value) {
+    nativeDatabase = DrawingDatabase.deserialize(JSON.stringify(value.nativeDatabase)).snapshot();
+    if (nativeDatabase.drawingVariables.HANCAD_VIEW_STATE !== undefined)
+      throw new Error('Recursive native drawing cache.');
+  }
+  let nativeBlobs: DrawingSession['nativeBlobs'];
+  if ('nativeBlobs' in value) {
+    const blobs = value.nativeBlobs;
+    if (
+      !Array.isArray(blobs) ||
+      !blobs.every((blob: unknown) => {
+        if (
+          typeof blob !== 'object' ||
+          blob === null ||
+          !('name' in blob) ||
+          typeof blob.name !== 'string' ||
+          !blob.name ||
+          blob.name.split(/[\\/]/).some((part) => part === '..') ||
+          !('data' in blob) ||
+          !Array.isArray(blob.data)
+        )
+          return false;
+        return blob.data.every(
+          (byte: unknown) =>
+            typeof byte === 'number' && Number.isInteger(byte) && byte >= 0 && byte <= 255,
+        );
+      })
+    )
+      throw new Error('Invalid native drawing blobs.');
+    nativeBlobs = structuredClone(blobs) as NonNullable<DrawingSession['nativeBlobs']>;
+  }
   return {
     state: normalizeCadState(value.state),
     fileName: value.fileName,
     report: restoreReport('report' in value ? value.report : undefined),
     ...(dimensionStyle ? { dimensionStyle } : {}),
     ...(draftingVariables ? { draftingVariables } : {}),
+    ...(nativeDatabase ? { nativeDatabase } : {}),
+    ...(nativeBlobs ? { nativeBlobs } : {}),
+    ...('nativeTitled' in value && typeof value.nativeTitled === 'boolean'
+      ? { nativeTitled: value.nativeTitled }
+      : {}),
     ...('documentId' in value && typeof value.documentId === 'string'
       ? { documentId: value.documentId }
       : {}),

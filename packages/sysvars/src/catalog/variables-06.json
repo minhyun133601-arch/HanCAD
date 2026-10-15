@@ -1,0 +1,312 @@
+[
+  {
+    "name": "CLAYOUT",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "현재 배치를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0C492884-3B3F-4C35-8BAE-8233342A9203.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    }
+  },
+  {
+    "name": "CLEANSCREENSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "화면 정리 상태가 켜져 있는지 꺼져 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-ADC0D08A-3E48-404A-B0B1-75E479182FF3.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CLIPROMPTLINES",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "명령 윈도우 위에 단일 명령에 대해 표시되는 임시 프롬프트 행 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8B14D930-2B19-497D-B61E-EFD95296221C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "CLIPROMPTUPDATE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "AutoLISP 또는 스크립트 파일을 실행하는 동안 생성되는 메시지 및 프롬프트를 명령행에 표시할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CBC7C354-C006-42FA-997D-A6603CA27FAD.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CLISTATE",
+    "type": "integer",
+    "default": 1,
+    "scope": "session",
+    "description": "명령행이 열려 있는지 아니면 닫혀 있는지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F08EAB93-CDB8-4843-B501-1B85B4390074.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "1"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CMATERIAL",
+    "type": "string",
+    "default": "BYLAYER",
+    "scope": "drawing",
+    "description": "새 객체의 재료를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-28B84E0C-4C55-442B-A09C-7B71682481F3.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "BYLAYER"
+    }
+  },
+  {
+    "name": "CMDACTIVE",
+    "type": "integer",
+    "scope": "session",
+    "description": "일반 명령, 투명 명령, 스크립트 또는 대화상자가 활성화되어 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-18B2E090-6C94-4C24-A70A-F2D6BDD5569C.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "bits": {
+      "0": "No active command",
+      "1": "Ordinary command is active",
+      "2": "Transparent command is active",
+      "4": "Script is active",
+      "8": "Dialog box is active",
+      "16": "Dynamic data exchange (DDE) is active",
+      "32": "AutoLISP is active (only visible to an ObjectARX-defined command)",
+      "64": "ObjectARX command is active"
+    },
+    "min": 0,
+    "max": 127,
+    "bitmask": 127,
+    "default": 0,
+    "defaultPolicy": "No command is active in a newly created HanCAD document."
+  },
+  {
+    "name": "CMDDIA",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "DIMEDIT 및 QLEADER 명령에 대한 내부 문자 편집기의 표시와 AutoCAD 기반 제품의 특정 대화상자 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CFB4A601-A0BF-49F0-856B-EEE1543A7E03.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CMDINPUTHISTORYMAX",
+    "type": "integer",
+    "default": 20,
+    "scope": "profile",
+    "description": "명령 프롬프트에 저장되는 이전 입력 값의 최대 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F3888541-C058-4C29-91C8-AB43261823BD.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "20"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "CMDNAMES",
+    "type": "string",
+    "default": "",
+    "scope": "session",
+    "description": "활성 및 투명 명령의 이름을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-422CB04D-A597-472F-B13B-72498DB8ECA3.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "\"\""
+    },
+    "readonly": true
+  },
+  {
+    "name": "CMFADEOPACITY",
+    "type": "integer",
+    "default": 40,
+    "scope": "profile",
+    "description": "부착된 모든 투명한 조정 모형을 통과하는 흐린 정도를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-33A5D12A-4E35-425E-9725-3387A8515111.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "40"
+    },
+    "min": 0,
+    "max": 90
+  },
+  {
+    "name": "CMLJUST",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "여러 줄 자리맞추기를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EC3FF124-EDA6-45A9-94EA-6122C6C42E0B.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "CMLSCALE",
+    "type": "real",
+    "default": 20,
+    "scope": "drawing",
+    "description": "여러 줄의 전체 폭을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9E3E86FD-CBF7-4722-BED5-17B12709C6F4.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000 (imperial) or 20.0000 (metric)"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "CMLSTYLE",
+    "type": "string",
+    "default": "Standard",
+    "scope": "drawing",
+    "description": "여러 줄의 모양을 결정하는 여러 줄 스타일을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-601C82B8-D127-4885-940C-D21A82E94886.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "Standard"
+    }
+  },
+  {
+    "name": "CMOSNAP",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면에 부착된 조정 모형의 형상에 대한 객체 스냅의 활성 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-02732412-4940-46C0-9840-30D17FD384BF.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "COMMANDPREVIEW",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "특정 명령의 가능한 결과 미리보기가 표시되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2B245436-029A-4E14-92C2-0ED4F4F1362E.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "COMPAREPROPS",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "객체 특성의 변경 사항을 두 도면 리비전 간의 변경 사항으로 식별할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FC52193A-3801-42D1-B5C3-873B192B36B2.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "bits": {
+      "0": "Object property changes are not included in the drawing comparison",
+      "1": "Color",
+      "2": "Layer",
+      "4": "Linetype",
+      "8": "Linetype scale",
+      "16": "Lineweight",
+      "32": "Transparency",
+      "64": "Thickness"
+    },
+    "min": 0,
+    "max": 127,
+    "bitmask": 127
+  },
+  {
+    "name": "COMPARESHOW2",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "두 번째 도면에만 있는 객체를 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8E3C5248-A2AE-4C26-A8A3-FCC9E1A846EF.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "COMPARESHOWCONTEXT",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "외부 참조 비교에서 사용되지 않는 객체의 가시성을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C4B684AD-633B-4498-9402-172424D3A2A1.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  }
+]

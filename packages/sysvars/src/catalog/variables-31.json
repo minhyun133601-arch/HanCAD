@@ -1,0 +1,289 @@
+[
+  {
+    "name": "PROGRAM",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "프로그램 이름을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-278C8023-96CB-414C-85F1-372896AA7B08.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "Varies with the product"
+    },
+    "readonly": true
+  },
+  {
+    "name": "PROJECTNAME",
+    "type": "string",
+    "default": "",
+    "scope": "drawing",
+    "description": "현재 도면에 프로젝트 이름을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BBE6FA4B-800E-4D7D-9D59-EDA24829C5E9.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "\"\""
+    }
+  },
+  {
+    "name": "PROJMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "자르기 또는 연장의 현재 투영 모드를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8735A062-2688-44A7-809A-9883761533F9.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "PROPERTYPREVIEW",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "특성을 조정하는 드롭다운 리스트 및 갤러리를 롤오버할 때 현재 선택된 객체에 대한 변경 사항을 미리 볼 수 있는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CBD0C401-9805-450A-855C-9FBDE6D6FA74.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PROPOBJLIMIT",
+    "type": "integer",
+    "default": 25000,
+    "scope": "profile",
+    "description": "특성 및 빠른 특성 팔레트를 사용하여 한 번에 변경할 수 있는 객체 수를 제한합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6170C0EC-0910-46A6-81DF-DE0A888573A0.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "25000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "PROXYGRAPHICS",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "프록시 객체 이미지를 도면에 저장할지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4205F367-F234-4BE3-86D5-81234684385F.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PROXYNOTICE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "프록시를 작성할 때 알림 메시지를 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A1A272D8-F3E3-4B84-AF23-1AFEF732DA03.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PROXYSHOW",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면에서의 프록시 객체 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E0F980FF-53A5-4094-B259-B1143F8C9B89.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "PSLTSCALE",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "도면 공간 뷰포트에 표시된 객체의 선종류 축척을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-23EA4D64-AE7D-41E5-A8D0-20F060313D62.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PSOLHEIGHT",
+    "type": "real",
+    "default": 80,
+    "scope": "drawing",
+    "description": "POLYSOLID 명령을 사용하여 작성한 스윕된 솔리드 객체의 기본 높이를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B3DA9FC6-E829-4BEC-BC06-BA19E0BF2971.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "4.0000 (imperial) or 80.0000 (metric)"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "PSOLWIDTH",
+    "type": "real",
+    "default": 5,
+    "scope": "drawing",
+    "description": "POLYSOLID 명령을 사용하여 작성한 스윕된 솔리드 객체의 기본 폭을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BD9FB9E1-A005-4DBB-8FC2-68B461E99540.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.2500 (imperial) or 5.0000 (metric)"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "PSTYLEMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "현재 도면이 색상 종속 플롯 스타일 모드인지 명명된 플롯 스타일 모드인지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2D0D1C41-60E6-4FD0-AB63-28475EE82633.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PSVPSCALE",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "새로 작성한 모든 뷰포트에 뷰 축척 비율을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0EE6B130-9ACC-4E5E-98E9-28D1E00BAE89.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "PUBLISHALLSHEETS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "게시 대화상자에서 활성 문서 또는 열려 있는 모든 문서의 컨텐츠를 로드할지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F58625D9-66FC-479F-9198-88509538DD92.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PUBLISHCOLLATE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "시트 세트, 다중 시트 플롯 파일 또는 플롯 스풀 파일의 플로팅이 다른 플롯 작업에 의해 중단될 수 있는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2369EDF8-FC5E-4DB9-8DBA-E1997C31BDED.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PUBLISHHATCH",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "DWF 또는 DWFx 형식으로 게시된 해치 패턴을 Autodesk Impression에서 열 때 하나의 객체로 취급할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A53DA0BB-9CFB-44ED-AF17-026C70C42F8E.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PUCSBASE",
+    "type": "string",
+    "default": "",
+    "scope": "drawing",
+    "description": "도면 공간에서만 직교 UCS 설정의 원점과 방향을 정의하는 UCS 이름을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1A64F4F1-3A28-4630-B0E0-D83DDB877E51.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "\"\""
+    }
+  },
+  {
+    "name": "QPLOCATION",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "빠른 특성 팔레트의 위치를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9536F299-E9E4-4418-B809-5AF5AFA5DF7C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "QPMODE",
+    "type": "integer",
+    "default": -1,
+    "scope": "profile",
+    "description": "객체를 선택할 때 빠른 특성 팔레트가 표시되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1803CDBC-C0C9-4AB9-B76B-FF6AB214D97B.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "-1"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

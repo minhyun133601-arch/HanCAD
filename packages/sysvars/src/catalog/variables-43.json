@@ -1,0 +1,300 @@
+[
+  {
+    "name": "VIEWBACKSTATUS",
+    "type": "integer",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "VIEWBACK 명령에서 이전 뷰를 사용할 수 있는지 여부를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-11389AEA-E166-4DE5-8D32-EB764B951510.htm",
+      "type": "Switch",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VIEWCTR",
+    "type": "point3",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "현재 뷰포트의 뷰 중심을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6F641FE3-8F12-491A-905B-A097D5B9718B.htm",
+      "type": "3D-point",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "VIEWDIR",
+    "type": "point3",
+    "default": [0, 0, 1],
+    "scope": "drawing",
+    "description": "UCS 좌표로 표현된 현재 뷰포트의 뷰 방향을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-30ED47BF-A7B7-4331-B1AF-976FCCD0FBCB.htm",
+      "type": "3D-vector",
+      "savedIn": "Drawing",
+      "initial": "0.0000,0.0000,1.0000"
+    },
+    "readonly": true
+  },
+  {
+    "name": "VIEWFWDSTATUS",
+    "type": "integer",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "이전 뷰를 VIEWFORWARD 명령에 사용할 수 있는지 여부를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-44A2ECBF-067F-46A8-852D-4A2E3F44130F.htm",
+      "type": "Switch",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VIEWMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트의 뷰 설정을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-01F9D6D3-0A43-4BCB-AA5C-65459D4BBC78.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "readonly": true,
+    "bits": {
+      "0": "Off",
+      "1": "Perspective view",
+      "2": "Front clipping",
+      "4": "Back clipping",
+      "8": "UCS Follow mode",
+      "16": "Front clipping not at the camera (not available in AutoCAD LT) If turned on, FRONTZ"
+    },
+    "min": 0,
+    "max": 31,
+    "bitmask": 31
+  },
+  {
+    "name": "VIEWSIZE",
+    "type": "real",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "도면 단위에서 측정되어, 현재 뷰포트에 표시되는 뷰의 높이를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-31B50CD0-4943-4E9B-8735-C15CB3C4268C.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VIEWSKETCHMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "시스템이 기호 스케치 모드에 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A5053CC6-8B1B-4CE5-A0DD-5DC3CF0CAB23.htm",
+      "type": "Switch",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VIEWTWIST",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "WCS를 기준으로 측정된 현재 뷰포트의 뷰 회전 각도를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5357731F-8FC6-4413-A7B2-3E152CD3127B.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VIEWUPDATEAUTO",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "원본 모형이 변경되면 모형 문서 도면 뷰를 자동으로 업데이트할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7300BF21-512A-44F5-9F81-20B63FD21110.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VISRETAIN",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "외부 참조에 종속된 도면층의 특성을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-897B1672-4E09-42E0-B857-A9D1F96ED671.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VPLAYEROVERRIDESMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "배치 뷰포트에 대한 도면층 특성 재지정을 표시 및 플롯할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C70C14C3-7BF1-4199-BFD4-7AF172E344CB.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VPMAXIMIZEDSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "뷰포트가 최대화되었는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BB58132B-1CF7-439D-B409-7EB1885E6CB8.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VPROTATEASSOC",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "뷰포트를 회전할 때 뷰포트의 뷰도 함께 회전할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D44A1A81-CE0A-49BC-BF34-42A0BF9E847B.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VSACURVATUREHIGH",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "곡률 분석(ANALYSISCURVATURE) 중에 표면이 초록색으로 표시되는 값을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E6C0D685-A93F-4DEB-A78D-4C22B2BA1735.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSACURVATURELOW",
+    "type": "real",
+    "default": -1,
+    "scope": "drawing",
+    "description": "곡률 분석(ANALYSISCURVATURE) 중에 표면이 파란색으로 표시되는 값을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E8717E47-F1FA-4300-AD5D-01653BAB0A4A.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "-1.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSACURVATURETYPE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "(ANALYSISCURVATURE)와 함께 사용되는 곡률 분석 유형을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4246C216-CCEB-4077-8359-4201760A1C44.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "VSADRAFTANGLEHIGH",
+    "type": "real",
+    "default": 3,
+    "scope": "drawing",
+    "description": "기울기 분석(ANALYSISDRAFT) 중에 모형이 초록색으로 표시되는 값을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C770ECF0-1C41-4D13-B848-60FAB95740BF.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "3.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSADRAFTANGLELOW",
+    "type": "real",
+    "default": -3,
+    "scope": "drawing",
+    "description": "기울기 분석(ANALYSISDRAFT) 중에 모형이 파란색으로 표시되는 값을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5FF7D508-AC7B-4095-B386-911574EF75D5.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "-3.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSAZEBRACOLOR1",
+    "type": "string",
+    "default": "RGB:255,255,255",
+    "scope": "drawing",
+    "description": "지브라 분석(ANALYSISZEBRA) 중에 표시되는 지브라 스트라이프의 첫 번째 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-12BD473D-92DF-4754-998F-4FF2CABC3C74.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "RGB:255,255,255"
+    }
+  }
+]

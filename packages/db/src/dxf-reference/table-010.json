@@ -1,0 +1,132 @@
+{
+  "title": "VIEW (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-CF3094AB-ECA9-43C1-8075-7791AC84F97C.htm",
+  "section": "table",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [2],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [40],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [10],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [20],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [41],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [11],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [21, 31],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [12],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [22, 32],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [42],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [43],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [44],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [50],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [71],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [281],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [72],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [73],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [332],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-5926A569-3E40-4ED2-AE06-6ACCE0EFC813.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A9FD9590-C97B-4E41-9F26-BD82C34A4F9F.htm"
+  ]
+}

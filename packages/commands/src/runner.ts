@@ -56,6 +56,7 @@ export class HeadlessCommandRunner {
     try {
       const resolved = this.registry.resolve(command);
       if (!resolved && !this.registry.get(command) && getSystemVariableDefinition(command)) {
+        this.database.invalidateSingleRedo();
         setVariableFromInput(command, context);
         this.lastCommand = command;
         return { status: 'ok', command, messages };
@@ -79,7 +80,25 @@ export class HeadlessCommandRunner {
           command,
           messages: [commandMessages.pending(command, this.locale)],
         };
-      await resolved.definition.execute(context);
+      const previousActive = this.sysvars.getNumber('CMDACTIVE');
+      if (command !== 'REDO') this.database.invalidateSingleRedo();
+      const previousNames = this.sysvars.get('CMDNAMES');
+      try {
+        this.sysvars.setRuntimeSessionValue(
+          'CMDACTIVE',
+          previousActive | (resolved.prefixes.transparent ? 2 : 1),
+        );
+        this.sysvars.setRuntimeSessionValue(
+          'CMDNAMES',
+          resolved.prefixes.transparent && previousNames !== ''
+            ? `${previousNames}'${command}`
+            : command,
+        );
+        await resolved.definition.execute(context);
+      } finally {
+        this.sysvars.setRuntimeSessionValue('CMDNAMES', previousNames);
+        this.sysvars.setRuntimeSessionValue('CMDACTIVE', previousActive);
+      }
       this.lastCommand = command;
       return { status: 'ok', command, messages };
     } catch (error) {

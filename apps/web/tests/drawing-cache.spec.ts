@@ -73,6 +73,8 @@ test('drawing cache falls back to IndexedDB on quota and restores report and geo
     .getByRole('button', { name: '새 도면', exact: true })
     .click();
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('0');
+  const newDrawingName = await page.locator('.file-tab[aria-current="page"]').innerText();
+  expect(newDrawingName).toMatch(/^Drawing\d+\.dwg$/);
   await expect
     .poll(() => page.evaluate((key) => localStorage.getItem(key), locationKey))
     .toBe('indexed');
@@ -98,7 +100,7 @@ test('drawing cache falls back to IndexedDB on quota and restores report and geo
     .toBe(0);
   await page.reload();
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('0');
-  await expect(page.getByRole('navigation', { name: '도면 탭' })).toContainText('Drawing1.dwg');
+  await expect(page.locator('.file-tab[aria-current="page"]')).toHaveText(newDrawingName);
 });
 
 test('failed cache writes preserve the active drawing and prevent restoring an older file', async ({

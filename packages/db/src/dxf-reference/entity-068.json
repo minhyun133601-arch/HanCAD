@@ -1,0 +1,56 @@
+{
+  "title": "Aligned Dimension Group Codes (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-7A123D5D-AC98-4A9A-A8CF-1A7EF5030418.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbAlignedDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [12],
+      "subclasses": ["AcDbAlignedDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [22, 32],
+      "subclasses": ["AcDbAlignedDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [13],
+      "subclasses": ["AcDbAlignedDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [23, 33],
+      "subclasses": ["AcDbAlignedDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [14],
+      "subclasses": ["AcDbAlignedDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [24, 34],
+      "subclasses": ["AcDbAlignedDimension"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-239A1BDD-7459-4BB9-8DD7-08EC79BF1EB0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-EDD54EAC-A339-4EBA-AEA6-EC8066505E2B.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-239A1BDD-7459-4BB9-8DD7-08EC79BF1EB0.htm"
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "title": "DIMSTYLE (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-F2FAD36F-0CE3-4943-9DAD-A9BCD2AE81DA.htm",
+  "section": "table",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [2],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [3],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [4],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [5],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [6],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [7],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [40],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [41],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [42],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [43],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [44],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [45],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [46],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [47],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [48],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [140],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [141],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [142],
+      "subclasses": ["AcDbDimStyleTableRecord"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-5926A569-3E40-4ED2-AE06-6ACCE0EFC813.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A9FD9590-C97B-4E41-9F26-BD82C34A4F9F.htm"
+  ]
+}

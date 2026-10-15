@@ -1,0 +1,283 @@
+[
+  {
+    "name": "SPLINETYPE",
+    "type": "integer",
+    "default": 6,
+    "scope": "drawing",
+    "description": "PEDIT 명령의 스플라인 옵션으로 생성되는 곡선 유형을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BDD2D1EF-9A72-47A6-9AAB-8877C76F05CF.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "6"
+    },
+    "enum": [5, 6],
+    "min": 5,
+    "max": 6
+  },
+  {
+    "name": "SPLKNOTS",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "맞춤점을 지정할 때 SPLINE 명령의 기본 매듭 옵션을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-134FD0A1-4396-4748-9FF4-C82B7BC24E28.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "SPLMETHOD",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "SPLINE 명령에 사용되는 기본 방법이 맞춤점인지 아니면 조정 정점인지를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-300EB1EF-E101-421C-A8B8-6D91E2873787.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SSFOUND",
+    "type": "string",
+    "default": "",
+    "scope": "session",
+    "description": "시트 세트 검색이 성공한 경우, 시트 세트 경로와 파일 이름을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3B03977F-A9AF-496B-A7B3-E8BE5CF301C1.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "\"\""
+    },
+    "readonly": true
+  },
+  {
+    "name": "SSLOCATE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면을 열 때 도면과 연관된 시트 세트를 찾아서 열지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F7010346-F114-42AA-9892-0D376ECE177A.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SSMAUTOOPEN",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "시트와 연관된 도면을 열 때 시트 세트 관리자의 표시 동작을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-81EC988C-AAEA-4CC8-ADC5-D636CE82F677.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SSMDETECTMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "클라우드 기반 DST 파일을 열 때 표시되는 시트 세트 관리자를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4A8AB2B5-F207-4E98-9CDA-1CA3E7E7A022.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SSMSHEETSTATUS",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "시트 세트의 상태 데이터에 대한 새로 고치기 방식을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-437E22BB-DAAE-42A7-8C7D-51B69DC4D60F.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "SSMSTATE",
+    "type": "integer",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "시트 세트 관리자(SSM) 윈도우가 열려 있는지 아니면 닫혀 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D097B7BC-5CAC-4667-965A-4A4273355F87.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "STANDARDSVIOLATION",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "비표준 객체가 작성되거나 수정될 때 현재 도면에 있는 표준 위반 사항에 대해 사용자에게 통지할지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EBF93B97-2455-41B0-B9EA-578BBE552BC1.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "STARTMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "시작 탭 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-143F3607-7D7F-4CC9-9BE4-2A221DF2D776.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "STARTUP",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "응용프로그램을 시작할 때나 새 도면을 열 때 표시되는 항목을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-941B7406-2342-47EA-9881-BAFF3A554310.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "STATUSBAR",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "상태막대의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-96BA1B54-760A-4B99-8D48-A87EC98BA2EF.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "STEPSIZE",
+    "type": "real",
+    "default": 6,
+    "scope": "drawing",
+    "description": "보행시선 또는 조감뷰 모드에서 각 단계의 크기를 도면 단위로 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C181AF04-E45C-4468-B924-3FB4CA858664.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "6.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "STEPSPERSEC",
+    "type": "real",
+    "default": 2,
+    "scope": "drawing",
+    "description": "보행시선 또는 조감뷰 모드에서 초당 수행 단계 수를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1E187D94-7EF8-4494-A3E0-8BA3E613DCCF.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "2.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "STUDENTDRAWING",
+    "type": "integer",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "현재 도면이 Autodesk 학생용 버전 제품으로 저장되었는지 여부를 보고합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A6E37575-FA05-4192-BE84-F19F8C0CE56A.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "Varies by drawing"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SUBOBJSELECTIONMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "면, 모서리, 정점 또는 솔리드 사용 내역 하위 객체를 롤오버하면 강조되는지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7C4F6525-41DD-48A2-AE7C-45663EDD6122.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3, 4, 5],
+    "min": 0,
+    "max": 5
+  },
+  {
+    "name": "SUNPROPERTIESSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "일영 특성 윈도우가 열려 있는지 닫혀 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-74E01ADA-420C-45F6-809F-71BDD4A4730E.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  }
+]

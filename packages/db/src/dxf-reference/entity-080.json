@@ -1,0 +1,78 @@
+{
+  "title": "ACAD_PROXY_ENTITY (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-89A690F9-E859-4D57-89EA-750F3FB76C6B.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbProxyEntity"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [90],
+      "subclasses": ["AcDbProxyEntity"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [91],
+      "subclasses": ["AcDbProxyEntity"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [92],
+      "subclasses": ["AcDbProxyEntity"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [310],
+      "subclasses": ["AcDbProxyEntity"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [93],
+      "subclasses": ["AcDbProxyEntity"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [310],
+      "subclasses": ["AcDbProxyEntity"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [330, 340, 350, 360],
+      "subclasses": ["AcDbProxyEntity"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [94],
+      "subclasses": ["AcDbProxyEntity"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [95],
+      "subclasses": ["AcDbProxyEntity"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbProxyEntity"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484.htm"
+  ]
+}

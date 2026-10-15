@@ -1,16 +1,19 @@
-import { DrawingDatabase, EventBus } from '@hancad/db';
+import { DrawingDatabase, EventBus, deserializeHcd, serializeHcd } from '@hancad/db';
 import { SystemVariableProfile, SystemVariables } from './variables';
 
 export interface DrawingDocument {
   id: string;
   name: string;
+  titled: boolean;
+  notice?: 'restored' | 'opened';
   database: DrawingDatabase;
   sysvars: SystemVariables;
+  blobs: Map<string, Uint8Array>;
 }
 
 export type DocumentEvent =
   | {
-      type: 'document-created' | 'document-activated' | 'document-closed';
+      type: 'document-created' | 'document-activated' | 'document-closed' | 'document-renamed';
       document: DrawingDocument;
     }
   | { type: 'documents-empty' };
@@ -29,18 +32,58 @@ export class DocumentManager {
     return [...this.documents.values()];
   }
 
-  create(database = new DrawingDatabase(), name?: string): DrawingDocument {
+  create(
+    database = new DrawingDatabase(),
+    name?: string,
+    blobs: ReadonlyMap<string, Uint8Array> = new Map(),
+    notice?: DrawingDocument['notice'],
+    titled = name !== undefined,
+  ): DrawingDocument {
     const serial = ++this.serial;
+    let drawingNumber = serial;
+    while (this.all.some((entry) => entry.name === `Drawing${drawingNumber}.dwg`)) drawingNumber++;
     const document: DrawingDocument = {
       id: `drawing-${serial}`,
-      name: name ?? `Drawing${serial}.dwg`,
+      name: name ?? `Drawing${drawingNumber}.dwg`,
+      titled,
+      ...(notice ? { notice } : {}),
       database,
-      sysvars: new SystemVariables({ database, profile: this.profile }),
+      sysvars: new SystemVariables({
+        database,
+        profile: this.profile,
+        runtimeValues: () => ({
+          DWGNAME: document.name,
+          DWGPREFIX: '',
+          DWGTITLED: document.titled ? 1 : 0,
+        }),
+      }),
+      blobs: new Map([...blobs].map(([key, value]) => [key, new Uint8Array(value)])),
     };
     this.documents.set(document.id, document);
     this.events.publish({ type: 'document-created', document });
     this.activate(document.id);
     return document;
+  }
+
+  rename(id: string, name: string): void {
+    const document = this.documents.get(id);
+    if (!document) throw new Error(`Unknown document: ${id}`);
+    if (!name.trim()) throw new Error('A document name is required.');
+    document.name = name;
+    document.titled = true;
+    this.events.publish({ type: 'document-renamed', document });
+  }
+
+  openHcd(bytes: Uint8Array, name: string): DrawingDocument {
+    // Decode and validate completely before changing the active document.
+    const loaded = deserializeHcd(bytes);
+    return this.create(loaded.database, name, loaded.blobs, 'opened');
+  }
+
+  saveHcd(id: string): Uint8Array {
+    const document = this.documents.get(id);
+    if (!document) throw new Error(`Unknown document: ${id}`);
+    return serializeHcd(document.database, document.blobs);
   }
 
   activate(id: string): void {

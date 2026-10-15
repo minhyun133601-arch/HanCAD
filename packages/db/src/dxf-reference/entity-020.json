@@ -1,0 +1,132 @@
+{
+  "title": "VIEWPORT (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-2602B0FB-02E4-4B9A-B03C-B1D904753D34.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [10],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [20, 30],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [40],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [41],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [68],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [69],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [12],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [22],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [13],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [23],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [14],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [24],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [15],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [25],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [16],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [26, 36],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [17],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [27, 37],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [42],
+      "subclasses": ["AcDbViewport"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484.htm"
+  ]
+}

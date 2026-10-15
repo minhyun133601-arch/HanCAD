@@ -1,0 +1,302 @@
+[
+  {
+    "name": "ENABLESYNCPDF",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "AutoCAD PDF 플로터 구성 중 하나를 사용하여 도면을 플롯하거나 게시할 때 Autodesk Docs에 저장된 도면의 소스 도면 정보가 AutoCAD에 포함되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-62EC1D00-E9EB-48F3-9E78-8F5F38949121.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "ERHIGHLIGHT",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "참조 이름 또는 참조 객체에 해당하는 요소를 외부 참조 팔레트 또는 도면 윈도우에서 선택하면 해당 참조 이름 또는 참조 객체를 강조할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-773FCCAE-703F-45B0-9645-F4530D76A0C9.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "ERRNO",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "AutoLISP 함수를 호출할 때 오류가 발생한 것을 제품에서 발견한 경우 적절한 오류 코드의 번호를 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-08E19480-F87B-46E9-9C37-64693F95F680.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "ERSTATE",
+    "type": "integer",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "외부 참조 팔레트가 열려 있는지 닫혀 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-57CCC897-AD15-4579-9751-C1299B2F6616.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "EXPERT",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "특정 프롬프트가 사용될지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-28C09385-C00B-48F6-9765-7CB178CDD891.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3, 4, 5],
+    "min": 0,
+    "max": 5
+  },
+  {
+    "name": "EXPLMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "session",
+    "description": "EXPLODE 명령이 비균일 축척(NUS) 블록을 지원할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-113BD30D-2F46-4E23-9B49-034AB50064A7.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "EXPORTEPLOTFORMAT",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "리본에 표시되는 기본 전자 파일 출력(PDF, DWF 또는 DWFx)을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0E4D7F85-B1A8-4009-8A93-DEF613459E8A.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "EXPORTPAGESETUP",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 페이지 설정과 함께 DWF, DWFx 또는 PDF 파일로 내보낼지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FED55746-EB0A-460F-979C-8CA7A1B5EE0A.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "EXTMAX",
+    "type": "point3",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "도면 범위의 오른쪽 위 점을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B3926CFA-DE74-4661-A9A5-2738A1FD937B.htm",
+      "type": "3D-point",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "EXTMIN",
+    "type": "point3",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "도면 범위의 왼쪽 아래 점을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F37FCEB8-FD86-4E8A-9DB3-A5163B2C0AE0.htm",
+      "type": "3D-point",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "EXTNAMES",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "블록, 치수 스타일, 도면층 및 기타 명명된 객체의 이름에 사용할 수 있는 문자를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8EC065EC-D551-4E02-9C5A-A33D1DB80B05.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "FACETERDEVSURFACE",
+    "type": "real",
+    "default": 0.001,
+    "scope": "profile",
+    "description": "변환된 메쉬 객체를 솔리드 또는 표면의 원본 쉐이프에 얼마나 밀접하게 부착할지 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B4C38DEE-5182-4526-8990-0F65BBFFFA60.htm",
+      "type": "Real",
+      "savedIn": "User-settings",
+      "initial": "0.0010"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "FACETERGRIDRATIO",
+    "type": "real",
+    "default": 0,
+    "scope": "profile",
+    "description": "메쉬로 변환된 솔리드 및 표면에 대해 작성되는 메쉬 분할의 최대 종횡비를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0BF25D4E-772B-44BC-9E44-F81C80ADAEB8.htm",
+      "type": "Real",
+      "savedIn": "User-settings",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "FACETERMAXEDGELENGTH",
+    "type": "real",
+    "default": 0,
+    "scope": "profile",
+    "description": "솔리드 및 표면을 변환하여 작성된 메쉬 객체의 최대 모서리 길이를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CC40F1DC-C470-4D48-A801-B13F71EBA37A.htm",
+      "type": "Real",
+      "savedIn": "User-settings",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "FACETERMAXGRID",
+    "type": "integer",
+    "default": 4096,
+    "scope": "profile",
+    "description": "MESHSMOOTH 명령을 사용하여 객체를 메쉬 객체로 변환할 때 최대 U 및 V 그리드 선 수에 영향을 주는 내부 매개변수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6716223B-E1C5-4B05-8F3B-ECF29D750BE5.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "4096"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "FACETERMESHTYPE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "작성할 메쉬 유형을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4074743F-42EC-4FDB-819F-667DBF2D6058.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "FACETERMINUGRID",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "MESHSMOOTH 명령을 사용하여 객체를 메쉬 객체로 변환할 때 최소 U 그리드 선 수에 영향을 주는 내부 매개변수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3C9D7C48-29EA-441A-B56D-56B3C1CAA570.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "FACETERMINVGRID",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "MESHSMOOTH 명령을 사용하여 객체를 메쉬 객체로 변환할 때 최소 V 그리드 선 수에 영향을 주는 내부 매개변수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F4C4CF36-3960-4EDE-BF89-1684D6ED8F14.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "FACETERPRIMITIVEMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "메쉬로 변환되는 객체의 부드럽게하기 설정을 메쉬 다듬기 옵션 대화상자에서 가져올지 아니면 메쉬 기본체 옵션 대화상자에서 가져올지 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EECD5E4D-17BD-4085-A592-D3484BDDBBC3.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "FACETERSMOOTHLEV",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "메쉬로 변환되는 객체의 기본 부드럽기 정도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E0A0EC48-AAC9-474D-8117-F90804C925AF.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

@@ -1,21 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { createEmptyCadState, readCadFile, visibleCadEntities } from '@hancad/legacy-bridge';
-import type { CadImportDiagnostic, LegacyCadState } from '@hancad/legacy-bridge';
-import { exportCadDrawing } from '@hancad/io-pdf';
+import { readCadFile, visibleCadEntities } from '@hancad/legacy-bridge';
+import type { CadEntity, CadImportDiagnostic, LegacyCadState } from '@hancad/legacy-bridge';
 import type { CommandRegistry } from '@hancad/commands';
-import { formatCadImportDiagnostic, getMessages } from '@hancad/ui';
+import { formatCadImportDiagnostic } from '@hancad/ui';
 import type { Messages } from '@hancad/ui';
 import type { DrawingDatabase } from '@hancad/db';
 import {
-  drawingStorageKey,
   drawingViewVariable,
-  deleteIndexedDrawing,
   getDrawingCacheLocation,
   readIndexedDrawing,
-  restoreDrawing,
   restoreCachedDrawingSession,
-  setDrawingCacheLocation,
-  writeIndexedDrawing,
 } from './drawing-storage';
 import type { DrawingSession } from './drawing-storage';
 import { dimensionStyleFields, readDimensionStyle, saveDimensionStyle } from './dimension-style';
@@ -25,19 +19,49 @@ import {
   saveDraftingVariables,
 } from './drafting-variables';
 import type { SysvarValue } from '@hancad/sysvars';
-import { canUseLocalDrawingCache, DrawingSessionTransfer } from './drawing-session';
+import { DrawingSessionTransfer } from './drawing-session';
 import { errorMessage } from './error-presenter';
+import {
+  initialDocumentDrawing,
+  createImportedDocument,
+  openNativeDocument,
+} from './document-actions';
+import type { DocumentManager } from '@hancad/sysvars';
+import { drawingErasureHistory, rememberDrawingErasure } from './erasure-history';
+import { cachedNativeDatabase, cachedNativeBlobs, nativeDrawingView } from './native-drawing-cache';
+import { publishDrawingCache } from './publish-drawing-cache';
+import { useDrawingFileCommands } from './useDrawingFileCommands';
+import { setDocumentSource } from './document-source';
+import { useDrawingFileNotice } from './useDrawingFileNotice';
 
-type ExportFormat = 'pdf' | 'png' | 'jpg' | 'svg' | 'dxf';
 interface DrawingFilesOptions {
   registry: CommandRegistry;
   database: DrawingDatabase;
   messages: Messages;
   print: (message: string) => void;
+  documentName?: string;
+  restoreLocal?: boolean;
+  newDocument?: () => void;
+  manager?: DocumentManager;
+  documentId?: string;
+  notice?: 'restored' | 'opened';
+  consumeNotice?: () => void;
 }
 
-export function useDrawingFiles({ registry, database, messages, print }: DrawingFilesOptions) {
-  const [initial] = useState(restoreDrawing);
+export function useDrawingFiles({
+  registry,
+  database,
+  messages,
+  print,
+  documentName = 'Drawing1.dwg',
+  restoreLocal = true,
+  newDocument,
+  manager,
+  documentId,
+  notice,
+  consumeNotice,
+}: DrawingFilesOptions) {
+  const [initial] = useState(() => initialDocumentDrawing(database, documentName, restoreLocal));
   const [transfer] = useState(() => new DrawingSessionTransfer());
   const [drawing, setDrawing] = useState<DrawingSession>(initial.drawing);
   const [reading, setReading] = useState(false);
@@ -48,84 +72,30 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
   const drawingRef = useRef(initial.drawing);
   const fileInput = useRef<HTMLInputElement>(null);
   const controller = useRef<AbortController | null>(null);
-  const originalSource = useRef<unknown>(null);
-  const restoredNotice = useRef(false);
+  const lastErased = useRef<readonly CadEntity[]>(drawingErasureHistory.get(database) ?? []);
   const storageWarning = useRef(false);
   const indexedNotice = useRef(false);
-  const cacheVersion = useRef(0);
   const documentGeneration = useRef(0);
-  const cacheQueue = useRef<Promise<void>>(Promise.resolve());
   const skipPersistence = useRef(false);
   const hasCachedGeometry = useRef(initial.restored);
   const actions = useRef({ messages, print, drawing });
   actions.current = { messages, print, drawing };
 
-  useEffect(() => {
-    if (restoredNotice.current) return;
-    restoredNotice.current = true;
-    if (initial.failed) print(messages.restoreFailed);
-    else if (initial.restored) print(messages.restoredDrawing);
-  }, [initial]);
+  useDrawingFileNotice({ initial, messages, print, documentName, notice, consumeNotice });
   useEffect(() => () => controller.current?.abort(), []);
 
   function persist(serialized: string): void {
-    hasCachedGeometry.current = true;
-    const version = ++cacheVersion.current;
-    let savedLocally = false;
-    try {
-      if (canUseLocalDrawingCache(serialized)) {
-        localStorage.setItem(drawingStorageKey, serialized);
-        setDrawingCacheLocation('local');
-        storageWarning.current = false;
-        savedLocally = true;
-      } else {
-        localStorage.removeItem(drawingStorageKey);
-        setDrawingCacheLocation('pending');
-      }
-    } catch {
-      try {
-        localStorage.removeItem(drawingStorageKey);
-      } catch {
-        // The browser may deny Web Storage entirely.
-      }
-      setDrawingCacheLocation('pending');
-    }
-    try {
-      saveDimensionStyle(
-        readDimensionStyle((name) => database.getVariable(name)),
-        drawingRef.current.documentId,
-      );
-      saveDraftingVariables(
-        readDraftingVariables((name) => database.getVariable(name)),
-        drawingRef.current.documentId,
-      );
-    } catch {
-      if (!storageWarning.current) actions.current.print(actions.current.messages.autosaveFailed);
-      storageWarning.current = true;
-    }
-    cacheQueue.current = cacheQueue.current.then(async () => {
-      if (savedLocally) {
-        await deleteIndexedDrawing().catch(() => undefined);
-        return;
-      }
-      try {
-        await writeIndexedDrawing(serialized);
-        if (version !== cacheVersion.current) return;
-        setDrawingCacheLocation('indexed');
-        storageWarning.current = false;
-        if (!indexedNotice.current)
-          actions.current.print(actions.current.messages.indexedDrawingSaved);
-        indexedNotice.current = true;
-      } catch {
-        await deleteIndexedDrawing().catch(() => undefined);
-        if (version !== cacheVersion.current) return;
-        setDrawingCacheLocation('failed');
-        if (!storageWarning.current) actions.current.print(actions.current.messages.autosaveFailed);
-        storageWarning.current = true;
-      }
+    publishDrawingCache(serialized, {
+      database,
+      manager,
+      documentId,
+      drawing: drawingRef,
+      actions,
+      storageWarning,
+      indexedNotice,
+      hasCachedGeometry,
     });
   }
-
   useEffect(() => {
     let initializing = true;
     let disposed = false;
@@ -171,6 +141,19 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
         return;
       }
       if (
+        event.type === 'sysvar-changed' &&
+        event.name !== drawingViewVariable &&
+        !initializing &&
+        manager
+      ) {
+        queueMicrotask(() => {
+          if (!disposed) {
+            const current = database.getVariable(drawingViewVariable);
+            if (typeof current === 'string') persist(current);
+          }
+        });
+      }
+      if (
         event.type !== 'sysvar-changed' ||
         event.name !== drawingViewVariable ||
         typeof event.value !== 'string'
@@ -202,12 +185,16 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
       database.clearHistory();
     }
     initializing = false;
+    if (initial.reused || !restoreLocal) {
+      const serialized = database.getVariable(drawingViewVariable);
+      if (typeof serialized === 'string') persist(serialized);
+    }
     if (initial.identityMigrated) {
       const serialized = database.getVariable(drawingViewVariable);
       if (typeof serialized === 'string') persist(serialized);
     }
     const generation = documentGeneration.current;
-    if (!initial.restored) {
+    if (!initial.restored && restoreLocal) {
       const location = getDrawingCacheLocation();
       if (location === 'failed' || location === 'pending') {
         if (!initial.failed) print(messages.restoreFailed);
@@ -217,6 +204,24 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
           .then((serialized) => {
             if (!serialized || disposed || documentGeneration.current !== generation) return;
             const restored = restoreCachedDrawingSession(serialized);
+            const native = cachedNativeDatabase(restored.drawing);
+            if (native && manager) {
+              native.transaction('RESTORE', (tx) =>
+                tx.setVariable(
+                  drawingViewVariable,
+                  JSON.stringify(nativeDrawingView(restored.drawing)),
+                ),
+              );
+              native.clearHistory();
+              manager.create(
+                native,
+                restored.drawing.fileName || restored.drawing.state.name,
+                cachedNativeBlobs(restored.drawing),
+                'restored',
+                restored.drawing.nativeTitled ?? Boolean(restored.drawing.fileName),
+              );
+              return;
+            }
             skipPersistence.current = !restored.identityMigrated;
             try {
               commitDrawing('RESTORE', restored.drawing, true);
@@ -278,6 +283,13 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
     state: LegacyCadState,
     variables?: Readonly<Record<string, SysvarValue>>,
   ): void {
+    if (label === 'ERASE') {
+      lastErased.current = rememberDrawingErasure(
+        database,
+        drawingRef.current.state.entities,
+        state.entities,
+      );
+    }
     const get = (name: string): unknown => variables?.[name] ?? database.getVariable(name);
     const dimensionStyle = readDimensionStyle(get);
     const draftingVariables = readDraftingVariables(get);
@@ -299,6 +311,12 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
     setReading(true);
     setProgress('');
     try {
+      if (/\.hcd$/i.test(file.name) && manager) {
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        if (current.signal.aborted || controller.current !== current) return;
+        openNativeDocument(manager, bytes, file.name);
+        return;
+      }
       const imported = await readCadFile(file, {
         signal: current.signal,
         onProgress: (message) => {
@@ -310,8 +328,13 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
       });
       if (current.signal.aborted || controller.current !== current) return;
       const next = { state: imported.state, report: imported.report, fileName: file.name };
+      if (manager) {
+        const document = createImportedDocument(manager, next);
+        setDocumentSource(document.database, imported.source);
+        return;
+      }
       commitDrawing('OPEN', next, true);
-      originalSource.current = imported.source;
+      setDocumentSource(database, imported.source);
       const active = actions.current;
       active.print(active.messages.importFinished(file.name, imported.state.entities.length));
     } catch (error) {
@@ -335,82 +358,21 @@ export function useDrawingFiles({ registry, database, messages, print }: Drawing
     }
   }
 
-  async function exportDrawing(format: ExportFormat): Promise<void> {
-    const active = actions.current;
-    if (!active.drawing.state.entities.length) throw new Error(active.messages.noDrawing);
-    const result = await exportCadDrawing(active.drawing.state, format);
-    const url = URL.createObjectURL(result.blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = result.fileName;
-    anchor.hidden = true;
-    document.body.append(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 10000);
-    const current = actions.current;
-    current.print(current.messages.exportFinished(result.fileName));
-  }
-
-  useEffect(() => {
-    const english = getMessages('en-US'),
-      korean = getMessages('ko-KR');
-    registry.register({
-      name: 'OPEN',
-      displayName: { 'ko-KR': korean.openCad, 'en-US': english.openCad },
-      description: { 'ko-KR': korean.localDrawingNote, 'en-US': english.localDrawingNote },
-      execute: () => {
-        fileInput.current?.click();
-      },
-    });
-    registry.register({
-      name: 'LAYON',
-      displayName: { 'ko-KR': korean.showAllLayers, 'en-US': english.showAllLayers },
-      description: { 'ko-KR': korean.hiddenLayersNote, 'en-US': english.hiddenLayersNote },
-      execute: () => {
-        const active = actions.current;
-        const next = {
-          ...active.drawing,
-          state: {
-            ...active.drawing.state,
-            layers: active.drawing.state.layers.map((layer) => ({ ...layer, visible: true })),
-          },
-        };
-        commitDrawing('LAYON', next, false, visibleCadEntities(active.drawing.state).length === 0);
-        active.print(active.messages.layersShown);
-      },
-    });
-    registry.register({
-      name: 'NEW',
-      displayName: { 'ko-KR': korean.newDrawing, 'en-US': english.newDrawing },
-      description: { 'ko-KR': korean.newDrawing, 'en-US': english.newDrawing },
-      execute: () => {
-        controller.current?.abort();
-        originalSource.current = null;
-        commitDrawing('NEW', { state: createEmptyCadState(), fileName: '', report: null }, true);
-        actions.current.print(actions.current.messages.newDrawingStarted);
-      },
-    });
-    const exports: readonly [
-      string,
-      ExportFormat,
-      keyof Pick<Messages, 'exportPdf' | 'exportPng' | 'exportJpg' | 'exportSvg' | 'exportDxf'>,
-    ][] = [
-      ['EXPORTPDF', 'pdf', 'exportPdf'],
-      ['EXPORTPNG', 'png', 'exportPng'],
-      ['EXPORTJPG', 'jpg', 'exportJpg'],
-      ['EXPORTSVG', 'svg', 'exportSvg'],
-      ['QSAVE', 'dxf', 'exportDxf'],
-    ];
-    for (const [name, format, label] of exports)
-      registry.register({
-        name,
-        displayName: { 'ko-KR': korean[label], 'en-US': english[label] },
-        description: { 'ko-KR': korean.exportNote, 'en-US': english.exportNote },
-        execute: () => exportDrawing(format),
-      });
-  }, [registry, messages]);
-
+  useDrawingFileCommands({
+    registry,
+    database,
+    messages,
+    fileInput,
+    controller,
+    lastErased,
+    getDrawing: () => drawingRef.current,
+    print: (message) => actions.current.print(message),
+    commitDrawing,
+    commitState,
+    newDocument,
+    manager,
+    documentId,
+  });
   const visibleCount = visibleCadEntities(drawing.state).length;
   return {
     ...drawing,

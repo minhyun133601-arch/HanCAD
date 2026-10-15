@@ -1,0 +1,288 @@
+[
+  {
+    "name": "SKYSTATUS",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "천공 조명이 렌더 시간에 계산될지 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-786A9AC3-F222-4B19-B73B-3027D5BF7FBE.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "SMOOTHMESHCONVERT",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "3D 솔리드 또는 표면으로 변환한 메쉬 객체에 부드럽게하기 또는 깎인면을 적용할지 및 면을 병합할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9357E7C2-B5C5-4CFF-9E9D-9B865FE31131.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "SMOOTHMESHGRID",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "3D 메쉬 객체에 기본 메쉬 깎인면 그리드를 표시할 최대 부드럽기 정도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B8DB646D-5A7D-4EFD-8355-B5DF97FFF5E9.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "enum": [0, 1, 2, 3, 4],
+    "min": 0,
+    "max": 4
+  },
+  {
+    "name": "SMOOTHMESHMAXFACE",
+    "type": "integer",
+    "default": 1000000,
+    "scope": "profile",
+    "description": "메쉬 객체에 대해 허용되는 최대 면 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C586972B-8A74-46FB-AD4D-0708605D0ED1.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1000000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SMOOTHMESHMAXLEV",
+    "type": "integer",
+    "default": 4,
+    "scope": "profile",
+    "description": "메쉬 객체에 대한 최대 부드럽기 정도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-70592674-3BBF-45FF-8E4C-DAEFD78D1812.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "4"
+    },
+    "min": 1,
+    "max": 255
+  },
+  {
+    "name": "SNAPANG",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 UCS를 기준으로 현재 뷰포트에 대한 스냅 및 그리드 회전 각도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7C4EAEAE-3738-4E51-AC9B-B16B5A2CDB3B.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SNAPBASE",
+    "type": "point2",
+    "default": [0, 0],
+    "scope": "drawing",
+    "description": "현재 UCS를 기준으로 현재 뷰포트에 대한 스냅 및 그리드 원점을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-484B0F6E-4EB0-4B83-9C95-16F5CCE8F3E2.htm",
+      "type": "2D-point",
+      "savedIn": "Drawing",
+      "initial": "0.0000,0.0000"
+    }
+  },
+  {
+    "name": "SNAPISOPAIR",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트에 대한 등각투영 평면을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-10E95216-5E3C-45F2-A6B9-79E7660A1F60.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "SNAPMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트에서 스냅 모드를 켜고 끕니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D6B961E9-1D95-458E-BEA1-C9997789EDC2.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SNAPSTYL",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트에 대해 그리드 및 그리드 스냅을 직사각형 또는 등각투영으로 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E04B7A7B-8232-44C3-BD74-20BCFEC07C2E.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SNAPTYPE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "현재 뷰포트의 스냅 유형(직사각형 또는 원형)을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2BC423FB-0BCD-4086-91F6-BE00F695FCB6.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SNAPUNIT",
+    "type": "point2",
+    "default": [10, 10],
+    "scope": "drawing",
+    "description": "현재 뷰포트의 스냅 간격을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1E54C26E-F08A-4648-87D0-62217BD6AE58.htm",
+      "type": "2D-point",
+      "savedIn": "Drawing",
+      "initial": "0.5000,0.5000 (imperial) or 10.0000,10.0000 (metric)"
+    }
+  },
+  {
+    "name": "SOLIDCHECK",
+    "type": "integer",
+    "default": 1,
+    "scope": "session",
+    "description": "현재 세션에 대한 3D 솔리드 확인 기능을 켜거나 끕니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-28A6E37C-17A0-432E-88E9-7A7A7ABDE75D.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SOLIDHIST",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "새 복합 솔리드에서 원본 구성요소의 사용 내역이 보존되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-956A861D-00ED-48E9-88D6-8D67C2E2AD21.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SORTENTS",
+    "type": "integer",
+    "default": 127,
+    "scope": "drawing",
+    "description": "여러 작업의 그리기 순서에 따라 객체 정렬을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-56B7D915-515B-4A9C-BCB5-EF2D43C05FE5.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "127"
+    },
+    "bits": {
+      "0": "Turns off all object sorting",
+      "1": "Sorts for object selection",
+      "2": "Sorts for object snaps",
+      "4": "Obsolete, has no effect",
+      "8": "Obsolete, has no effect",
+      "16": "Obsolete, has no effect",
+      "32": "Sorts for plotting",
+      "64": "Obsolete, has no effect"
+    },
+    "min": 0,
+    "max": 127,
+    "bitmask": 127
+  },
+  {
+    "name": "SORTORDER",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면층 리스트를 정렬할 때 자연 정렬 순서를 사용할지 아니면 ASCII 값을 사용할지를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0CF4F029-C5C0-4B79-BEE8-0B0EE7068FF3.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SPLFRAME",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "나선 및 부드러운 메쉬 객체의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9F9CC9C6-023C-44BC-A0BF-3C25F36C4259.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SPLINESEGS",
+    "type": "integer",
+    "default": 8,
+    "scope": "drawing",
+    "description": "PEDIT 명령의 스플라인 옵션으로 스플라인 맞춤 폴리선을 생성할 때 각 스플라인 맞춤 폴리선에 생성될 선 세그먼트 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-938743E7-E438-4E93-9A9B-1514E0BADB47.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "8"
+    },
+    "min": -32768,
+    "max": 32767
+  }
+]

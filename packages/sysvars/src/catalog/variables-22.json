@@ -1,0 +1,308 @@
+[
+  {
+    "name": "INTERFERECOLOR",
+    "type": "string",
+    "default": "1",
+    "scope": "drawing",
+    "description": "간섭 객체의 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A4EE21EE-4F2B-4E2C-8715-6EAB714C56F8.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "1"
+    }
+  },
+  {
+    "name": "INTERFEREOBJVS",
+    "type": "string",
+    "default": "Realistic",
+    "scope": "drawing",
+    "description": "간섭 객체에 대한 비주얼 스타일을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C50BF4CF-4D5E-4820-8AFF-8D0673BD3692.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "Realistic"
+    }
+  },
+  {
+    "name": "INTERFEREVPVS",
+    "type": "string",
+    "default": "Wireframe",
+    "scope": "drawing",
+    "description": "간섭을 검사하는 동안 뷰포트에 대한 비주얼 스타일을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F056B9DB-BE98-4993-9ECD-1953C09A846A.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "Wireframe"
+    }
+  },
+  {
+    "name": "INTERSECTIONCOLOR",
+    "type": "integer",
+    "default": 257,
+    "scope": "drawing",
+    "description": "비주얼 스타일이 2D 와이어프레임으로 설정되면 3D 표면의 교차점에 있는 폴리선의 색상을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7BF2966C-118B-4AAF-82E5-83A773E1ABEB.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "257"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "INTERSECTIONDISPLAY",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "비주얼 스타일이 2D 와이어프레임으로 설정된 상태에서 HIDE를 수행할 때 3D 솔리드 및 표면의 교차점 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E0A00845-398B-484B-9F47-105A6F2BFFD7.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "ISAVEBAK",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면 파일을 저장할 때 BAK 파일을 작성할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-25AF36C1-CA4A-4C1C-8D93-1C4F436C6C25.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "ISAVEPERCENT",
+    "type": "integer",
+    "default": 50,
+    "scope": "profile",
+    "description": "증분 저장을 위해 DWG 파일에 할당되는 공간의 양을 조정합니다. 이 조정은 전체 저장이 필요하기 전에 수행할 수 있는 빠른 저장 작업의 수에 영향을 줍니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-469DFA87-1986-4BDA-918B-1E3F9D6FCDC2.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "50"
+    },
+    "min": 0,
+    "max": 100
+  },
+  {
+    "name": "JIGZOOMMIN",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "블록 범위를 삽입할 때 맞춰야 하는 뷰 치수의 최소 비율을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-31EA623B-8681-4BF7-B715-AB88F12D8761.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "min": 0,
+    "max": 90
+  },
+  {
+    "name": "LARGEOBJECTSUPPORT",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "도면을 열고 저장할 때 큰 객체의 크기 제한을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DF5416D3-FB6F-4022-A448-62144907CE2D.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "LASTANGLE",
+    "type": "real",
+    "default": 0,
+    "scope": "session",
+    "description": "현재 UCS의 XY 평면을 기준으로 입력한 마지막 호, 선 또는 폴리선의 끝 접선 각도를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FBD5ACF2-BEB9-4159-8F76-AE464DE2DF6F.htm",
+      "type": "Real",
+      "savedIn": "Not-saved",
+      "initial": "0.0000"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "LASTPOINT",
+    "type": "point3",
+    "default": [0, 0, 0],
+    "scope": "session",
+    "description": "마지막으로 지정한 점을 현재 공간에 대한 UCS 좌표로 표현하여 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4EE5F6EA-B8D1-4DD0-8D5D-B7FA2AD3A3D0.htm",
+      "type": "3D-point",
+      "savedIn": "Not-saved",
+      "initial": "0.0000,0.0000,0.0000"
+    }
+  },
+  {
+    "name": "LASTPROMPT",
+    "type": "string",
+    "default": "",
+    "scope": "session",
+    "description": "명령 프롬프트에 반향된 마지막 문자열을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6C63005A-A87C-416C-B9FC-D11F609143A9.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "\"\""
+    },
+    "readonly": true
+  },
+  {
+    "name": "LATITUDE",
+    "type": "real",
+    "default": 37.795,
+    "scope": "drawing",
+    "description": "지리적 표식기의 위도를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BBA986D3-9BA8-4160-9471-55DAC9EDCA70.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "37.7950"
+    },
+    "min": -90,
+    "max": 90
+  },
+  {
+    "name": "LAYERDLGMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "기존 또는 현재 도면층 특성 관리자가 열렸는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E3DD4E11-E47D-4ABA-8D6C-F61D2E16532F.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "LAYEREVAL",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "도면 또는 부착된 외부 참조에 새 도면층을 추가할 때 새 도면층에 대해 도면층 리스트를 평가할지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-42F44696-D045-4468-ADEB-E18AEFBA77BF.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "LAYEREVALCTL",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면층 특성 관리자에서 새 도면층에 대해 평가되는 비조정 새 도면층 필터 리스트를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4EE593AE-BBD3-43B3-8F31-1896399A55E0.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "LAYERFILTERALERT",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "과도한 도면층 필터를 삭제하여 성능을 향상시킵니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7787698E-ADFF-46D1-B096-944103AC90A5.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "LAYERMANAGERSTATE",
+    "type": "integer",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "도면층 특성 관리자가 열려 있는지 아니면 닫혀 있는지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2269B3A5-18DA-4A35-A013-F2EC4D238393.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "LAYERNOTIFY",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "비조정 새 도면층이 있을 때 경고를 표시하는 시기를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FCE244C3-F642-4EF5-912E-C099EFF9C050.htm",
+      "type": "Bitcode",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "bits": {
+      "0": "Off",
+      "1": "Plot",
+      "2": "Open",
+      "4": "Load/Reload/Attach for xrefs",
+      "8": "Restore layer state",
+      "16": "Save",
+      "32": "Insert"
+    },
+    "min": 0,
+    "max": 63,
+    "bitmask": 63
+  },
+  {
+    "name": "LAYLOCKFADECTL",
+    "type": "integer",
+    "default": 50,
+    "scope": "profile",
+    "description": "잠긴 도면층의 객체에 대한 페이드 양을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-753F2A76-E248-483F-9F55-CCF613B12C31.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "50"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

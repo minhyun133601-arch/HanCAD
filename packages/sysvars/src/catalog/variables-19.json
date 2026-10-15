@@ -1,0 +1,297 @@
+[
+  {
+    "name": "GRIPDYNCOLOR",
+    "type": "integer",
+    "default": 140,
+    "scope": "profile",
+    "description": "동적 블록에 대한 사용자 그립의 색상을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1BA695E9-20BB-4BBA-A307-A51F6A4046AE.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "140"
+    },
+    "min": 1,
+    "max": 255
+  },
+  {
+    "name": "GRIPHOT",
+    "type": "integer",
+    "default": 12,
+    "scope": "profile",
+    "description": "선택된 그립의 색상을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-96ABB239-7C6F-431B-BB37-672123472EC8.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "12"
+    },
+    "min": 1,
+    "max": 255
+  },
+  {
+    "name": "GRIPHOVER",
+    "type": "integer",
+    "default": 11,
+    "scope": "profile",
+    "description": "선택되지 않은 그립 위에서 커서가 잠깐 멈추는 경우 이 그립의 채우기 색상을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9CC870B5-A4B9-41E3-9B0B-B9566530587B.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "11"
+    },
+    "min": 1,
+    "max": 255
+  },
+  {
+    "name": "GRIPOBJLIMIT",
+    "type": "integer",
+    "default": 100,
+    "scope": "profile",
+    "description": "선택 세트가 지정된 객체 수보다 많은 객체를 포함할 때 그립의 표시를 억제합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-705F3A42-4A2F-4B5C-A2A6-0CF8949B8ED5.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "100"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "GRIPS",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "선택한 객체에서 그립의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-97AD30F3-A1A3-4027-91B7-49008841A447.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "GRIPSIZE",
+    "type": "integer",
+    "default": 5,
+    "scope": "profile",
+    "description": "그립 상자의 크기를 장치 독립적 픽셀 단위로 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5F355F5F-0DDE-49B4-B253-C6BA717BAF8B.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "5"
+    },
+    "min": 1,
+    "max": 255
+  },
+  {
+    "name": "GRIPSUBOBJMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "하위 객체를 선택할 때 그립이 자동으로 핫 그립으로 표시되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1F18AF4A-7124-49CD-96D0-53E740434ABF.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "bits": {
+      "0": "Grips are NOT made hot when subobjects are selected.",
+      "1": "Grips for the attributes of blocks, and the grips for the faces, edges, vertices, and",
+      "2": "Grips for polyline segments are made hot when these subobjects are selected."
+    },
+    "min": 0,
+    "max": 3,
+    "bitmask": 3
+  },
+  {
+    "name": "GROUPDISPLAYMODE",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "그룹 선택이 켜져 있고 그룹의 객체가 선택된 경우 그립이 표시되는 방식을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1EDF8F98-A769-415C-9FF3-B8C304369094.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "GTDEFAULT",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "3D 비주얼 스타일의 뷰포트에서 MOVE, ROTATE 또는 SCALE 명령을 시작할 때 3D 이동, 3D 회전 또는 3D 축척 작업을 자동으로 시작할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C419D5E0-FAD3-414E-9554-EE5DAD2EDB64.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "GTLOCATION",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "3D 비주얼 스타일의 뷰포트에서 명령을 시작하기 전에 객체를 선택할 때 표시할 3D 이동, 3D 회전 또는 3D 축척 장치의 초기 위치를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-83583225-CD2E-426A-8E87-3FFC9DEA4D1A.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HALOGAP",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "한 객체가 다른 객체에 의해 숨겨지는 경우 표시되는 간격을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-323A9B4D-2B53-4E3D-83AA-2A14AC9CA10C.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "HANDLES",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "응용프로그램에서 객체 핸들에 액세스할 수 있는지 여부를 보고합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FC1B6550-B675-49F7-96DF-A44445CBC797.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "HANDSEED",
+    "type": "string",
+    "scope": "drawing",
+    "readonly": true,
+    "description": "다음에 사용할 객체 핸들",
+    "defaultUnavailable": "Resolved from the drawing handle allocator.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm",
+      "type": "Handle (DXF group 5)",
+      "savedIn": "Drawing",
+      "initial": "Allocated dynamically"
+    }
+  },
+  {
+    "name": "HELPPREFIX",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "도움말 시스템의 파일 경로를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-07966A0F-F2F4-4465-B921-92FECAEBE540.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Varies"
+    }
+  },
+  {
+    "name": "HIDETEXT",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "TEXT 또는 MTEXT 명령으로 작성된 문자 객체가 HIDE 명령을 수행하는 동안 처리될지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C30AB91D-D9B6-4762-A6F4-AF3DA50459EF.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HIGHLIGHT",
+    "type": "integer",
+    "default": 1,
+    "scope": "session",
+    "description": "객체 강조표시를 조정합니다. 이는 그립으로 선택된 객체에는 영향을 주지 않습니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A0543122-803C-4692-9EEB-090483C4025C.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HPANNOTATIVE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "이 세션에서 새 해치 패턴이 주석인지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D5AAA8E4-D02D-43FA-B999-57E795CC15F5.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HPASSOC",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "해치 및 채우기가 연관되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4875C3C9-77E8-49F9-8E91-C89084C76733.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HPBOUND",
+    "type": "integer",
+    "default": 1,
+    "scope": "session",
+    "description": "이 세션에서 HATCH 및 BOUNDARY로 작성된 객체 유형을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1300471B-7F23-4D0B-AC7F-C72AC47D824E.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  }
+]

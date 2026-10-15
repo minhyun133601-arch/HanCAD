@@ -4,3 +4,4 @@ export * from './messages';
 export * from './registry';
 export * from './runner';
 export * from './input-errors';
+export { undoPrompt, historyInputPrompt, historyErrorMessage } from './history-commands';

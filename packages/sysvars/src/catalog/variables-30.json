@@ -1,0 +1,293 @@
+[
+  {
+    "name": "PLOTTRANSPARENCYOVERRIDE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "객체 투명도를 플롯하는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-38F03A2C-6D36-4AD9-BBE0-9CA574BEF218.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "PLQUIET",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "선택적인 플롯 관련 대화상자 및 비치명적인 스크립트 오류의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2CB8CDA5-CDD7-472D-8F34-EB7C23B8CAFE.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "POINTCLOUD2DVSDISPLAY",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "2D 와이어프레임 비주얼 스타일로 점 구름을 볼 때 경계 상자 및 문자 메시지의 표시 여부를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-78A7FF41-2B0F-4141-AFB4-D5283EEB6567.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "POINTCLOUDAUTOUPDATE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "2015 이전의 기존 점 구름 객체에만 적용됩니다. 조작, 초점이동, 줌 또는 궤도 후 점 구름이 자동으로 재생성되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8DEF25C6-2F91-4BD1-AC92-B0ABBA291467.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "POINTCLOUDCACHESIZE",
+    "type": "integer",
+    "default": 512,
+    "scope": "profile",
+    "description": "점 구름을 표시하도록 예약된 메모리 양을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FA022633-3BB5-4881-9ED1-A514F685186C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "512"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "POINTCLOUDDENSITY",
+    "type": "integer",
+    "default": 15,
+    "scope": "profile",
+    "description": "2015 이전의 기존 점 구름 객체에만 적용됩니다. 도면 뷰의 모든 기존 점 구름에 대해 표시되는 점의 백분율을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FFC9C797-7822-4BB9-BDCE-369F2BBF8C65.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "15"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "POINTCLOUDLOCK",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "부착된 점 구름을 처리, 이동 또는 회전하거나 자를 수 있는지 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-91368F24-0E98-424D-9C5C-804FCDA9F576.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "POINTCLOUDLOD",
+    "type": "integer",
+    "default": 10,
+    "scope": "drawing",
+    "description": "점 구름에 대한 표시 세부 수준을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-028E3724-7D1F-420E-B87A-CE0C9578290E.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "10"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "POINTCLOUDPOINTMAX",
+    "type": "integer",
+    "default": 10000000,
+    "scope": "profile",
+    "description": "도면에 부착된 모든 점 구름에 대해 표시할 수 있는 최대 점 수를 설정합니다. 기존(2015년 이전 버전) 점 구름에게는 영향을 주지 않습니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A08F0428-3EF8-4102-A553-76AC2C097BA0.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "10,000,000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "POINTCLOUDRTDENSITY",
+    "type": "integer",
+    "default": 5,
+    "scope": "profile",
+    "description": "줌, 초점이동 또는 궤도 이동 중에 표시되는 점 개수를 줄여 성능을 개선합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AD344DE9-D747-4EFD-83B0-872CB299566A.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "5"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "POINTCLOUDVISRETAIN",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "AutoCAD 2014에서 작성된 기존 도면에서 부착된 점 구름 프로젝트 파일(RCP 파일)이 참조하는 영역 및 개별 스캔(RCS 파일)의 켜짐 또는 꺼짐 상태가 유지되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B393B848-FCB4-45A6-83D7-280DAFFD501E.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "POLARADDANG",
+    "type": "string",
+    "default": "",
+    "scope": "profile",
+    "description": "극좌표 추적 및 PolarSnap에 대한 추가 각도를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-73162BAB-C98D-4159-A653-E4C7D4CB38C3.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "\"\""
+    }
+  },
+  {
+    "name": "POLARANG",
+    "type": "real",
+    "default": 90,
+    "scope": "profile",
+    "description": "극좌표 각도 증분을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0CF67F9E-F953-43D6-9227-0D56E0E693ED.htm",
+      "type": "Real",
+      "savedIn": "Registry",
+      "initial": "90"
+    },
+    "enum": [90, 45, 30, 22.5, 18, 15, 10, 5]
+  },
+  {
+    "name": "POLARDIST",
+    "type": "real",
+    "default": 0,
+    "scope": "profile",
+    "description": "SNAPTYPE이 1(PolarSnap)로 설정된 경우 스냅 증분을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2CE7AC0B-D502-49F1-8C51-A67AA3E4BB15.htm",
+      "type": "Real",
+      "savedIn": "Registry",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "POLARMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "극좌표 및 객체 스냅 추적 설정을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D91628CC-9975-4DBF-8D02-10B23A6F3ED5.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "bits": {
+      "0": "Acquire automatically",
+      "1": "Measure polar angles from selected objects (relative)",
+      "2": "Use polar tracking settings in object snap tracking",
+      "4": "Yes",
+      "8": "Press SHIFT to acquire"
+    },
+    "min": 0,
+    "max": 15,
+    "bitmask": 15
+  },
+  {
+    "name": "POPUPS",
+    "type": "integer",
+    "default": 1,
+    "scope": "session",
+    "description": "현재 구성된 디스플레이 드라이버의 상태를 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2E31C396-BF5D-4C0B-A0AD-6C8B43ACA7EA.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "1"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PREVIEWCREATIONTRANSPARENCY",
+    "type": "integer",
+    "default": 60,
+    "scope": "profile",
+    "description": "SURFBLEND, SURFPATCH, SURFFILLET, FILLETEDGE, CHAMFEREDGE 및 LOFT를 사용하는 동안 생성되는 미리보기의 투명도를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B9CB868C-B9BE-45CB-9DCC-DCBCBBC38C6B.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "60"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "PREVIEWTYPE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "도면 썸네일 미리보기에 사용할 뷰를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1A22B0E0-1EC1-4DAA-8933-10FCE4215BC0.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PRODUCT",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "제품 이름을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1586C054-4EDF-4BB8-99F8-799A2C8ECC8E.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "Varies with the product"
+    },
+    "readonly": true
+  }
+]

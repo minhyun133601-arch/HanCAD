@@ -1,0 +1,16 @@
+{
+  "title": "About Extended Data (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A2A628B0-3699-4740-A215-C560E7242F63.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [3],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-B871E164-EC79-46E8-8DF6-EFE312D66291.htm"
+  ]
+}

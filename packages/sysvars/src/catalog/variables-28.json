@@ -1,0 +1,262 @@
+[
+  {
+    "name": "PALETTEOPAQUE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "팔레트를 투명하게 할 수 있는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-32C9D125-6D80-4C1B-A51D-3F48854BD1E4.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "PARAMETERCOPYMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "구속된 객체를 도면, 모형 공간 및 배치, 블록 정의 간에 복사할 때 구속조건 및 참조되는 사용자 매개변수를 처리할 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-003EF122-5624-4CBA-A925-9D9B756C1490.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2, 3, 4],
+    "min": 0,
+    "max": 4
+  },
+  {
+    "name": "PARAMETERSSTATUS",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "매개변수 관리자를 표시할지 아니면 숨길지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6F68AA1F-4273-48D5-A688-B8E2C9D5C11D.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PASTESPECMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "AutoCAD 도면요소 옵션에서 PASTESPEC 명령을 사용할 때 Microsoft Excel 데이터의 셀 형식을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BBFB5A36-686D-4BAF-8AF3-B06BE9AFED56.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PCMSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "점 구름 관리자가 열려 있는지 아니면 닫혀 있는지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BD650D0C-95CA-4168-9594-0A251190C710.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PDFFRAME",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "PDF 언더레이 프레임의 표시 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9FC48ACE-3962-4977-B2BB-CD90984E91D6.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "PDFIMPORTIMAGEPATH",
+    "type": "string",
+    "default": "\"PDF Images\"",
+    "scope": "profile",
+    "description": "PDF 파일을 가져올 때 참조되는 이미지 파일이 추출되어 저장되는 폴더를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4DB80DEB-CDE2-430B-9D5E-7A3828BC7832.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "\"PDF Images\""
+    }
+  },
+  {
+    "name": "PDFIMPORTMODE",
+    "type": "integer",
+    "default": 6,
+    "scope": "profile",
+    "description": "PDF 파일에서 객체를 가져올 때의 기본 처리를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-669F39FF-972F-4C24-8841-E42185A44843.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "6"
+    },
+    "bits": {
+      "0": "Does not process objects after they are imported. This includes converting Bezier curves to arcs,",
+      "1": "Combines imported objects into a block.",
+      "2": "Applies lineweight properties.",
+      "4": "Joins contiguous line and arc segments into polylines, when possible.",
+      "8": "Converts fills into solid-filled hatches rather than 2D solids.",
+      "16": "Combines sets of collinear segments into polyline segments."
+    },
+    "min": 0,
+    "max": 31,
+    "bitmask": 31
+  },
+  {
+    "name": "PDFOSNAP",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면에 부착된 PDF 언더레이의 형상에 대한 객체 스냅의 활성 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9E9F06D1-115B-4966-ABE8-F129AFDB36FB.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PDFSHX",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면을 PDF 파일로 내보낼 때 SHX 글꼴을 사용하는 문자 객체를 PDF 파일에 주석으로 저장할지 아니면 숨겨진 문자로 저장할지를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-56EA988C-A1DA-4E85-8765-B3F31A01AB02.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "PDFSHXBESTFONT",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "가져온 PDF 형상을 문자로 변환할 때 PDFSHXTEXT 명령에서 가장 일치하는 글꼴을 사용할지, 아니면 인식 임계값을 초과하는 첫 번째로 선택한 글꼴을 사용할지를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5734B0FD-1813-4926-BFCD-47CDF24FFAEC.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PDFSHXLAYER",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "SHX 형상을 문자 객체로 변환할 때 새로 작성한 문자 객체에 지정되는 도면층을 제어합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E2F6E9D6-8696-42D8-8DE4-8D82FB1F4C81.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PDFSHXTHRESHOLD",
+    "type": "integer",
+    "default": 95,
+    "scope": "profile",
+    "description": "형상이 문자 객체로 변환되기 전에 선택한 형상이 글꼴과 일치해야 백분율을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C9A0DC3C-7906-45A2-9997-ECEC9CFA2758.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "95"
+    },
+    "min": 1,
+    "max": 100
+  },
+  {
+    "name": "PDMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "점 객체의 표시 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-82F9BB52-D026-4D6A-ABA6-BF29641F459B.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3, 4, 32, 33, 34, 35, 36, 64, 65, 66, 67, 68, 96, 97, 98, 99, 100],
+    "min": 0,
+    "max": 100
+  },
+  {
+    "name": "PDSIZE",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "점 객체의 표시 크기를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-826CA91D-704B-400B-B784-7FCC9619AFB9.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "PEDITACCEPT",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "PEDIT 사용 시, 프롬프트 없이 선택한 객체를 폴리선으로 자동 변환합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-ED35EB02-53AD-4725-97DD-346C7E01974D.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  }
+]

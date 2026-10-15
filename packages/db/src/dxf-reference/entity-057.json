@@ -1,0 +1,133 @@
+{
+  "title": "Common MLeader Group Codes (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-69B9139A-48B4-48A5-B3CF-A3233ABFBE49.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [340],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [90],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [170],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [91],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [341],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [171],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [290],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [291],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [41],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [342],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [42],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [172],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [343],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [173],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [95],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [174],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [175],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [92],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [292],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [344],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-72D20B8C-0F5E-4993-BEB7-0FCF94F32BE0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-72D20B8C-0F5E-4993-BEB7-0FCF94F32BE0.htm"
+  ]
+}

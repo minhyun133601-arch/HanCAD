@@ -1,0 +1,45 @@
+{
+  "title": "ATTDEF (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-F0EA099B-6F88-4BCC-BEC7-247BA64838A4.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [],
+      "ranges": [[420, 429]],
+      "subclasses": ["AcDbMText"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [],
+      "ranges": [[430, 439]],
+      "subclasses": ["AcDbMText"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [45],
+      "subclasses": ["AcDbMText"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [63],
+      "subclasses": ["AcDbMText"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [441],
+      "subclasses": ["AcDbMText"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-62E5383D-8A14-47B4-BFC4-35824CAE8363.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484.htm"
+  ]
+}

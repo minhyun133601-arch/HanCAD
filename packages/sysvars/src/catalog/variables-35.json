@@ -1,0 +1,290 @@
+[
+  {
+    "name": "SHADEDGE",
+    "type": "integer",
+    "default": 3,
+    "scope": "drawing",
+    "description": "모서리의 음영처리를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C2F44CA9-913D-4C23-88DF-1FFF728369D7.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "3"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "SHADEDIF",
+    "type": "integer",
+    "default": 70,
+    "scope": "drawing",
+    "description": "앰비언트 라이트에 대한 분산 반사 광선의 비율을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B74E8745-6155-40DE-8CC1-E765573BCBAD.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "70"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SHADOWPLANELOCATION",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "그림자를 표시하는 데 사용되는 비가시적 지반 평면의 위치를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8E831EE6-2948-482E-9B0B-DE06155733C1.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SHAREDVIEWSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "공유 뷰 팔레트가 열려 있는지 닫혀 있는지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A37BCDB4-90A9-434A-8FD8-ABEF0921F3FD.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SHAREVIEWPROPERTIES",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "도면 특성을 공유 뷰에 포함할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CA6EAAAA-041C-448C-8F1C-74AB0CA8136C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SHORTCUTMENU",
+    "type": "integer",
+    "default": 11,
+    "scope": "profile",
+    "description": "도면 영역에서 기본값, 편집 및 명령 모드 바로 가기 메뉴를 사용할 수 있는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-27079CDD-85E0-4883-A961-82C8FC5C7F46.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "11"
+    },
+    "bits": {
+      "0": "Disables all Default, Edit, and Command mode shortcut menus.",
+      "1": "Enables Default mode shortcut menus.",
+      "2": "Enables Edit mode shortcut menus.",
+      "4": "Enables Command mode shortcut menus whenever a command is active.",
+      "8": "Enables Command mode shortcut menus only when command options are currently available at the Command",
+      "16": "Enables the display of a shortcut menu when the right button on the pointing device"
+    },
+    "min": 0,
+    "max": 31,
+    "bitmask": 31
+  },
+  {
+    "name": "SHORTCUTMENUDURATION",
+    "type": "integer",
+    "default": 250,
+    "scope": "profile",
+    "description": "도면 영역에 바로 가기 메뉴를 표시하기 위해 좌표 입력 장치의 오른쪽 버튼을 눌러야 하는 시간을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1F0CD64B-A9EC-437A-9EC3-E475D7A83DBA.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "250"
+    },
+    "min": 100,
+    "max": 10000
+  },
+  {
+    "name": "SHOWHIST",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "도면의 솔리드에 대한 사용 내역 표시 특성을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-06B7570B-3FDD-40B4-84A6-B9C15549702E.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "readonly": true,
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "SHOWLAYERUSAGE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "도면층 특성 관리자에서 아이콘을 표시하여 도면층이 사용 중인지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-21FA88A5-6769-4CCF-B252-C059CBDDFFBA.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SHOWMOTIONPIN",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "썸네일 이미지의 기본 상태를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6F31BED8-8059-49EA-9E65-67EEAB3D334B.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SHOWNEWSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "업데이트의 새 피쳐 강조 표시가 활성 상태인지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C5FF63F2-4636-45C9-9F05-958E0F6CB9F6.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SHOWPAGESETUPFORNEWLAYOUTS",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "새 배치를 작성할 때 페이지 설정 관리자가 표시되는지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3DE6D9CE-CFA5-438D-A1A8-AA2E232D0C23.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SHOWPALETTESTATE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "팔레트를 HIDEPALETTES 명령으로 숨겼는지 아니면 SHOWPALETTES 명령으로 복원했는지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5E311DF3-340C-4405-B1CD-973950AAE071.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SHPNAME",
+    "type": "string",
+    "default": "",
+    "scope": "session",
+    "description": "기호 명명 규칙을 지켜야 하는 기본 쉐이프 이름을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-39E0CF6E-2D2F-4618-AD71-2D54AE391E34.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "\"\""
+    }
+  },
+  {
+    "name": "SIGWARN",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "디지털 서명이 부착된 파일을 열 때 경고 메시지를 표시할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0AEC6815-83E1-4852-9519-E9757DCF7AF5.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SKETCHINC",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "SKETCH 명령에 대한 레코드 증분을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F0858B5F-0435-471A-8A54-D59ABA2155E7.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.1000 (imperial) or 1.0000 (metric)"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SKPOLY",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "SKETCH 명령을 사용할 때 생성되는 항목(선, 폴리선, 스플라인)을 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0BDCB230-916D-45A2-803A-7EB270CE4308.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "SKTOLERANCE",
+    "type": "real",
+    "default": 0.5,
+    "scope": "drawing",
+    "description": "스플라인이 프리핸드 스케치에 어느 정도로 가깝게 맞춰지는지를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0E77860B-C012-4F92-8C05-514B100D0A66.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.5000"
+    },
+    "min": 0,
+    "max": 1
+  }
+]

@@ -1,0 +1,302 @@
+[
+  {
+    "name": "FACETRATIO",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "원통형 및 원추형 솔리드에 대한 면 깎기의 종횡비를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-526C0511-E66E-43DD-86A9-4118F1154B97.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "FACETRES",
+    "type": "real",
+    "default": 0.5,
+    "scope": "drawing",
+    "description": "음영처리, 렌더링된 객체, 렌더링된 그림자 및 은선이 제거된 객체의 부드럽기를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2DF46705-EE9E-409F-86B5-ED391CE207DC.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.5000"
+    },
+    "min": 0.01,
+    "max": 10
+  },
+  {
+    "name": "FASTSHADEDMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "교차 플랫폼 3D 그래픽 시스템을 켤지 아니면 끌지를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-81A94EE2-017F-406C-90BB-8E004157DA33.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "FIELDDISPLAY",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "필드가 회색 배경으로 표시될지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-99DB691B-9E11-4BD5-AFFE-BC1312F3281A.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "FIELDEVAL",
+    "type": "integer",
+    "default": 31,
+    "scope": "drawing",
+    "description": "필드가 업데이트되는 방식을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EF5D2DDE-A170-4BB4-8F76-7F3FAFE30E56.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "31"
+    },
+    "bits": {
+      "0": "Not updated",
+      "1": "Updated on open",
+      "2": "Updated on save",
+      "4": "Updated on plot",
+      "8": "Updated on use of ETRANSMIT",
+      "16": "Updated on regeneration"
+    },
+    "min": 0,
+    "max": 31,
+    "bitmask": 31
+  },
+  {
+    "name": "FILEDIA",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "파일 탐색 대화상자의 표시를 억제합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-99736BD7-E60E-4F4A-83F7-436B6F9C67A1.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "FILETABTHUMBHOVER",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "파일 탭 썸네일 위에 마우스를 놓으면 도면 윈도우에 해당 모형 또는 배치가 로드되는지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-15DD5C80-C8C8-4750-87C0-0C67A975FB79.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [1, 0],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "FILLETRAD",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "2D 객체의 현재 모깎기 반지름을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BA2DD5FF-B663-48DB-95A8-6DEAFCEDDBF5.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "min": 0
+  },
+  {
+    "name": "FILLETRAD3D",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "3D 객체의 현재 모깎기 반지름을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-758FCCF3-8E13-4D60-9BC8-62231C8B3066.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "FILLMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "해치와 채우기, 2D 솔리드 및 굵은 폴리선을 채울지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FC385D70-45AA-4B9A-848A-CA3906C36124.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "FONTALT",
+    "type": "string",
+    "default": "simplex.shx",
+    "scope": "profile",
+    "description": "지정된 글꼴 파일을 찾을 수 없는 경우에 사용할 대체 글꼴을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-858A8D84-5104-4A35-9C82-2094DF6F411D.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "simplex.shx"
+    }
+  },
+  {
+    "name": "FONTMAP",
+    "type": "string",
+    "default": "acad.fmp",
+    "scope": "profile",
+    "description": "대체 글꼴용으로 사용할 글꼴 매핑 파일을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FC45A5DC-31F5-4725-A482-C95769273C1C.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "acad.fmp (AutoCAD) or acadlt.fmp (AutoCAD LT)"
+    }
+  },
+  {
+    "name": "FRAME",
+    "type": "integer",
+    "default": 3,
+    "scope": "drawing",
+    "description": "모든 이미지, 지도 이미지, 언더레이, 잘린 외부 참조 및 객체 가리기 객체의 프레임 화면표시를 제어합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-29BD70BB-07BF-41A2-8C2F-AD41C9402486.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "3"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "FRAMESELECTION",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "이미지, 언더레이, 잘린 외부 참조 또는 객체 가리기의 숨겨진 프레임을 선택할 수 있는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4DD5058A-4194-4568-A03E-81CE9BC9C018.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "FRONTZ",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트에 대한 대상 면으로부터 전면 자르기 평면 간격띄우기를 도면 단위로 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7B68318D-2060-44B2-BD7C-300AC62F8E21.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "FULLOPEN",
+    "type": "integer",
+    "default": 1,
+    "scope": "session",
+    "description": "현재 도면이 부분적으로 열려 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-90B96194-104A-4A8E-87CE-0909C921F556.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "1"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "FULLPLOTPATH",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면 파일의 전체 경로가 플롯 스풀러로 전송될지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-92D38169-B19C-4073-AF31-9007B78EC768.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "GEOLATLONGFORMAT",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "지리적 위치 대화상자 및 상태막대의 위도 및 경도 값 형식을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-17D1BEB2-6A2D-4EFC-B63D-920FDA84CEAC.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "GEOLOCATEMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "위치 추적이 켜져 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E3BAE34E-E50B-46D0-9DF0-CE2377F908A6.htm",
+      "type": "Switch",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  }
+]

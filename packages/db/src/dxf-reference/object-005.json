@@ -1,0 +1,120 @@
+{
+  "title": "PLOTSETTINGS (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-1113675E-AB07-4567-801A-310CDE0D56E9.htm",
+  "section": "object",
+  "documentedGroups": [
+    {
+      "codes": [49],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [140],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [141],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [142],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [143],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [72],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [73],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [74],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [7],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [75],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [76],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [77],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [78],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [147],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [148],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [149],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [333],
+      "subclasses": ["AcDbPlotSettings"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-6939D69E-04CB-4F4C-87B2-67BC540FCF58.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-2D71EE99-A6BE-4060-9B43-808CF1E201C6.htm"
+  ]
+}

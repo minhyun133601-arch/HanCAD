@@ -63,8 +63,10 @@ describe('ZIP-first canonical commands and aliases', () => {
       status: 'not-implemented',
       command: 'DIMSTYLE',
     });
-    expect((await runner.run('SETVAR DIMSTYLE "Standard"')).status).toBe('ok');
-    expect(runner.sysvars.get('DIMSTYLE')).toBe('Standard');
+    const readonlyStyle = await runner.run('SETVAR DIMSTYLE "Standard"');
+    expect(readonlyStyle.status).toBe('error');
+    expect(readonlyStyle.messages.join(' ')).toContain('읽기 전용');
+    expect(runner.sysvars.get('DIMSTYLE')).toBe('ISO-25');
     await runner.run('UNDEFINE DIMSTYLE');
     expect((await runner.run('DIMSTYLE')).status).toBe('unknown');
     expect((await runner.run('.DIMSTYLE')).status).toBe('not-implemented');
@@ -183,7 +185,7 @@ describe('ZIP-first canonical commands and aliases', () => {
       }
       expect(runner.database.serialize()).toBe(before);
       expect([runner.database.undoCount, runner.database.redoCount]).toEqual(history);
-      await runner.run('REDO');
+      await runner.run('MREDO');
       expect(runner.sysvars.get('LUPREC')).toBe(2);
     }
   });
@@ -214,7 +216,7 @@ describe('ZIP-first canonical commands and aliases', () => {
     expect(format).toHaveBeenCalledExactlyOnceWith(failure);
     expect(runner.database.serialize()).toBe(drawing);
     expect([runner.database.undoCount, runner.database.redoCount]).toEqual(history);
-    await runner.run('REDO');
+    await runner.run('MREDO');
     expect(runner.sysvars.get('LUPREC')).toBe(2);
     expect(await new HeadlessCommandRunner().run('GETVAR')).toMatchObject({
       status: 'error',

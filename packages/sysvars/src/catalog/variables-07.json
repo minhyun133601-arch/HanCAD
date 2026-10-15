@@ -1,0 +1,299 @@
+[
+  {
+    "name": "COMPARETEXT",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "도면 비교에 문자 객체가 포함되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1BE58261-FA5F-4914-BAC6-C1DF7E3D1E9C.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "COMPASS",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "3D 나침반을 현재 뷰포트에서 켤지 또는 끌지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5D0E105E-ECA0-4BF2-B0AD-492BA214CB85.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "COMPLEXLTPREVIEW",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "대화식 작업 중 복합 선종류의 미리보기 표시 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-58DC9873-E9F7-43C6-A2A6-1F040B6280D2.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CONSTRAINTBARDISPLAY",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "이후에 적용되는 기하학적 구속조건에 대한 구속조건 막대 표시와 선택한 객체에 대한 숨겨진 구속조건 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B9994A28-0C01-4364-A336-A1D1AD1AD886.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "bits": {
+      "0": "Automatically hides constraint bars after applying geometric constraints. Note: Constraint bars will always be displayed",
+      "1": "Displays constraint bars as objects are geometrically constrained.",
+      "2": "Displays any hidden constraints, both geometric and dimensional, but only as long as the constrained"
+    },
+    "min": 0,
+    "max": 3,
+    "bitmask": 3
+  },
+  {
+    "name": "CONSTRAINTBARMODE",
+    "type": "integer",
+    "default": 4095,
+    "scope": "profile",
+    "description": "구속조건 막대의 기하학적 구속조건 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6C6BEE02-35E8-4D0D-920E-E72B4E5BA2DD.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "4095"
+    },
+    "bits": {
+      "1": "Horizontal",
+      "2": "Vertical",
+      "4": "Perpendicular",
+      "8": "Parallel",
+      "16": "Tangent",
+      "32": "Smooth",
+      "64": "Coincident",
+      "128": "Concentric",
+      "256": "Collinear",
+      "512": "Symmetric",
+      "1024": "Equal",
+      "2048": "Fix"
+    },
+    "min": 0,
+    "max": 4095,
+    "bitmask": 4095
+  },
+  {
+    "name": "CONSTRAINTINFER",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "형상을 만들고 편집하는 동안 기하학적 구속조건을 추론할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-71EC58F4-BBAD-444E-AF4D-ABDF6B038141.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CONSTRAINTNAMEFORMAT",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "치수 구속조건의 문자 형식을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DF4DF224-9C8F-436B-9CDD-B45F126F69FA.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "CONSTRAINTSOLVEMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "구속조건을 적용하거나 편집할 때 구속조건 동작을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-897F4D0C-3090-4DE4-8A47-76C803BCE682.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "COORDS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "상태막대에서 커서 위치가 계속 업데이트되는지 아니면 특정 횟수만 업데이트되는지를 조정합니다. 또한 좌표가 표시되는 형식을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-91D3C93C-9C89-4397-B855-92AFD5228422.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "COPYMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "COPY 명령의 자동 반복 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BB3CED8E-4FA7-492A-8229-77A9021F67D7.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "COUNTCOLOR",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "개수의 객체에 대한 강조 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4711DC76-B422-4618-A2FA-3AACE7A1F37D.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "min": 1,
+    "max": 255
+  },
+  {
+    "name": "COUNTERRORCOLOR",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "개수에서 오류가 발생할 수 있는 객체에 대한 강조 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4A8A439A-6BDF-4DB1-A804-E265A65C81E1.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "min": 1,
+    "max": 255
+  },
+  {
+    "name": "COUNTPALETTESTATE",
+    "type": "integer",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "개수 팔레트가 열려 있는지 아니면 닫혀 있는지 보고합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AE8057DA-6293-4948-88D1-16DF9B09FC2A.htm",
+      "type": "Switch",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "COUNTSERVICE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "개수의 배경 색인화를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-273E2620-8D3C-4C9C-91E9-4FE4E081FB55.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CPLOTSTYLE",
+    "type": "string",
+    "default": "ByColor",
+    "scope": "drawing",
+    "description": "새 객체의 현재 플롯 스타일을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7CBC3F05-F15B-4BF1-84A7-16CE634BF6B6.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "ByColor"
+    }
+  },
+  {
+    "name": "CPROFILE",
+    "type": "string",
+    "default": "<<Unnamed Profile>>",
+    "scope": "profile",
+    "description": "현재 프로파일의 이름을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-07A23914-0704-4C4F-B484-1BB6C965BAA3.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "<<Unnamed Profile>>"
+    },
+    "readonly": true
+  },
+  {
+    "name": "CROSSINGAREACOLOR",
+    "type": "integer",
+    "default": 100,
+    "scope": "profile",
+    "description": "교차 선택 중 선택 영역의 색상을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-64DE9794-60FC-45E6-B117-F32BB4EADC94.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "100"
+    },
+    "min": 1,
+    "max": 255
+  },
+  {
+    "name": "CTAB",
+    "type": "string",
+    "default": "Model",
+    "scope": "drawing",
+    "description": "도면 영역에 모형 탭 또는 지정된 배치 탭이 표시되는지 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-20529853-0C88-4417-8D8C-9783E9789BBC.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "Model"
+    }
+  }
+]

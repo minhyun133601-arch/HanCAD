@@ -3,8 +3,8 @@
   "currentApp": {
     "features": [
       {
-        "ko-KR": "선·원·사각형·폴리선 그리기: 마우스와 좌표 입력",
-        "en-US": "Draw lines, circles, rectangles and polylines using the mouse or coordinates"
+        "ko-KR": "선·원·사각형·폴리선 그리기와 다중 도면 탭: 도면별 변수·실행 취소 기록 유지",
+        "en-US": "Draw lines, circles, rectangles and polylines; independent drawing tabs retain their variables and undo journals"
       },
       {
         "ko-KR": "수평·수직·정렬·반지름·지름·각도 치수 작성과 기본 스타일 설정",
@@ -31,8 +31,8 @@
         "en-US": "Open local DWG/DXF files; wheel zoom at the cursor, middle-button pan and double-middle fit"
       },
       {
-        "ko-KR": "PDF·PNG·JPG·SVG·DXF 내보내기",
-        "en-US": "Export PDF, PNG, JPG, SVG and DXF"
+        "ko-KR": "HCD 도면 저장·열기와 PDF·PNG·JPG·SVG·DXF 내보내기",
+        "en-US": "Save/open native HCD drawings and export PDF, PNG, JPG, SVG and DXF"
       },
       {
         "ko-KR": "생략·근사 객체 보고와 한글 명령 입력",
@@ -41,8 +41,8 @@
     ],
     "limitations": [
       {
-        "ko-KR": "현재 기능은 부분 구현입니다. 원본 0~25단계 순서에 따라 수락 기준이 충족되지 않은 부분부터 진행합니다.",
-        "en-US": "Delivered features are partial. Continue in original phase order from 0 to 25, starting with unmet acceptance checks."
+        "ko-KR": "현재 페이즈 1을 진행합니다. 원본 0~25단계 순서를 유지하며 사용자 요청으로 페이즈 0 네이티브 검증은 보류했습니다.",
+        "en-US": "Phase 01 is active. Preserve original phase order from 0 to 25; Phase 00 native acceptance is deferred by user instruction."
       },
       {
         "ko-KR": "일부 DWG 객체는 생략·근사되며 DXF 저장은 무손실 원본 보존 방식이 아닙니다.",
@@ -87,8 +87,8 @@
       },
       "status": "in-progress",
       "detail": {
-        "ko-KR": "핸들·트랜잭션·107개 변수·HCD 기반 구현. 전체 객체 스키마와 고급 UNDO 확장 중.",
-        "en-US": "Handles, transactions, 107 variables and HCD foundations are implemented. Complete object schemas and advanced UNDO remain in progress."
+        "ko-KR": "DXF 객체 메타데이터·기하·860개 변수·고급 UNDO·독립 도면·HCD 저장/복구 구현. 환경 기본값·일부 범위·UI 그룹화와 정확한 참조 동등성 검증은 남아 있습니다.",
+        "en-US": "DXF metadata, geometry, 860 variables, advanced UNDO, independent documents and native HCD persistence are implemented. Host defaults, some ranges, UI grouping and exact reference parity remain open."
       }
     },
     {

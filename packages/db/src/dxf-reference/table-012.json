@@ -1,0 +1,66 @@
+{
+  "title": "LAYER (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-D94802B0-8BE8-4AC9-8054-17197688AFDB.htm",
+  "section": "table",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbLayerTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [2],
+      "subclasses": ["AcDbLayerTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbLayerTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [62],
+      "subclasses": ["AcDbLayerTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [6],
+      "subclasses": ["AcDbLayerTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [290],
+      "subclasses": ["AcDbLayerTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [370],
+      "subclasses": ["AcDbLayerTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [390],
+      "subclasses": ["AcDbLayerTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [347],
+      "subclasses": ["AcDbLayerTableRecord"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-5926A569-3E40-4ED2-AE06-6ACCE0EFC813.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A9FD9590-C97B-4E41-9F26-BD82C34A4F9F.htm"
+  ]
+}

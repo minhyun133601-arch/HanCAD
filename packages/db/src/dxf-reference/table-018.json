@@ -1,0 +1,108 @@
+{
+  "title": "LTYPE (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-F57A316C-94A2-416C-8280-191E34B182AC.htm",
+  "section": "table",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [2],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [3],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [72],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [73],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [40],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [49],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [74],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [75],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [340],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [46],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [50],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [44],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [45],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [9],
+      "subclasses": ["AcDbLinetypeTableRecord"],
+      "context": "record",
+      "repeated": true
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-5926A569-3E40-4ED2-AE06-6ACCE0EFC813.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A9FD9590-C97B-4E41-9F26-BD82C34A4F9F.htm"
+  ]
+}

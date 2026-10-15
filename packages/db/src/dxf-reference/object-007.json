@@ -1,0 +1,132 @@
+{
+  "title": "SUNSTUDY (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-1C7C073F-4CFD-4939-97D9-7AB0C1E163A3.htm",
+  "section": "object",
+  "documentedGroups": [
+    {
+      "codes": [0],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [5],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [102],
+      "subclasses": [],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [330],
+      "subclasses": [],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [102],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [330],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [100],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [90],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [1],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [2],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [3],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [290],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [4],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [291],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [91],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [90],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [90],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [292],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [93],
+      "subclasses": ["AcDbSunStudy"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-6939D69E-04CB-4F4C-87B2-67BC540FCF58.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-2D71EE99-A6BE-4060-9B43-808CF1E201C6.htm"
+  ]
+}

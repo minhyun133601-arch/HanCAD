@@ -1,0 +1,60 @@
+{
+  "title": "SURFACE (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-BB62483A-89C3-47C4-80E5-EA3F08979863.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbModelerGeometry"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbModelerGeometry"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [1],
+      "subclasses": ["AcDbModelerGeometry"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [3],
+      "subclasses": ["AcDbModelerGeometry"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [100],
+      "subclasses": ["AcDbSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [71],
+      "subclasses": ["AcDbSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [72],
+      "subclasses": ["AcDbSurface"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-9218F5A6-3AE4-4EA4-854E-E15E1946AE88.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3D9D8A87-1E46-48AE-B482-BAD1C4D460CA.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-844D8EC8-318D-4721-AFF2-82923DB10678.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-55DCEC23-9286-4A32-AAFA-E1F945B10A19.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-9218F5A6-3AE4-4EA4-854E-E15E1946AE88.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3D9D8A87-1E46-48AE-B482-BAD1C4D460CA.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-844D8EC8-318D-4721-AFF2-82923DB10678.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-55DCEC23-9286-4A32-AAFA-E1F945B10A19.htm"
+  ]
+}

@@ -169,7 +169,8 @@ test('OFFSET Multiple previews, locally undoes and repeats offsets before whole-
   await enter(page, 'U');
   expect((await drawing(page)).entities).toEqual(before);
   await value(page, 'OFFSETDIST', '10');
-  await enter(page, 'REDO');
+  await enter(page, 'MREDO');
+  await enter(page, '1');
   expect(await lines(page)).toEqual(result);
 });
 

@@ -1,0 +1,297 @@
+[
+  {
+    "name": "REMEMBERFOLDERS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "표준 파일 선택 대화상자에 표시된 기본 경로를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6CA42228-7F27-4217-8F70-F1C2AF644740.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "RENDERPREFSSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "렌더 사전 설정 관리자 팔레트가 열려 있는지 또는 닫혀 있는지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D711D9BD-DDB1-469A-82F1-422AF4F3E34C.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "RENDERTIME",
+    "type": "integer",
+    "default": 10,
+    "scope": "drawing",
+    "description": "렌더링된 이미지를 반복적으로 정련하기 위해 렌더 엔진에서 사용하는 시간(분)을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B851E102-BCF5-48B1-B89E-B7BF52D14B2C.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "10"
+    },
+    "min": 1,
+    "max": 32767
+  },
+  {
+    "name": "RENDERUSERLIGHTS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "렌더링 중 뷰포트 조명의 설정을 재지정할 것인지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B7931F8F-E34C-42F6-8D41-DBA71707AB87.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "REPORTERROR",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "프로그램이 예기치 않게 종료되는 경우 Autodesk로 오류 보고서를 전송할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-509A2E92-C0B6-477C-B1B4-2D66CEB45E13.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "REVCLOUDAPPROXARCLEN",
+    "type": "real",
+    "default": 0,
+    "scope": "profile",
+    "description": "구름형 리비전의 현재 대략적인 호 길이를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EA1AE5FF-6DE4-49D2-A422-10294CF8FACB.htm",
+      "type": "Real",
+      "savedIn": "Registry",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "REVCLOUDARCVARIANCE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "구름형 리비전 호를 다양한 현 길이를 사용하여 작성할지 또는 대체로 균일한 현 길이를 사용하여 작성할지를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-970AE162-B9A6-4CB6-A227-EBBCBD04271E.htm",
+      "type": "Switch",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "REVCLOUDGRIPS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "구름형 리비전에 표시되는 그립 수를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7790D277-F11B-4AA3-BC97-40DF1C27CC7F.htm",
+      "type": "Switch",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "RIBBONDOCKEDHEIGHT",
+    "type": "integer",
+    "default": 100,
+    "scope": "profile",
+    "description": "수평으로 고정된 리본을 현재 탭의 높이에 맞출지 아니면 사전 설정된 높이에 맞출지 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-66301197-1C8B-4A0E-B919-813DAA2456C2.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "100"
+    },
+    "min": 0,
+    "max": 500
+  },
+  {
+    "name": "RIBBONSELECTMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "리본 상황별 탭을 호출하여 명령을 완료한 후에 pickfirst 선택 세트를 선택된 상태로 유지할지 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EAADC5BE-E317-4068-980E-715741EF9E20.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "RIBBONSTATE",
+    "type": "integer",
+    "default": 1,
+    "scope": "session",
+    "description": "리본 팔레트가 열려 있는지 아니면 닫혀 있는지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-61E4267F-6957-4A0D-A2B6-69FB0674331C.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "1"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "ROAMABLEROOTPREFIX",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "로밍할 수 있는 사용자화 가능 파일이 설치된 루트 폴더의 전체 경로를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-17F7BD8A-98B1-4A9B-8724-D96105B5F6E7.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "ROLLOVEROPACITY",
+    "type": "integer",
+    "default": 100,
+    "scope": "profile",
+    "description": "커서를 팔레트 위로 이동하는 동안 팔레트 투명도를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E0A6843B-1C07-4D59-8142-B72CC87791FF.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "100"
+    },
+    "enum": [0, 100],
+    "min": 0,
+    "max": 100
+  },
+  {
+    "name": "ROLLOVERTIPS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "커서를 객체 위로 이동할 때 롤오버 툴팁의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-22E75D39-E601-41BD-935C-B359345DC47E.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "RTDISPLAY",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "실시간 ZOOM 또는 PAN 명령을 사용하는 동안 래스터 이미지 및 OLE 객체의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BA3CD3F0-A5A3-421A-92EC-C02317F9BE4A.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "RTREGENAUTO",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "실시간 초점이동 및 줌 작업의 자동 재생성을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9B52A286-BFCD-47B7-9FAC-197BBDB246D8.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SAVEFIDELITY",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "AutoCAD 2007 및 이전 버전에서 주석 객체에 대한 시각적 사실성을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0D4C8D4B-6A37-4D74-BEE4-E00459B4F1ED.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SAVEFILE",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "현재 자동 저장 파일 이름을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2C7A305A-951E-49F3-9804-4C9CD23270E5.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "SAVEFILEPATH",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "현재 세션에 대한 모든 자동 저장 파일의 폴더 경로를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-62A5D248-65DB-46DA-8A45-89DFB6C78C88.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Varies"
+    }
+  }
+]

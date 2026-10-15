@@ -15,6 +15,10 @@ export interface Messages {
   newDrawing: string;
   open: string;
   save: string;
+  saveNative: string;
+  restoreErased: string;
+  noErasedObjects: string;
+  nativeOpenFailed: string;
   undo: string;
   redo: string;
   plot: string;
@@ -170,6 +174,10 @@ export interface Messages {
   exportInvalidJpeg: string;
   exportInvalidPdfMargin: string;
   commandHistoryCountInvalid: string;
+  commandHistoryOptionInvalid: string;
+  undoDisabled: string;
+  undoLimited: string;
+  undoNoGroup: string;
   commandInvalidPointValue: (name: string) => string;
   commandStringValueRequired: (name: string) => string;
   inputStringRequired: string;
@@ -288,6 +296,7 @@ export interface Messages {
   statusChanged: (name: string, enabled: boolean) => string;
   sysvarValuePrompt: (name: string, value: string) => string;
   sysvarUnknown: (name: string) => string;
+  sysvarUnavailable: (name: string) => string;
   sysvarReadonly: (name: string) => string;
   sysvarInvalid: (name: string, range: string) => string;
   sysvarNotNumber: (name: string) => string;

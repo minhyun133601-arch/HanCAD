@@ -1,0 +1,90 @@
+{
+  "title": "VIEW (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-CF3094AB-ECA9-43C1-8075-7791AC84F97C.htm",
+  "section": "table",
+  "documentedGroups": [
+    {
+      "codes": [334],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [348],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [361],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [110],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [120, 130],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [111],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [121, 131],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [112],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [122, 132],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [79],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [146],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [345],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [346],
+      "subclasses": ["AcDbViewTableRecord"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-5926A569-3E40-4ED2-AE06-6ACCE0EFC813.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A9FD9590-C97B-4E41-9F26-BD82C34A4F9F.htm"
+  ]
+}

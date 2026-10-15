@@ -1,0 +1,295 @@
+[
+  {
+    "name": "DIMSD2",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "두 번째 치수선 및 화살촉의 억제를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B55002A4-AF9F-41D0-A8B4-EDB8BB078662.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMSE1",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "첫 번째 치수보조선의 표시를 억제합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-491A0E6F-0387-4169-BCB9-40F2432C0B99.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMSE2",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "두 번째 치수보조선의 표시를 억제합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A2711B05-7F7E-472C-B53E-03B1F168FFEB.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMSOXD",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수보조선 내에 충분한 공간이 없으면 화살표 억제.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-79F0441D-60E2-49AE-80F1-093A5BB588E2.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMSTYLE",
+    "type": "string",
+    "default": "ISO-25",
+    "scope": "drawing",
+    "description": "도면의 치수에 사용되는 단위 유형(영국식/표준 또는 ISO-25/미터법)을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-98D575CA-C7FE-4442-83F3-C2BFD7D9A112.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "Standard (imperial) or ISO-25 (metric)"
+    },
+    "readonly": true
+  },
+  {
+    "name": "DIMTAD",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "치수 선을 기준으로 문자의 수직 위치를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-60D1241D-CEA7-4493-BD6A-4EF433F3C946.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0 (imperial) or 1 (metric)"
+    },
+    "enum": [0, 1, 2, 3, 4],
+    "min": 0,
+    "max": 4
+  },
+  {
+    "name": "DIMTDEC",
+    "type": "integer",
+    "default": 2,
+    "scope": "drawing",
+    "description": "치수에서 1차 단위에 대한 공차 값에 표시할 소수부 자릿수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-49EAC810-F707-464B-852D-F0B8D5BC3588.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "4 (imperial) or 2 (metric)"
+    },
+    "min": 0,
+    "max": 8
+  },
+  {
+    "name": "DIMTFAC",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "DIMTXT에 의해 설정된 바와 같이 치수 문자 높이를 기준으로 분수 및 공차 값의 문자 높이에 대한 축척 비율을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0D3CBEEB-CF89-4979-BE42-A123357188DE.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMTFILL",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수 문자의 배경을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4E38E29F-DE85-4791-A2E7-4DC22842B1B4.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "DIMTFILLCLR",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수의 문자 배경 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FF6E5A28-35F0-4998-BC72-9EFD4EACCE18.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMTIH",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "세로좌표를 제외한 모든 치수 유형에 대해 치수보조선 내부에서 치수 문자의 위치를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-60CFA531-80FD-45EF-B529-F4FAF5C758B3.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "1 (imperial) or 0 (metric)"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMTIX",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수보조선 사이에 문자를 그립니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A553FB59-8741-4500-A7ED-15B02A1F3470.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMTM",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "DIMTOL 또는 DIMLIM이 켜져 있는 경우 치수 문자에 대한 최소(또는 하위) 공차 한계를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E2AAD7FB-C563-42A8-B7B4-3A3EC8AA8C68.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMTMOVE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수 문자 이동 규칙을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-10475059-6A2E-40B2-AF30-E92F104E9C03.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "DIMTOFL",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "문자가 외부에 배치된 경우에도 치수보조선 사이에 치수 선을 그릴지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-40D7439D-C805-4373-879A-E19ACE97FE54.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0 (imperial) or 1 (metric)"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMTOH",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수보조선 외부에서 치수 문자의 위치를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-71B03AC9-ADC1-4859-A9CD-85247BACABBE.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "1 (imperial) or 0 (metric)"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMTOL",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수 문자에 공차를 덧붙입니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1FA5DC50-8D40-49A5-9A79-08A4E01D6178.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMTOLJ",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "공칭 치수 문자를 기준으로 공차 값에 대한 수직 자리맞춤을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CF5FAF97-2718-4253-8B4C-9D6D7EB75C59.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1 (imperial) or 0 (metric)"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "DIMTP",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "DIMTOL 또는 DIMLIM이 켜져 있는 경우 치수 문자에 대한 최대(또는 상위) 공차 한계를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-635300D6-9738-44C4-A0B6-176F194533B3.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

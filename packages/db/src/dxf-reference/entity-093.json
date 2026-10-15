@@ -1,0 +1,66 @@
+{
+  "title": "TOLERANCE (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-ADFCED35-B312-4996-B4C1-61C53757B3FD.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbFcf"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [3],
+      "subclasses": ["AcDbFcf"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [10],
+      "subclasses": ["AcDbFcf"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [20, 30],
+      "subclasses": ["AcDbFcf"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [1],
+      "subclasses": ["AcDbFcf"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [210],
+      "subclasses": ["AcDbFcf"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [220, 230],
+      "subclasses": ["AcDbFcf"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [11],
+      "subclasses": ["AcDbFcf"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [21, 31],
+      "subclasses": ["AcDbFcf"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484.htm"
+  ]
+}

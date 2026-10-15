@@ -68,7 +68,7 @@ Registered canonical names and aliases from the supplied reference. Registration
 | ERASE              | E          | Partial / Pick or preselection; Delete shortcut                                        |
 | EXPLODE            | X          | Not implemented; explicit message                                                      |
 | EXPORT             | EXP        | Not implemented; explicit message                                                      |
-| EXPORTPDF          | EPDF       | Not implemented; explicit message                                                      |
+| EXPORTPDF          | EPDF       | Partial / Visible supported geometry on A4 raster PDF                                  |
 | EXTEND             | EX         | LINE targets, supported boundaries, Quick/Standard, Shift, fence, Edge, local Undo     |
 | EXTERNALREFERENCES | ER         | Not implemented; explicit message                                                      |
 | EXTRUDE            | EXT        | Not implemented; explicit message                                                      |
@@ -76,7 +76,7 @@ Registered canonical names and aliases from the supplied reference. Registration
 | FILTER             | FI         | Not implemented; explicit message                                                      |
 | FLATSHOT           | FSHOT      | Not implemented; explicit message                                                      |
 | GEOCONSTRAINT      | GCON       | Not implemented; explicit message                                                      |
-| GETVAR             |            | Partial / Read a typed system variable                                                 |
+| GETVAR             |            | Partial / 860 typed definitions; unresolved host defaults report unavailable           |
 | GRADIENT           | GD         | Not implemented; explicit message                                                      |
 | GROUP              | G, -G      | Not implemented; explicit message                                                      |
 | HATCH              | BH, H, -H  | Not implemented; explicit message                                                      |
@@ -112,7 +112,7 @@ Registered canonical names and aliases from the supplied reference. Registration
 | MLEADERSTYLE       | MLS        | Not implemented; explicit message                                                      |
 | MLINE              | ML         | Not implemented; explicit message                                                      |
 | MOVE               | M          | Preselection or pick/window selection, base/second point, exact/snapped input          |
-| MREDO              |            | Partial / Redo by count or ALL                                                         |
+| MREDO              |            | Partial / Redo by count, All or Last                                                   |
 | MSPACE             | MS         | Not implemented; explicit message                                                      |
 | MTEXT              | MT, T, -T  | Not implemented; explicit message                                                      |
 | MVIEW              | MV         | Not implemented; explicit message                                                      |
@@ -141,7 +141,7 @@ Registered canonical names and aliases from the supplied reference. Registration
 | QVLAYOUT           | QVL        | Not implemented; explicit message                                                      |
 | RECTANG            | REC        | Partial / Two opposite corners                                                         |
 | REDEFINE           |            | Partial / Restore a command; argument form                                             |
-| REDO               |            | Partial / Redo one transaction                                                         |
+| REDO               |            | Partial / Restore last U/UNDO batch immediately; intervening command closes window     |
 | REDRAW             | R          | Not implemented; explicit message                                                      |
 | REDRAWALL          | RA         | Not implemented; explicit message                                                      |
 | REGEN              | RE         | Not implemented; explicit message                                                      |
@@ -155,7 +155,7 @@ Registered canonical names and aliases from the supplied reference. Registration
 | SCRIPT             | SCR        | Not implemented; explicit message                                                      |
 | SECTION            | SEC        | Not implemented; explicit message                                                      |
 | SECTIONPLANE       | SPLANE     | Not implemented; explicit message                                                      |
-| SETVAR             | SET        | Partial / Set a validated system variable                                              |
+| SETVAR             | SET        | Partial / Typed/scoped validation; drawing values undoable; some ranges pending        |
 | SHADEMODE          | SHA        | Not implemented; explicit message                                                      |
 | SHEETSET           | SSM        | Not implemented; explicit message                                                      |
 | SHOWPALETTES       | PON        | Not implemented; explicit message                                                      |
@@ -179,10 +179,10 @@ Registered canonical names and aliases from the supplied reference. Registration
 | TOOLPALETTES       | TP         | Not implemented; explicit message                                                      |
 | TORUS              | TOR        | Not implemented; explicit message                                                      |
 | TRIM               | TR         | LINE targets, Quick/Standard boundaries, Shift, fence, Edge and command-local Undo     |
-| U                  |            | Partial / Undo one transaction                                                         |
+| U                  |            | Partial / Undo one group; LINE/PLINE local segment undo                                |
 | UCSMAN             | UC         | Not implemented; explicit message                                                      |
 | UNDEFINE           |            | Partial / Disable a command; argument form                                             |
-| UNDO               |            | Partial / Undo by count; other options pending                                         |
+| UNDO               |            | Partial / Count, Auto, Control, BEgin, End, Mark, Back; UI grouping pending            |
 | UNION              | UNI        | Not implemented; explicit message                                                      |
 | UNITS              | UN, -UN    | Not implemented; explicit message                                                      |
 | VIEW               | V, -V      | Not implemented; explicit message                                                      |
@@ -200,31 +200,78 @@ Registered canonical names and aliases from the supplied reference. Registration
 
 ## Additional registered bootstrap commands
 
-| Command        | Implementation status                                               |
-| -------------- | ------------------------------------------------------------------- |
-| ALIASEDIT      | Not implemented; explicit message                                   |
-| CAL            | Not implemented; explicit message                                   |
-| CLEANSCREENOFF | Not implemented; explicit message                                   |
-| CLEANSCREENON  | Not implemented; explicit message                                   |
-| CLOSE          | Not implemented; explicit message                                   |
-| COPYBASE       | Not implemented; explicit message                                   |
-| COPYCLIP       | Not implemented; explicit message                                   |
-| CUTCLIP        | Not implemented; explicit message                                   |
-| DBCONNECT      | Not implemented; explicit message                                   |
-| HELP           | Not implemented; explicit message                                   |
-| HYPERLINK      | Not implemented; explicit message                                   |
-| INFER          | Not implemented; explicit message                                   |
-| MARKUP         | Not implemented; explicit message                                   |
-| NEW            | Partial / Empty document and reset history                          |
-| OOPS           | Not implemented; explicit message                                   |
-| OPEN           | Partial / Local DWG/DXF chooser; safe error/cancel                  |
-| PASTEBLOCK     | Not implemented; explicit message                                   |
-| PASTECLIP      | Not implemented; explicit message                                   |
-| QSAVE          | Partial / Supported-entity DXF download                             |
-| REINIT         | Not implemented; explicit message                                   |
-| SAVEAS         | Not implemented; explicit message                                   |
-| SELECT         | Visible unlocked picks, window/crossing drag, Shift removal, Ctrl+A |
-| TABLET         | Not implemented; explicit message                                   |
+| Command        | Implementation status                                                |
+| -------------- | -------------------------------------------------------------------- |
+| ALIASEDIT      | Not implemented; explicit message                                    |
+| CAL            | Not implemented; explicit message                                    |
+| CLEANSCREENOFF | Not implemented; explicit message                                    |
+| CLEANSCREENON  | Not implemented; explicit message                                    |
+| CLOSE          | Not implemented; explicit message                                    |
+| COPYBASE       | Not implemented; explicit message                                    |
+| COPYCLIP       | Not implemented; explicit message                                    |
+| CUTCLIP        | Not implemented; explicit message                                    |
+| DBCONNECT      | Not implemented; explicit message                                    |
+| HELP           | Not implemented; explicit message                                    |
+| HYPERLINK      | Not implemented; explicit message                                    |
+| INFER          | Not implemented; explicit message                                    |
+| MARKUP         | Not implemented; explicit message                                    |
+| NEW            | Partial / New independent DrawingN with metric defaults              |
+| OOPS           | Partial / Restore latest erase set across edits and tab reactivation |
+| OPEN           | Partial / New document from HCD or lossy local DWG/DXF import        |
+| PASTEBLOCK     | Not implemented; explicit message                                    |
+| PASTECLIP      | Not implemented; explicit message                                    |
+| QSAVE          | Partial / Supported-entity DXF download                              |
+| REINIT         | Not implemented; explicit message                                    |
+| SAVEAS         | Not implemented; explicit message                                    |
+| SELECT         | Visible unlocked picks, window/crossing drag, Shift removal, Ctrl+A  |
+| TABLET         | Not implemented; explicit message                                    |
+
+## Phase 01 foundations
+
+GETVAR, SETVAR and a registered variable name use the same declarative registry.
+It contains 860 definitions with source links, scope, defaults, Korean descriptions
+and available ranges/flags. 62 environment/document-dependent initial values
+remain explicitly unavailable; some numeric ranges await reference verification.
+Read-only values are rejected, drawing values enter the database journal and
+profile values are shared across documents. docs/SYSVARS.md is generated from
+this registry. Registering a variable does not implement its dependent command.
+
+UNDO accepts a count or Auto, Control, BEgin, End, Mark and Back. Control includes
+All, None, One, Combine and Layer. BEgin/End combine accepted transactions;
+Mark/Back restore a checkpoint, with confirmation before Back without a mark.
+MREDO accepts a count, All or Last. UNDOCTL reflects these journal settings.
+Auto menu macros and navigation/layer UI category grouping remain pending.
+REDO restores the last U/UNDO batch only immediately afterward; informational
+commands and rejected input close that window. MREDO retains the remaining stack.
+OOPS supports the latest erased set; BLOCK/WBLOCK/PURGE cases await those commands.
+
+NEW opens another document tab. Switching tabs retains each native database,
+undo journal and drawing variables while profile variables remain shared. OPEN
+validates a full .hcd before activating a new document; DWG/DXF continue through
+the supported-geometry adapter into a fresh native default graph. HANSAVE is
+HanCAD's application-specific full .hcd save (zipped JSON plus binary blobs).
+QSAVE DXF output still preserves only supported adapter geometry.
+DocumentManager has a close API; tab-close UI and the CLOSE command remain pending.
+The native graph includes opaque data, but persistent entity editing and canvas
+display still use the transitional view adapter rather than all schema types.
+
+Feature checks live in database history/schema/default tests, sysvar and headless
+tests, document foundation tests and `database-foundations.spec.ts`. They include
+1,000 deterministic generated create/modify/erase operations with full undo/redo,
+identical native HCD graph/blob reload, tab history/OOPS and damaged-file recovery.
+The four acceptance checks do not close the remaining full-build parity items.
+
+Manual command sequences use a clean profile for default values. Press Enter
+after each item and Esc after rejected input to return to the idle command prompt:
+
+- `OSMODE`, `Enter` displays 4133 in a fresh document; `OSMODE`, `99999` is rejected.
+- `SETVAR`, `LUPREC`, `2` changes inquiry precision; `U` restores the prior value.
+- `UNDO`, `BE`, create two completed LINE commands, `UNDO`, `E`, `U`, `REDO`
+  tests grouped removal/restoration.
+- `UNDO`, `M`, create a completed LINE, `UNDO`, `B` restores the mark.
+- `NEW`, draw a LINE, switch back to the first tab and use `U` to inspect isolated
+  histories; use `ERASE`, then another edit and `OOPS` to restore only the erased set.
+- `HANSAVE`, then `OPEN` the downloaded .hcd to reopen the native graph in a new tab.
 
 ## Browser workflow commands
 
@@ -239,22 +286,23 @@ UI errors, including language changes before an asynchronous image callback.
 Headless SETVAR point/string and UNDO/REDO count failures use typed bilingual
 diagnostics; command/input validation tests verify failure leaves history intact.
 
-| Command                         | Implemented options                                                             | Verification                                                                            |
-| ------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| EXPORTPDF                       | Visible supported geometry on A4 raster PDF                                     | Actual downloads, strict PDF parsing and independent render                             |
-| EXPORTPNG / EXPORTJPG           | White background, maximum 2400 px                                               | Decoding and visual QA                                                                  |
-| EXPORTSVG                       | Vector supported entities, readable fixed screen strokes                        | Actual Edge rendering and SVG geometry invariants                                       |
-| HANPROGRESS                     | Current features, limitations and all 26 phase statuses                         | Browser progress dialog checks                                                          |
-| LINE / CIRCLE / RECTANG / PLINE | Initial mouse and coordinate sessions                                           | Draft session feature tests; production browser drafting/undo/save/reload checks passed |
-| ERASE / SELECT                  | Pick/preselection; locked/hidden objects protected                              | Feature tests; production browser drafting/undo/save/reload checks passed               |
-| U / UNDO / REDO / MREDO         | Shared transaction journal, whole completed drawing commands and variable edits | Database journal tests and browser integration                                          |
+| Command                         | Implemented options                                                            | Verification                                                                            |
+| ------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| EXPORTPDF                       | Visible supported geometry on A4 raster PDF                                    | Actual downloads, strict PDF parsing and independent render                             |
+| EXPORTPNG / EXPORTJPG           | White background, maximum 2400 px                                              | Decoding and visual QA                                                                  |
+| EXPORTSVG                       | Vector supported entities, readable fixed screen strokes                       | Actual Edge rendering and SVG geometry invariants                                       |
+| HANPROGRESS                     | Current features, limitations and all 26 phase statuses                        | Browser progress dialog checks                                                          |
+| LINE / CIRCLE / RECTANG / PLINE | Initial mouse and coordinate sessions                                          | Draft session feature tests; production browser drafting/undo/save/reload checks passed |
+| ERASE / SELECT                  | Pick/preselection; locked/hidden objects protected                             | Feature tests; production browser drafting/undo/save/reload checks passed               |
+| U / UNDO / REDO / MREDO / OOPS  | Shared per-document journal, options/groups/marks and latest erase restoration | Database/headless tests and Phase 01 browser integration                                |
+| NEW / OPEN / HANSAVE            | Independent documents; full native HCD save/open plus supported DWG/DXF import | HCD graph/blob round-trip and document browser checks                                   |
 
 Input uses WCS Y up (`x,y`, `@dx,dy`, `@distance<angle`); the transitional view
 model converts Y exactly once. LINE/PLINE use Enter to finish, C to close and U to
 remove the last accepted segment. Esc keeps accepted LINE/PLINE segments and
 cancels the active preview. CIRCLE supports center/radius only; RECTANG supports
-two corners only. PLINE arc/width options, lasso/grips, advanced UNDO
-options, DWG saving and full plotting remain pending.
+two corners only. PLINE arc/width options, lasso/grips, undo menu/category
+integration, DWG saving and full plotting remain pending.
 
 F8 Ortho and F3 running object snaps are connected. Supported snap modes are
 endpoint, midpoint, center, quadrant, nearest and true intersection per OSMODE. Exact

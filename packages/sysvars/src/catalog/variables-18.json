@@ -1,0 +1,288 @@
+[
+  {
+    "name": "GEOMAPMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트에 사용되는 온라인 맵의 스타일을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D7C64582-431C-4C5E-B544-0F5DE532B7A4.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1, 2, 3, 4, 5, 6, 7, 8],
+    "min": 0,
+    "max": 8
+  },
+  {
+    "name": "GEOMARKERVISIBILITY",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "지리적 표식기의 가시성을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-24FF3B38-8A3E-428E-8AD4-E1182149489A.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "GEOMARKPOSITIONSIZE",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "위치 표식기를 작성할 때 점 객체 및 여러 줄 문자 객체에 사용할 축척 비율을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B119B38F-A03C-456C-A379-F66D0640DAEC.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "GFANG",
+    "type": "real",
+    "default": 0,
+    "scope": "session",
+    "description": "그라데이션 채우기의 각도를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4364D9A4-1132-464F-BD45-F5F5E3E32F02.htm",
+      "type": "Real",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "GFCLR1",
+    "type": "string",
+    "default": "\"Blue\"",
+    "scope": "session",
+    "description": "한 색 그라데이션 채우기의 색상 또는 두 색 그라데이션 채우기의 첫 번째 색상을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1DB58F66-D25B-49B6-9A84-7992B19EB89A.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "\"Blue\""
+    }
+  },
+  {
+    "name": "GFCLR2",
+    "type": "string",
+    "default": "\"Yellow\"",
+    "scope": "session",
+    "description": "두 색 그라데이션 채우기의 두 번째 색상을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-60D22A1A-EF08-41F0-B76A-5793B2D7EAC9.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "\"Yellow\""
+    }
+  },
+  {
+    "name": "GFCLRSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "그라데이션 채우기에서 한 색상을 사용하는지 아니면 두 색상을 사용하는지 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7FF6A82D-6970-4916-9FBB-2AB782ABA987.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "GFNAME",
+    "type": "integer",
+    "default": 1,
+    "scope": "session",
+    "description": "그라데이션 채우기의 패턴을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5B251F13-2A65-4116-9D58-0971CF8834EA.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "1"
+    },
+    "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "min": 1,
+    "max": 9
+  },
+  {
+    "name": "GFSHIFT",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "그라데이션 채우기의 패턴이 중심에 있는지 위쪽과 왼쪽으로 이동되는지를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3E52C558-97E8-4BB9-A4BE-4305F83BB894.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "GLOBALOPACITY",
+    "type": "integer",
+    "default": 100,
+    "scope": "profile",
+    "description": "모든 팔레트의 투명도 레벨을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-27CA16ED-30EC-4C5F-AC35-1D39CE34BB93.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "100"
+    },
+    "enum": [0, 100],
+    "min": 0,
+    "max": 100
+  },
+  {
+    "name": "GRIDDISPLAY",
+    "type": "integer",
+    "default": 3,
+    "scope": "drawing",
+    "description": "그리드의 표시 동작 및 표시 한계를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4D6AC943-FC9C-4CB8-A4E6-AD7313BF9C3A.htm",
+      "type": "Bitcode",
+      "savedIn": "Drawing",
+      "initial": "3"
+    },
+    "bits": {
+      "0": "Restricts the grid to the area specified by the LIMITS command",
+      "1": "Does not restrict the grid to the area specified by the LIMITS command",
+      "2": "Turns on adaptive grid display, which limits the density of the grid when zoomed out",
+      "4": "If the grid is set to adaptive display and when zoomed in, generates additional, more",
+      "8": "Changes the grid plane to follow the XY plane of the dynamic UCS. (Not applicable"
+    },
+    "min": 0,
+    "max": 15,
+    "bitmask": 15
+  },
+  {
+    "name": "GRIDMAJOR",
+    "type": "integer",
+    "default": 5,
+    "scope": "drawing",
+    "description": "주 그리드 선의 빈도를 보조 그리드 선과 비교하여 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-94C8162E-B852-469D-B434-5BB822B0215C.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "5"
+    },
+    "min": 1,
+    "max": 100
+  },
+  {
+    "name": "GRIDMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "그리드를 켤지 또는 끌지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EB16BD83-E8A5-41D7-95DD-E8FE8028B8FD.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "GRIDSTYLE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "그리드를 점으로 표시할지 선으로 표시할지를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-30FC52C7-A734-43EE-A08D-96717A4B4959.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "bits": {
+      "0": "Displays the lined grid for model space, the Block Editor, sheets, and paper space layouts.",
+      "1": "Displays the dotted grid for model space.",
+      "2": "Displays the dotted grid for the Block Editor.",
+      "4": "Displays the dotted grid for sheets and paper space layouts."
+    },
+    "min": 0,
+    "max": 7,
+    "bitmask": 7
+  },
+  {
+    "name": "GRIDUNIT",
+    "type": "point2",
+    "default": [10, 10],
+    "scope": "drawing",
+    "description": "현재 뷰포트의 그리드 간격(X 및 Y)을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6E37252F-77E5-4266-8759-AAD5E5577F1C.htm",
+      "type": "2D-point",
+      "savedIn": "Drawing",
+      "initial": "0.5000,0.5000 (imperial) or 10,10 (metric)"
+    }
+  },
+  {
+    "name": "GRIPBLOCK",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "블록의 그립 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-325AE351-DEC3-41E9-BC9D-22A08D805261.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "GRIPCOLOR",
+    "type": "integer",
+    "default": 150,
+    "scope": "profile",
+    "description": "선택되지 않은 그립의 색상을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6D239124-BCB9-430F-91F8-7D7C4DC1A0A4.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "150"
+    },
+    "min": 1,
+    "max": 255
+  },
+  {
+    "name": "GRIPCONTOUR",
+    "type": "integer",
+    "default": 251,
+    "scope": "profile",
+    "description": "그립 외곽선의 색상을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2523202B-F6EB-4AA6-AF05-2E3931C4C12D.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "251"
+    },
+    "min": 1,
+    "max": 255
+  }
+]

@@ -4,6 +4,21 @@ export interface JsonObject {
 }
 
 export type Handle = string;
+export type DxfPoint2 = [number, number];
+export type DxfPoint3 = [number, number, number];
+export interface PolylineVertexFields {
+  position: DxfPoint2 | DxfPoint3;
+  bulge?: number;
+  startWidth?: number;
+  endWidth?: number;
+  id?: number;
+  flags?: number;
+}
+export interface DictionaryEntryFields {
+  name: string;
+  handle: Handle;
+  hardOwner: boolean;
+}
 export type SymbolTableName =
   'BLOCK_RECORD' | 'LAYER' | 'LTYPE' | 'STYLE' | 'DIMSTYLE' | 'UCS' | 'VIEW' | 'VPORT' | 'APPID';
 
@@ -81,7 +96,7 @@ export const defaultEntityProperties: Readonly<EntityProperties> = Object.freeze
   plotStyle: 'ByLayer',
   visible: true,
   thickness: 0,
-  extrusion: [0, 0, 1] as [number, number, number],
+  extrusion: Object.freeze([0, 0, 1]) as unknown as [number, number, number],
   material: null,
   shadowFlags: 0,
 });

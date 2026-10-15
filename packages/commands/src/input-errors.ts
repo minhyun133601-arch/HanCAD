@@ -1,4 +1,5 @@
-export type CommandInputErrorCode = 'invalid-point' | 'string-required' | 'invalid-history-count';
+export type CommandInputErrorCode =
+  'invalid-point' | 'string-required' | 'invalid-history-count' | 'invalid-history-option';
 
 /** A recognized input failure, independent of UI catalogs and command execution state. */
 export class CommandInputError extends Error {
@@ -11,7 +12,9 @@ export class CommandInputError extends Error {
         ? `Invalid point value for ${variable}`
         : code === 'string-required'
           ? `A string value is required for ${variable}`
-          : 'Undo/redo count must be a positive integer.',
+          : code === 'invalid-history-option'
+            ? 'Invalid undo option.'
+            : 'Undo/redo count must be a positive integer.',
     );
     this.name = 'CommandInputError';
   }
@@ -21,6 +24,7 @@ export interface CommandInputErrorMessages {
   commandInvalidPointValue: (name: string) => string;
   commandStringValueRequired: (name: string) => string;
   commandHistoryCountInvalid: string;
+  commandHistoryOptionInvalid: string;
 }
 
 export function formatCommandInputError(
@@ -34,5 +38,7 @@ export function formatCommandInputError(
       return messages.commandStringValueRequired(error.variable ?? '');
     case 'invalid-history-count':
       return messages.commandHistoryCountInvalid;
+    case 'invalid-history-option':
+      return messages.commandHistoryOptionInvalid;
   }
 }

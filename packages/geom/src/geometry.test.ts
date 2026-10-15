@@ -14,6 +14,18 @@ import {
 } from './index';
 
 describe('pure double precision geometry', () => {
+  it('closes open polyline inquiry with a straight chord regardless of final-vertex bulge', () => {
+    expect(
+      polylineArea({
+        vertices: [
+          { x: 0, y: 0 },
+          { x: 10, y: 0 },
+          { x: 10, y: 10, bulge: 4 },
+        ],
+        closed: false,
+      }),
+    ).toBe(50);
+  });
   it('computes lengths and closest points at survey coordinates', () => {
     expect(distance({ x: 1e8, y: 2e8 }, { x: 1e8 + 3, y: 2e8 + 4 })).toBe(5);
     expect(

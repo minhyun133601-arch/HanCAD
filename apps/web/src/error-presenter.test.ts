@@ -27,9 +27,9 @@ describe('browser domain error presentation', () => {
         english: 'Unknown system variable "NONEXISTENT".',
       },
       {
-        action: () => variables.set('DIMSTYLE', '없는 스타일'),
-        korean: 'DIMSTYLE의 값이 유효하지 않습니다. 이름 "없는 스타일"이(가) 도면에 없습니다.',
-        english: 'Invalid value for DIMSTYLE. Name "없는 스타일" does not exist in the drawing.',
+        action: () => variables.set('TEXTSTYLE', '없는 스타일'),
+        korean: 'TEXTSTYLE의 값이 유효하지 않습니다. 이름 "없는 스타일"이(가) 도면에 없습니다.',
+        english: 'Invalid value for TEXTSTYLE. Name "없는 스타일" does not exist in the drawing.',
       },
     ];
     for (const failure of cases) {

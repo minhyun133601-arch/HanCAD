@@ -1,0 +1,313 @@
+[
+  {
+    "name": "MAXACTVP",
+    "type": "integer",
+    "default": 64,
+    "scope": "drawing",
+    "description": "배치에서 한 번에 활성화할 수 있는 뷰포트의 최대 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-86846A4D-4E21-4E62-A710-E7B55243452D.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "64"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "MAXSORT",
+    "type": "integer",
+    "default": 1000,
+    "scope": "profile",
+    "description": "대화상자, 드롭다운 리스트 및 팔레트에서 알파벳순으로 정렬되는 최대 항목 수를 설정합니다(예: 파일 이름, 도면층 이름 및 블록 이름).",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7AD30968-4982-4E1C-9847-69A5EAEB7C63.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1000"
+    },
+    "min": 0,
+    "max": 32767
+  },
+  {
+    "name": "MAXTOUCHES",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "연결된 디지타이저에서 지원하는 만나는 점 수를 식별합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9083CEB0-765A-4812-9F83-AD8320E079D2.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "MBUTTONPAN",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "좌표 입력 장치에서 세 번째 버튼 또는 휠의 동작을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-07122CB7-EC98-4D5F-B3BE-16EA6FB54CED.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MEASUREINIT",
+    "type": "integer",
+    "default": 1,
+    "defaultPolicy": "HanCAD's metric startup policy uses the documented metric value 1; Autodesk's initial value varies by country/region.",
+    "scope": "profile",
+    "description": "처음부터 작성을 시작하는 도면에 영국식 기본 설정을 사용할지 또는 미터법 기본 설정을 사용할지를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5F81863D-FAA6-4837-9071-F91C3E1A1E26.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "Varies by country/region"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MEASUREMENT",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "현재 도면에 영국식 또는 미터법 해치 패턴 및 선종류 파일을 사용할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1D074C55-0B63-482E-8A37-A52AC0C7C8FE.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0 (imperial) or 1 (metric)"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MENUBAR",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "메뉴막대의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-27FE369A-FBB3-4559-9093-F572EE00AD6C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MENUECHO",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "메뉴 반향 및 프롬프트 제어 비트를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B28F3542-B21B-45BF-987E-63303EE18170.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "bits": {
+      "1": "Suppresses echo of menu items (^P in a menu item toggles echoing)",
+      "2": "Suppresses display of system prompts during menu",
+      "4": "Disables ^P toggle of menu echoing",
+      "8": "Displays input/output strings; debugging aid for DIESEL macros"
+    },
+    "min": 0,
+    "max": 15,
+    "bitmask": 15
+  },
+  {
+    "name": "MENUNAME",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "파일 이름의 경로를 포함하여 사용자화 파일 이름을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9F0A50EB-0A85-473E-9AF5-184B25B81D40.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "customization_file_name"
+    },
+    "readonly": true
+  },
+  {
+    "name": "MESHTYPE",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "REVSURF, TABSURF, RULESURF 및 EDGESURF에 의해 작성되는 메쉬 유형을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BC7C217E-CBA1-43AF-8688-81204DFDCDEB.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MIRRHATCH",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "MIRROR가 해치 패턴을 반영하는 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-427D4868-B3BF-48F1-8BB8-04FE1B3976D4.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MIRRTEXT",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "MIRROR가 문자를 반사하는 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D55D2D18-B26E-4525-B5E4-03A2A07FB5F6.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MLEADERLAYER",
+    "type": "string",
+    "default": ".",
+    "defaultPolicy": "The documented use-current initial setting is represented by the '.' sentinel defined in the same source topic.",
+    "scope": "drawing",
+    "description": "새 다중 지시선의 기본 도면층을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1A3337E5-3C1E-446C-9EED-91B3931EE2B0.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "use current"
+    }
+  },
+  {
+    "name": "MLEADERSCALE",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "다중 지시선에 적용되는 전역 축척 비율을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-79E3F4C9-2F20-4DE0-8966-E4636ACF6E68.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "MODEMACRO",
+    "type": "string",
+    "default": "",
+    "scope": "session",
+    "description": "현재 도면의 이름, 시간/날짜 스탬프 또는 특수 모드와 같은 상태 행의 문자열을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3637B188-6520-4BCB-B40F-1E0428AE34AD.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "\"\""
+    }
+  },
+  {
+    "name": "MSLTSCALE",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "모형 탭에 표시되는 선종류를 주석 축척으로 축척합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-023B046C-56EA-463C-A867-DF713666A69E.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MSMSTATE",
+    "type": "integer",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "표식 세트 관리자가 열려 있는지 아니면 닫혀 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-71C7F558-EDEE-4890-94F7-05F2C3CC83C0.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "MSOLESCALE",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "모형 공간에 붙여 넣을 문자와 OLE 객체의 크기를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EB73E96B-3B3B-49DC-AE73-1DF7F9EE2CEE.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "MTEXTAUTOSTACK",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "MTEXT 명령에 대한 AutoStack 사용을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B8FD8188-880B-4F95-BF74-D3D67B6F46D2.htm",
+      "type": "Switch",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MTEXTCOLUMN",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "여러 줄 문자 객체의 기본 열 설정을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-188C7F13-7046-436E-9F4E-6E05984456E8.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  }
+]

@@ -1,0 +1,240 @@
+[
+  {
+    "name": "TIMEZONE",
+    "type": "integer",
+    "default": -8000,
+    "scope": "drawing",
+    "description": "도면에서 일영에 대한 시간대를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E3E3BE84-74E4-40E5-9F44-AFBA6C3C7FEC.htm",
+      "type": "Enum",
+      "savedIn": "Drawing",
+      "initial": "-8000"
+    },
+    "enum": [
+      -12000, -11000, -10000, -9000, -8000, -7000, -7001, -7002, -6000, -6001, -6002, -6003, -5000,
+      -5001, -5002, -4000, -4001, -4002, -3300, -3000, -3001, -3002, -2000, -1000, -1001, 0, 1, 2,
+      1000, 1001, 1002, 1003, 1004, 2000, 2001, 2002, 2003, 2004, 2005, 3000, 3001, 3002, 3003,
+      3300, 4000, 4001, 4300, 5000, 5001, 5300, 5450, 6000, 6001, 6002, 6300, 7000, 7001, 8000,
+      8001, 8002, 8003, 8004, 9000, 9001, 9002, 9300, 9301, 10000, 10001, 10002, 10003, 10004,
+      11000, 12000, 12001, 13000
+    ],
+    "min": -12000,
+    "max": 13000
+  },
+  {
+    "name": "TOOLTIPS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "리본, 도구막대 및 기타 사용자 인터페이스 요소의 툴팁 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FF7CD25B-9C88-402B-B581-7EA3A1D53407.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "TOOLTIPSIZE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "제도 툴팁의 표시 크기와 동적 입력 문자를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8C059E0F-B9CC-4E43-90F9-6BC0B5D74758.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "min": -3,
+    "max": 6
+  },
+  {
+    "name": "TOOLTIPTRANSPARENCY",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "제도 툴팁의 투명도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-26024442-3F76-4C24-BBC4-E1CB5D4A5E06.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "min": 0,
+    "max": 100
+  },
+  {
+    "name": "TOUCHMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "터치 사용 화면 또는 인터페이스를 사용하는 경우 리본에서 터치 패널의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7C9B1395-2191-4F6C-8655-0F7ED79DEC37.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "TPSTATE",
+    "type": "integer",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "도구 팔레트 윈도우가 열려 있는지 아니면 닫혀 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B0ED5827-EB20-42CF-9CD7-7CB5B891A651.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "TRACECURRENT",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "TRACEMODE=1 또는 2일 때 활성 트레이스의 이름을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E1AB2A1C-672A-4946-A21B-4B9C341E8F20.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "TRACEMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "트레이스가 활성화되었는지 여부와 현재 모드가 편집 또는 보기인지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B026D045-3154-4989-9711-B31159CCF5AB.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "TRACEPAPERCTL",
+    "type": "integer",
+    "default": 20,
+    "scope": "profile",
+    "description": "투사지 효과의 불투명도를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B2D2101F-F8E4-468A-9FAE-DC7BBE909985.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "20"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "TRACEVPSUPPORT",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "현재 활성 모형 공간 뷰포트 내에서 표식 보조 상자를 실행할 수 있는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5AEC6D3B-597A-41CD-A654-3A078F729FDD.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "TRANSPARENCYDISPLAY",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "BYLAYER 또는 개별 객체에 지정된 투명도 특성이 표시되는지 아니면 억제되는지 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0908F1AC-D122-4B3D-A17C-8705D03A0D0C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "TRAYICONS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "트레이를 상태막대에 표시할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-15781673-1E08-4A81-9E12-4787B80AA9C2.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "TRAYNOTIFY",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "서비스 통지를 상태막대 트레이에 표시할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A04959FC-2592-4A48-B82B-82A43CF14986.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "TRAYTIMEOUT",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "서비스 알림 표시 시간을 초 단위로 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E9E9A296-E43D-486F-AD5D-4814C5453B7F.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "min": 0,
+    "max": 10
+  },
+  {
+    "name": "TREEDEPTH",
+    "type": "integer",
+    "default": 3020,
+    "scope": "drawing",
+    "description": "최대 깊이, 즉 트리 구조의 공간 색인을 분기로 나눌 수 있는 횟수를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BDC94EB9-20E9-4C97-BD8B-DB2530CB968D.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "3020"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

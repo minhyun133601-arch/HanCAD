@@ -1,0 +1,291 @@
+[
+  {
+    "name": "CCONSTRAINTFORM",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "객체에 주석 구속조건 또는 동적 구속조건을 적용할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-48517518-17D8-496D-AAA0-BE84DD5F5008.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CDATE",
+    "type": "real",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "현재 날짜 및 시간을 부호화된 십진 형식으로 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-764D9293-3F87-4E63-802E-8B45F1B76F92.htm",
+      "type": "Real",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "CECOLOR",
+    "type": "string",
+    "default": "BYLAYER",
+    "scope": "drawing",
+    "description": "새 객체를 작성할 때 객체의 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-703858E3-9038-406A-B499-90A0C05BECBF.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "BYLAYER"
+    }
+  },
+  {
+    "name": "CELTSCALE",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "현재 객체 선종류 축척 비율을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-ECE175AB-AB7B-4DEC-9CEC-D5D67AF9310B.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000"
+    },
+    "min": 0,
+    "exclusiveMin": true
+  },
+  {
+    "name": "CELTYPE",
+    "type": "string",
+    "default": "BYLAYER",
+    "scope": "drawing",
+    "description": "새 객체의 선종류를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-28460EAB-7005-4E82-A97C-47A728F420E5.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "BYLAYER"
+    }
+  },
+  {
+    "name": "CELWEIGHT",
+    "type": "integer",
+    "default": -1,
+    "scope": "drawing",
+    "description": "새 객체의 선가중치를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E1B15CA7-C45D-4845-B1A6-2520F6F911F3.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "-1"
+    },
+    "enum": [
+      -3, -2, -1, 0, 5, 9, 13, 15, 18, 20, 25, 30, 35, 40, 50, 53, 60, 70, 80, 90, 100, 106, 120,
+      140, 158, 200, 211
+    ],
+    "min": -3,
+    "max": 211
+  },
+  {
+    "name": "CENTERCROSSSIZE",
+    "type": "string",
+    "default": "\"0.1x\"",
+    "scope": "drawing",
+    "description": "연관 중심 표식의 크기를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AB005660-A8D7-41AC-85FE-CC5C39B2E61E.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "\"0.1x\""
+    }
+  },
+  {
+    "name": "CENTERLTYPE",
+    "type": "string",
+    "default": "\"CENTER2\"",
+    "scope": "drawing",
+    "description": "중심 표식 및 중심선에 사용되는 선종류를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D1BE48F5-2689-4C14-B7F8-917A3AA71246.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "\"CENTER2\""
+    }
+  },
+  {
+    "name": "CENTERLTYPEFILE",
+    "type": "string",
+    "default": "\"acad.lin\"",
+    "scope": "drawing",
+    "description": "중심 표식 및 중심선을 작성하는 데 사용되는 로드된 선종류 라이브러리 파일을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2E0C4EC9-141B-4091-A7A2-05B9A01D1E98.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "\"acad.lin\""
+    }
+  },
+  {
+    "name": "CENTERMARKEXE",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "중심선이 새 중심 표식에서 자동으로 연장되는지 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B5FD3049-94D2-4527-97A4-46F9BABE7EB2.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CENTERMT",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "수평 방향으로 가운데 맞춤된 여러 줄 문자를 그립으로 늘이는 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9046FDEF-20E6-4A78-935F-399C97BBAF50.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CETRANSPARENCY",
+    "type": "integer",
+    "default": -1,
+    "scope": "drawing",
+    "description": "새 객체에 대해 투명도 레벨을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-058580C9-43DE-4770-93C4-3DE1AB2F5287.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "-1"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "CGEOCS",
+    "type": "string",
+    "default": "None",
+    "scope": "drawing",
+    "description": "도면 파일에 지정된 GIS 좌표계의 이름을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2CB959D6-CDE3-47B6-B06B-BCA32EF8F371.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "None"
+    },
+    "readonly": true
+  },
+  {
+    "name": "CHAMFERA",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "CHAMMODE가 0으로 설정되면 첫 번째 모따기 거리를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E2E34687-6BFF-481A-9732-885651AA44CF.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "min": 0
+  },
+  {
+    "name": "CHAMFERB",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "CHAMMODE가 0으로 설정되면 두 번째 모따기 거리를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-53D438C7-3179-4971-BC39-E0F878FD18CF.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "min": 0
+  },
+  {
+    "name": "CHAMFERC",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "CHAMMODE가 1로 설정되면 모따기 길이를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FFFD13C0-3C7F-4865-B783-46E3BC652AC9.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "min": 0
+  },
+  {
+    "name": "CHAMFERD",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "CHAMMODE가 1로 설정되면 모따기 각도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-19EB0506-005C-491A-B2E6-AF12890A3786.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "min": 0
+  },
+  {
+    "name": "CHAMMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "CHAMFER에 대한 입력 방법을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0FFBF218-FED2-485D-A332-19F406228123.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CIRCLERAD",
+    "type": "real",
+    "default": 0,
+    "scope": "session",
+    "description": "기본 원 반지름을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4C17F0AB-E726-4242-8060-0577C8F657BF.htm",
+      "type": "Real",
+      "savedIn": "Not-saved",
+      "initial": "0.0000"
+    },
+    "min": 0
+  },
+  {
+    "name": "CLAYER",
+    "type": "string",
+    "default": "0",
+    "scope": "drawing",
+    "description": "현재 도면층을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C4C02A34-3F38-41D1-945A-AEC4BB24926B.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "0"
+    }
+  }
+]

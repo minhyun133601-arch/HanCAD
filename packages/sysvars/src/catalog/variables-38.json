@@ -1,0 +1,302 @@
+[
+  {
+    "name": "SUNSTATUS",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트에서 일광의 조명 효과를 켜거나 끕니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F0A4FE6A-90B7-48FD-A713-05536469E1C3.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SUPPRESSALERTS",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "새 도면을 이전 버전의 제품에서 열고 저장할 때 잠재적 데이터 손실에 대한 경고를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7B418167-5674-4BDD-9876-E9D1643DA920.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SURFACEASSOCIATIVITY",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "표면이 작성된 객체와 표면 간의 관계가 유지되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-85627C06-46E2-4F94-B26D-37690199F350.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SURFACEASSOCIATIVITYDRAG",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "연관 표면의 끌기 미리보기 동작을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-413FBF23-068B-4981-93A3-66C03D7E0BDF.htm",
+      "type": "Switch",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SURFACEAUTOTRIM",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "형상을 표면에 투영할 때 표면이 자동으로 잘리는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-03223908-0EF5-40FB-BD34-F8EA3D03B1F8.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SURFTAB1",
+    "type": "integer",
+    "default": 6,
+    "scope": "drawing",
+    "description": "RULESURF 및 TABSURF 명령에 대해 생성되는 테이블 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8AC3C392-FCE4-432E-844F-183B3BD21303.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "6"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SURFTAB2",
+    "type": "integer",
+    "default": 6,
+    "scope": "drawing",
+    "description": "REVSURF 및 EDGESURF 명령에 대한 N 방향의 메쉬 밀도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-074FCB02-CEEC-4EA2-BA61-2B01D3FD1383.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "6"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SURFTYPE",
+    "type": "integer",
+    "default": 6,
+    "scope": "drawing",
+    "description": "PEDIT 명령의 부드럽게 옵션으로 수행되는 표면 맞춤의 유형을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C925860D-5C50-485D-8940-69902CE53211.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "6"
+    },
+    "enum": [5, 6, 8],
+    "min": 5,
+    "max": 8
+  },
+  {
+    "name": "SURFU",
+    "type": "integer",
+    "default": 6,
+    "scope": "drawing",
+    "description": "PEDIT 부드럽게하기에 대한 M 방향의 표면 밀도와 표면 객체의 U 등각선 밀도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-651DFAD4-8A22-4C48-9DD5-E5751BDBE055.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "6"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SURFV",
+    "type": "integer",
+    "default": 6,
+    "scope": "drawing",
+    "description": "PEDIT 부드럽게하기 옵션에 대한 N 방향의 표면 밀도와 표면 객체의 V 등각선 밀도를 설정합니다",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-13E30946-F85A-4E74-8B2D-5A627C21093E.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "6"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SYSCODEPAGE",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "운영 체제에 의해 결정되는 시스템 코드 페이지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CBFE553B-A277-4417-810D-CE7BDB50CAC1.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "TABLEINDICATOR",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "내부 문자 편집기가 테이블 셀 편집용으로 열린 경우에 행 번호와 열 문자의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3D0A98BA-D143-4EE0-8B80-8F3BAC45C5E1.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "TABMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "타블렛 입력 장치 사용을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D8E7DF14-67C2-484F-94CF-267E54C9AAB4.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "TARGET",
+    "type": "point3",
+    "default": [0, 0, 0],
+    "scope": "drawing",
+    "description": "현재 뷰포트에서 투시 투영에 대한 표적점의 UCS 좌표를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0649E4B8-B11A-411E-96CE-125BEBEB5B42.htm",
+      "type": "3D-point",
+      "savedIn": "Drawing",
+      "initial": "0.0000,0.0000,0.0000"
+    },
+    "readonly": true
+  },
+  {
+    "name": "TBSHOWSHORTCUTS",
+    "type": "string",
+    "default": "YES",
+    "scope": "profile",
+    "description": "Ctrl 및 Alt 키를 사용하는 바로 가기를 도구막대의 툴팁에 표시하는지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-540E7411-1048-48EF-B08A-2F9433BC28A7.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "YES"
+    }
+  },
+  {
+    "name": "TDCREATE",
+    "type": "real",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "도면이 작성된 현지 시간과 날짜를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E29DC24D-4899-4D45-A104-50703E451684.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "TDINDWG",
+    "type": "real",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "현재 도면을 저장한 후 다시 저장할 때까지의 총 경과 시간을 나타내는 전체 편집 시간을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6C01D280-2906-469B-B087-49594C2FA66B.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "TDUCREATE",
+    "type": "real",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "도면이 작성된 국제 시간과 날짜를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7AFCF83F-5400-4617-8268-A717283A73E8.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "TDUPDATE",
+    "type": "real",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "마지막으로 업데이트하거나 저장한 현지 시간과 날짜를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CABE62CF-8DFD-416E-AEE9-A6F33EEEE657.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "TDUSRTIMER",
+    "type": "real",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "사용자 타이머를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A842406A-BBE8-4A99-8B1A-101AEAB587B6.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

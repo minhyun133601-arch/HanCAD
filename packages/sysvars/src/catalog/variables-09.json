@@ -1,0 +1,304 @@
+[
+  {
+    "name": "DGNFRAME",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "DGN 언더레이 프레임이 현재 도면에서 표시되거나 플롯되는지 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A311139A-E89C-4F44-B6E9-C41A25E54CB5.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "DGNIMPORTMAX",
+    "type": "integer",
+    "default": 10000000,
+    "scope": "profile",
+    "description": "DGN 파일을 가져올 때 변환되는 요소의 최대 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-41C26D69-E74B-4920-9814-C734E96D7838.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "10000000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DGNIMPORTMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "DGNIMPORT 명령의 기본 동작을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6BC7D42E-8073-409F-8544-FA709593EC3C.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "DGNMAPPINGPATH",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "DGN 매핑 설정이 저장되는 dgnsetups.ini 파일의 위치를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-256656FF-5248-4DEB-806F-BDCAB78A188F.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "DGNOSNAP",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면에 부착된 DGN 언더레이의 형상에 대해 객체 스냅을 활성화할지 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9C2BF2F7-D0BF-4188-828D-9683B1AB38A3.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIASTAT",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "가장 최근에 사용된 대화상자의 종료 방법을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1E85A76A-9E15-425B-B912-BDCE22C3D164.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIGITIZER",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "시스템에 연결된 디지타이저를 식별합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C8151C05-2D3D-4FA7-902F-9E7582CFBBAA.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMADEC",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "각도 치수에 표시되는 정밀도 자릿수를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E5C2F9AA-5017-4111-A485-E0456225D691.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "min": -1,
+    "max": 8
+  },
+  {
+    "name": "DIMALT",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수의 대체 단위 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D3B737AB-53B7-431E-A794-746DD2EB6209.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMALTD",
+    "type": "integer",
+    "default": 3,
+    "scope": "drawing",
+    "description": "대체 단위의 소수부 자릿수를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DE3D35C1-C4AB-4A11-9F3A-6E5CF6EE9160.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "2 (imperial) or 3 (metric)"
+    },
+    "min": 0,
+    "max": 8
+  },
+  {
+    "name": "DIMALTF",
+    "type": "real",
+    "default": 0.0394,
+    "scope": "drawing",
+    "description": "대체 단위의 승수를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4BB25870-8BFF-478D-8C04-88457311AAF2.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "25.4000 (imperial) or 0.0394 (metric)"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMALTRND",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "대체 치수 단위를 반올림합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B67093DA-6B0D-4E32-8A33-6298A770CAAF.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMALTTD",
+    "type": "integer",
+    "default": 3,
+    "scope": "drawing",
+    "description": "치수의 대체 단위에서 공차 값의 소수부 자릿수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4C0568B5-2655-4906-8BAC-3CA273007825.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "2 (imperial) or 3 (metric)"
+    },
+    "min": 0,
+    "max": 8
+  },
+  {
+    "name": "DIMALTTZ",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "공차 값에서 0의 억제를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-846F1DD5-C6B0-4088-BD5D-51D5E62345E2.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "min": 0,
+    "max": 15
+  },
+  {
+    "name": "DIMALTU",
+    "type": "integer",
+    "default": 2,
+    "scope": "drawing",
+    "description": "각도를 제외한 모든 치수 하위 유형의 대체 단위에 대한 단위 형식을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3A2EA9D7-30C7-4C89-A09F-DD2AB74B9D13.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "2"
+    },
+    "enum": [1, 2, 3, 4, 5, 6, 7, 8],
+    "min": 1,
+    "max": 8
+  },
+  {
+    "name": "DIMALTZ",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "대체 단위 치수 값에 대한 0의 억제를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4EAEEC60-4A34-4C5E-BFA4-AEFA8EEB4FB6.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "min": 0,
+    "max": 15
+  },
+  {
+    "name": "DIMAPOST",
+    "type": "string",
+    "default": "",
+    "scope": "drawing",
+    "description": "각도를 제외한 모든 유형의 치수에 대체 치수 측정단위의 문자 머리말 또는 꼬리말(또는 둘 다)을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AEA9448D-CC01-404B-AFA0-055B9C2F21EE.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "\"\""
+    }
+  },
+  {
+    "name": "DIMARCSYM",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "호 길이 치수의 호 기호 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1B843AB0-7976-4DD9-9464-6B0A71A34D81.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "DIMASSOC",
+    "type": "integer",
+    "default": 2,
+    "scope": "drawing",
+    "description": "치수 객체의 연관성과 치수의 분해 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D77085A3-6E4C-4C18-AD70-21F54ED72492.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "DIMASZ",
+    "type": "real",
+    "default": 2.5,
+    "scope": "drawing",
+    "description": "치수 선 및 지시선 화살촉의 크기를 조정합니다. 갈고리선의 크기도 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-43E31690-BA17-4AD6-82D1-E7809BD1298A.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.1800 (imperial) or 2.5000 (metric)"
+    },
+    "min": 0
+  }
+]

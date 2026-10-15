@@ -1,0 +1,289 @@
+[
+  {
+    "name": "AUNITS",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "각도의 단위를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C7C0F6A5-7982-43DB-97F9-5B9B0044E9FA.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3, 4],
+    "min": 0,
+    "max": 4
+  },
+  {
+    "name": "AUPREC",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "각도 단위 및 좌표에 대해 표시 정밀도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EE1ED20C-1096-4299-820F-83F1BC9B96F3.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "min": 0,
+    "max": 8
+  },
+  {
+    "name": "AUTODWFPUBLISH",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "도면(DWG) 파일을 저장하거나 닫을 때 DWF(Design Web Format) 파일이 자동으로 작성되게 할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-67B17228-BFB3-4223-BF64-EE09FF2A4C57.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "AUTOMATICPUB",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "도면(DWG) 파일을 저장하거나 닫을 때 전자 파일(DWF/PDF)을 자동으로 작성할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-04E06B5A-D6BA-41A9-B5C8-BF3DC6BE9C83.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "AUTOPLACEMENT",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "블록을 삽입할 때 배치 제안사항이 표시되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-84265932-8B02-4740-A178-EF1BBD7CB01F.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "AUTOSNAP",
+    "type": "integer",
+    "default": 63,
+    "scope": "profile",
+    "description": "AutoSnap 표식기, 툴팁 및 마그넷의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BE7947EB-2A08-4406-A169-4C5E125B1F4D.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "63"
+    },
+    "bits": {
+      "0": "Turns off the AutoSnap marker, tooltips, and magnet. Also turns off polar tracking, object snap",
+      "1": "Turns on the AutoSnap marker",
+      "2": "Turns on the AutoSnap tooltips",
+      "4": "Turns on the AutoSnap magnet",
+      "8": "Turns on polar tracking",
+      "16": "Turns on object snap tracking",
+      "32": "Turns on tooltips for polar tracking, object snap tracking, and Ortho mode"
+    },
+    "min": 0,
+    "max": 63,
+    "bitmask": 63
+  },
+  {
+    "name": "BACKGROUNDPLOT",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "플로팅 및 게시에 대해 백그라운드 플로팅을 켤지 아니면 끌지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-713029B7-B5AC-4860-BE2E-74878D418EA4.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "BACKZ",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트의 대상 평면으로부터 뒷면 자르기 평면 간격띄우기를 도면 단위로 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EC6CF0EF-05A7-4D12-9437-46360B2BBF62.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "BACTIONCOLOR",
+    "type": "string",
+    "default": "7",
+    "scope": "profile",
+    "description": "블록 편집기에서 동작의 문자 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7BEFF137-53F2-4D69-A19B-63A68EE4A54E.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "7"
+    }
+  },
+  {
+    "name": "BCONSTATUSMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "구속조건 표시 상태를 켜거나 끄며, 구속조건 레벨에 따라 객체의 음영처리를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-30193F93-378C-4A90-91E0-4737A772330C.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "BCONVERTLAYER",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "객체를 블록으로 변환한 후 블록 정의의 객체 도면층이 도면층 0이 될지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-63A8986F-1FCC-4480-947B-E576260FC4D4.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "BDEPENDENCYHIGHLIGHT",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "블록 편집기에서 매개변수, 동작 또는 그립이 선택된 경우 종속 객체가 강조된 종속성인지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6F4561D1-9A00-4C57-9D14-959A4B11F6AB.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "BGCOREPUBLISH",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "배경 게시에서 단일 코어를 사용할지 다중 코어를 사용할지를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CEA83608-0AC0-4188-B413-DE586EBB103C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "BGRIPOBJCOLOR",
+    "type": "string",
+    "default": "141",
+    "scope": "profile",
+    "description": "블록 편집기에서 그립의 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-929B1BF9-B156-438C-A609-83B7FC0385FD.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "141"
+    }
+  },
+  {
+    "name": "BGRIPOBJSIZE",
+    "type": "integer",
+    "default": 8,
+    "scope": "profile",
+    "description": "화면표시를 기준으로 블록 편집기에서 사용자 그립의 표시 크기를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1DF5F69B-ADF3-4936-ADCF-D2A841FF9019.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "8"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "BINDTYPE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "결합 또는 내부 편집 작업이 수행될 때 외부 참조의 \"명명된 객체\"에 적용할 명명 동작을 제어하거나 기본값을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1B410F79-266A-4D64-BEA6-87191A0B0D30.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "BLOCKCREATEMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "BLOCK 및 -BLOCK 명령으로 블록을 작성한 후 선택한 객체에 대한 동작을 설정합니다. 객체는 삭제되거나, 유지되거나, 블록의 인스턴스로 대체됩니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-284CAB90-961D-4A2C-8BE4-A44ED750884C.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "BLOCKEDITLOCK",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "블록 편집기를 열거나 동적 블록 정의를 편집하지 못하도록 합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BBBAEABC-E8D3-4E32-8D03-81067ADF4AD0.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  }
+]

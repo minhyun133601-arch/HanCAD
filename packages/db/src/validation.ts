@@ -1,6 +1,21 @@
 import { normalizeHandle } from './types';
 import type { DatabaseObject, DatabaseSnapshot, Handle, JsonValue } from './types';
 
+function assertGroups(value: unknown): void {
+  if (!Array.isArray(value)) throw new Error('Invalid DXF group list.');
+  for (const group of value) {
+    if (
+      typeof group !== 'object' ||
+      group === null ||
+      !('code' in group) ||
+      !Number.isSafeInteger(group.code) ||
+      !('value' in group)
+    )
+      throw new Error('Invalid DXF group.');
+    assertJson(group.value);
+  }
+}
+
 export function assertJson(value: unknown): asserts value is JsonValue {
   if (value === null || typeof value === 'string' || typeof value === 'boolean') return;
   if (typeof value === 'number' && Number.isFinite(value)) return;
@@ -52,6 +67,8 @@ export function assertObject(value: unknown): asserts value is DatabaseObject {
   for (const key of ['xdata', 'fields'])
     if (typeof object[key] !== 'object' || object[key] === null || Array.isArray(object[key]))
       throw new Error(`Invalid object ${key}.`);
+  assertGroups(object.groups);
+  for (const groups of Object.values(object.xdata as Record<string, unknown>)) assertGroups(groups);
   assertJson(value);
 }
 
@@ -111,4 +128,50 @@ export function validateSnapshot(snapshot: DatabaseSnapshot): void {
   }
   if (!handles.has(snapshot.namedObjectDictionary))
     throw new Error('Missing named object dictionary.');
+  const byHandle = new Map(snapshot.objects.map((object) => [object.handle, object]));
+  if (byHandle.get(snapshot.namedObjectDictionary)?.type !== 'DICTIONARY')
+    throw new Error('Invalid named object dictionary.');
+  for (const object of snapshot.objects) {
+    const visited = new Set<Handle>([object.handle]);
+    let owner = object.owner;
+    while (owner !== null) {
+      if (visited.has(owner)) throw new Error('Circular object ownership.');
+      visited.add(owner);
+      owner = byHandle.get(owner)!.owner;
+    }
+    if (object.type === 'DICTIONARY' && object.fields.entries !== undefined) {
+      if (!Array.isArray(object.fields.entries)) throw new Error('Invalid dictionary entries.');
+      const names = new Set<string>();
+      for (const entry of object.fields.entries) {
+        if (
+          entry === null ||
+          typeof entry !== 'object' ||
+          Array.isArray(entry) ||
+          typeof entry.name !== 'string' ||
+          typeof entry.handle !== 'string' ||
+          !handles.has(entry.handle) ||
+          names.has(entry.name)
+        )
+          throw new Error('Invalid dictionary entry reference.');
+        names.add(entry.name);
+        if (entry.hardOwner === true && byHandle.get(entry.handle)?.owner !== object.handle)
+          throw new Error('Dictionary hard ownership does not match object owner.');
+      }
+    }
+    if (object.type === 'LAYOUT' && object.fields.blockRecord !== undefined) {
+      const block =
+        typeof object.fields.blockRecord === 'string'
+          ? byHandle.get(object.fields.blockRecord)
+          : undefined;
+      if (block?.type !== 'BLOCK_RECORD') throw new Error('Invalid layout block record.');
+      if (block.fields.layout !== undefined && block.fields.layout !== object.handle)
+        throw new Error('Layout and block record references disagree.');
+    }
+    if (object.type === 'BLOCK_RECORD' && object.fields.layout !== undefined) {
+      const layout =
+        typeof object.fields.layout === 'string' ? byHandle.get(object.fields.layout) : undefined;
+      if (layout?.type !== 'LAYOUT' || layout.fields.blockRecord !== object.handle)
+        throw new Error('Invalid block record layout.');
+    }
+  }
 }

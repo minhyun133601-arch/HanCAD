@@ -1,8 +1,83 @@
 # Architecture
 
-The active implementation sequence is the original Phase 00 through Phase 25.
+The user explicitly advanced work to original Phase 01. Phase 00 native acceptance
+remains deferred and unverified. Subsequent work stays in original phase order.
 Previously delivered later-phase adapters remain supported, but their presence
 does not imply acceptance of the preceding phases.
+
+Phase 01 foundations use a native DrawingDatabase graph independently of the
+transitional canvas model. Persistent hex handles, ownership, reactors, extension
+dictionaries and ordered XDATA live in that graph. Nine symbol tables and the
+named object dictionary own metric defaults, styles, scales and reciprocal
+layout/block-record references. Model, Layout1 and Layout2 have BLOCK/ENDBLK
+records; paper layouts also have viewport records. Snapshot validation checks
+references, ownership cycles and optional dictionary/layout metadata while
+remaining compatible with older arbitrary JSON fields.
+
+The shared DXF schema separates editable mappings from documented opaque data.
+Sixteen record types have field codecs; the remaining inventory has sourced
+group-code metadata and explicitly opaque status. Numeric facts are generated
+from 157 Autodesk DXF pages into 2,318 rows with code ranges, subclass/application
+contexts and repeated-record notes. SCALE has common metadata only because a
+standalone published code table was not found. A schema inventory does not imply
+an implemented Properties palette, entmod or DXF importer. Ordered original
+groups remain authoritative for unknown/repeated data; edits change only mapped
+groups in their matching subclass, retaining intervening groups and per-vertex
+attributes. POLYLINE headers and their owned VERTEX records remain distinct.
+
+Pure geometry consumes canonical JSON fields through an explicit supported,
+invalid or unsupported result, without a runtime database dependency. Its curve
+types cover POINT, LINE, CIRCLE, ARC, ELLIPSE, bulged/width polylines, NURBS/fit
+splines, XLINE and RAY. DXF OCS points use the arbitrary-axis basis; ARC angles
+are degrees and ellipse parameters are radians. Inquiries provide evaluation,
+closest point, bounds, length, area and affine transforms. Infinite curves and
+nonplanar area have explicit results. Numerical spline/ellipse inquiries and
+conservative bounds do not promise exact global minima for arbitrary high-degree
+curves. Widths remain polyline attributes; length/area inquiries use the centerline.
+Fit-only periodic endpoint tangents are accepted only when they match the
+existing C2 interpolant; inconsistent tangents are explicitly unsupported.
+Arbitrary constrained periodic fitting, natural end conditions without tangents
+and exact interpolation despite a stored nonzero fit tolerance remain reference
+assumptions.
+
+The system-variable registry contains 860 distinct definitions with source links,
+scope, type, description, read-only status and available validation metadata.
+798 have fixed or selected metric defaults; 62 environment/document-dependent
+defaults remain explicitly unavailable until a runtime provider supplies them.
+214 DXF header mappings are separate from SETVAR definitions. GETVAR, SETVAR and
+direct variable names share validation and bilingual diagnostics. Profile state
+is shared by DocumentManager; drawing and session state belong to each document.
+HANDSEED and UNDOCTL read current database state. Some numeric ranges still await
+verification, including the conflicting published SELECTIONEFFECTCOLOR default
+and range. Registration alone does not implement the feature controlled by a
+variable. The registry generates docs/SYSVARS.md and has an offline drift check.
+
+The database journal stores before/after changes and emits object added,
+modified, erased, unerased and variable events. It supports count undo/redo,
+BEgin/End, Mark/Back and Control All/None/One; UNDOCTL reflects journal flags.
+OOPS restores the latest erased objects independently of intervening edits.
+Auto/Combine/Layer state and grouping APIs exist, but menu macro, navigation and
+layer UI integration remains pending. REDO restores the last actual U/UNDO batch
+only while no intervening command has closed that window. MREDO separately retains
+the remaining redo stack after informational commands or rejected input.
+
+DocumentManager activates Drawing1, Drawing2 and subsequent documents, each
+retaining its database, history, drawing variables and binary blobs. Only the
+active DocumentApp owns canvas/input resources; switching documents cancels its
+provisional command and remounts presentation without discarding native history.
+NEW carries remembered writable session defaults into a fresh document. OPEN
+creates a separate document. HCD validates both the native graph and optional
+transitional view before activation; DWG/DXF use the existing lossy adapter into
+a fresh default graph. Native .hcd is zipped JSON plus binary blobs, and HANSAVE
+preserves the full graph. Supported-entity DXF exports remain separate and lossy.
+
+Recovery stores the full native snapshot and blobs alongside the transitional
+view, excluding the reserved view variable from the nested snapshot to prevent
+recursive growth. Restored current-style overlays are applied to native drawing
+variables before a clean history baseline. A shared cache publication queue and
+version prevent an older document's asynchronous write/failure from replacing or
+deleting the latest active recovery. Recovery persists the active document, not
+the entire open document set or undo journal. HCD also reloads a clean history.
 
 Desktop startup uses one read-only prerequisite inventory shared by
 `check:desktop` and the `tauri dev/build` wrapper. It inspects the installed tools,

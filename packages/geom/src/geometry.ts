@@ -101,6 +101,15 @@ export function circleBounds(circle: Circle2): Bounds2 {
 export function arcLength(arc: Arc2): number {
   return Math.abs(arc.radius * arc.sweepAngle);
 }
+/** Stable signed area of an arc closed by its chord, including very shallow arcs. */
+export function circularSegmentArea(radius: number, sweep: number): number {
+  if (Math.abs(sweep) < 0.001) {
+    const squared = sweep * sweep;
+    const length = radius * sweep;
+    return length * (length * sweep) * (1 / 12 - squared / 240 + (squared * squared) / 10080);
+  }
+  return (radius * radius * (sweep - Math.sin(sweep))) / 2;
+}
 export function arcPoint(arc: Arc2, parameter: number): Vec2 {
   return circlePoint(arc, arc.startAngle + arc.sweepAngle * parameter);
 }
@@ -143,14 +152,16 @@ export function polylineLength(polyline: Polyline2): number {
 export function polylineArea(polyline: Polyline2): number {
   let area = 0;
   const origin = polyline.vertices[0] ?? { x: 0, y: 0 };
-  forEachSegment({ ...polyline, closed: true }, (start, end) => {
+  forEachSegment({ ...polyline, closed: true }, (start, end, index) => {
     const sx = start.x - origin.x;
     const sy = start.y - origin.y;
     const ex = end.x - origin.x;
     const ey = end.y - origin.y;
     area += (sx * ey - ex * sy) / 2;
-    const arc = bulgeArc(start, end, start.bulge ?? 0);
-    if (arc) area += (arc.radius * arc.radius * (arc.sweepAngle - Math.sin(arc.sweepAngle))) / 2;
+    const bulge =
+      !polyline.closed && index === polyline.vertices.length - 1 ? 0 : (start.bulge ?? 0);
+    const arc = bulgeArc(start, end, bulge);
+    if (arc) area += circularSegmentArea(arc.radius, arc.sweepAngle);
   });
   return area;
 }
@@ -174,12 +185,12 @@ function coordinateMidpoint(a: number, b: number): number {
 }
 function forEachSegment(
   polyline: Polyline2,
-  callback: (start: PolylineVertex, end: PolylineVertex) => void,
+  callback: (start: PolylineVertex, end: PolylineVertex, index: number) => void,
 ): void {
   const count = polyline.vertices.length - (polyline.closed ? 0 : 1);
   for (let index = 0; index < count; index++) {
     const start = polyline.vertices[index];
     const end = polyline.vertices[(index + 1) % polyline.vertices.length];
-    if (start && end) callback(start, end);
+    if (start && end) callback(start, end, index);
   }
 }

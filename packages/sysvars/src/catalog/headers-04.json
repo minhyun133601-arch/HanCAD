@@ -1,0 +1,236 @@
+[
+  {
+    "name": "OBSCOLOR",
+    "codes": [70],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "OBSLTYPE",
+    "codes": [280],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "ORTHOMODE",
+    "codes": [70],
+    "systemVariable": "ORTHOMODE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PDMODE",
+    "codes": [70],
+    "systemVariable": "PDMODE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PDSIZE",
+    "codes": [40],
+    "systemVariable": "PDSIZE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PELEVATION",
+    "codes": [40],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PEXTMAX",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PEXTMIN",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PINSBASE",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PLIMCHECK",
+    "codes": [70],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PLIMMAX",
+    "codes": [10, 20],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PLIMMIN",
+    "codes": [10, 20],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PLINEGEN",
+    "codes": [70],
+    "systemVariable": "PLINEGEN",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PLINEWID",
+    "codes": [40],
+    "systemVariable": "PLINEWID",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PROJECTNAME",
+    "codes": [1],
+    "systemVariable": "PROJECTNAME",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PROXYGRAPHICS",
+    "codes": [70],
+    "systemVariable": "PROXYGRAPHICS",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PSLTSCALE",
+    "codes": [70],
+    "systemVariable": "PSLTSCALE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PSTYLEMODE",
+    "codes": [290],
+    "systemVariable": "PSTYLEMODE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PSVPSCALE",
+    "codes": [40],
+    "systemVariable": "PSVPSCALE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSBASE",
+    "codes": [2],
+    "systemVariable": "PUCSBASE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSNAME",
+    "codes": [2],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSORG",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSORGBACK",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSORGBOTTOM",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSORGFRONT",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSORGLEFT",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSORGRIGHT",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSORGTOP",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSORTHOREF",
+    "codes": [2],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSORTHOVIEW",
+    "codes": [70],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSXDIR",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "PUCSYDIR",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "QTEXTMODE",
+    "codes": [70],
+    "systemVariable": "QTEXTMODE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "REGENMODE",
+    "codes": [70],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SHADEDGE",
+    "codes": [70],
+    "systemVariable": "SHADEDGE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SHADEDIF",
+    "codes": [70],
+    "systemVariable": "SHADEDIF",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SHADOWPLANELOCATION",
+    "codes": [40],
+    "systemVariable": "SHADOWPLANELOCATION",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SKETCHINC",
+    "codes": [40],
+    "systemVariable": "SKETCHINC",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SKPOLY",
+    "codes": [70],
+    "systemVariable": "SKPOLY",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  }
+]

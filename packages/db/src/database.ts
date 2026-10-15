@@ -13,14 +13,8 @@ import type {
   NewDatabaseObject,
   SymbolTableName,
 } from './types';
-
-interface ChangeSet {
-  label: string;
-  objects: Map<Handle, { before: DatabaseObject | undefined; after: DatabaseObject | undefined }>;
-  variables: Map<string, { before: JsonValue | undefined; after: JsonValue | undefined }>;
-  beforeSeed: Handle;
-  afterSeed: Handle;
-}
+import { UndoJournal } from './history';
+import type { ChangeSet, UndoCategory, UndoMode } from './history';
 
 export class DrawingDatabase {
   readonly events = new EventBus<DatabaseEvent>();
@@ -30,8 +24,9 @@ export class DrawingDatabase {
   private readonly variables: JsonObject;
   private readonly metadata: JsonObject;
   private nextHandle: bigint;
-  private undoJournal: ChangeSet[] = [];
-  private redoJournal: ChangeSet[] = [];
+  private readonly history = new UndoJournal();
+  private lastErased: Handle[] = [];
+  private lastUndoSize = 0;
   private active: ChangeSet | undefined;
 
   constructor(snapshot: DatabaseSnapshot = createMetricSnapshot()) {
@@ -48,10 +43,19 @@ export class DrawingDatabase {
     return this.nextHandle.toString(16).toUpperCase();
   }
   get undoCount(): number {
-    return this.undoJournal.length;
+    return this.history.undoCount;
   }
   get redoCount(): number {
-    return this.redoJournal.length;
+    return this.history.redoCount;
+  }
+  get undoControl(): number {
+    return this.history.control;
+  }
+  get undoMarkCount(): number {
+    return this.history.markCount;
+  }
+  get undoReachedMark(): boolean {
+    return this.history.reachedMark;
   }
 
   get(handle: Handle, includeErased = false): DatabaseObject | undefined {
@@ -79,6 +83,7 @@ export class DrawingDatabase {
   transaction<Result>(
     label: string,
     operation: (transaction: DatabaseTransaction) => Result,
+    category: UndoCategory = 'command',
   ): Result {
     if (this.active)
       throw new Error(
@@ -86,6 +91,7 @@ export class DrawingDatabase {
       );
     const changes: ChangeSet = {
       label,
+      category,
       objects: new Map(),
       variables: new Map(),
       beforeSeed: this.handseed,
@@ -110,26 +116,80 @@ export class DrawingDatabase {
       throw error;
     }
     if (changes.objects.size || changes.variables.size) {
-      this.undoJournal.push(changes);
-      this.redoJournal = [];
+      const erased = [...changes.objects.entries()]
+        .filter(([, entry]) => !entry.before?.erased && entry.after?.erased)
+        .map(([handle]) => handle);
+      if (erased.length) this.lastErased = erased;
+      this.history.record(changes);
       this.publishChanges(changes, 'after');
     }
     return result;
   }
 
   undo(count = 1): number {
-    return this.moveHistory(this.undoJournal, this.redoJournal, 'before', count);
+    this.assertHistoryIdle();
+    return this.applyHistory(this.history.undo(count), 'before');
   }
 
   redo(count = 1): number {
-    return this.moveHistory(this.redoJournal, this.undoJournal, 'after', count);
+    this.assertHistoryIdle();
+    return this.applyHistory(this.history.redo(count), 'after');
+  }
+  redoLastUndo(): number {
+    return this.lastUndoSize ? this.redo(this.lastUndoSize) : 0;
+  }
+  invalidateSingleRedo(): void {
+    this.lastUndoSize = 0;
+  }
+
+  beginUndoGroup(): void {
+    this.assertHistoryIdle();
+    this.history.begin();
+    this.publishHistory();
+  }
+  endUndoGroup(): void {
+    this.assertHistoryIdle();
+    this.history.end();
+    this.publishHistory();
+  }
+  markUndo(): void {
+    this.assertHistoryIdle();
+    this.history.mark();
+    this.publishHistory();
+  }
+  backUndo(confirmAll = false): number | undefined {
+    this.assertHistoryIdle();
+    const changes = this.history.back();
+    if (changes) return this.applyHistory(changes, 'before');
+    return confirmAll
+      ? this.applyHistory(this.history.undo(this.undoCount, true), 'before')
+      : undefined;
+  }
+  configureUndo(mode: UndoMode): void {
+    this.assertHistoryIdle();
+    this.history.configure(mode);
+    this.publishHistory();
+  }
+  setUndoOption(option: 'auto' | 'combine' | 'layer', value: boolean): void {
+    this.assertHistoryIdle();
+    this.history.setOption(option, value);
+    this.publishHistory();
+  }
+  oops(): number {
+    const handles = this.lastErased.filter((handle) => this.get(handle, true)?.erased);
+    if (!handles.length) return 0;
+    this.transaction('OOPS', (transaction) => {
+      for (const handle of handles) transaction.unerase(handle);
+    });
+    return handles.length;
   }
 
   clearHistory(): void {
     if (this.active) throw new Error('Cannot clear history inside a transaction.');
-    this.undoJournal = [];
-    this.redoJournal = [];
-    this.events.publish({ type: 'history-changed', undoCount: 0, redoCount: 0 });
+    this.history.clear();
+    this.lastUndoSize = 0;
+    this.lastErased = [];
+    this.publishHistory();
   }
 
   snapshot(): DatabaseSnapshot {
@@ -222,25 +282,24 @@ export class DrawingDatabase {
     return this.active;
   }
 
-  private moveHistory(
-    source: ChangeSet[],
-    target: ChangeSet[],
-    state: 'before' | 'after',
-    count: number,
-  ): number {
+  private assertHistoryIdle(): void {
     if (this.active) throw new Error('Cannot change history inside a transaction.');
-    if (!Number.isSafeInteger(count) || count < 0)
-      throw new Error('Undo count must be a non-negative integer.');
-    let moved = 0;
-    while (moved < count) {
-      const changes = source.pop();
-      if (!changes) break;
+  }
+  private applyHistory(entries: readonly ChangeSet[], state: 'before' | 'after'): number {
+    if (state === 'before') this.lastUndoSize = entries.length;
+    else this.lastUndoSize = 0;
+    for (const changes of entries) {
       this.restore(changes, state);
-      target.push(changes);
-      moved++;
       this.publishChanges(changes, state);
     }
-    return moved;
+    return entries.length;
+  }
+  private publishHistory(): void {
+    this.events.publish({
+      type: 'history-changed',
+      undoCount: this.undoCount,
+      redoCount: this.redoCount,
+    });
   }
 
   private restore(changes: ChangeSet, state: 'before' | 'after'): void {

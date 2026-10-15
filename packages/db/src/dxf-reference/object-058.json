@@ -1,0 +1,132 @@
+{
+  "title": "MATERIAL (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E540C5BB-E166-44FA-B36C-5C739878B272.htm",
+  "section": "object",
+  "documentedGroups": [
+    {
+      "codes": [141],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [175],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [7],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [176],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [177],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [178],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [142],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [143],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [179],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [8],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [270],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [271],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [272],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [144],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [145],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [146],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [273],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [9],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [274],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [275],
+      "subclasses": ["AcDbMaterial"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-6939D69E-04CB-4F4C-87B2-67BC540FCF58.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-2D71EE99-A6BE-4060-9B43-808CF1E201C6.htm"
+  ]
+}

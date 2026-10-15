@@ -1,0 +1,248 @@
+[
+  {
+    "name": "DIMTVP",
+    "codes": [40],
+    "systemVariable": "DIMTVP",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTXSTY",
+    "codes": [7],
+    "systemVariable": "DIMTXSTY",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTXT",
+    "codes": [40],
+    "systemVariable": "DIMTXT",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTZIN",
+    "codes": [70],
+    "systemVariable": "DIMTZIN",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMUPT",
+    "codes": [70],
+    "systemVariable": "DIMUPT",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMZIN",
+    "codes": [70],
+    "systemVariable": "DIMZIN",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DISPSILH",
+    "codes": [70],
+    "systemVariable": "DISPSILH",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DRAGVS",
+    "codes": [349],
+    "systemVariable": "DRAGVS",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DWGCODEPAGE",
+    "codes": [3],
+    "systemVariable": "DWGCODEPAGE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "ELEVATION",
+    "codes": [40],
+    "systemVariable": "ELEVATION",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "ENDCAPS",
+    "codes": [280],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "EXTMAX",
+    "codes": [10, 20, 30],
+    "systemVariable": "EXTMAX",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "EXTMIN",
+    "codes": [10, 20, 30],
+    "systemVariable": "EXTMIN",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "EXTNAMES",
+    "codes": [290],
+    "systemVariable": "EXTNAMES",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "FILLETRAD",
+    "codes": [40],
+    "systemVariable": "FILLETRAD",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "FILLMODE",
+    "codes": [70],
+    "systemVariable": "FILLMODE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "FINGERPRINTGUID",
+    "codes": [2],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "HALOGAP",
+    "codes": [280],
+    "systemVariable": "HALOGAP",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "HANDSEED",
+    "codes": [5],
+    "systemVariable": "HANDSEED",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "HIDETEXT",
+    "codes": [290],
+    "systemVariable": "HIDETEXT",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "HYPERLINKBASE",
+    "codes": [1],
+    "systemVariable": "HYPERLINKBASE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "INDEXCTL",
+    "codes": [280],
+    "systemVariable": "INDEXCTL",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "INSBASE",
+    "codes": [10, 20, 30],
+    "systemVariable": "INSBASE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "INSUNITS",
+    "codes": [70],
+    "systemVariable": "INSUNITS",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "INTERFERECOLOR",
+    "codes": [62],
+    "systemVariable": "INTERFERECOLOR",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "INTERFEREOBJVS",
+    "codes": [345],
+    "systemVariable": "INTERFEREOBJVS",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "INTERFEREVPVS",
+    "codes": [346],
+    "systemVariable": "INTERFEREVPVS",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "INTERSECTIONCOLOR",
+    "codes": [70],
+    "systemVariable": "INTERSECTIONCOLOR",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "INTERSECTIONDISPLAY",
+    "codes": [290],
+    "systemVariable": "INTERSECTIONDISPLAY",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "JOINSTYLE",
+    "codes": [280],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "LIMCHECK",
+    "codes": [70],
+    "systemVariable": "LIMCHECK",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "LIMMAX",
+    "codes": [10, 20],
+    "systemVariable": "LIMMAX",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "LIMMIN",
+    "codes": [10, 20],
+    "systemVariable": "LIMMIN",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "LTSCALE",
+    "codes": [40],
+    "systemVariable": "LTSCALE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "LUNITS",
+    "codes": [70],
+    "systemVariable": "LUNITS",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "LUPREC",
+    "codes": [70],
+    "systemVariable": "LUPREC",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "LWDISPLAY",
+    "codes": [290],
+    "systemVariable": "LWDISPLAY",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "MAXACTVP",
+    "codes": [70],
+    "systemVariable": "MAXACTVP",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "MEASUREMENT",
+    "codes": [70],
+    "systemVariable": "MEASUREMENT",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "MENU",
+    "codes": [1],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "MIRRTEXT",
+    "codes": [70],
+    "systemVariable": "MIRRTEXT",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  }
+]

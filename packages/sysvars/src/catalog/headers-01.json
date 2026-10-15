@@ -1,0 +1,254 @@
+[
+  {
+    "name": "ACADMAINTVER",
+    "codes": [70],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "ACADVER",
+    "codes": [1],
+    "systemVariable": "ACADVER",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "ANGBASE",
+    "codes": [50],
+    "systemVariable": "ANGBASE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "ANGDIR",
+    "codes": [70],
+    "systemVariable": "ANGDIR",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "ATTMODE",
+    "codes": [70],
+    "systemVariable": "ATTMODE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "AUNITS",
+    "codes": [70],
+    "systemVariable": "AUNITS",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "AUPREC",
+    "codes": [70],
+    "systemVariable": "AUPREC",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CECOLOR",
+    "codes": [62],
+    "systemVariable": "CECOLOR",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CELTSCALE",
+    "codes": [40],
+    "systemVariable": "CELTSCALE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CELTYPE",
+    "codes": [6],
+    "systemVariable": "CELTYPE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CELWEIGHT",
+    "codes": [370],
+    "systemVariable": "CELWEIGHT",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CEPSNID",
+    "codes": [390],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CEPSNTYPE",
+    "codes": [380],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CHAMFERA",
+    "codes": [40],
+    "systemVariable": "CHAMFERA",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CHAMFERB",
+    "codes": [40],
+    "systemVariable": "CHAMFERB",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CHAMFERC",
+    "codes": [40],
+    "systemVariable": "CHAMFERC",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CHAMFERD",
+    "codes": [40],
+    "systemVariable": "CHAMFERD",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CLAYER",
+    "codes": [8],
+    "systemVariable": "CLAYER",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CMLJUST",
+    "codes": [70],
+    "systemVariable": "CMLJUST",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CMLSCALE",
+    "codes": [40],
+    "systemVariable": "CMLSCALE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CMLSTYLE",
+    "codes": [2],
+    "systemVariable": "CMLSTYLE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "CSHADOW",
+    "codes": [280],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMADEC",
+    "codes": [70],
+    "systemVariable": "DIMADEC",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMALT",
+    "codes": [70],
+    "systemVariable": "DIMALT",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMALTD",
+    "codes": [70],
+    "systemVariable": "DIMALTD",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMALTF",
+    "codes": [40],
+    "systemVariable": "DIMALTF",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMALTRND",
+    "codes": [40],
+    "systemVariable": "DIMALTRND",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMALTTD",
+    "codes": [70],
+    "systemVariable": "DIMALTTD",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMALTTZ",
+    "codes": [70],
+    "systemVariable": "DIMALTTZ",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMALTU",
+    "codes": [70],
+    "systemVariable": "DIMALTU",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMALTZ",
+    "codes": [70],
+    "systemVariable": "DIMALTZ",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMAPOST",
+    "codes": [1],
+    "systemVariable": "DIMAPOST",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMASO",
+    "codes": [70],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMASSOC",
+    "codes": [280],
+    "systemVariable": "DIMASSOC",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMASZ",
+    "codes": [40],
+    "systemVariable": "DIMASZ",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMATFIT",
+    "codes": [70],
+    "systemVariable": "DIMATFIT",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMAUNIT",
+    "codes": [70],
+    "systemVariable": "DIMAUNIT",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMAZIN",
+    "codes": [70],
+    "systemVariable": "DIMAZIN",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMBLK",
+    "codes": [1],
+    "systemVariable": "DIMBLK",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMBLK1",
+    "codes": [1],
+    "systemVariable": "DIMBLK1",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMBLK2",
+    "codes": [1],
+    "systemVariable": "DIMBLK2",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMCEN",
+    "codes": [40],
+    "systemVariable": "DIMCEN",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  }
+]

@@ -1,0 +1,277 @@
+[
+  {
+    "name": "DWGCHECK",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면을 열 때 도면에서 잠재적인 문제를 검사합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-91E890BF-AEBD-4BCE-9663-1AFD595AA5E4.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2, 3, 4, 5, 6, 7],
+    "min": 0,
+    "max": 7
+  },
+  {
+    "name": "DWGCODEPAGE",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "호환성을 위해 SYSCODEPAGE와 동일한 값을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2DD5A705-BD1E-4398-8C1C-17C8B139E66B.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "DWGNAME",
+    "type": "string",
+    "default": "Drawing1.dwg",
+    "scope": "session",
+    "description": "현재 도면의 이름을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A89861EF-5F4F-46C6-A1DB-9D985A3858C9.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "Drawing1.dwg"
+    },
+    "readonly": true
+  },
+  {
+    "name": "DWGPREFIX",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "현재 도면에 대한 드라이브와 폴더 경로를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-479EAE14-5A70-4FDD-8ACD-D75E5548386B.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "DWGTITLED",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "현재 도면이 명명되어 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1CA841EC-0313-4A34-8829-0CC0B5FB6FEE.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DX12FRAMERATEUNLIMITED",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "가변 동기화 모니터 최적화를 사용합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9B7C2155-4F2C-4732-A8CB-FA295865151C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DXEVAL",
+    "type": "integer",
+    "default": 12,
+    "scope": "drawing",
+    "description": "데이터 추출 테이블과 데이터 원본의 비교 시점을 조정하고 데이터가 현재 값이 아닌 경우 업데이트 알림을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E8649154-1088-4C93-B4C6-03D0ED7B05E1.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "12"
+    },
+    "bits": {
+      "0": "No notification",
+      "1": "Open",
+      "2": "Save",
+      "4": "Plot",
+      "8": "Publish",
+      "16": "eTransmit/Archive",
+      "32": "Save with Automatic Update",
+      "64": "Plot with Automatic Update",
+      "128": "Publish with Automatic Update",
+      "256": "eTransmit/Archive with Automatic Update"
+    },
+    "min": 0,
+    "max": 511,
+    "bitmask": 511
+  },
+  {
+    "name": "DYNCONSTRAINTMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "제한된 객체를 선택하면 숨겨진 치수 구속조건이 표시됩니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C05FEE39-20AC-4EC8-9BFE-D9DD67A1A3F2.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DYNDIVIS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "그립 신축 편집 작업 동안 표시되는 동적 치수의 수를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C2BB4EEB-D3FC-40AC-B479-A6E001E90947.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "DYNINFOTIPS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "그립을 사용하여 편집할 때 Shift 및 Ctrl 사용을 위한 팁이 표시되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2C36CFFB-EFED-4CD3-BE59-700B63DCC908.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DYNMODE",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "동적 입력 기능을 켜거나 끕니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1ED138FF-2679-45C4-9C2C-332A821C9D12.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "enum": [-3, -2, -1, 0, 1, 2, 3],
+    "min": -3,
+    "max": 3
+  },
+  {
+    "name": "DYNPICOORDS",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "좌표에 대한 포인터 입력에 상대 형식이 사용될지 절대 형식이 사용될지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-87D649DF-8474-4F55-806E-604906030B36.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DYNPIFORMAT",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "좌표 입력 장치로 입력할 때 극좌표 형식을 사용할지 아니면 데카르트 형식을 사용할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-03D36D36-D734-43C3-BA4D-EA68C573F73C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DYNPIVIS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "포인터 입력이 표시되는 시기를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A5EBB25D-E626-4B4D-AD5B-0DEE467D70A7.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "DYNPROMPT",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "동적 입력 툴팁에서 프롬프트의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FA6A4CC1-DF9D-452C-93EA-48FFD0E08E1C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "EDGEMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "TRIM 및 EXTEND 명령이 절단 모서리 및 경계 모서리를 결정하는 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-ED7D2A22-0C65-49C3-A58E-D10A3BECBE57.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "ELEVATION",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 UCS를 기준으로 새 객체의 현재 고도를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E0FE35FA-841A-40D0-8282-1639F9A47107.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

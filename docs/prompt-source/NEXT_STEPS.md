@@ -2,33 +2,39 @@
 
 ## Active next step
 
-The latest user instruction on 2026-10-15 supersedes the earlier feature-first
-handoff: complete Phase 00, then Phase 01 through Phase 25 in numeric order.
-Read `../PROGRESS.md`'s active-order section first. Preserve delivered later-phase
-features, but do not implement new later-phase work while an earlier phase is
-incomplete.
+The latest explicit user instruction on 2026-10-15 advances to Phase 01 and
+supersedes the earlier wait for Phase 00 native acceptance. That check remains
+deferred and unverified. Read `../PROGRESS.md`'s active-phase section first.
+Preserve delivered later-phase features; do not advance to Phase 02 until the
+whole original Phase 01 build and acceptance list pass.
 
 Bootstrap milestones 0.6 and 0.7 are implemented and tested: original-order docs,
 complete desktop prerequisite diagnostics, bilingual progress/system-variable
 errors and structured importer errors/progress/warnings. Current-language
 presentation survives live reads, asynchronous export failures and warning-cache
 recovery; renderer startup failures retain the shell and release resources.
-The latest full verification passes 235 unit, 30 compatibility and 50 production
-Edge tests, with one opt-in private-file skip. Continue Phase 00 milestone 0.8
-with actual native acceptance after the missing prerequisites are supplied.
+The Phase 01 continuation delivers DXF mappings/opaque graphs, required geometry
+operations, 860 variable definitions, advanced history, independent document tabs
+and native HCD save/open/recovery. All four original acceptance tests have concrete
+test coverage; the full build list remains partial. Continue milestone 1.6 with
+host defaults, deferred range evidence, Auto/navigation/layer UI undo integration,
+exact metric defaults and remaining constrained fit-spline cases.
+
+Current verified delivery: WASM/lint/format/typecheck, 307 unit, 30 compatibility
+and 55 production Edge tests pass; one opt-in private-file test is skipped. The
+user asked to stop after the current actionable delivery and leave a concrete
+handoff. First resume with DATE/CDATE clock providers in the existing runtimeValues
+hook; see `../PROGRESS.md` for exact units, provider categories and later checks.
 
 MSVC C++ tools and the Windows SDK remain unavailable. Their
 earlier installation was rejected by automatic approval review with
 `blocked by policy`. Actual Tauri startup, minimum size and window-state
 restoration remain pending; do not substitute the browser launch for that proof.
 
-Browser text/error-path audit and 1280x720 visual checks pass. Resolve the native
-prerequisite and exercise actual Korean Tauri startup, minimum 1280x720, and saved
-position/size restoration. Inspect native runtime diagnostics in both languages
-and rerun complete verification after any correction before marking Phase 00 complete.
-Phase 01 requires complete schemas/sysvars, geometry behavior, advanced Undo and
-document/HCD integration beyond the already-tested subsets. Start that phase only
-after original Phase 00 acceptance passes.
+Browser checks do not complete native acceptance. When its prerequisites become
+available, exercise Korean Tauri startup, minimum 1280x720 and window restoration
+before marking Phase 00 complete. Phase 01 is active under the newer user request;
+complete its remaining build requirements without starting another phase.
 
 ## Current delivery boundary
 

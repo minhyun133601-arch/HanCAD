@@ -1,0 +1,277 @@
+[
+  {
+    "name": "MTEXTDETECTSPACE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "MTEXT 명령에서 리스트 항목을 작성하는 데 키보드 스페이스바를 사용할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CDEA90C9-66CB-4F23-9FB6-5BD7F49796C2.htm",
+      "type": "Switch",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MTEXTED",
+    "type": "string",
+    "default": "\"Internal\"",
+    "scope": "profile",
+    "description": "여러 줄 문자 객체를 편집할 응용프로그램을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C7CF957C-3A44-4667-8ABE-22CAFDF99145.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "\"Internal\""
+    }
+  },
+  {
+    "name": "MTJIGSTRING",
+    "type": "string",
+    "default": "\"abc\"",
+    "scope": "profile",
+    "description": "MTEXT 명령이 시작될 때 커서 위치에 표시되는 샘플 문자의 내용을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A4497DDB-EAC9-4DFD-837D-19B85C6426C1.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "\"abc\""
+    }
+  },
+  {
+    "name": "MVIEWPREVIEW",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "명명된 배치 뷰포트 또는 새 배치 뷰포트를 삽입할 때 미리보기 동작을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2CA0AB1A-D237-4C8D-A9A7-C23D8339102A.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "NAVBARDISPLAY",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "모든 뷰포트에서 탐색 막대의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-96CA70D4-A86A-4BEE-BBB3-BFF1C28799A2.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "NAVSWHEELMODE",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "SteeringWheels의 현재 모드를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BF597215-83F8-42B0-95B5-3A6D588B6BA7.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2, 3, 4, 5, 6],
+    "min": 0,
+    "max": 6
+  },
+  {
+    "name": "NAVSWHEELOPACITYBIG",
+    "type": "integer",
+    "default": 50,
+    "scope": "profile",
+    "description": "대형 SteeringWheels의 불투명을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E2B522DD-4DA7-40BF-A078-C6C6E4E726BF.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "50"
+    },
+    "min": 25,
+    "max": 90
+  },
+  {
+    "name": "NAVSWHEELOPACITYMINI",
+    "type": "integer",
+    "default": 50,
+    "scope": "profile",
+    "description": "미니 SteeringWheels의 불투명을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-ECB4FE77-CB72-4D88-9BB5-110A63B2AA86.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "50"
+    },
+    "min": 25,
+    "max": 90
+  },
+  {
+    "name": "NAVSWHEELSIZEBIG",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "대형 SteeringWheels의 크기를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DD21EA8A-6893-4883-95E8-380E78C7ED7F.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "NAVSWHEELSIZEMINI",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "미니 SteeringWheels의 크기를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-95FBFDE3-9A89-4A24-A2A3-91A9416A3498.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "NAVVCUBEDISPLAY",
+    "type": "integer",
+    "default": 3,
+    "scope": "drawing",
+    "description": "현재 비주얼 스타일 및 현재 뷰포트에서 ViewCube 도구의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0D362177-000F-4722-83D8-0B808F4A4C97.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "3"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "NAVVCUBELOCATION",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "뷰포트에서 ViewCube 도구가 표시되는 구석을 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-37832360-B7F4-4C03-8FDD-54C21D2383E2.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "NAVVCUBEOPACITY",
+    "type": "integer",
+    "default": 50,
+    "scope": "profile",
+    "description": "비활성 상태일 때 ViewCube 도구의 불투명도를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-629F5CDF-9266-4614-AC67-A022181CFF1B.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "50"
+    },
+    "min": 0,
+    "max": 100
+  },
+  {
+    "name": "NAVVCUBEORIENT",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "ViewCube 도구가 현재 UCS 또는 WCS를 반영하는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-34A9363D-2578-4CBF-B9CC-3B4452DE8FB3.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "NAVVCUBESIZE",
+    "type": "integer",
+    "default": 4,
+    "scope": "profile",
+    "description": "ViewCube 도구의 크기를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-775F24B6-7044-43DF-8967-A5C6EE930758.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "4"
+    },
+    "enum": [0, 1, 2, 3, 4],
+    "min": 0,
+    "max": 4
+  },
+  {
+    "name": "NORTHDIRECTION",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "WCS의 Y 축과 그리드 북쪽 사이의 각도를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-ABD3783D-4D11-40B0-9499-4FC7F42E155D.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "OBJECTISOLATIONMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "도면 세션 간에 숨겨진 객체를 계속 숨겨 둘지를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B4ED98BE-62D0-4982-82A2-87B744C56F99.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "OBSCUREDCOLOR",
+    "type": "integer",
+    "default": 257,
+    "scope": "drawing",
+    "description": "가려진 선의 색상을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-31495F30-D8DA-4A33-BAF0-730A5DD90890.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "257"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

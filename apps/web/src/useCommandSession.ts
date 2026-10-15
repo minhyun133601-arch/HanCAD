@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CommandRegistry, HeadlessCommandRunner } from '@hancad/commands';
+import { CommandRegistry, HeadlessCommandRunner, historyInputPrompt } from '@hancad/commands';
 import type { CommandResult } from '@hancad/commands';
 import { DrawingDatabase } from '@hancad/db';
 import { getSystemVariableDefinition, SystemVariables } from '@hancad/sysvars';
+import type { DrawingDocument } from '@hancad/sysvars';
 import { getMessages, type Locale } from '@hancad/ui';
 import { restoreProfileVariables, subscribeProfileVariables } from './profile-storage';
 import { errorMessage } from './error-presenter';
@@ -16,23 +17,27 @@ export interface HistoryLine {
 type PromptSession =
   | { kind: 'idle' }
   | { kind: 'variable-name'; command: 'GETVAR' | 'SETVAR' }
-  | { kind: 'variable-value'; command: string; name: string };
+  | { kind: 'variable-value'; command: string; name: string }
+  | { kind: 'history'; command: 'UNDO' | 'MREDO'; values: string[] };
 
-export function useCommandSession(locale: Locale) {
+export function useCommandSession(locale: Locale, document?: DrawingDocument) {
   const messages = getMessages(locale);
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
   const [runtime] = useState(() => {
-    const database = new DrawingDatabase();
-    const sysvars = new SystemVariables({ database });
-    restoreProfileVariables(sysvars.profile);
+    const database = document?.database ?? new DrawingDatabase();
+    const sysvars = document?.sysvars ?? new SystemVariables({ database });
+    if (!document) restoreProfileVariables(sysvars.profile);
     return {
       database,
       sysvars,
       registry: new CommandRegistry(),
     };
   });
-  useEffect(() => subscribeProfileVariables(runtime.sysvars.profile), [runtime]);
+  useEffect(
+    () => (document ? undefined : subscribeProfileVariables(runtime.sysvars.profile)),
+    [runtime, document],
+  );
   const runner = useMemo(
     () =>
       new HeadlessCommandRunner({
@@ -63,11 +68,35 @@ export function useCommandSession(locale: Locale) {
   function promptText(session: PromptSession): string {
     if (session.kind === 'idle') return messages.commandPrompt;
     if (session.kind === 'variable-name') return messages.sysvarNamePrompt;
-    const current = runtime.sysvars.get(session.name);
-    return messages.sysvarValuePrompt(
-      session.name,
-      Array.isArray(current) ? current.join(',') : String(current),
-    );
+    if (session.kind === 'history')
+      return (
+        historyInputPrompt(
+          session.command,
+          session.values,
+          locale,
+          runtime.database.undoMarkCount > 0,
+        ) ?? messages.commandPrompt
+      );
+    try {
+      const current = runtime.sysvars.get(session.name);
+      return messages.sysvarValuePrompt(
+        session.name,
+        Array.isArray(current) ? current.join(',') : String(current),
+      );
+    } catch (error) {
+      return messages.commandFailure(errorMessage(error, messages));
+    }
+  }
+
+  function openVariablePrompt(next: Extract<PromptSession, { kind: 'variable-value' }>): void {
+    try {
+      runtime.sysvars.get(next.name);
+      transition(next);
+      print(promptText(next));
+    } catch (error) {
+      transition({ kind: 'idle' });
+      print(messages.commandFailure(errorMessage(error, messages)));
+    }
   }
 
   function print(text: string, kind: HistoryLine['kind'] = 'output'): void {
@@ -93,6 +122,24 @@ export function useCommandSession(locale: Locale) {
     setInput('');
     recalled.current = -1;
     const active = promptRef.current;
+    if (active.kind === 'history') {
+      print(`${promptText(active)} ${value}`, 'echo');
+      const values = [...active.values, value];
+      const prompt = historyInputPrompt(
+        active.command,
+        values,
+        locale,
+        runtime.database.undoMarkCount > 0,
+      );
+      if (prompt) {
+        transition({ ...active, values });
+        print(prompt);
+      } else {
+        const result = await run(active.command, values);
+        if (result.status === 'ok') transition({ kind: 'idle' });
+      }
+      return;
+    }
     if (active.kind === 'variable-name') {
       const name = value.trim().toUpperCase();
       print(`${promptText(active)} ${name}`, 'echo');
@@ -106,8 +153,7 @@ export function useCommandSession(locale: Locale) {
         if (result.status === 'ok') transition({ kind: 'idle' });
       } else {
         const next: PromptSession = { kind: 'variable-value', command: 'SETVAR', name };
-        transition(next);
-        print(promptText(next));
+        openVariablePrompt(next);
       }
       return;
     }
@@ -127,6 +173,25 @@ export function useCommandSession(locale: Locale) {
     const tokens = line.split(/\s+/);
     const resolution = runtime.registry.resolve(tokens[0] ?? '');
     const command = resolution?.canonicalName;
+    if (
+      command !== 'REDO' &&
+      (resolution?.definition.execute || getSystemVariableDefinition(tokens[0] ?? ''))
+    )
+      runtime.database.invalidateSingleRedo();
+    if (command === 'UNDO' || command === 'MREDO') {
+      const values = tokens.slice(1);
+      const prompt = historyInputPrompt(
+        command,
+        values,
+        locale,
+        runtime.database.undoMarkCount > 0,
+      );
+      if (prompt) {
+        transition({ kind: 'history', command, values });
+        print(prompt);
+        return;
+      }
+    }
     if ((command === 'SETVAR' || command === 'GETVAR') && tokens.length === 1) {
       const next: PromptSession = { kind: 'variable-name', command };
       transition(next);
@@ -152,8 +217,7 @@ export function useCommandSession(locale: Locale) {
         command: command === 'SETVAR' ? command : variableName,
         name: variableName,
       };
-      transition(next);
-      print(promptText(next));
+      openVariablePrompt(next);
       return;
     }
     await run(line);

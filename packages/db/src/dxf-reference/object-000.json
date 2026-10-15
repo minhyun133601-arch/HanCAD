@@ -1,0 +1,132 @@
+{
+  "title": "TABLESTYLE (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-0DBCA057-9F6C-4DEB-A66F-8A9B3C62FB1A.htm",
+  "section": "object",
+  "documentedGroups": [
+    {
+      "codes": [0],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [5],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [102],
+      "subclasses": [],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [330],
+      "subclasses": [],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [102],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [100],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [280],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [3],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [71],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [40],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [41],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [280],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [281],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [7],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [140],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [170],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [62],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [63],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [283],
+      "subclasses": ["AcDbTableStyle"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-6939D69E-04CB-4F4C-87B2-67BC540FCF58.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-2D71EE99-A6BE-4060-9B43-808CF1E201C6.htm"
+  ]
+}

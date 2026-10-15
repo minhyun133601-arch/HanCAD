@@ -1,0 +1,23 @@
+{
+  "title": "THUMBNAILIMAGE Section Group Codes (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-F0369984-9699-40D5-8F9A-139491A14231.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [90],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [310],
+      "subclasses": [],
+      "context": "record",
+      "repeated": true
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-792F79DC-0D5D-43B5-AB0E-212E0EDF6BAE.htm"
+  ]
+}

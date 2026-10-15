@@ -1,5 +1,91 @@
 # Decisions
 
+## 2026-10-15: User-directed advance to Phase 01
+
+The latest explicit user request advances implementation to Phase 01. It
+supersedes the prior wait for Phase 00 native acceptance, which remains deferred
+and unverified. Preserve completed bootstrap diagnostics and delivered drafting
+features; build only original Phase 01 foundations until its requirements pass.
+The missing MSVC/SDK installation remains subject to the recorded earlier policy
+rejection and is not retried as part of this phase.
+
+## 2026-10-15: Native Phase 01 foundations and explicit remaining parity
+
+The four original Phase 01 acceptance checks are narrower than its build list.
+Keep the phase partial while unresolved defaults, range validation and undo UI
+integration remain. Passing native graph/HCD, randomized journal and headless
+checks does not certify complete AutoCAD database or system-variable parity.
+
+Keep entity and object records as ordered group streams with persistent common
+metadata. The [common entity codes](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm)
+and [XDATA reference](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A2A628B0-3699-4740-A215-C560E7242F63.htm)
+require application/subclass context rather than a single code-to-value map.
+Mapped edits preserve unknown and repeated groups, including dictionary entries
+and per-vertex widths/bulges. Sixteen codecs are implemented; other types retain
+explicit opaque status with documented numeric mappings. Metadata covers the
+published entity/object/table inventory and child sections. SCALE is common-only
+until a specific official group table or verified reference record is available.
+Later DXF/DWG I/O must consume this graph; the current editable import adapter is
+still lossy and is not upgraded merely by adding the native schema.
+
+The default graph uses original resources and metric values, without copying an
+Autodesk template or font. Named styles, 25 scales, limits and layout/block links
+are established, following [DICTIONARY](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-40B92C63-26F0-485B-A9C2-B349099B26D0.htm),
+[LAYOUT](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-433D25BF-655D-4697-834E-C666EDFD956D.htm)
+and [BLOCK_RECORD](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A1FD1934-7EF5-4D35-A4B0-F8AE54A9A20A.htm)
+reference relationships. Exact acadiso style numeric fields, paper setup,
+font substitution, default viewport contents and scale-list membership/order
+still require comparison with the user's installed metric template.
+
+Canonical geometry preserves DXF units and coordinate systems, including OCS
+bulges/widths from [LWPOLYLINE](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-748FC305-F3F2-4F74-825A-61F04D757A50.htm)
+and control/fit data from [SPLINE](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E1F884F8-AA90-4864-A215-3182D47A9C74.htm).
+Closest point, length and area on general splines are numerical; curved bounds
+may be conservative. Widths are retained while these inquiries use centerlines.
+Fit-only periodic endpoint tangents are accepted only when they match the existing
+C2 periodic cubic interpolant. Inconsistent tangents are explicitly unsupported;
+do not create arbitrary extra knots to force a fit. Autodesk's
+[SPLINE command reference](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5E7D51E2-1595-4E0C-85F8-2D7CBD166A08.htm)
+documents fit parameterization and tangency, but does not define a general
+periodic constrained solver. Arbitrary periodic endpoint tangents, natural end
+conditions for omitted fit tangents and exact interpolation for stored nonzero
+fit tolerance remain assumptions pending reference comparison. Nonuniform
+polyline transforms retain source data with an affine wrapper; database writeback
+of that transformed geometry belongs to integration.
+
+The sourced registry has 860 variables, 798 fixed/metric defaults and 62 explicitly
+unavailable host/document defaults. An unavailable default produces a typed
+diagnostic, not a guessed path or zero. Keep DXF header metadata separate from
+SETVAR-only names. Defer numeric ranges lacking reliable evidence. Autodesk's
+[SELECTIONEFFECTCOLOR reference](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CBB90ED0-9C2C-401A-B849-0EAD4E15DC7E.htm)
+specifies default 0 alongside range 1-255; retain its documented default and
+integer validation until installed-reference behavior resolves the conflict.
+The documented AREA/CENTER settings resolve to HPDRAWMODE=0 and HPPATHALIGNMENT=1;
+use-current defaults for HPLAYER, HPTRANSPARENCY, MLEADERLAYER and XREFLAYER retain
+the official `.` sentinel. MEASUREINIT=1 follows the explicit metric startup
+policy rather than guessing the host's region. Source initial-value wording stays
+attached to each definition and the generated reference.
+
+Undo supports the original options and live UNDOCTL, but Auto menu grouping and
+navigation/layer category integration remain unfinished. Autodesk's
+[User Preferences reference](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-2E780292-7D34-4A34-8CCC-82363D4F9092.htm)
+defines those combined UI actions; exposing state flags alone does not reproduce
+them. [REDO](https://help.autodesk.com/cloudhelp/2022/ENU/AutoCAD-Core/files/GUID-BA4CEE11-D8AD-4644-8488-7CEBCA50AFFE.htm)
+must immediately follow U/UNDO. The runner now closes the single-REDO window on
+intervening commands, including informational commands and rejected input, and
+REDO restores the last actual undo batch. MREDO retains its separate redo stack.
+Compare the exact command boundaries and prompts with the installed reference.
+[OOPS](https://help.autodesk.com/cloudhelp/2022/ENU/AutoCAD-Core/files/GUID-0E72CDCD-9ECA-453A-8A04-CA2921740270.htm)
+restores the latest ERASE set; BLOCK/WBLOCK/PURGE cases await those commands.
+
+Use a new document for both native and imported OPEN, so a prior graph, OOPS set
+or binary attachment cannot leak into the opened file. Tab reactivation retains
+history; recovery/HCD reload starts a clean journal. The .hcd save preserves the
+full native graph and binary blobs. The application-specific HANSAVE command is
+separate from transitional supported-entity DXF output. Recovery publishes only
+the active document through a shared ordered queue; full open-document-set crash
+recovery is not claimed.
+
 ## 2026-10-15: Complete the next bootstrap diagnostic boundary
 
 Continue Phase 00 only, as the user explicitly reaffirmed sequential phase
@@ -31,7 +117,8 @@ The refreshed native prerequisite inventory still lacks MSVC and the Windows
 SDK. Respect the earlier automatic approval rejection (`blocked by policy`);
 do not install through another route. Native Korean shell startup, the 1280x720
 minimum and saved position/size remain Phase 00 acceptance blockers. Browser
-verification does not satisfy those items, and Phase 01 must not start.
+verification does not satisfy those items. The later explicit user-directed
+advance recorded above supersedes this entry's original Phase 01 start gate.
 
 ## 2026-10-15: Restore strict original phase order
 

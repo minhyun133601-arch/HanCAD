@@ -1,0 +1,49 @@
+{
+  "title": "MENTALRAYRENDERSETTINGS (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-69B42C9D-062D-4FEC-952E-CA0DDF7B4831.htm",
+  "section": "object",
+  "documentedGroups": [
+    {
+      "codes": [70],
+      "subclasses": ["AcDbMentalRayRenderSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [290],
+      "subclasses": ["AcDbMentalRayRenderSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [1],
+      "subclasses": ["AcDbMentalRayRenderSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [90],
+      "subclasses": ["AcDbMentalRayRenderSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbMentalRayRenderSettings"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [90],
+      "subclasses": ["AcDbMentalRayRenderSettings"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-6FC0020B-5FF4-4D98-B3CA-A901D5DA93B3.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-6939D69E-04CB-4F4C-87B2-67BC540FCF58.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-6FC0020B-5FF4-4D98-B3CA-A901D5DA93B3.htm"
+  ]
+}

@@ -1,0 +1,257 @@
+[
+  {
+    "name": "DIMGAP",
+    "type": "real",
+    "default": 0.625,
+    "scope": "drawing",
+    "description": "치수 문자를 표시하기 위해 치수 선이 끊어질 때 치수 문자에 대한 거리를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EB367187-A5D6-404A-8121-A6D1D25B626A.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0900 (imperial) or 0.6250 (metric)"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMJOGANG",
+    "type": "real",
+    "default": 45,
+    "scope": "drawing",
+    "description": "꺾어진 반지름 치수에서 치수선의 횡단 세그먼트 각도를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9C23D722-0792-4585-A40A-B8E3A191999A.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "45"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMJUST",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수 문자의 수평 위치를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C67348A9-2260-4135-A7FF-FE0B45211CB0.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3, 4],
+    "min": 0,
+    "max": 4
+  },
+  {
+    "name": "DIMLDRBLK",
+    "type": "string",
+    "default": "",
+    "scope": "drawing",
+    "description": "지시선의 화살표 유형을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B4374832-C2B4-4555-900C-693625AC58DE.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "\"\""
+    }
+  },
+  {
+    "name": "DIMLFAC",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "선형 치수 측정단위의 축척 비율을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B6063785-B199-4A9A-8BD7-2108EB0AB7ED.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMLIM",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "기본 문자로 치수 한계를 생성합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-271D1152-D76D-4FD1-B91B-50F8671012A4.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMLTEX1",
+    "type": "string",
+    "default": "",
+    "scope": "drawing",
+    "description": "첫 번째 치수보조선의 선종류를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-535BAECA-312A-4841-A064-4FDB3469AAD0.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "\"\""
+    }
+  },
+  {
+    "name": "DIMLTYPE",
+    "type": "string",
+    "default": "",
+    "scope": "drawing",
+    "description": "치수 선의 선종류를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-08054AEC-6DB4-4E69-B992-C6D8FC0021EC.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "\"\""
+    }
+  },
+  {
+    "name": "DIMLUNIT",
+    "type": "integer",
+    "default": 2,
+    "scope": "drawing",
+    "description": "각도를 제외한 모든 치수 유형의 단위를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2ECDF7CF-6EEA-4174-B50C-8630D5002C20.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "2"
+    },
+    "enum": [1, 2, 3, 4, 5, 6],
+    "min": 1,
+    "max": 6
+  },
+  {
+    "name": "DIMLWD",
+    "type": "integer",
+    "default": -2,
+    "scope": "drawing",
+    "description": "치수 선에 선가중치를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8EE72FFB-3EE7-4F10-83EC-45565F1CBCCE.htm",
+      "type": "Enum",
+      "savedIn": "Drawing",
+      "initial": "-2"
+    },
+    "enum": [
+      -3, -2, -1, 0, 5, 9, 13, 15, 18, 20, 25, 30, 35, 40, 50, 53, 60, 70, 80, 90, 100, 106, 120,
+      140, 158, 200, 211
+    ],
+    "min": -3,
+    "max": 211
+  },
+  {
+    "name": "DIMLWE",
+    "type": "integer",
+    "default": -2,
+    "scope": "drawing",
+    "description": "치수보조선에 선가중치를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-21DF5F82-4F3A-4F93-8FD6-89A942799468.htm",
+      "type": "Enum",
+      "savedIn": "Drawing",
+      "initial": "-2"
+    },
+    "enum": [
+      -3, -2, -1, 0, 5, 9, 13, 15, 18, 20, 25, 30, 35, 40, 50, 53, 60, 70, 80, 90, 100, 106, 120,
+      140, 158, 200, 211
+    ],
+    "min": -3,
+    "max": 211
+  },
+  {
+    "name": "DIMPICKBOX",
+    "type": "integer",
+    "default": 5,
+    "scope": "profile",
+    "description": "DIM 명령 내에서 객체 선택 표적 높이(픽셀)를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E5C8EBE2-6B96-46C8-9D24-23A713A1E6B0.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "5"
+    },
+    "min": 0,
+    "max": 50
+  },
+  {
+    "name": "DIMPOST",
+    "type": "string",
+    "default": "",
+    "scope": "drawing",
+    "description": "치수 측정단위에 문자 머리말이나 꼬리말(또는 둘 다)을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-79CCF9B1-BE33-4158-891C-50E4BF795D8E.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "None"
+    }
+  },
+  {
+    "name": "DIMRND",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "모든 치수기입 거리를 지정된 값으로 반올림합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-215CF615-1AA7-45E5-9D0F-CF9693ABCCB9.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIMSAH",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "치수 선 화살촉 블록의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1B912FA4-3D88-42BC-93B4-D329DB5DBF1F.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DIMSCALE",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "크기, 거리 또는 간격띄우기를 지정하는 치수기입 변수에 적용되는 전체 축척 비율을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AEA309F0-B831-4432-8085-FB6CD49CDC78.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000"
+    },
+    "min": 0
+  },
+  {
+    "name": "DIMSD1",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "첫 번째 치수선 및 화살촉의 억제를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B476440D-0BCB-4691-81BA-1B0DC945BE99.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  }
+]

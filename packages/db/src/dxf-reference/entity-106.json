@@ -1,0 +1,23 @@
+{
+  "title": "Object Coordinate Systems (OCS) in DXF",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-D99F1509-E4E4-47A3-8691-92EA07DC88F5.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [3, 3, 3, 3, 3, 3],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [2, 2, 2],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E19E5B42-0CC7-4EBA-B29F-5E1D595149EE.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-B871E164-EC79-46E8-8DF6-EFE312D66291.htm"
+  ]
+}

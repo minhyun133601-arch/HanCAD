@@ -1,0 +1,78 @@
+{
+  "title": "HELIX (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-76DB3ABF-3C8C-47D1-8AFB-72942D9AE1FF.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbHelix"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [90],
+      "subclasses": ["AcDbHelix"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [91],
+      "subclasses": ["AcDbHelix"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [10, 20, 30],
+      "subclasses": ["AcDbHelix"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [11, 21, 31],
+      "subclasses": ["AcDbHelix"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [12, 22, 32],
+      "subclasses": ["AcDbHelix"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [40],
+      "subclasses": ["AcDbHelix"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [41],
+      "subclasses": ["AcDbHelix"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [42],
+      "subclasses": ["AcDbHelix"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [290],
+      "subclasses": ["AcDbHelix"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [280],
+      "subclasses": ["AcDbHelix"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484.htm"
+  ]
+}

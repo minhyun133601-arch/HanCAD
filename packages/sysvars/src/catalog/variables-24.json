@@ -1,0 +1,273 @@
+[
+  {
+    "name": "LOFTMAG2",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "로프트 동작의 마지막 횡단을 통해 기울기 각도의 크기를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-128216DE-135C-4135-9787-3386CBFE4B56.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "LOFTNORMALS",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "횡단을 통과하는 로프트 객체의 법선을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1176E493-3EF5-4FE0-9199-F6EEC132E362.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2, 3, 4, 5, 6],
+    "min": 0,
+    "max": 6
+  },
+  {
+    "name": "LOFTPARAM",
+    "type": "integer",
+    "default": 7,
+    "scope": "drawing",
+    "description": "로프트 솔리드 및 표면의 쉐이프를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D2666F77-526D-4A38-BE6F-4E7CD99EF1F7.htm",
+      "type": "Bitcode",
+      "savedIn": "Drawing",
+      "initial": "7"
+    },
+    "bits": {
+      "1": "No twist (minimizes the twist between cross sections)",
+      "2": "Align direction (aligns the start to end direction of each cross section curve)",
+      "4": "Simplify (produces simple solids and surfaces, such as a cylinder or plane, instead of spline",
+      "8": "Close (closes the surface or solid between the first and the last cross sections)"
+    },
+    "min": 0,
+    "max": 15,
+    "bitmask": 15
+  },
+  {
+    "name": "LOGFILEMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "명령 사용 내역을 로그 파일에 기록할지 여부를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C0C25385-F210-4834-B7D4-B29C2592D36A.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "LOGFILENAME",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "현재 도면에 대한 명령 사용 내역 로그 파일의 경로와 이름을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-38D94E23-56D3-4B41-8684-200150A2DDA7.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "LOGFILEPATH",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "세션의 모든 도면에 대한 명령 사용 내역 로그 파일의 경로를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0E2D4DF2-4C26-48AC-ACBC-819E3C46CE59.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Varies"
+    }
+  },
+  {
+    "name": "LOGINNAME",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "현재 사용자의 로그인 이름을 표시하고 DWG 및 관련 파일의 파일 특성 통계와 함께 저장됩니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-81446F4E-F6DC-442A-9889-EE777D3D49B9.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "LONGITUDE",
+    "type": "real",
+    "default": -122.394,
+    "scope": "drawing",
+    "description": "지리적 표식기의 경도를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C745C49D-3646-4C3E-B32E-7AC0F89E854E.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "-122.3940"
+    },
+    "min": -180,
+    "max": 180
+  },
+  {
+    "name": "LTSCALE",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "전역 선종류 축척 비율을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-88787AE5-957B-483C-9EEF-51564114181F.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000"
+    },
+    "min": 0,
+    "exclusiveMin": true
+  },
+  {
+    "name": "LUNITS",
+    "type": "integer",
+    "default": 2,
+    "scope": "drawing",
+    "description": "객체 작성을 위한 선형 단위 형식을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D7C80D1F-B1C0-44A9-898E-B3100FF391CB.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "2"
+    },
+    "enum": [1, 2, 3, 4, 5],
+    "min": 1,
+    "max": 5
+  },
+  {
+    "name": "LUPREC",
+    "type": "integer",
+    "default": 4,
+    "scope": "drawing",
+    "description": "선형 단위 및 좌표의 표시 정밀도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5FFF39D6-EFC7-49F5-B56A-6023EB5C0DE7.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "4"
+    },
+    "min": 0,
+    "max": 8
+  },
+  {
+    "name": "LWDEFAULT",
+    "type": "integer",
+    "default": 25,
+    "scope": "profile",
+    "description": "기본 선가중치 값을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-969FE4A6-C30D-44DE-AFD4-A81B53F175F6.htm",
+      "type": "Enum",
+      "savedIn": "Registry",
+      "initial": "25"
+    },
+    "enum": [
+      0, 5, 9, 13, 15, 18, 20, 25, 30, 35, 40, 50, 53, 60, 70, 80, 90, 100, 106, 120, 140, 158, 200,
+      211
+    ],
+    "min": 0,
+    "max": 211
+  },
+  {
+    "name": "LWDISPLAY",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "객체의 선가중치를 표시할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-18CA6E8F-0008-402E-9F6B-2F9ED8A0A7DD.htm",
+      "type": "Switch",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "LWUNITS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "선가중치 단위를 인치로 표시할지 또는 밀리미터로 표시할지 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-60AD1B40-39E8-4918-B93D-647CBA439E30.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MACROINSIGHTSSUPPORT",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "실행하는 명령 시퀀스를 기준으로 매크로 정보를 받을 수 있는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D1780F08-853C-4AAF-BD71-D0E27C3E8018.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MATBROWSERSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "재료 검색기가 열려 있는지 아니면 닫혀 있는지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EE82A39A-90F8-46F7-87FC-4AF9E9AEB833.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "MATEDITORSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "재료 편집기가 열려 있는지 아니면 닫혀 있는지를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-38D9209A-0682-44F3-B065-1EB70D7B1B5F.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  }
+]

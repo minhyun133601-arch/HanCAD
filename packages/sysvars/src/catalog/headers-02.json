@@ -1,0 +1,254 @@
+[
+  {
+    "name": "DIMCLRD",
+    "codes": [70],
+    "systemVariable": "DIMCLRD",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMCLRE",
+    "codes": [70],
+    "systemVariable": "DIMCLRE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMCLRT",
+    "codes": [70],
+    "systemVariable": "DIMCLRT",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMDEC",
+    "codes": [70],
+    "systemVariable": "DIMDEC",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMDLE",
+    "codes": [40],
+    "systemVariable": "DIMDLE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMDLI",
+    "codes": [40],
+    "systemVariable": "DIMDLI",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMDSEP",
+    "codes": [70],
+    "systemVariable": "DIMDSEP",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMEXE",
+    "codes": [40],
+    "systemVariable": "DIMEXE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMEXO",
+    "codes": [40],
+    "systemVariable": "DIMEXO",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMFAC",
+    "codes": [40],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMGAP",
+    "codes": [40],
+    "systemVariable": "DIMGAP",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMJUST",
+    "codes": [70],
+    "systemVariable": "DIMJUST",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMLDRBLK",
+    "codes": [1],
+    "systemVariable": "DIMLDRBLK",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMLFAC",
+    "codes": [40],
+    "systemVariable": "DIMLFAC",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMLIM",
+    "codes": [70],
+    "systemVariable": "DIMLIM",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMLUNIT",
+    "codes": [70],
+    "systemVariable": "DIMLUNIT",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMLWD",
+    "codes": [70],
+    "systemVariable": "DIMLWD",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMLWE",
+    "codes": [70],
+    "systemVariable": "DIMLWE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMPOST",
+    "codes": [1],
+    "systemVariable": "DIMPOST",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMRND",
+    "codes": [40],
+    "systemVariable": "DIMRND",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMSAH",
+    "codes": [70],
+    "systemVariable": "DIMSAH",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMSCALE",
+    "codes": [40],
+    "systemVariable": "DIMSCALE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMSD1",
+    "codes": [70],
+    "systemVariable": "DIMSD1",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMSD2",
+    "codes": [70],
+    "systemVariable": "DIMSD2",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMSE1",
+    "codes": [70],
+    "systemVariable": "DIMSE1",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMSE2",
+    "codes": [70],
+    "systemVariable": "DIMSE2",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMSHO",
+    "codes": [70],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMSOXD",
+    "codes": [70],
+    "systemVariable": "DIMSOXD",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMSTYLE",
+    "codes": [2],
+    "systemVariable": "DIMSTYLE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTAD",
+    "codes": [70],
+    "systemVariable": "DIMTAD",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTDEC",
+    "codes": [70],
+    "systemVariable": "DIMTDEC",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTFAC",
+    "codes": [40],
+    "systemVariable": "DIMTFAC",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTIH",
+    "codes": [70],
+    "systemVariable": "DIMTIH",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTIX",
+    "codes": [70],
+    "systemVariable": "DIMTIX",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTM",
+    "codes": [40],
+    "systemVariable": "DIMTM",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTMOVE",
+    "codes": [70],
+    "systemVariable": "DIMTMOVE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTOFL",
+    "codes": [70],
+    "systemVariable": "DIMTOFL",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTOH",
+    "codes": [70],
+    "systemVariable": "DIMTOH",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTOL",
+    "codes": [70],
+    "systemVariable": "DIMTOL",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTOLJ",
+    "codes": [70],
+    "systemVariable": "DIMTOLJ",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTP",
+    "codes": [40],
+    "systemVariable": "DIMTP",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "DIMTSZ",
+    "codes": [40],
+    "systemVariable": "DIMTSZ",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  }
+]

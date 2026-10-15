@@ -1,0 +1,136 @@
+{
+  "title": "HATCH (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-C6C71CED-CE0F-4184-82A5-07AD6241F15B.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [10],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [20, 30],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [210],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [220, 230],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [2],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [63],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [71],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [91],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [75],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [76],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [52],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [41],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [73],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [77],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [78],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [47],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [98],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [11],
+      "subclasses": ["AcDbHatch"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-DC5215D6-E73F-4DFF-8BE9-01CA9610FAEE.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-7C05C0EC-B0FB-4A86-A164-B9E5C6C03990.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-DC5215D6-E73F-4DFF-8BE9-01CA9610FAEE.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-7C05C0EC-B0FB-4A86-A164-B9E5C6C03990.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484.htm"
+  ]
+}

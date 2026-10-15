@@ -1,0 +1,304 @@
+[
+  {
+    "name": "DIVMESHPYRLENGTH",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 피라미드 밑면의 각 치수에 따른 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6E36079B-3895-4F58-85F3-26E469FAB9AA.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHSPHEREAXIS",
+    "type": "integer",
+    "default": 12,
+    "scope": "profile",
+    "description": "메쉬 구의 축 끝점에 대한 반지름 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-10B0A4DB-B7DE-4396-A00C-25BAE411C0EF.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "12"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHSPHEREHEIGHT",
+    "type": "integer",
+    "default": 6,
+    "scope": "profile",
+    "description": "메쉬 구의 두 축 끝점 사이 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2AAE7B03-092A-4B63-90E5-E1ACFB38DCD6.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "6"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHTORUSPATH",
+    "type": "integer",
+    "default": 8,
+    "scope": "profile",
+    "description": "메쉬 토러스 프로파일에 의해 스윕된 경로의 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6EAE939E-9300-41B8-AE69-9F37FB09FBE0.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "8"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHTORUSSECTION",
+    "type": "integer",
+    "default": 8,
+    "scope": "profile",
+    "description": "메쉬 토러스 경로를 스윕하는 프로파일의 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FEC2887D-0C6B-47AB-8915-B1138D0B9863.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "8"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHWEDGEBASE",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 쐐기에서 삼각형 치수 둘레의 중간점 사이 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9D3DFF3B-0301-484D-9473-299911CAFB37.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHWEDGEHEIGHT",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 쐐기의 Z 축 기준 높이에 대한 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D3C66A72-C32E-400D-8F2D-37D61A91CE4D.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHWEDGELENGTH",
+    "type": "integer",
+    "default": 4,
+    "scope": "profile",
+    "description": "메쉬 쐐기에서 X축 방향 길이의 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-053FEEB7-D24F-49A0-B2DD-2E0DC3BE514B.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "4"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHWEDGESLOPE",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "쐐기 꼭대기점에서 밑면 모서리까지 이어지는 기울기의 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-27AAE7EA-D887-4FFA-A46C-F2682D1C1753.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DIVMESHWEDGEWIDTH",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "메쉬 쐐기에서 Y축 방향 폭의 분할 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7ACF07B3-EC83-4BDD-B159-E18C224B069E.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DONUTID",
+    "type": "real",
+    "default": 0.5,
+    "scope": "session",
+    "description": "도넛의 내부 지름에 대한 기본값을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E464A318-DDF6-4017-BE03-1366361C9623.htm",
+      "type": "Real",
+      "savedIn": "Not-saved",
+      "initial": "0.5000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DONUTOD",
+    "type": "real",
+    "default": 1,
+    "scope": "session",
+    "description": "도넛의 외부 지름에 대한 기본값을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B3C626A7-3401-43B5-8ACF-2BF3445A6C75.htm",
+      "type": "Real",
+      "savedIn": "Not-saved",
+      "initial": "1.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DRAGMODE",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "마우스로 끄는 객체의 표시 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0690A755-3B81-44E7-9AB2-5DFED263642F.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "DRAGP1",
+    "type": "integer",
+    "default": 5000,
+    "scope": "profile",
+    "description": "하드웨어 가속을 사용하는 경우, 사용자가 2D 뷰포트 내에서 객체를 끌 때 시스템이 마우스에서 새 입력 샘플을 확인하기 전에 그리는 벡터의 수를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E2A80E69-A30A-439C-B909-E5CAA3E220F2.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "5000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DRAGP2",
+    "type": "integer",
+    "default": 10,
+    "scope": "profile",
+    "description": "소프트웨어 가속을 사용하는 경우, 사용자가 2D 뷰포트 내에서 객체를 끌 때 시스템이 마우스에서 새 입력 샘플을 확인하기 전에 그리는 벡터의 수를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5A74FD9B-CEFD-4D3A-B2D0-E868CF8CE1F7.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "10"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DRAGVS",
+    "type": "string",
+    "default": "",
+    "scope": "drawing",
+    "description": "3D 솔리드 및 메쉬 기본체와 돌출된 솔리드, 표면 및 메쉬를 작성할 때 표시할 비주얼 스타일을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EEB66098-82FA-4E58-8251-0879FB983228.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "\"\""
+    }
+  },
+  {
+    "name": "DRAWORDERCTL",
+    "type": "integer",
+    "default": 3,
+    "scope": "drawing",
+    "description": "겹치는 객체를 작성하거나 편집할 때 기본 표시 동작을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-85D5C950-1323-4A62-BC35-2CDA7F1C6A50.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "3"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "DRSTATE",
+    "type": "integer",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "도면 복구 관리자 윈도우가 열려 있는지 닫혀 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CFD2DAD1-88A5-47F4-8A19-B379A53A78FB.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DTEXTED",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "단일 행 문자 편집에 표시되는 사용자 인터페이스를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1B7D1C18-13E5-46D2-9C31-114EC6D981E6.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DWFFRAME",
+    "type": "integer",
+    "default": 2,
+    "scope": "drawing",
+    "description": "현재 도면에서 DWF 또는 DWFx 언더레이 프레임을 표시할지 아니면 플롯할지 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-67366D5F-0B39-4159-B762-D369EC765486.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "DWFOSNAP",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면에 부착된 DWF 또는 DWFx 언더레이의 형상에 대한 객체 스냅의 활성 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C3059786-E3F3-47B0-8B54-F93E15A84120.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  }
+]

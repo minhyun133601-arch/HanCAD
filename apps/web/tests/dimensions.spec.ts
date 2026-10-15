@@ -246,9 +246,7 @@ test('standalone style changes persist on empty drawings and foreign overlays do
   });
   await page.reload();
   await enter(page, 'D');
-  await expect(dialog.getByRole('spinbutton', { name: '문자 높이', exact: true })).toHaveValue(
-    '2.5',
-  );
+  await expect(dialog.getByRole('spinbutton', { name: '문자 높이', exact: true })).toHaveValue('7');
   await dialog.getByRole('button', { name: '취소', exact: true }).click();
   await page.evaluate(() => {
     const saved = JSON.parse(localStorage.getItem('hancad.active-drawing.v1') ?? '{}');

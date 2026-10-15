@@ -1,0 +1,310 @@
+[
+  {
+    "name": "BLOCKEXCLUDECOLOR",
+    "type": "integer",
+    "default": 7,
+    "scope": "profile",
+    "description": "블록으로 변환되어서는 안 되는 식별된 인스턴스에 대해 색상 강조를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2226EB5E-5283-4EB4-B2F2-67D22C3D74B4.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "7"
+    },
+    "min": 1,
+    "max": 255
+  },
+  {
+    "name": "BLOCKNAVIGATE",
+    "type": "string",
+    "default": "None",
+    "scope": "profile",
+    "description": "블록 팔레트의 라이브러리 탭에 표시되는 폴더, 파일 및 블록을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-44E6D5B6-5C89-422B-AA74-08780DF15E71.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "None"
+    }
+  },
+  {
+    "name": "BLOCKREDEFINEMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "블록 팔레트에서 기존 블록 정의와 이름이 같은 블록을 삽입할 때 명령행의 프롬프트 또는 대화상자의 표시 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-15A13868-7582-4CCD-A8FC-9AF2D05E689C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "BLOCKSDATACOLLECTION",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "스마트 블록으로 작업할 때 사용되는 컨텐츠 데이터를 데이터 수집 서비스에 공유할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5AD60349-4CA6-4E2C-982E-8DAEF5E9FF53.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "BLOCKSRECENTFOLDER",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "최근에 삽입 또는 작성한 블록이 저장되는 경로를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2B47D65C-B88A-42C6-BE79-590901360A5D.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Varies"
+    }
+  },
+  {
+    "name": "BLOCKSYNCFOLDER",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "최근 및 즐겨찾기 블록이 저장되는 경로를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B03DC983-2680-4D73-B246-780990CBF4F3.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Varies"
+    }
+  },
+  {
+    "name": "BLOCKTESTWINDOW",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "블록 테스트 윈도우가 현재 윈도우인지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-25FB9865-B874-4E34-9BE9-DD50B1BFAB22.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "BPARAMETERCOLOR",
+    "type": "string",
+    "default": "170",
+    "scope": "profile",
+    "description": "블록 편집기에서 매개변수의 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0385868B-AEF9-47B9-A52E-58D5B9C3837F.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "170"
+    }
+  },
+  {
+    "name": "BPARAMETERFONT",
+    "type": "string",
+    "default": "Simplex.shx",
+    "scope": "profile",
+    "description": "블록 편집기에서 매개변수와 동작에 사용되는 글꼴을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8613E9B0-A4D9-4EF8-B047-2513F86BB937.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Simplex.shx"
+    }
+  },
+  {
+    "name": "BPARAMETERSIZE",
+    "type": "integer",
+    "default": 12,
+    "scope": "profile",
+    "description": "화면표시를 기준으로 블록 편집기의 매개변수 문자 및 피쳐 크기를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BAD1002D-57F9-46C7-B990-5CDDA96C12CB.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "12"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "BPTEXTHORIZONTAL",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "블록 편집기에서 동작 매개변수 및 구속조건 매개변수에 표시되는 문자를 수평으로 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3F1EAACA-CB50-4D3E-946C-A84D00F1FB2E.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "BSEARCHINCLUDEEXISTINGBLOCKS",
+    "type": "integer",
+    "default": 3,
+    "scope": "session",
+    "description": "BSEARCH 명령이 기본적으로 기존 블록 인스턴스를 선택하는지 여부를 조정합니다. 사용자는 검토 프로세스 중에도 계속 선택 사항을 조정할 수 있습니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1BC7085A-B6E2-4131-858A-A1BBF399FC0E.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "3"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "BTMARKDISPLAY",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "값 세트 표식기가 동적 블록 참조를 위해 표시되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AB938681-7796-49D7-94A5-DAEA81C552C1.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "BVMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "현재 가시성 상태에 보이지 않도록 된 객체가 블록 편집기에서 표시되는 방식을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BF628BE6-7100-4606-9185-44007503E8DE.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CACHEMAXTOTALSIZE",
+    "type": "integer",
+    "default": 1024,
+    "scope": "profile",
+    "description": "제품 그래픽 캐시에 있는 모든 도면 파일 항목에 대한 상한을 MB(메가바이트)로 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F3B22467-BC93-4D91-AC10-E93EAB157F85.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1024"
+    },
+    "min": 0,
+    "max": 65535
+  },
+  {
+    "name": "CAMERADISPLAY",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "카메라 객체의 표시를 켜거나 끕니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A3A09659-03D1-4A2C-97DE-DF7352824989.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CAMERAHEIGHT",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "새 카메라 객체의 기본 높이를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C2CF584A-5C0A-4436-A6ED-ABF6F0FE569A.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "CANNOSCALE",
+    "type": "string",
+    "default": "1:1",
+    "scope": "drawing",
+    "description": "현재 공간에 대한 현재 주석 축척의 이름을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C7111BEE-76AA-481D-AC51-8600A31FA23A.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "1:1"
+    }
+  },
+  {
+    "name": "CANNOSCALEVALUE",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "현재 주석 축척의 값을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9584CD21-91CA-470A-8CE1-9FEC04BDD11E.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "CAPTURETHUMBNAILS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "뒤로 감기 도구에 대해 썸네일을 캡처할지 여부와 캡처 시기를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CA64DFE3-6EAD-4F92-A3C9-0B374AF892A3.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "CBARTRANSPARENCY",
+    "type": "integer",
+    "default": 50,
+    "scope": "profile",
+    "description": "구속조건 막대의 투명도를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3E0C6CFC-B222-467F-95C4-EFEBF7496BB6.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "50"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

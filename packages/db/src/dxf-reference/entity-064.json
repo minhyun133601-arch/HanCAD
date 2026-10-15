@@ -1,0 +1,96 @@
+{
+  "title": "LWPOLYLINE (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-748FC305-F3F2-4F74-825A-61F04D757A50.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [90],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [43],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [38],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [39],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [10],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [20],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [91],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [40],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [41],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [42],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": true
+    },
+    {
+      "codes": [210],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [220, 230],
+      "subclasses": ["AcDbPolyline"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484.htm"
+  ]
+}

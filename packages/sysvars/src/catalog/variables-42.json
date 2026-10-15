@@ -1,0 +1,315 @@
+[
+  {
+    "name": "UCSORTHO",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "직교 뷰를 복원할 때 UCS의 XY 평면을 현재 뷰 평면과 자동으로 정렬할지 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A8E18ED4-F2FA-4D8D-9FEA-7F19DA3D3B43.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "UCSSELECTMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "그립을 사용하여 UCS 아이콘을 선택하고 조작할 수 있는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5AEDA561-BE5F-42E0-9A49-0894CCFBE020.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "UCSVIEW",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "현재 UCS가 명명된 뷰와 함께 저장될지 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-37336AF7-160A-4A87-9688-46DE8929975C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "UCSVP",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "다른 뷰포트의 UCS가 현재 뷰포트의 UCS에 종속적인지 또는 독립적인지를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F71044DB-48DE-4D02-89E4-B1C2BC4C64A0.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "UCSXDIR",
+    "type": "point3",
+    "default": [1, 0, 0],
+    "scope": "drawing",
+    "description": "현재 공간에서 현재 뷰포트에 대한 현재 UCS의 X 방향을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F2A48D4C-47E8-4147-8580-C604351A8D27.htm",
+      "type": "3D-point",
+      "savedIn": "Drawing",
+      "initial": "1.0000,0.0000,0.0000"
+    },
+    "readonly": true
+  },
+  {
+    "name": "UCSYDIR",
+    "type": "point3",
+    "default": [0, 1, 0],
+    "scope": "drawing",
+    "description": "현재 공간에서 현재 뷰포트에 대한 현재 UCS의 Y 방향을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F2E99479-FC68-4460-BE1F-68383AC1BE98.htm",
+      "type": "3D-point",
+      "savedIn": "Drawing",
+      "initial": "0.0000,1.0000,0.0000"
+    },
+    "readonly": true
+  },
+  {
+    "name": "UNDOCTL",
+    "type": "integer",
+    "default": 53,
+    "scope": "session",
+    "description": "UNDO 명령에 사용되는 옵션을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A28ACE3A-D8BB-4933-8FFC-3AF0F7BA0330.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "53"
+    },
+    "readonly": true,
+    "bits": {
+      "0": "UNDO is turned off",
+      "1": "UNDO is turned on",
+      "2": "Only one command can be undone",
+      "4": "Auto is turned on",
+      "8": "A group is currently active",
+      "16": "Zoom and pan operations are grouped as a single action",
+      "32": "Layer property operations are grouped as a single action"
+    },
+    "min": 0,
+    "max": 63,
+    "bitmask": 63
+  },
+  {
+    "name": "UNDOMARKS",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "UNDO 제어 스트림에 배치된 표식의 수를 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6F47FEE0-823D-4C0A-AAA4-DA11215BCDD3.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "UNITMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "단위의 표시 형식을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C52134E8-10EB-4AE7-A0C0-8F798C68F823.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "UPDATETHUMBNAIL",
+    "type": "integer",
+    "default": 15,
+    "scope": "drawing",
+    "description": "뷰 및 배치의 썸네일 미리보기 업데이트를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8DEFD44A-66B1-479E-9FBC-8ECADA03EFAC.htm",
+      "type": "Bitcode",
+      "savedIn": "Drawing",
+      "initial": "15"
+    },
+    "bits": {
+      "0": "Does not update previews",
+      "1": "Updates previews for model space views",
+      "2": "Updates previews for layout views",
+      "4": "Updates previews for layouts",
+      "8": "Updates previews when layouts or views are created, modified, or restored",
+      "16": "Updates previews when the drawing is saved"
+    },
+    "min": 0,
+    "max": 31,
+    "bitmask": 31
+  },
+  {
+    "name": "USERI1",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "정수 값을 저장하고 검색합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BDC0BB08-FCDD-4E4F-AC3F-407696911F8B.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "USERI2",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "정수 값을 저장하고 검색합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BDC0BB08-FCDD-4E4F-AC3F-407696911F8B.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "USERI3",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "정수 값을 저장하고 검색합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BDC0BB08-FCDD-4E4F-AC3F-407696911F8B.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "USERI4",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "정수 값을 저장하고 검색합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BDC0BB08-FCDD-4E4F-AC3F-407696911F8B.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "USERI5",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "정수 값을 저장하고 검색합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BDC0BB08-FCDD-4E4F-AC3F-407696911F8B.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "USERR1",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "실수를 저장하고 검색합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DBDAD959-AAB0-4E85-87D3-A5841A5BC281.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "USERR2",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "실수를 저장하고 검색합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DBDAD959-AAB0-4E85-87D3-A5841A5BC281.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "USERR3",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "실수를 저장하고 검색합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DBDAD959-AAB0-4E85-87D3-A5841A5BC281.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "USERR4",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "실수를 저장하고 검색합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DBDAD959-AAB0-4E85-87D3-A5841A5BC281.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "USERR5",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "실수를 저장하고 검색합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DBDAD959-AAB0-4E85-87D3-A5841A5BC281.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

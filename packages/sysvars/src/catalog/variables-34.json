@@ -1,0 +1,311 @@
+[
+  {
+    "name": "SAVENAME",
+    "type": "string",
+    "default": "",
+    "scope": "session",
+    "description": "가장 최근에 저장된 도면의 파일 이름과 폴더 경로를 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-EBBA5CBE-4B68-4150-BE22-5A7DC3810A48.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "\"\""
+    },
+    "readonly": true
+  },
+  {
+    "name": "SAVETIME",
+    "type": "integer",
+    "default": 10,
+    "scope": "profile",
+    "description": "자동 저장 간격을 설정합니다. 해당 간격은 분 단위로 측정됩니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AE54276F-ACF1-41A1-87EC-56E297CDB067.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "10"
+    },
+    "min": 0,
+    "max": 600
+  },
+  {
+    "name": "SCREENMODE",
+    "type": "integer",
+    "default": 3,
+    "scope": "session",
+    "description": "표시의 상태를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C6905C65-5048-460B-AABC-DCBE77FA6F2C.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "3"
+    },
+    "readonly": true,
+    "bits": {
+      "0": "Text screen is displayed",
+      "1": "Drawing area is displayed",
+      "2": "Dual-screen display is configured"
+    },
+    "min": 0,
+    "max": 3,
+    "bitmask": 3
+  },
+  {
+    "name": "SCREENSIZE",
+    "type": "point2",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "픽셀 단위로 현재 뷰포트 크기(X 및 Y)를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D2744552-5213-4E20-9D6B-169D7ECE2696.htm",
+      "type": "2D-point",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "SECTIONOFFSETINC",
+    "type": "real",
+    "default": 6,
+    "scope": "drawing",
+    "description": "단면 평면의 간격띄우기를 위해 컨트롤을 클릭하는 경우 단면 객체가 이동할 거리를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DDA60D8B-1C5C-443E-8D29-CC720A235B1B.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "6.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SECTIONTHICKNESSINC",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "단면 슬라이스 두께 컨트롤이 증가 또는 감소하는 점의 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E93EA846-7CAC-48FA-A2BE-BA361FC3519F.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "1.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SECURELOAD",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "실행 파일이 신뢰할 수 있는 폴더에서만 로드되도록 제한되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-541566C6-2738-49DD-87C3-C1490E924A02.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1, may be locked by the CAD administrator"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "SECUREREMOTEACCESS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "ObjectARX 프로그램이 인터넷 위치 또는 원격 서버에 액세스 할 수 없도록 제한합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B76972C0-FB74-4E1E-AEA0-427B7B6FEEFB.htm",
+      "type": "Switch",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SELECTIONANNODISPLAY",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "주석 객체를 선택할 때 대체 축척 표현을 일시적으로 희미하게 표시할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-022C086E-E1E2-4FB2-A7B3-4272EC810FA9.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SELECTIONAREA",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "선택 영역에 대한 효과 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-78E758D3-4953-44DB-BC11-D11BF9718C7E.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SELECTIONAREAOPACITY",
+    "type": "integer",
+    "default": 25,
+    "scope": "profile",
+    "description": "윈도우 및 교차 선택 과정에서 선택 영역의 투명도를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-02C900C5-D8AA-4E2F-BC28-4FE194031711.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "25"
+    },
+    "min": 0,
+    "max": 100
+  },
+  {
+    "name": "SELECTIONCYCLING",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "겹치는 객체 및 선택 순환과 연관된 표시 옵션을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-08FA6975-49A7-4029-A3F3-ABDA3B2A7122.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [-2, -1, 0, 1, 2],
+    "min": -2,
+    "max": 2
+  },
+  {
+    "name": "SELECTIONEFFECT",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "객체가 선택될 때 사용되는 시각 효과를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E3D7841C-87EB-4F5C-86C7-213FF9469BA8.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "SELECTIONEFFECTCOLOR",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "객체 선택 시 광택 강조 효과의 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CBB90ED0-9C2C-401A-B849-0EAD4E15DC7E.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "SELECTIONOFFSCREEN",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "오프스크린 객체 선택을 제어합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2609B540-EF39-45B5-8682-FEC7F16B77DE.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "SELECTIONPREVIEW",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "선택 미리보기의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-77B3B59F-95E5-4F8A-85E2-D9411D712AF0.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "bits": {
+      "0": "Off",
+      "1": "On when no commands are active",
+      "2": "On when a command prompts for object selection"
+    },
+    "min": 0,
+    "max": 3,
+    "bitmask": 3
+  },
+  {
+    "name": "SELECTSIMILARMODE",
+    "type": "integer",
+    "default": 130,
+    "scope": "profile",
+    "description": "SELECTSIMILAR를 사용하여 같은 유형의 객체를 선택하려면 일치해야 하는 특성을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B5E03A31-ADA0-4374-B75E-0F3D26F4EB49.htm",
+      "type": "Bitcode",
+      "savedIn": "User-settings",
+      "initial": "130"
+    },
+    "bits": {
+      "0": "Object type",
+      "1": "Color",
+      "2": "Layer",
+      "4": "Linetype",
+      "8": "Linetype scale",
+      "16": "Lineweight",
+      "32": "Plot style",
+      "64": "Object style, including text styles, dimension styles, and table styles",
+      "128": "Name, for referenced objects including blocks, xrefs, and images"
+    },
+    "min": 0,
+    "max": 255,
+    "bitmask": 255
+  },
+  {
+    "name": "SETBYLAYERMODE",
+    "type": "integer",
+    "default": 255,
+    "scope": "profile",
+    "description": "SETBYLAYER 명령에 대해 선택할 특성을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7A27C789-A03B-4EBE-869D-2E429CF928C1.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "255"
+    },
+    "bits": {
+      "0": "No properties are selected",
+      "1": "Color property",
+      "2": "Linetype property",
+      "4": "Lineweight property",
+      "8": "Material property",
+      "16": "Plot Style property",
+      "32": "Changes ByBlock to ByLayer",
+      "64": "Include blocks when changing ByBlock to ByLayer",
+      "128": "Transparency property"
+    },
+    "min": 0,
+    "max": 255,
+    "bitmask": 255
+  }
+]

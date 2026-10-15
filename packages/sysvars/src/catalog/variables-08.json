@@ -1,0 +1,296 @@
+[
+  {
+    "name": "CTABLESTYLE",
+    "type": "string",
+    "default": "Standard",
+    "scope": "drawing",
+    "description": "현재 테이블 스타일의 이름을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-674CB618-DEFC-42BB-8125-0508A331B94D.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "Standard"
+    }
+  },
+  {
+    "name": "CULLINGOBJ",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "뷰에서 숨겨진 3D 하위 객체를 강조 또는 선택할 수 있는지를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-590C8657-F0DE-4014-B921-FFCFF8C389DE.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CULLINGOBJSELECTION",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "뷰에서 숨겨진 3D 객체를 강조 또는 선택할 수 있는지를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3B35DE27-EC50-4290-ACF8-ABC5FB25EBBC.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CURSORBADGE",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "도면 영역에 특정 커서 배지가 표시되는지 여부를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-61152026-7B55-42F1-80F6-4EF228EA0BA7.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [1, 2],
+    "min": 1,
+    "max": 2
+  },
+  {
+    "name": "CURSORSIZE",
+    "type": "integer",
+    "default": 5,
+    "scope": "profile",
+    "description": "화면 크기의 백분율로 십자선 크기를 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-06BFA068-F97A-453F-8403-75AA778E7C35.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "5"
+    },
+    "min": 1,
+    "max": 100
+  },
+  {
+    "name": "CURSORTYPE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "좌표 입력 장치에서 표시되는 커서 유형을 결정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-17BAD632-92A4-4CCC-AF91-71ADB8C51FFD.htm",
+      "type": "Switch",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "CVIEWDETAILSTYLE",
+    "type": "string",
+    "default": "Metric50",
+    "scope": "drawing",
+    "description": "현재 상세 뷰 스타일의 이름을 설정합니다. 현재 상세 뷰 스타일은 사용자가 새로 작성하는 모든 모형 문서 상세 뷰, 상세 경계 및 지시선의 모양을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A4691398-49AD-4CBF-A37E-3893F748775F.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "Imperial24 (imperial) or Metric50 (metric)"
+    }
+  },
+  {
+    "name": "CVIEWSECTIONSTYLE",
+    "type": "string",
+    "default": "Metric50",
+    "scope": "drawing",
+    "description": "현재 단면 뷰 스타일의 이름을 설정합니다. 현재 단면 뷰 스타일은 사용자가 새로 작성하는 모든 모형 문서 단면 뷰 및 단면 선의 모양을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-141E01E9-EC99-4550-83D4-41D5830D9B50.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "Imperial24 (imperial) or Metric50 (metric)"
+    }
+  },
+  {
+    "name": "CVPORT",
+    "type": "integer",
+    "default": 2,
+    "scope": "drawing",
+    "description": "현재 뷰포트의 식별 번호를 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5FAAE9D9-31BB-4C8A-BA84-808610B59EB9.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "2"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DATE",
+    "type": "real",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "현재 날짜 및 시간을 수정 율리우스력 날짜 형식으로 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CBB24068-1654-4753-BE2E-1D0CE9700411.htm",
+      "type": "Real",
+      "savedIn": "Not-saved",
+      "initial": "Varies"
+    },
+    "readonly": true,
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "DBCSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "데이터베이스 연결 관리자가 열려 있는지 아니면 닫혀 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D768F760-93D2-4422-81E2-E7A3A7AC70C2.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DBLCLKEDIT",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면 영역에서의 두 번 클릭 편집 동작을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0A1763AF-D682-4776-99BA-E64BC2B0D286.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DCTCUST",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "현재 사용자 철자 사전의 경로 및 파일 이름을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-68D78C7A-4C80-4932-A014-B1D6A4FB4FF6.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Varies"
+    }
+  },
+  {
+    "name": "DCTMAIN",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "현재 기본 철자 사전의 3자 키워드를 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E16B1AF6-1907-43AA-B295-40071E3469E2.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Varies by country/region"
+    }
+  },
+  {
+    "name": "DEFAULTGIZMO",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "3D 이동, 3D 회전 또는 3D 축척 장치를 하위 객체를 선택할 때 사용할 기본값으로 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C80894A1-5A23-4CAF-83B1-435C3A5D290F.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "DEFAULTLIGHTING",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "다른 조명 대신에 기본 조명을 켜거나 끕니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C1503769-205F-4D58-99A9-5FE7FE3BD8BC.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DEFAULTLIGHTINGTYPE",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "기본 조명을 이전 혹은 새 유형으로 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A3815F4D-2097-4BC5-B026-AB4AF6526088.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "DEFLPLSTYLE",
+    "type": "string",
+    "default": "Normal",
+    "scope": "profile",
+    "description": "AutoCAD 2000 이전 릴리즈에서 만들어진 도면을 열 때 도면의 모든 도면층 또는 도면 템플릿을 사용하지 않고 처음부터 새 도면을 만들 때 도면층 0에 대한 기본 플롯 스타일을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-ED42103C-2A6F-4098-A489-D3EB303F17C5.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Normal"
+    }
+  },
+  {
+    "name": "DEFPLSTYLE",
+    "type": "string",
+    "default": "ByLayer",
+    "scope": "profile",
+    "description": "AutoCAD 2000 이전 릴리즈에서 만들어진 도면을 열 때 또는 도면 템플릿을 사용하지 않고 처음부터 새 도면을 만들 때 도면의 새 객체에 대한 기본 플롯 스타일을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CAEBD2CD-DA0D-4C91-AB53-BCBFF7FA3D22.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "ByLayer"
+    }
+  },
+  {
+    "name": "DELOBJ",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "다른 객체를 작성하는 데 사용한 형상을 보관할지 아니면 삭제할지를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CB64587F-611E-441E-AB07-14B415BF535F.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

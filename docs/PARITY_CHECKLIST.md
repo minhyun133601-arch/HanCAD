@@ -3,7 +3,7 @@
 These checks track reference behavior and unresolved compatibility. A registered
 command is not an implemented command.
 
-- [ ] Complete original Phase 00 native Korean shell startup, minimum 1280x720 and size/position restoration before new Phase 01 implementation.
+- [ ] Complete deferred original Phase 00 native Korean shell startup, minimum 1280x720 and size/position restoration; user-directed Phase 01 advancement does not verify those items.
 - [ ] Audit all user-visible diagnostics against typed ko-KR/en-US catalogs; bilingual progress content alone does not complete i18n.
 - [ ] Compare localized importer line/limit errors, warnings after language switch/recovery and current-language cancellation against the installed Korean reference; preserve arbitrary external diagnostics verbatim.
 - [ ] Verify renderer startup failure retains the shell and command input in both locales; injected browser context failures do not prove native WebView2 behavior.
@@ -11,6 +11,17 @@ command is not an implemented command.
 - [ ] Verify Korean prompts against the reference release.
 - [ ] Verify the original shortcut table against the reference/user PGP profile.
 - [ ] Verify default variables by drawing, profile and session scope.
+- [ ] Compare the native acadiso default reference graph: styles, exact numeric fields/fonts, layout/block/viewport ownership, paper setup and 25 scale-list entries/order.
+- [ ] Verify all documented DXF entity/object variants and contexts against real files; SCALE currently has common group metadata only, and most record types remain opaque rather than editable.
+- [ ] Verify mapped edits retain duplicate/unknown groups, subclass/application boundaries, dictionary entries, XDATA, reactors, extension dictionaries and per-vertex data through future DXF I/O.
+- [ ] Compare OCS/arbitrary-axis coordinates, ARC degrees, ellipse parameters, bulged/width polylines and affine transforms with the reference; wire pure native geometry into persistent edit commands.
+- [ ] Compare numerical NURBS/fit spline closest points, length, area and conservative bounds; verify natural omitted-tangent conditions/nonzero fit tolerance, matching periodic tangents and the unsupported arbitrary periodic tangent case.
+- [ ] Supply the 62 unresolved host/document sysvar defaults through verified runtime providers; complete deferred numeric ranges and resolve SELECTIONEFFECTCOLOR default 0 versus published range 1-255.
+- [ ] Verify Korean direct-sysvar prompts, OSMODE 4133/invalid 99999, SETVAR LUPREC 2, read-only values and all shared-profile/per-document scopes against installed AutoCAD.
+- [ ] Compare UNDO count/marks/groups/Control and live UNDOCTL; integrate Auto menu grouping and navigation/layer category combination into actual UI commands.
+- [ ] Compare implemented REDO's immediate-after-U/UNDO window and last undo batch against the installed reference; compare MREDO count/All/Last and OOPS after intervening edits and document reactivation.
+- [ ] Verify NEW/OPEN/tab switching preserve independent graphs/history/blobs and shared profiles; provisional commands cancel without leaking into another document.
+- [ ] Verify full .hcd and active recovery preserve opaque records/reference graphs/blobs; test delayed old-document cache writes and failures, and distinguish clean reload history from retained tab history.
 - [ ] Verify D/DV/DRE use the supplied specification and do not use legacy aliases.
 - [ ] Verify command prefixes, last-command repeat, cancellation and transparent commands.
 - [ ] Verify Korean IME command entry and Korean free-text composition on Windows.

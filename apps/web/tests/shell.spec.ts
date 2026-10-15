@@ -19,7 +19,7 @@ test('Korean shell is local, readable, and uses the required canvas background',
   });
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
-  await expect(page).toHaveTitle('HanCAD');
+  await expect(page).toHaveTitle('Drawing1.dwg — HanCAD');
   await expect(page.getByRole('tab', { name: '홈', exact: true })).toHaveAttribute(
     'aria-selected',
     'true',

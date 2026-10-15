@@ -13,6 +13,7 @@ export interface SystemVariableErrorDetails {
 export interface SystemVariableErrorMessages {
   sysvarUnknown: (name: string) => string;
   sysvarReadonly: (name: string) => string;
+  sysvarUnavailable: (name: string) => string;
   sysvarInvalid: (name: string, range: string) => string;
   sysvarNotNumber: (name: string) => string;
   sysvarNotToggleable: (name: string) => string;
@@ -25,7 +26,7 @@ export interface SystemVariableErrorMessages {
 export class SystemVariableError extends Error {
   constructor(
     readonly variable: string,
-    readonly code: 'unknown' | 'readonly' | 'invalid',
+    readonly code: 'unknown' | 'readonly' | 'invalid' | 'unavailable',
     message: string,
     readonly details: SystemVariableErrorDetails = {},
   ) {
@@ -42,6 +43,7 @@ export function formatSystemVariableError(
   const { variable, code, details } = error;
   if (code === 'unknown') return messages.sysvarUnknown(variable);
   if (code === 'readonly') return messages.sysvarReadonly(variable);
+  if (code === 'unavailable') return messages.sysvarUnavailable(variable);
   if (details.reason === 'not-number') return messages.sysvarNotNumber(variable);
   if (details.reason === 'not-toggleable') return messages.sysvarNotToggleable(variable);
   if (details.reason === 'missing-symbol')
@@ -65,22 +67,36 @@ export class SystemVariableProfile {
 export interface SystemVariablesOptions {
   database?: DrawingDatabase;
   profile?: SystemVariableProfile;
+  runtimeValues?: () => Readonly<Record<string, SysvarValue>>;
 }
 
 export class SystemVariables {
   readonly database: DrawingDatabase;
   readonly profile: SystemVariableProfile;
-  readonly events = new EventBus<{ name: string; value: SysvarValue }>();
+  readonly events = new EventBus<{ name: string; value: SysvarValue | undefined }>();
   private readonly sessionValues = new Map<string, SysvarValue>();
   private readonly unsubscribers: (() => void)[];
+  private readonly runtimeValues: (() => Readonly<Record<string, SysvarValue>>) | undefined;
 
   constructor(options: SystemVariablesOptions = {}) {
     this.database = options.database ?? new DrawingDatabase();
     this.profile = options.profile ?? new SystemVariableProfile();
+    this.runtimeValues = options.runtimeValues;
     this.unsubscribers = [
       this.database.events.subscribe((event) => {
-        if (event.type === 'sysvar-changed' && getSystemVariableDefinition(event.name))
-          this.events.publish({ name: event.name, value: this.get(event.name) });
+        if (event.type === 'sysvar-changed') {
+          const definition = getSystemVariableDefinition(event.name);
+          if (definition)
+            this.events.publish({
+              name: event.name,
+              value:
+                event.value === undefined && definition.default === undefined
+                  ? undefined
+                  : this.get(event.name),
+            });
+        }
+        if (event.type === 'history-changed')
+          this.events.publish({ name: 'UNDOCTL', value: this.database.undoControl });
       }),
       this.profile.events.subscribe((event) => this.events.publish(structuredClone(event))),
     ];
@@ -92,13 +108,28 @@ export class SystemVariables {
 
   get(name: string): SysvarValue {
     const definition = this.requireDefinition(name);
+    if (definition.name === 'UNDOCTL') return this.database.undoControl;
+    if (definition.name === 'HANDSEED') return this.database.handseed;
+    const runtime = definition.readonly ? this.runtimeValues?.()[definition.name] : undefined;
+    if (runtime !== undefined) {
+      validateSystemVariable(definition, runtime);
+      return structuredClone(runtime);
+    }
     const stored =
       definition.scope === 'drawing'
         ? this.database.getVariable(definition.name)
         : definition.scope === 'profile'
           ? this.profile.values.get(definition.name)
           : this.sessionValues.get(definition.name);
-    if (stored === undefined) return structuredClone(definition.default);
+    if (stored === undefined) {
+      if (definition.default === undefined)
+        throw new SystemVariableError(
+          definition.name,
+          'unavailable',
+          `${definition.name}의 초기값은 현재 환경에서 아직 확인할 수 없습니다.`,
+        );
+      return structuredClone(definition.default);
+    }
     validateSystemVariable(definition, stored);
     return structuredClone(stored as SysvarValue);
   }
@@ -133,6 +164,20 @@ export class SystemVariables {
       this.sessionValues.set(definition.name, structuredClone(value));
       this.events.publish({ name: definition.name, value: structuredClone(value) });
     }
+  }
+
+  /** Host command/OS state bypasses SETVAR and the drawing journal, with the same validation. */
+  setRuntimeSessionValue(name: string, value: SysvarValue): void {
+    const definition = this.requireDefinition(name);
+    if (!definition.readonly || definition.scope !== 'session' || definition.name === 'UNDOCTL')
+      throw new SystemVariableError(
+        definition.name,
+        'readonly',
+        `${definition.name}은(는) 런타임 세션 값으로 변경할 수 없습니다.`,
+      );
+    validateSystemVariable(definition, value);
+    this.sessionValues.set(definition.name, structuredClone(value));
+    this.events.publish({ name: definition.name, value: this.get(definition.name) });
   }
 
   toggle(name: string): SysvarValue {
@@ -218,10 +263,14 @@ export function validateSystemVariable(definition: SystemVariableDefinition, val
   }
   if (valid && typeof value === 'number')
     valid =
-      (definition.min === undefined || value >= definition.min) &&
-      (definition.max === undefined || value <= definition.max);
+      (definition.min === undefined ||
+        (definition.exclusiveMin ? value > definition.min : value >= definition.min)) &&
+      (definition.max === undefined ||
+        (definition.exclusiveMax ? value < definition.max : value <= definition.max));
   if (valid && definition.enum)
     valid = definition.enum.some((allowed) => JSON.stringify(allowed) === JSON.stringify(value));
+  if (valid && definition.bitmask !== undefined && typeof value === 'number')
+    valid = Number.isInteger(value) && value >= 0 && (value & definition.bitmask) === value;
   if (!valid) {
     const range =
       definition.min === undefined

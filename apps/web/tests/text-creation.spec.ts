@@ -74,7 +74,8 @@ test('DT enters Korean lines in place, ignores composition Enter and groups undo
   await enter(page, 'U');
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('0');
   await heightVariable(page, '2.5');
-  await enter(page, 'REDO');
+  await enter(page, 'MREDO');
+  await enter(page, '1');
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('2');
   await heightVariable(page, '5');
   await page.reload();
@@ -141,7 +142,8 @@ test('TEXT remembers an accepted height without lines and Korean TEXT saves and 
   await heightVariable(page, '6');
   await enter(page, 'U');
   await heightVariable(page, '2.5');
-  await enter(page, 'REDO');
+  await enter(page, 'MREDO');
+  await enter(page, '1');
   await heightVariable(page, '6');
   await page.reload();
   await heightVariable(page, '6');

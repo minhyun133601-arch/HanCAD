@@ -1,0 +1,304 @@
+[
+  {
+    "name": "HPBOUNDRETAIN",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "이 세션에서 새 해치 및 채우기에 대해 경계 객체가 작성되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2B931D42-4FFA-44A5-8E87-27254BF68A12.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HPDLGMODE",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "해치 및 그라데이션 대화상자와 해치 편집 대화상자의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8C19FED5-6024-40A8-AEBD-2AA1C57240B3.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "HPDOUBLE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "이 세션에서 사용자 정의 패턴에 대해 해치 패턴을 이중화하는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-691E7B7D-28DD-46A0-980D-82FFC0CC0B32.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HPDRAWMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "해치 또는 채우기에 새 경계를 정의할 때 사용되는 도면 모드를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B23CFA6A-88E4-4446-B003-BE4A6D766B48.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0 or AREA"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HPGAPTOL",
+    "type": "real",
+    "default": 0,
+    "scope": "profile",
+    "description": "계속 닫힌 해치 경계로 처리할 영역을 거의 둘러싸고 있는 객체 세트 간의 최대 간격을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E58FDE75-CDB6-4625-83A8-D0BA4CF6A96A.htm",
+      "type": "Real",
+      "savedIn": "Registry",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "HPINHERIT",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 도면에서 HATCH 및 HATCHEDIT의 특성 상속 옵션을 사용할 때 해치 원점을 상속하는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DD1C25BF-7AF2-4785-8C30-CC8B27C13331.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HPISLANDDETECTION",
+    "type": "integer",
+    "default": 1,
+    "scope": "session",
+    "description": "이 세션에서 새 해치 경계 내의 고립 영역을 처리하는 방식을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3B578500-B1F3-450E-8C1B-5DEE394B2A27.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "HPISLANDDETECTIONMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "session",
+    "description": "이 세션에서 새 해치 및 채우기 내의 고립 영역을 탐지하는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1595FDAF-AE59-475B-A8DA-D7D754C16501.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HPLAYER",
+    "type": "string",
+    "default": ".",
+    "defaultPolicy": "The documented use-current initial setting is represented by the '.' sentinel defined in the same source topic.",
+    "scope": "drawing",
+    "description": "현재 도면에서 새 해치 및 채우기에 대한 기본 도면층을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8B64F625-7DD2-4264-8E59-3936F0992070.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "use current"
+    }
+  },
+  {
+    "name": "HPLINETYPE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "해치 패턴에서 비연속 선종류가 표시되는 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-10E0E411-38C4-4BCE-B9AA-0E03B772DFB2.htm",
+      "type": "Switch",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HPMAXAREAS",
+    "type": "integer",
+    "default": 100,
+    "scope": "profile",
+    "description": "단일 해치 객체가 포함할 수 있는 \"닫힌 영역\"의 최대 수를 설정하고, 줌 작업 중에 솔리드 및 패턴 해치 간을 계속 자동으로 전환합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-407E5F77-E823-4998-AD10-BEE5F2422AB4.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "100"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "HPMAXLINES",
+    "type": "integer",
+    "default": 100000,
+    "scope": "profile",
+    "description": "해치 작업에서 생성되는 해치선의 최대 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0DE22398-D77D-40C6-83CA-06A24581539A.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "100000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "HPOBJWARNING",
+    "type": "integer",
+    "default": 100000,
+    "scope": "profile",
+    "description": "경고 메시지를 표시하기 전에 선택할 수 있는 해치 경계 객체의 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FB17EB18-FD84-4CD0-950A-2040CC1D1F86.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "100000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "HPORIGIN",
+    "type": "point2",
+    "default": [0, 0],
+    "scope": "drawing",
+    "description": "현재 도면에서 현재 사용자 좌표계를 기준으로 새 해치 패턴의 해치 원점을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-38993CD0-3F26-400C-BCAF-F82057A059DD.htm",
+      "type": "2D-point",
+      "savedIn": "Drawing",
+      "initial": "0.0000,0.0000"
+    }
+  },
+  {
+    "name": "HPORIGINMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "기본 해치 원점을 결정하는 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-471B755D-69F9-467B-BE6F-103106C1B03A.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3, 4, 5],
+    "min": 0,
+    "max": 5
+  },
+  {
+    "name": "HPPATHALIGNMENT",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "해치하거나 채울 새 그리기 경로의 정렬을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A1AAAF13-E0F8-4516-BADA-C46282E430AF.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1 or CENTER"
+    },
+    "enum": [1, 2, 3],
+    "min": 1,
+    "max": 3
+  },
+  {
+    "name": "HPQUICKPREVIEW",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "해치 영역을 지정할 때 해치 미리보기가 표시되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-55E323D8-5BC3-407E-A57C-B18273325604.htm",
+      "type": "Switch",
+      "savedIn": "User-settings",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "HPQUICKPREVTIMEOUT",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "미리보기를 자동으로 취소하기 전에 해치 미리보기를 생성할 최대 시간을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4AB77E71-3EA7-41E7-AE43-EFE547149D4C.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "min": 1,
+    "max": 300
+  },
+  {
+    "name": "HPSPACE",
+    "type": "real",
+    "default": 1,
+    "scope": "session",
+    "description": "이 세션에서 새 사용자 정의 해치 패턴에 대한 기본 행 간격을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-E7F89BD7-6591-442E-A150-B662F2FCFBFF.htm",
+      "type": "Real",
+      "savedIn": "Not-saved",
+      "initial": "1.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "HPTRANSPARENCY",
+    "type": "string",
+    "default": ".",
+    "defaultPolicy": "The documented use-current initial setting is represented by the '.' sentinel defined in the same source topic.",
+    "scope": "drawing",
+    "description": "현재 도면의 새 해치 및 채우기에 대한 기본 투명도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C12451CF-470A-48B2-83A7-92BC0E873936.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "use current"
+    }
+  }
+]

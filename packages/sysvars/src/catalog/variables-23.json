@@ -1,0 +1,296 @@
+[
+  {
+    "name": "LAYOUTCREATEVIEWPORT",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면에 추가하는 새 배치 각각에서 뷰포트가 자동으로 작성되는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-799745E4-9804-41A7-BC48-E67CF2615111.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "LAYOUTREGENCTL",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "모형 탭 및 배치 탭에서 표시 리스트의 업데이트 방법을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A4FB9763-625A-4C4F-B948-100BE5566694.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "LEGACYCTRLPICK",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "선택 순환 및 하위 객체 선택에 대한 Ctrl 키 동작을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7FD66320-FC7D-4855-886A-C4BF7B3F1C03.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "LENSLENGTH",
+    "type": "real",
+    "default": 50,
+    "scope": "drawing",
+    "description": "투시도에 사용되는 렌즈의 길이를 밀리미터 단위로 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-78DABC95-C744-4DC2-8A19-4A66711D537C.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "50.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "LIGHTGLYPHDISPLAY",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "라이트 그림 문자의 표시를 켜거나 끕니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D1EA6DB1-C013-4066-9F5A-425AA5833F2B.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "LIGHTINGUNITS",
+    "type": "integer",
+    "default": 2,
+    "scope": "drawing",
+    "description": "도면의 조명 단위를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B127602F-B213-4F13-83BB-A84031576023.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "LIGHTLISTSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "모형의 라이트 팔레트가 열려 있는지 아니면 닫혀 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CEABCC09-2DD3-4D13-97AC-5CB0C410ECFC.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "LIGHTSINBLOCKS",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "렌더링할 때 블록에 포함된 라이트의 사용 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5A21C492-C983-466B-BC6E-02177810722D.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "LIMCHECK",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "그리드 한계를 벗어나 객체를 작성할 수 있는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-84DE5754-71A8-4CA7-91C4-05E0463D2BAB.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "LIMMAX",
+    "type": "point2",
+    "default": [420, 297],
+    "scope": "drawing",
+    "description": "현재 공간에 대한 오른쪽 위 그리드 한계를 저장합니다. 표준 좌표계로 표현됩니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-CB4FA7B5-7041-481F-858C-C9BFE4AAC660.htm",
+      "type": "2D-point",
+      "savedIn": "Drawing",
+      "initial": "12.0000,9.0000 (imperial) or 420.0000,297.0000 (metric)"
+    }
+  },
+  {
+    "name": "LIMMIN",
+    "type": "point2",
+    "default": [0, 0],
+    "scope": "drawing",
+    "description": "현재 공간에 대한 왼쪽 아래 그리드 한계를 저장합니다. 표준 좌표계로 표현됩니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1F2F481D-D130-4ED9-8590-7910F6F7F2D9.htm",
+      "type": "2D-point",
+      "savedIn": "Drawing",
+      "initial": "0.0000,0.0000"
+    }
+  },
+  {
+    "name": "LINESMOOTHING",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "2D 와이어프레임 비주얼 스타일의 2D 객체에 앤티앨리어싱을 적용할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A3F27607-8A69-401B-9247-61E00584B7F4.htm",
+      "type": "Switch",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "LISPSYS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "기본 AutoLISP 개발 환경을 조정하고, AutoCAD for Windows에서만 VLISP 명령의 동작을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1853092D-6E6D-4A06-8956-AD2C3DF203A3.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "LOCALE",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "session",
+    "description": "현재 언어를 나타내는 코드를 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FC7C9C59-4335-4511-8804-36E1724534CC.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "Varies by country/region"
+    },
+    "readonly": true
+  },
+  {
+    "name": "LOCALROOTPREFIX",
+    "type": "string",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "profile",
+    "description": "로컬 사용자화 가능 파일이 설치된 루트 폴더의 전체 경로를 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B91E3446-3DA2-49E6-A312-701104E2F829.htm",
+      "type": "String",
+      "savedIn": "Registry",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "LOCKUI",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "DesignCenter 및 특성 팔레트와 같은 고정 가능한 윈도우 및 도구막대 패널의 위치와 크기를 잠급니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-19C5EEB0-D2DD-4726-89A7-3D346B513715.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "bits": {
+      "0": "Toolbars, panels, and windows not locked",
+      "1": "Docked toolbars and panels locked",
+      "2": "Docked or anchored windows locked",
+      "4": "Floating toolbars and panels locked",
+      "8": "Floating windows locked"
+    },
+    "min": 0,
+    "max": 15,
+    "bitmask": 15
+  },
+  {
+    "name": "LOFTANG1",
+    "type": "real",
+    "default": 90,
+    "scope": "drawing",
+    "description": "로프트 동작의 첫 번째 횡단을 통해 기울기 각도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AF30562B-CAF3-480C-A470-316E995AA084.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "90"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "LOFTANG2",
+    "type": "real",
+    "default": 90,
+    "scope": "drawing",
+    "description": "로프트 동작의 마지막 횡단을 통해 기울기 각도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4947343A-BC69-4DB5-A1E9-F80F52996DC9.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "90"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "LOFTMAG1",
+    "type": "real",
+    "default": 0,
+    "scope": "drawing",
+    "description": "로프트 동작의 첫 번째 횡단을 통해 기울기 각도의 크기를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BC5CCAED-A9E9-4D3B-BCC7-242A31D9E777.htm",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "0.0000"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  }
+]

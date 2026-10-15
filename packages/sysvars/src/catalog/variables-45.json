@@ -1,0 +1,291 @@
+[
+  {
+    "name": "VSMAX",
+    "type": "point3",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "현재 뷰포트 가상 화면의 오른쪽 위 구석을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-676295A1-1CEC-4CA6-BCAA-65779EEC5B5D.htm",
+      "type": "3D-point",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "VSMIN",
+    "type": "point3",
+    "defaultUnavailable": "The documented initial value depends on an environment, document or unresolved symbolic value.",
+    "scope": "drawing",
+    "description": "현재 뷰포트 가상 화면의 왼쪽 아래 구석을 저장합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-3C57A560-FCBB-4564-96E8-C28E5DFFF593.htm",
+      "type": "3D-point",
+      "savedIn": "Drawing",
+      "initial": "Varies"
+    },
+    "readonly": true
+  },
+  {
+    "name": "VSMONOCOLOR",
+    "type": "string",
+    "default": "RGB:255,255,255",
+    "scope": "drawing",
+    "description": "현재 뷰포트에 적용된 비주얼 스타일에서 면의 단색 및 색조 표시 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-96A9A82E-6ED7-4009-9EBC-1C95FF709DED.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "RGB:255,255,255"
+    }
+  },
+  {
+    "name": "VSOCCLUDEDCOLOR",
+    "type": "string",
+    "default": "ByEntity",
+    "scope": "drawing",
+    "description": "비주얼 스타일에 대해 표시할 은선의 색상을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D5AC4805-9F95-4E93-A3CE-6A1ABAE75C4A.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "ByEntity"
+    }
+  },
+  {
+    "name": "VSOCCLUDEDEDGES",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "비주얼 스타일의 숨겨진 모서리를 표시하는지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FB755451-C5C6-454E-B9E6-50B638EF9650.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VSOCCLUDEDLTYPE",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "비주얼 스타일에 대해 표시되는 은선의 선종류를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-27853A50-8881-457D-BB18-F30BBA1CDB8C.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "min": 0,
+    "max": 11
+  },
+  {
+    "name": "VSSHADOWS",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "비주얼 스타일의 그림자 표시 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5582A510-88D3-4113-8886-A27DD0C95F1F.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "VSSILHEDGES",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트에 적용된 비주얼 스타일에 있는 솔리드 객체의 외곽 모서리 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F5E3C87D-F43B-42D7-BF2B-AC7239906F20.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSSTATE",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "비주얼 스타일 윈도우가 열려 있는지 아니면 닫혀 있는지 여부를 나타냅니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C49FC69B-185B-4B9B-8FEC-0F0886FA5730.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "readonly": true,
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VTDURATION",
+    "type": "integer",
+    "default": 750,
+    "scope": "profile",
+    "description": "부드럽게 뷰 변환 시간을 밀리초 단위로 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6D9BC830-B194-4B07-91F5-9F9B359CF870.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "750"
+    },
+    "min": 0,
+    "max": 5000
+  },
+  {
+    "name": "VTENABLE",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "부드럽게 뷰 변환이 사용되는 시점을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-D0AF2638-DE82-4CB2-A7D8-C771EB5CDD6D.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "enum": [0, 1, 2, 3, 4, 5, 6, 7],
+    "min": 0,
+    "max": 7
+  },
+  {
+    "name": "VTFPS",
+    "type": "integer",
+    "default": 7,
+    "scope": "profile",
+    "description": "부드럽게 뷰 변환의 최소 속도를 초당 프레임 수로 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2E80345C-4F20-4C50-A7EC-0E361A388B68.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "7"
+    },
+    "min": 1,
+    "max": 30
+  },
+  {
+    "name": "WBLOCKCREATEMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "WBLOCK 및 -WBLOCK 명령을 사용하여 블록을 파일로 저장한 후 선택한 객체에 대한 동작을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9A839134-A53C-4B84-A96C-FB12B411C649.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "WHIPTHREAD",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "도면을 재생성하는 작업과 같이 특정 작업의 속도를 높이기 위해 프로세서를 추가로 사용할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-DF14446D-1EB4-44DF-859C-01977F6C4CD0.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "WINDOWAREACOLOR",
+    "type": "integer",
+    "default": 150,
+    "scope": "profile",
+    "description": "윈도우 선택 중에 투명 선택 영역의 색상을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-67BDB659-F4F4-407F-9746-3861C4CD92A2.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "150"
+    },
+    "min": 1,
+    "max": 255
+  },
+  {
+    "name": "WIPEOUTFRAME",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "객체 가리기 객체에 대한 프레임의 화면표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AF1A9E90-35FB-4A49-AA39-E3456B4F264D.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "WMFBKGND",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "객체가 Windows 메타파일(WMF) 형식으로 삽입될 경우 배경 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-51DB9284-EAF6-478E-8A3F-2A18E7A9263B.htm",
+      "type": "Switch",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "WMFFOREGND",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "객체가 Windows 메타파일(WMF) 형식으로 삽입될 경우 지정된 전경 색상을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-485219AF-71F4-4E7A-B5FD-BE53E358AC54.htm",
+      "type": "Switch",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "WORKSPACELABEL",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "상태막대에 현재 작업공간의 이름을 표시할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5B1F561B-E8ED-4868-A267-1411279A95F5.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  }
+]

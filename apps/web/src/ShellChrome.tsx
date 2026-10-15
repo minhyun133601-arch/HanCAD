@@ -164,6 +164,7 @@ const fileTools: readonly Tool[] = [
   { label: 'exportJpg', command: 'EXPORTJPG', icon: 'rectangle' },
   { label: 'exportSvg', command: 'EXPORTSVG', icon: 'line' },
   { label: 'exportDxf', command: 'QSAVE', icon: 'save' },
+  { label: 'saveNative', command: 'HANSAVE', icon: 'save' },
 ];
 
 export function TitleBar({
@@ -353,17 +354,37 @@ export function FileTabs({
   messages,
   execute,
   fileName,
+  documents,
+  activeId,
+  activate,
 }: {
   messages: Messages;
   execute: Execute;
   fileName: string;
+  documents?: readonly { id: string; name: string }[];
+  activeId?: string;
+  activate?: (id: string) => void;
 }) {
   return (
     <nav className="file-tabs" aria-label={messages.fileTabs}>
-      <button className="file-tab active" aria-current="page">
-        <span className="file-dot" />
-        {fileName}
-      </button>
+      {documents ? (
+        documents.map((document) => (
+          <button
+            key={document.id}
+            className={document.id === activeId ? 'file-tab active' : 'file-tab'}
+            aria-current={document.id === activeId ? 'page' : undefined}
+            onClick={() => activate?.(document.id)}
+          >
+            {document.id === activeId && <span className="file-dot" />}
+            {document.name}
+          </button>
+        ))
+      ) : (
+        <button className="file-tab active" aria-current="page">
+          <span className="file-dot" />
+          {fileName}
+        </button>
+      )}
       <button
         className="add-tab"
         aria-label={messages.newDrawing}

@@ -1,0 +1,242 @@
+[
+  {
+    "name": "SORTENTS",
+    "codes": [280],
+    "systemVariable": "SORTENTS",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SPLINESEGS",
+    "codes": [70],
+    "systemVariable": "SPLINESEGS",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SPLINETYPE",
+    "codes": [70],
+    "systemVariable": "SPLINETYPE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SURFTAB1",
+    "codes": [70],
+    "systemVariable": "SURFTAB1",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SURFTAB2",
+    "codes": [70],
+    "systemVariable": "SURFTAB2",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SURFTYPE",
+    "codes": [70],
+    "systemVariable": "SURFTYPE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SURFU",
+    "codes": [70],
+    "systemVariable": "SURFU",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "SURFV",
+    "codes": [70],
+    "systemVariable": "SURFV",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "TDCREATE",
+    "codes": [40],
+    "systemVariable": "TDCREATE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "TDINDWG",
+    "codes": [40],
+    "systemVariable": "TDINDWG",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "TDUCREATE",
+    "codes": [40],
+    "systemVariable": "TDUCREATE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "TDUPDATE",
+    "codes": [40],
+    "systemVariable": "TDUPDATE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "TDUSRTIMER",
+    "codes": [40],
+    "systemVariable": "TDUSRTIMER",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "TDUUPDATE",
+    "codes": [40],
+    "systemVariable": "TDUUPDATE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "TEXTSIZE",
+    "codes": [40],
+    "systemVariable": "TEXTSIZE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "TEXTSTYLE",
+    "codes": [7],
+    "systemVariable": "TEXTSTYLE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "THICKNESS",
+    "codes": [40],
+    "systemVariable": "THICKNESS",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "TILEMODE",
+    "codes": [70],
+    "systemVariable": "TILEMODE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "TRACEWID",
+    "codes": [40],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "TREEDEPTH",
+    "codes": [70],
+    "systemVariable": "TREEDEPTH",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSBASE",
+    "codes": [2],
+    "systemVariable": "UCSBASE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSNAME",
+    "codes": [2],
+    "systemVariable": "UCSNAME",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSORG",
+    "codes": [10, 20, 30],
+    "systemVariable": "UCSORG",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSORGBACK",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSORGBOTTOM",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSORGFRONT",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSORGLEFT",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSORGRIGHT",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSORGTOP",
+    "codes": [10, 20, 30],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSORTHOREF",
+    "codes": [2],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSORTHOVIEW",
+    "codes": [70],
+    "systemVariable": null,
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSXDIR",
+    "codes": [10, 20, 30],
+    "systemVariable": "UCSXDIR",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UCSYDIR",
+    "codes": [10, 20, 30],
+    "systemVariable": "UCSYDIR",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "UNITMODE",
+    "codes": [70],
+    "systemVariable": "UNITMODE",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "USERI1",
+    "codes": [70],
+    "systemVariable": "USERI1",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "USERI2",
+    "codes": [70],
+    "systemVariable": "USERI2",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "USERI3",
+    "codes": [70],
+    "systemVariable": "USERI3",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "USERI4",
+    "codes": [70],
+    "systemVariable": "USERI4",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "USERI5",
+    "codes": [70],
+    "systemVariable": "USERI5",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  },
+  {
+    "name": "USERR1",
+    "codes": [40],
+    "systemVariable": "USERR1",
+    "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A.htm"
+  }
+]

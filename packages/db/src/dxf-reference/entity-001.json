@@ -1,0 +1,68 @@
+{
+  "title": "Angular Dimension Group Codes (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-09821B78-9F8E-43BA-82F2-8C931485EDC9.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDb3PointAngularDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [13],
+      "subclasses": ["AcDb3PointAngularDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [23, 33],
+      "subclasses": ["AcDb3PointAngularDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [14],
+      "subclasses": ["AcDb3PointAngularDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [24, 34],
+      "subclasses": ["AcDb3PointAngularDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [15],
+      "subclasses": ["AcDb3PointAngularDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [25, 35],
+      "subclasses": ["AcDb3PointAngularDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [16],
+      "subclasses": ["AcDb3PointAngularDimension"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [26, 36],
+      "subclasses": ["AcDb3PointAngularDimension"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-239A1BDD-7459-4BB9-8DD7-08EC79BF1EB0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-EDD54EAC-A339-4EBA-AEA6-EC8066505E2B.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-239A1BDD-7459-4BB9-8DD7-08EC79BF1EB0.htm"
+  ]
+}

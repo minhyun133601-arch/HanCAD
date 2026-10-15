@@ -326,17 +326,46 @@ test('a cold DWG reader reopens the same Korean-named file and restores it after
   await waitForRead(page);
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
   await expect(page.getByTestId('drawing-import-report')).toContainText('134');
+  const tabs = page
+    .getByRole('navigation', { name: '도면 탭' })
+    .getByRole('button', { name: fixture.name, exact: true });
+  const reports = page
+    .getByRole('log', { name: '명령 기록' })
+    .locator('.history-line')
+    .filter({ hasText: /70개 객체/ });
+  const documentIdentity = () =>
+    page.evaluate(() => {
+      const session = JSON.parse(localStorage.getItem('hancad.active-drawing.v1') ?? '{}') as {
+        documentId?: string;
+      };
+      return session.documentId;
+    });
+  await expect(tabs).toHaveCount(1);
+  await expect(tabs.first()).toHaveAttribute('aria-current', 'page');
+  await expect(reports).toHaveCount(1);
+  const firstDocumentId = await documentIdentity();
+  expect(firstDocumentId).toBeTruthy();
   await chooseFile(page, fixture);
   await waitForRead(page);
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
   const name = page.getByRole('navigation', { name: '도면 탭' });
   await expect(name).toContainText(fixture.name);
-  await expect(
-    page
-      .getByRole('log', { name: '명령 기록' })
-      .locator('.history-line')
-      .filter({ hasText: /70개 객체/ }),
-  ).toHaveCount(2);
+  // Each successful OPEN owns a new document and one import report in its command workspace.
+  await expect(tabs).toHaveCount(2);
+  await expect(tabs.nth(1)).toHaveAttribute('aria-current', 'page');
+  await expect(reports).toHaveCount(1);
+  const secondDocumentId = await documentIdentity();
+  expect(secondDocumentId).toBeTruthy();
+  expect(secondDocumentId).not.toBe(firstDocumentId);
+  await tabs.first().click();
+  await expect(tabs.first()).toHaveAttribute('aria-current', 'page');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
+  await expect(page.getByTestId('drawing-import-report')).toContainText('134');
+  expect(await documentIdentity()).toBe(firstDocumentId);
+  await tabs.nth(1).click();
+  await expect(tabs.nth(1)).toHaveAttribute('aria-current', 'page');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
+  expect(await documentIdentity()).toBe(secondDocumentId);
   await page.reload();
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
   await expect(name).toContainText(fixture.name);

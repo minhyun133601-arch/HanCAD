@@ -1,0 +1,301 @@
+[
+  {
+    "name": "VSAZEBRACOLOR2",
+    "type": "string",
+    "default": "RGB:0,0,0",
+    "scope": "drawing",
+    "description": "지브라 분석(ANALYSISZEBRA) 중에 표시되는 지브라 스트라이프의 두 번째(반대) 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4B3BF9D7-C002-42FC-9748-F31DB1D65B31.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "RGB:0,0,0"
+    }
+  },
+  {
+    "name": "VSAZEBRADIRECTION",
+    "type": "integer",
+    "default": 90,
+    "scope": "drawing",
+    "description": "지브라 분석(ANALYSISZEBRA) 중에 지브라 스트라이프가 표시되는 방식(수평, 수직 또는 각도)을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A4DFC27E-5533-4096-AFA6-8C76CCB8271F.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "90"
+    },
+    "enum": [0, 90],
+    "min": 0,
+    "max": 90
+  },
+  {
+    "name": "VSAZEBRASIZE",
+    "type": "integer",
+    "default": 45,
+    "scope": "drawing",
+    "description": "지브라 분석(ANALYSISZEBRA) 중에 표시되는 지브라 스트라이프의 폭을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C08DB688-221E-42EF-8A12-B2A62EF938C3.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "45"
+    },
+    "min": 1,
+    "max": 100
+  },
+  {
+    "name": "VSAZEBRATYPE",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "지브라 분석(ANALYSISZEBRA)을 사용할 때의 지브라 유형을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-20469CB5-5D3A-494F-906A-7251930B7621.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VSBACKGROUNDS",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "현재 뷰포트로 적용된 비주얼 스타일에 배경이 표시될지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5294FB47-1581-4DE3-BE51-21CE7493E573.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VSEDGECOLOR",
+    "type": "string",
+    "default": "BYENTITY",
+    "scope": "drawing",
+    "description": "현재 뷰포트에 적용된 비주얼 스타일의 모서리 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7BCDF702-521E-4B3F-BFD5-1F20B2519247.htm",
+      "type": "String",
+      "savedIn": "Drawing",
+      "initial": "BYENTITY"
+    }
+  },
+  {
+    "name": "VSEDGEJITTER",
+    "type": "integer",
+    "default": -2,
+    "scope": "drawing",
+    "description": "펜슬로 스케치한 것처럼 객체에 모서리가 여러 선형 스트로크가 포함된 상태로 표시되게 합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-16BCE894-58CB-4644-B5CD-CAF34EA3B968.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "-2"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSEDGELEX",
+    "type": "integer",
+    "default": -6,
+    "scope": "drawing",
+    "description": "손으로 그린 효과를 나타내기 위해 끝점 바깥으로 연장하여 선 및 모서리를 나타낼 픽셀 수를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-416A46CB-4045-44ED-BFCD-310E614402A6.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "-6"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSEDGES",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "뷰포트에 표시된 모서리의 유형을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-AEA68A47-48B7-412E-B2C5-9AA21EE4A669.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "VSEDGESMOOTH",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "각진 모서리의 표시 각도를 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-00E8DD9B-D7E4-4720-84BE-3E3554424F11.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSFACECOLORMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "면 색상의 계산 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8DAF78F6-5088-4D86-B858-759BB7674570.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "VSFACEHIGHLIGHT",
+    "type": "integer",
+    "default": -30,
+    "scope": "drawing",
+    "description": "현재 뷰포트에서 재료 없는 면의 반사 강조 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-94547162-5EF4-4435-BCFC-4E165A302BEC.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "-30"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSFACEOPACITY",
+    "type": "integer",
+    "default": -60,
+    "scope": "drawing",
+    "description": "3D 객체에 대해 사전 설정된 투명도 레벨을 켜거나 끕니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BCBB0B39-1527-4C11-A02F-911E2C04BF2F.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "-60"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSFACESTYLE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "면, 솔리드-채움 해치 및 그라데이션을 현재 뷰포트에 표시하는 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-26F78CF6-8164-480B-B39C-52216E5B1B88.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "VSHALOGAP",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트에 적용된 비주얼 스타일의 halo 간격을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A6242C38-7507-4216-AE95-2784EE1870A4.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSINTERSECTIONCOLOR",
+    "type": "integer",
+    "default": 7,
+    "scope": "drawing",
+    "description": "비주얼 스타일의 독립 3D 솔리드, 표면 및 메쉬 교차점 색상을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-510292F6-EB7F-4167-AF7D-2087F39DEF47.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "7"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "VSINTERSECTIONEDGES",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "비주얼 스타일의 독립 3D 솔리드, 표면 및 메쉬 교차점 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-02F8B554-D1DD-437B-8AA3-64575B88BC1F.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VSISOONTOP",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트로 적용된 비주얼 스타일에서 음영처리된 객체의 맨 위 등각선을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9143D739-0D86-48BE-9F7E-AE3B4CACE050.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "VSLIGHTINGQUALITY",
+    "type": "integer",
+    "default": 1,
+    "scope": "drawing",
+    "description": "현재 뷰포트의 조명 품질을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6E3771E8-7D64-4B8B-BD57-20FCD3B465D8.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "VSMATERIALMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "현재 뷰포트의 재료 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-06C459DA-3D4B-4796-89B4-4521795DC7CE.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  }
+]

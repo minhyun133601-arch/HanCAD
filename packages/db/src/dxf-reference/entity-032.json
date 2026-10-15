@@ -1,0 +1,103 @@
+{
+  "title": "Lofted Surface (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3D9D8A87-1E46-48AE-B482-BAD1C4D460CA.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [40],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [41],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [42],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [43],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [44],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [290],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [291],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [292],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [293],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [294],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [295],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [296],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [297],
+      "subclasses": ["AcDbLoftedSurface"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-BB62483A-89C3-47C4-80E5-EA3F08979863.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-BB62483A-89C3-47C4-80E5-EA3F08979863.htm"
+  ]
+}

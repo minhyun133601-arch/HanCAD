@@ -3,6 +3,7 @@ import type { SysvarValue } from '@hancad/sysvars';
 import type { CommandInput } from '@hancad/editor';
 import { commandMessages } from './messages';
 import { CommandInputError } from './input-errors';
+import { runUndo, runMultipleRedo, runOops } from './history-commands';
 import type { CommandContext, CommandDefinition } from './types';
 import type { CommandRegistry } from './registry';
 
@@ -13,16 +14,17 @@ export function registerCoreCommands(registry: CommandRegistry): void {
       context.print(`${name} = ${formatSysvar(context.sysvars.get(name))}`);
     },
     SETVAR: (context) => setVariableFromInput(context.input.requireString().toUpperCase(), context),
-    U: (context) => undo(context),
-    UNDO: (context) => undo(context),
-    REDO: (context) => redo(context, 1),
-    MREDO: (context) => {
-      const value = context.input.take();
-      redo(
-        context,
-        value === undefined || value === 'ALL' ? context.database.redoCount : parseCount(value),
-      );
+    U: (context) => {
+      if (context.input.remaining) throw new CommandInputError('invalid-history-option');
+      runUndo(context);
     },
+    UNDO: (context) => runUndo(context),
+    REDO: (context) => {
+      if (!context.database.redoLastUndo())
+        context.print(commandMessages.nothingToRedo(context.locale));
+    },
+    MREDO: runMultipleRedo,
+    OOPS: runOops,
     UNDEFINE: (context) => changeDefinition(context, registry, true),
     REDEFINE: (context) => changeDefinition(context, registry, false),
     LTSCALE: (context) => setVariableFromInput('LTSCALE', context),
@@ -80,28 +82,6 @@ function parseSysvarInput(name: string, input: CommandInput): SysvarValue {
   }
   if (typeof input !== 'string') throw new CommandInputError('string-required', name);
   return input;
-}
-
-function parseCount(input: CommandInput): number {
-  const value =
-    typeof input === 'number' ? input : typeof input === 'string' ? Number(input) : Number.NaN;
-  if (!Number.isSafeInteger(value) || value < 1)
-    throw new CommandInputError('invalid-history-count');
-  return value;
-}
-
-function undo(context: CommandContext): void {
-  const input = context.input.take();
-  if (typeof input === 'string' && !/^\d+$/.test(input)) {
-    context.print(commandMessages.pending(`UNDO ${input.toUpperCase()}`, context.locale));
-    return;
-  }
-  const count = input === undefined ? 1 : parseCount(input);
-  if (!context.database.undo(count)) context.print(commandMessages.nothingToUndo(context.locale));
-}
-
-function redo(context: CommandContext, count: number): void {
-  if (!context.database.redo(count)) context.print(commandMessages.nothingToRedo(context.locale));
 }
 
 function changeDefinition(

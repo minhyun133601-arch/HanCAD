@@ -6,9 +6,20 @@ import { InputValueError, formatInputValueError } from '@hancad/editor';
 import { PdfExportError, formatPdfExportError } from '@hancad/io-pdf';
 import { getCadImportDiagnostic } from '@hancad/legacy-bridge';
 import { formatCadImportDiagnostic } from '@hancad/ui';
+import { UndoStateError } from '@hancad/db';
+import { NativeDrawingFileError } from './native-file-error';
 
 /** Localize recognized domain errors without rewriting unrelated diagnostics. */
 export function errorMessage(error: unknown, messages: Messages): string {
+  if (error instanceof NativeDrawingFileError) return messages.nativeOpenFailed;
+  if (error instanceof UndoStateError)
+    return messages[
+      error.code === 'no-group'
+        ? 'undoNoGroup'
+        : error.code === 'disabled'
+          ? 'undoDisabled'
+          : 'undoLimited'
+    ];
   if (error instanceof CanvasContextError) return messages.rendererContextUnavailable(error.kind);
   if (error instanceof CommandInputError) return formatCommandInputError(error, messages);
   if (error instanceof InputValueError) return formatInputValueError(error, messages);

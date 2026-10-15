@@ -1,0 +1,132 @@
+{
+  "title": "DIMASSOC (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-C0B96256-A911-4B4D-85E6-EB4AF2C91E27.htm",
+  "section": "object",
+  "documentedGroups": [
+    {
+      "codes": [0],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [5],
+      "subclasses": [],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [102],
+      "subclasses": [],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [330],
+      "subclasses": [],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [100],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [330],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [90],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [70],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [71],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [1],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [72],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [331],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [73],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [91],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [301],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [40],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [10],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [20],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [30],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    },
+    {
+      "codes": [332],
+      "subclasses": ["AcDbDimAssoc"],
+      "context": "application",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-6939D69E-04CB-4F4C-87B2-67BC540FCF58.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-2D71EE99-A6BE-4060-9B43-808CF1E201C6.htm"
+  ]
+}

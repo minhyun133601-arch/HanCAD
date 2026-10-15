@@ -1,0 +1,103 @@
+{
+  "title": "Revolved Surface (DXF)",
+  "source": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-844D8EC8-318D-4721-AFF2-82923DB10678.htm",
+  "section": "entity",
+  "documentedGroups": [
+    {
+      "codes": [100],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [90],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [90],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [310],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [10, 20, 30],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [11, 21, 31],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [40],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [41],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [42],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [43],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [44],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [45],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [46],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [290],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    },
+    {
+      "codes": [291],
+      "subclasses": ["AcDbRevolvedSurface"],
+      "context": "record",
+      "repeated": false
+    }
+  ],
+  "children": [
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-BB62483A-89C3-47C4-80E5-EA3F08979863.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-E50DB779-69AE-43C6-B004-85653A983AC0.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-3610039E-27D1-4E23-B6D3-7E60B22BB5BD.htm",
+    "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-DXF/files/GUID-BB62483A-89C3-47C4-80E5-EA3F08979863.htm"
+  ]
+}

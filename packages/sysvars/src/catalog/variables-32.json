@@ -1,0 +1,303 @@
+[
+  {
+    "name": "QTEXTMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "drawing",
+    "description": "문자 표시 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-95370B7F-B389-4026-94B7-7E869BF2AAB6.htm",
+      "type": "Integer",
+      "savedIn": "Drawing",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "QVDRAWINGPIN",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "도면 미리보기 이미지의 기본 상태를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B0DE7734-6ACB-4897-ABD2-7A8D2BD84BE5.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "QVLAYOUTPIN",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "모형 공간 미리보기 이미지 및 도면의 배치의 기본 상태를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-2E54A1E5-5C85-4487-9D23-781845BF4EA2.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "RASTERDPI",
+    "type": "integer",
+    "default": 300,
+    "scope": "profile",
+    "description": "치수 있는 출력 장치와 치수 없는 출력 장치 간에 전환할 때 용지 크기 및 플롯 축척을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-804EEB78-7F41-4E49-B121-D9966571B8D3.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "300"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "RASTERPERCENT",
+    "type": "integer",
+    "default": 20,
+    "scope": "profile",
+    "description": "각 래스터 이미지나 OLE 객체를 인쇄할 수 있는 사용 가능한 가상 메모리의 최대 백분율을 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B091EC10-7E05-4D8E-8B70-89CDAC03F917.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "20"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "RASTERPREVIEW",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "썸네일 미리보기 이미지를 작성하여 도면과 함께 저장할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-81E53976-3950-4849-A287-56C4E878E9F6.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "RASTERTHRESHOLD",
+    "type": "integer",
+    "default": 20,
+    "scope": "profile",
+    "description": "인쇄할 때 각 래스터 이미지나 OLE 객체에 대한 임계값을 MB 단위로 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-64A75B2B-7131-4CBA-876D-3BE232C51014.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "20"
+    },
+    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+  },
+  {
+    "name": "RE-INIT",
+    "type": "integer",
+    "default": 0,
+    "scope": "session",
+    "description": "디지타이저, 디지타이저 포트 및 acad.pgp 파일을 다시 초기화합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FD73A73D-0CB7-4E03-96A6-C0CD9A29A280.htm",
+      "type": "Bitcode",
+      "savedIn": "Not-saved",
+      "initial": "0"
+    },
+    "bits": {
+      "1": "Digitizer input/output port reinitialization",
+      "4": "Digitizer reinitialization",
+      "16": "PGP file reinitialization (reload)"
+    },
+    "min": 0,
+    "max": 21,
+    "bitmask": 21
+  },
+  {
+    "name": "REBUILD2DCV",
+    "type": "integer",
+    "default": 6,
+    "scope": "profile",
+    "description": "스플라인을 재생성할 때 조정 정점 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-FA242EB3-5D28-4837-9D95-7BFB763608BB.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "6"
+    },
+    "min": 2,
+    "max": 32767
+  },
+  {
+    "name": "REBUILD2DDEGREE",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "스플라인을 재생성할 때 전역 차수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-BCCE2600-0834-4976-AD1D-FA4AA8E42B11.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "min": 1,
+    "max": 11
+  },
+  {
+    "name": "REBUILD2DOPTION",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "스플라인을 재생성할 때 원래 곡선을 삭제할지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8FB89BB1-0294-4B8E-8E50-F7149A19ECF9.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "REBUILDDEGREEU",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "NURBS 표면을 재생성할 때 U 방향 각도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-07B3C262-27CF-4FB1-9A98-84532C484844.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "min": 2,
+    "max": 11
+  },
+  {
+    "name": "REBUILDDEGREEV",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "NURBS 표면을 재생성할 때 V 방향 각도를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-89D61BC8-ABB1-4FB7-8EDD-0A6E786FA110.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "min": 2,
+    "max": 11
+  },
+  {
+    "name": "REBUILDOPTIONS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "NURBS 표면을 재생성할 때 삭제 및 자르기 옵션을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-C6C258F8-7039-4107-9C7B-C8D34D785530.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2, 3],
+    "min": 0,
+    "max": 3
+  },
+  {
+    "name": "REBUILDU",
+    "type": "integer",
+    "default": 6,
+    "scope": "profile",
+    "description": "NURBS 표면을 재생성할 때 U 방향 그리드 선 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-B1689C60-6FE1-4804-8091-8E072573C749.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "6"
+    },
+    "min": 2,
+    "max": 32767
+  },
+  {
+    "name": "REBUILDV",
+    "type": "integer",
+    "default": 6,
+    "scope": "profile",
+    "description": "NURBS 표면을 재생성할 때 V 방향 그리드 선 수를 설정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5362ECDA-B3F2-43D2-9C13-5A5E32529C16.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "6"
+    },
+    "min": 2,
+    "max": 32767
+  },
+  {
+    "name": "RECOVERAUTO",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "손상된 도면 파일을 열기 전이나 연 후의 복구 알림 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-18E43007-8DE9-4C6D-AE55-13FF0AF492C3.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "bits": {
+      "0": "Displays a dialog box notification to recover a damaged drawing. Any running script is interrupted.",
+      "1": "Automatically recovers the damaged drawing, opens the drawing, and displays a report in a dialog",
+      "2": "Displays a dialog box notification to recover a damaged drawing. After the file is recovered,",
+      "3": "Automatically recovers the damaged drawing, opens the drawing, and displays a report in the Command"
+    },
+    "min": 0,
+    "max": 3,
+    "bitmask": 3
+  },
+  {
+    "name": "RECOVERYMODE",
+    "type": "integer",
+    "default": 2,
+    "scope": "profile",
+    "description": "시스템 고장 후에 도면 복구 정보가 기록될지 여부를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-00A79CD6-938C-45B4-A380-A2BFD993D758.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "2"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "REFEDITNAME",
+    "type": "string",
+    "default": "",
+    "scope": "session",
+    "description": "편집 중인 참조의 이름을 표시합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5B6E3917-5EA0-49A1-869E-2C4E18FCDA50.htm",
+      "type": "String",
+      "savedIn": "Not-saved",
+      "initial": "\"\""
+    },
+    "readonly": true
+  }
+]

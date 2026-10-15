@@ -88,7 +88,6 @@ describe('declarative system variables', () => {
     for (const [name, value] of [
       ['CLAYER', 'Missing Layer'],
       ['TEXTSTYLE', 'Missing Style'],
-      ['DIMSTYLE', 'Missing Dimstyle'],
       ['CELTYPE', 'Missing Linetype'],
     ] as const) {
       expect(() => variables.set(name, value)).toThrow('도면에 없습니다');
@@ -97,7 +96,7 @@ describe('declarative system variables', () => {
     expect(variables.database.undoCount).toBe(0);
     variables.set('CLAYER', '0');
     variables.set('TEXTSTYLE', 'standard');
-    variables.set('DIMSTYLE', 'iso-25');
+    expect(() => variables.set('DIMSTYLE', 'iso-25')).toThrow('읽기 전용');
     variables.set('CELTYPE', 'bylayer');
     expect(variables.get('TEXTSTYLE')).toBe('Standard');
     expect(variables.get('DIMSTYLE')).toBe('ISO-25');
