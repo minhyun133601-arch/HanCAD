@@ -41,8 +41,8 @@
     ],
     "limitations": [
       {
-        "ko-KR": "현재 페이즈 1을 진행합니다. 원본 0~25단계 순서를 유지하며 사용자 요청으로 페이즈 0 네이티브 검증은 보류했습니다.",
-        "en-US": "Phase 01 is active. Preserve original phase order from 0 to 25; Phase 00 native acceptance is deferred by user instruction."
+        "ko-KR": "페이즈 1을 완료했습니다. 다음은 페이즈 2(화면 표시·탐색)입니다. 사용자 요청으로 페이즈 0 네이티브 검증은 보류 중입니다.",
+        "en-US": "Phase 01 is complete; Phase 02 (rendering and navigation) is next. Phase 00 native acceptance remains deferred by user instruction."
       },
       {
         "ko-KR": "일부 DWG 객체는 생략·근사되며 DXF 저장은 무손실 원본 보존 방식이 아닙니다.",
@@ -85,10 +85,10 @@
         "ko-KR": "도면 데이터·변수·실행 취소",
         "en-US": "Drawing database, variables and undo"
       },
-      "status": "in-progress",
+      "status": "complete",
       "detail": {
-        "ko-KR": "DXF 객체 메타데이터·기하·860개 변수·고급 UNDO·독립 도면·HCD 저장/복구 구현. 환경 기본값·일부 범위·UI 그룹화와 정확한 참조 동등성 검증은 남아 있습니다.",
-        "en-US": "DXF metadata, geometry, 860 variables, advanced UNDO, independent documents and native HCD persistence are implemented. Host defaults, some ranges, UI grouping and exact reference parity remain open."
+        "ko-KR": "수락 기준 4개 통과. DATE·도면 시간·뷰·배치 등 런타임 변수, 문서화된 범위 28개, 줌/팬 실행 취소와 매크로 Auto 그룹 완료. 실제 AutoCAD 대조 항목은 동등성 점검표에 남아 있습니다.",
+        "en-US": "All four acceptance checks pass. Runtime variables (dates, drawing times, view, layout), 28 documented ranges, zoom/pan undo and Auto macro grouping are complete. Installed-AutoCAD comparisons remain on the parity checklist."
       }
     },
     {

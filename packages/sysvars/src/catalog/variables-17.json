@@ -42,7 +42,7 @@
       "savedIn": "Registry",
       "initial": "1"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "FIELDDISPLAY",
@@ -142,7 +142,7 @@
       "savedIn": "Drawing",
       "initial": "1.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "FILLMODE",
@@ -231,7 +231,7 @@
       "initial": "0.0000"
     },
     "readonly": true,
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "FULLOPEN",

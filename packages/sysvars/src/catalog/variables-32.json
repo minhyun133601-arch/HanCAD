@@ -59,7 +59,8 @@
       "savedIn": "Registry",
       "initial": "300"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": 100,
+    "max": 32767
   },
   {
     "name": "RASTERPERCENT",
@@ -73,7 +74,7 @@
       "savedIn": "Registry",
       "initial": "20"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "RASTERPREVIEW",
@@ -103,7 +104,7 @@
       "savedIn": "Registry",
       "initial": "20"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "RE-INIT",

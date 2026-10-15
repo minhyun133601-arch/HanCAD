@@ -138,7 +138,7 @@
       "initial": "Varies"
     },
     "readonly": true,
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "STANDARDSVIOLATION",
@@ -216,7 +216,7 @@
       "savedIn": "Drawing",
       "initial": "6.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "STEPSPERSEC",
@@ -230,7 +230,8 @@
       "savedIn": "Drawing",
       "initial": "2.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": 1,
+    "max": 30
   },
   {
     "name": "STUDENTDRAWING",
@@ -245,7 +246,7 @@
       "initial": "Varies by drawing"
     },
     "readonly": true,
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "SUBOBJSELECTIONMODE",

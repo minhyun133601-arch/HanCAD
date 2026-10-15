@@ -4,7 +4,7 @@ import { RetainedScene } from './scene';
 import type { SceneStats } from './scene';
 import { relativeEntity } from './geometry';
 import { CadPointerController } from './pointer-controller';
-import type { CadCanvasOptions, CadView } from './pointer-controller';
+import type { CadCanvasOptions, CadView, CadWorldView } from './pointer-controller';
 import { drawSnapOverlay } from './snap-overlay';
 import { drawSelectionOverlay } from './selection-overlay';
 import type { CadSnapKind, CadSnapMarker } from './snap-overlay';
@@ -12,10 +12,12 @@ import { CanvasContextError } from './errors';
 export type { CadSnapKind } from './snap-overlay';
 export type {
   CadCanvasOptions,
+  CadNavigationKind,
   CadNavigationSettings,
   CadPointerPick,
   CadSelectionDrag,
   CadView,
+  CadWorldView,
 } from './pointer-controller';
 
 /** Input drawing snapshots must be immutable. This renderer never edits the caller's model. */
@@ -78,6 +80,7 @@ export class CadCanvasSurface {
         },
         fit: () => this.fit(),
         invalidate: () => this.requestRender(),
+        worldView: () => this.getWorldView(),
       });
       this.render();
     } catch (error) {
@@ -145,6 +148,37 @@ export class CadCanvasSurface {
   }
   getView(): CadView {
     return { ...this.view };
+  }
+  getWorldView(): CadWorldView {
+    return {
+      center: {
+        x: this.origin.x - this.view.tx / this.view.scale,
+        y: this.origin.y - this.view.ty / this.view.scale,
+      },
+      height: this.height / this.view.scale,
+    };
+  }
+  /** Restores a recorded view (undo/redo of navigation) without reporting a new navigation. */
+  setWorldView(view: CadWorldView): void {
+    if (!(view.height > 0) || !Number.isFinite(view.center.x) || !Number.isFinite(view.center.y))
+      return;
+    this.pointer.cancel();
+    const scale = Math.max(1e-6, Math.min(1e6, this.height / view.height));
+    this.view = {
+      scale,
+      tx: -(view.center.x - this.origin.x) * scale,
+      ty: -(view.center.y - this.origin.y) * scale,
+    };
+    this.requestRender(true);
+  }
+  getViewportSize(): { width: number; height: number } {
+    return { width: this.width, height: this.height };
+  }
+  /** ZOOM Extents as a recorded navigation. */
+  zoomExtents(): void {
+    const before = this.getWorldView();
+    this.fit();
+    this.options.onNavigate?.('zoom', before, this.getWorldView());
   }
   worldToScreen(point: CadPoint): CadPoint {
     return {

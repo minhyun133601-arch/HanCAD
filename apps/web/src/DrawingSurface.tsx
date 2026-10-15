@@ -26,6 +26,7 @@ export function DrawingSurface({
   suppressSelectionBox,
   getNavigationSettings,
   selectionGesture,
+  onNavigate,
 }: {
   messages: Messages;
   layout: LayoutId;
@@ -45,6 +46,7 @@ export function DrawingSurface({
   suppressSelectionBox: NonNullable<CadCanvasOptions['suppressSelectionBox']>;
   getNavigationSettings: NonNullable<CadCanvasOptions['getNavigationSettings']>;
   selectionGesture: NonNullable<CadCanvasOptions['selectionGesture']>;
+  onNavigate: NonNullable<CadCanvasOptions['onNavigate']>;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const surface = useRef<CanvasSurface | null>(null);
@@ -62,6 +64,7 @@ export function DrawingSurface({
         suppressSelectionBox,
         getNavigationSettings,
         selectionGesture,
+        onNavigate,
       });
       canvas.setDrawing(drawing);
       surface.current = canvas;

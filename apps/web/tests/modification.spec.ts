@@ -148,6 +148,9 @@ test('Esc before MOVE placement leaves the drawing unchanged and prints cancella
   expect((await drawing(page)).entities).toEqual(before);
   await expect(page.getByTestId('drawing-canvas')).toHaveAttribute('data-preview-count', '0');
   await expect(cancellations).toHaveCount(previousCount + 1);
+  // The fit used for pointer mapping is a ZOOM undo step; the cancelled MOVE is not.
+  await enter(page, 'U');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('1');
   await enter(page, 'U');
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('0');
 });

@@ -100,7 +100,7 @@
       "savedIn": "Drawing",
       "initial": "-2"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "VSEDGELEX",
@@ -114,7 +114,7 @@
       "savedIn": "Drawing",
       "initial": "-6"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "VSEDGES",
@@ -144,7 +144,8 @@
       "savedIn": "Drawing",
       "initial": "1"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": 0,
+    "max": 180
   },
   {
     "name": "VSFACECOLORMODE",
@@ -174,7 +175,8 @@
       "savedIn": "Drawing",
       "initial": "-30"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": -100,
+    "max": 100
   },
   {
     "name": "VSFACEOPACITY",
@@ -188,7 +190,7 @@
       "savedIn": "Drawing",
       "initial": "-60"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "VSFACESTYLE",
@@ -218,7 +220,8 @@
       "savedIn": "Drawing",
       "initial": "0"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": 0,
+    "max": 100
   },
   {
     "name": "VSINTERSECTIONCOLOR",
@@ -232,7 +235,7 @@
       "savedIn": "Drawing",
       "initial": "7"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "VSINTERSECTIONEDGES",

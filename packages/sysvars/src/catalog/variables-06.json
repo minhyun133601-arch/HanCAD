@@ -41,7 +41,8 @@
       "savedIn": "Registry",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": 0,
+    "max": 50
   },
   {
     "name": "CLIPROMPTUPDATE",
@@ -145,7 +146,7 @@
       "savedIn": "Registry",
       "initial": "20"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "CMDNAMES",
@@ -204,7 +205,7 @@
       "savedIn": "Drawing",
       "initial": "1.0000 (imperial) or 20.0000 (metric)"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "CMLSTYLE",

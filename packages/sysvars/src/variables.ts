@@ -68,6 +68,8 @@ export interface SystemVariablesOptions {
   database?: DrawingDatabase;
   profile?: SystemVariableProfile;
   runtimeValues?: () => Readonly<Record<string, SysvarValue>>;
+  /** Lazily resolved host value by canonical name; preferred for costly facts. */
+  runtimeValue?: (name: string) => SysvarValue | undefined;
 }
 
 export class SystemVariables {
@@ -76,12 +78,13 @@ export class SystemVariables {
   readonly events = new EventBus<{ name: string; value: SysvarValue | undefined }>();
   private readonly sessionValues = new Map<string, SysvarValue>();
   private readonly unsubscribers: (() => void)[];
-  private readonly runtimeValues: (() => Readonly<Record<string, SysvarValue>>) | undefined;
+  private readonly runtimeLookup: (name: string) => SysvarValue | undefined;
 
   constructor(options: SystemVariablesOptions = {}) {
     this.database = options.database ?? new DrawingDatabase();
     this.profile = options.profile ?? new SystemVariableProfile();
-    this.runtimeValues = options.runtimeValues;
+    const { runtimeValues, runtimeValue } = options;
+    this.runtimeLookup = (name) => runtimeValue?.(name) ?? runtimeValues?.()[name];
     this.unsubscribers = [
       this.database.events.subscribe((event) => {
         if (event.type === 'sysvar-changed') {
@@ -110,7 +113,7 @@ export class SystemVariables {
     const definition = this.requireDefinition(name);
     if (definition.name === 'UNDOCTL') return this.database.undoControl;
     if (definition.name === 'HANDSEED') return this.database.handseed;
-    const runtime = definition.readonly ? this.runtimeValues?.()[definition.name] : undefined;
+    const runtime = definition.readonly ? this.runtimeLookup(definition.name) : undefined;
     if (runtime !== undefined) {
       validateSystemVariable(definition, runtime);
       return structuredClone(runtime);
@@ -122,6 +125,12 @@ export class SystemVariables {
           ? this.profile.values.get(definition.name)
           : this.sessionValues.get(definition.name);
     if (stored === undefined) {
+      // Writable host-defined values (CLAYOUT) report the host state until set.
+      const fallback = definition.readonly ? undefined : this.runtimeLookup(definition.name);
+      if (fallback !== undefined) {
+        validateSystemVariable(definition, fallback);
+        return structuredClone(fallback);
+      }
       if (definition.default === undefined)
         throw new SystemVariableError(
           definition.name,
@@ -225,6 +234,7 @@ export class SystemVariables {
       DIMSTYLE: 'DIMSTYLE',
       CELTYPE: 'LTYPE',
     };
+    if (name === 'CLAYOUT' && typeof value === 'string') return this.resolveLayout(value);
     const table = references[name];
     if (table === undefined || typeof value !== 'string') return value;
     const symbol = this.database
@@ -243,6 +253,29 @@ export class SystemVariables {
         { reason: 'missing-symbol', reference: value },
       );
     return symbol.name;
+  }
+
+  /** CLAYOUT is `name*handle`; a name, `*handle` or both select the layout. */
+  private resolveLayout(value: string): string {
+    const separator = value.lastIndexOf('*');
+    const name = separator < 0 ? value : value.slice(0, separator);
+    const handle = separator < 0 ? '' : value.slice(separator + 1).toUpperCase();
+    const layout = this.database
+      .all()
+      .find(
+        (object) =>
+          object.type === 'LAYOUT' &&
+          (!name || object.name?.toUpperCase() === name.toUpperCase()) &&
+          (!handle || object.handle === handle),
+      );
+    if (!layout?.name || (!name && !handle))
+      throw new SystemVariableError(
+        'CLAYOUT',
+        'invalid',
+        `CLAYOUT의 값이 유효하지 않습니다. 이름 "${value}"이(가) 도면에 없습니다.`,
+        { reason: 'missing-symbol', reference: value },
+      );
+    return `${layout.name}*${layout.handle}`;
   }
 }
 

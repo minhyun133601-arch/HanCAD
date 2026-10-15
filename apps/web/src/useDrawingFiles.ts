@@ -33,6 +33,7 @@ import { publishDrawingCache } from './publish-drawing-cache';
 import { useDrawingFileCommands } from './useDrawingFileCommands';
 import { setDocumentSource } from './document-source';
 import { useDrawingFileNotice } from './useDrawingFileNotice';
+import { viewVariables } from './view-history';
 
 interface DrawingFilesOptions {
   registry: CommandRegistry;
@@ -143,6 +144,7 @@ export function useDrawingFiles({
       if (
         event.type === 'sysvar-changed' &&
         event.name !== drawingViewVariable &&
+        !viewVariables.some((name) => name === event.name) &&
         !initializing &&
         manager
       ) {

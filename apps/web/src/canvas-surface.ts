@@ -1,5 +1,5 @@
 import { CadCanvasSurface } from '@hancad/render';
-import type { CadCanvasOptions, CadSnapKind } from '@hancad/render';
+import type { CadCanvasOptions, CadSnapKind, CadWorldView } from '@hancad/render';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 
 /** Owns the DOM canvas; React only provides the host element. */
@@ -54,6 +54,18 @@ export class CanvasSurface {
   }
   fit(): void {
     this.renderer.fit();
+  }
+  zoomExtents(): void {
+    this.renderer.zoomExtents();
+  }
+  getWorldView(): CadWorldView {
+    return this.renderer.getWorldView();
+  }
+  setWorldView(view: CadWorldView): void {
+    this.renderer.setWorldView(view);
+  }
+  getViewportSize(): { width: number; height: number } {
+    return this.renderer.getViewportSize();
   }
 
   dispose(): void {

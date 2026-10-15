@@ -11,7 +11,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHSPHEREAXIS",
@@ -25,7 +25,7 @@
       "savedIn": "User-settings",
       "initial": "12"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHSPHEREHEIGHT",
@@ -39,7 +39,7 @@
       "savedIn": "User-settings",
       "initial": "6"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHTORUSPATH",
@@ -53,7 +53,7 @@
       "savedIn": "User-settings",
       "initial": "8"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHTORUSSECTION",
@@ -67,7 +67,7 @@
       "savedIn": "User-settings",
       "initial": "8"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHWEDGEBASE",
@@ -81,7 +81,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHWEDGEHEIGHT",
@@ -95,7 +95,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHWEDGELENGTH",
@@ -109,7 +109,7 @@
       "savedIn": "User-settings",
       "initial": "4"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHWEDGESLOPE",
@@ -123,7 +123,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHWEDGEWIDTH",
@@ -137,7 +137,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DONUTID",
@@ -151,7 +151,7 @@
       "savedIn": "Not-saved",
       "initial": "0.5000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DONUTOD",
@@ -165,7 +165,7 @@
       "savedIn": "Not-saved",
       "initial": "1.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DRAGMODE",
@@ -195,7 +195,7 @@
       "savedIn": "Registry",
       "initial": "5000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DRAGP2",
@@ -209,7 +209,7 @@
       "savedIn": "Registry",
       "initial": "10"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DRAGVS",
@@ -253,7 +253,7 @@
       "initial": "Varies"
     },
     "readonly": true,
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DTEXTED",
@@ -267,7 +267,7 @@
       "savedIn": "Registry",
       "initial": "2"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DWFFRAME",

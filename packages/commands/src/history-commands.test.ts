@@ -7,6 +7,23 @@ async function run(runner: HeadlessCommandRunner, command: string): Promise<void
 }
 
 describe('headless advanced history command paths', () => {
+  it('undoes a whole menu macro with one U only while UNDO Auto is on', async () => {
+    const runner = new HeadlessCommandRunner();
+    const macro = [{ command: 'SETVAR LUPREC 2' }, { command: 'SETVAR AUPREC 3' }];
+    await runner.runMacro(macro);
+    expect(runner.database.undoCount).toBe(1);
+    expect(runner.database.undoGroupActive).toBe(false);
+    await run(runner, 'U');
+    expect(runner.sysvars.get('LUPREC')).toBe(4);
+    expect(runner.sysvars.get('AUPREC')).toBe(0);
+    await run(runner, 'UNDO A OFF');
+    expect(runner.sysvars.getNumber('UNDOCTL') & 4).toBe(0);
+    await runner.runMacro(macro);
+    expect(runner.database.undoCount).toBe(2);
+    await run(runner, 'U');
+    expect(runner.sysvars.get('LUPREC')).toBe(2);
+    expect(runner.sysvars.get('AUPREC')).toBe(0);
+  });
   it('requires REDO immediately after U/UNDO while MREDO can still restore later', async () => {
     const runner = new HeadlessCommandRunner();
     await run(runner, 'SETVAR LUPREC 2');

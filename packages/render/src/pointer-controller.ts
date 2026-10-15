@@ -20,6 +20,12 @@ export interface CadSelectionDrag {
   gesture?: 'area' | 'fence';
   points?: readonly CadPoint[];
 }
+/** The displayed model region: center in drawing-session coordinates and height in units. */
+export interface CadWorldView {
+  center: CadPoint;
+  height: number;
+}
+export type CadNavigationKind = 'zoom' | 'pan';
 export interface CadNavigationSettings {
   zoomFactor: number;
   zoomWheel: number;
@@ -33,6 +39,8 @@ export interface CadCanvasOptions {
   suppressSelectionBox?: (start: CadPoint) => boolean;
   onSelectionDrag?: (event: CadSelectionDrag) => void;
   getNavigationSettings?: () => CadNavigationSettings;
+  /** Called once per completed wheel step, pan drag or extents fit with the prior view. */
+  onNavigate?: (kind: CadNavigationKind, before: CadWorldView, after: CadWorldView) => void;
   observeResize?: boolean;
 }
 interface PointerHost {
@@ -44,6 +52,7 @@ interface PointerHost {
   coordinates: (point: CadPoint) => void;
   fit: () => void;
   invalidate: () => void;
+  worldView: () => CadWorldView;
 }
 interface Press {
   pointerId: number;
@@ -60,7 +69,9 @@ interface Press {
 
 /** Keeps canvas capture, selection gestures and view navigation out of drawing code. */
 export class CadPointerController {
-  private pan: { pointerId: number; local: CadPoint; view: CadView; moved: boolean } | undefined;
+  private pan:
+    | { pointerId: number; local: CadPoint; view: CadView; moved: boolean; before: CadWorldView }
+    | undefined;
   private press: Press | undefined;
   private middleClick: { time: number; local: CadPoint } | undefined;
 
@@ -147,6 +158,7 @@ export class CadPointerController {
     const steps = Math.max(-10, Math.min(10, event.deltaY / divisor)) * direction;
     const local = this.localPoint(event);
     const view = this.host.view();
+    const before = this.host.worldView();
     const scale = Math.max(1e-6, Math.min(1e6, view.scale * (1 + factor / 100) ** -steps));
     const ratio = scale / view.scale;
     const { x: width, y: height } = this.host.viewport();
@@ -156,6 +168,7 @@ export class CadPointerController {
       ty: local.y - height / 2 - (local.y - height / 2 - view.ty) * ratio,
     });
     if (this.pan) this.pan = { ...this.pan, local, view: this.host.view() };
+    else this.options.onNavigate?.('zoom', before, this.host.worldView());
   };
   private readonly onPointerDown = (event: PointerEvent): void => {
     if (event.button !== 0 && event.button !== 1) return;
@@ -190,11 +203,19 @@ export class CadPointerController {
         event.timeStamp - previous.time <= 500 &&
         Math.hypot(local.x - previous.local.x, local.y - previous.local.y) <= 6
       ) {
+        const before = this.host.worldView();
         this.host.fit();
+        this.options.onNavigate?.('zoom', before, this.host.worldView());
         return;
       }
       this.cancel();
-      this.pan = { pointerId: event.pointerId, local, view: this.host.view(), moved: false };
+      this.pan = {
+        pointerId: event.pointerId,
+        local,
+        view: this.host.view(),
+        moved: false,
+        before: this.host.worldView(),
+      };
     }
     this.canvas.setPointerCapture?.(event.pointerId);
   };
@@ -236,6 +257,7 @@ export class CadPointerController {
     if (pan && event.pointerId === pan.pointerId && event.button === 1) {
       this.pan = undefined;
       if (!pan.moved) this.middleClick = { time: event.timeStamp, local: this.localPoint(event) };
+      else this.options.onNavigate?.('pan', pan.before, this.host.worldView());
       this.release(pan.pointerId);
     }
     const press = this.press;

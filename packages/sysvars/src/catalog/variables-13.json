@@ -11,7 +11,7 @@
       "savedIn": "Drawing",
       "initial": "0.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIMTVP",
@@ -25,7 +25,7 @@
       "savedIn": "Drawing",
       "initial": "0.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIMTXSTY",
@@ -160,7 +160,7 @@
       "savedIn": "Registry",
       "initial": "1"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHBOXHEIGHT",
@@ -174,7 +174,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHBOXLENGTH",
@@ -188,7 +188,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHBOXWIDTH",
@@ -202,7 +202,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHCONEAXIS",
@@ -216,7 +216,7 @@
       "savedIn": "User-settings",
       "initial": "8"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHCONEBASE",
@@ -230,7 +230,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHCONEHEIGHT",
@@ -244,7 +244,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHCYLAXIS",
@@ -258,7 +258,7 @@
       "savedIn": "User-settings",
       "initial": "8"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHCYLBASE",
@@ -272,7 +272,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHCYLHEIGHT",
@@ -286,7 +286,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHPYRBASE",
@@ -300,7 +300,7 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIVMESHPYRHEIGHT",
@@ -314,6 +314,6 @@
       "savedIn": "User-settings",
       "initial": "3"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   }
 ]

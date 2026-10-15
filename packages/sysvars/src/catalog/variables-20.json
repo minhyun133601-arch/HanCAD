@@ -75,7 +75,8 @@
       "savedIn": "Registry",
       "initial": "0.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": 0,
+    "max": 5000
   },
   {
     "name": "HPINHERIT",
@@ -167,7 +168,8 @@
       "savedIn": "Registry",
       "initial": "100"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": 0,
+    "max": 10000000
   },
   {
     "name": "HPMAXLINES",
@@ -181,7 +183,8 @@
       "savedIn": "Registry",
       "initial": "100000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": 100,
+    "max": 10000000
   },
   {
     "name": "HPOBJWARNING",
@@ -195,7 +198,7 @@
       "savedIn": "Registry",
       "initial": "100000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "HPORIGIN",
@@ -285,7 +288,7 @@
       "savedIn": "Not-saved",
       "initial": "1.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "HPTRANSPARENCY",

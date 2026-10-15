@@ -16,6 +16,8 @@ import { useWorkspaceShortcuts } from './useWorkspaceShortcuts';
 import { useDrawingCommands } from './useDrawingCommands';
 import { InlineTextEditor } from './InlineTextEditor';
 import { errorMessage } from './error-presenter';
+import { useViewHistory } from './view-history';
+import { layoutFromName, layoutName, useHostVariables } from './host-variables';
 import type { DocumentManager, DrawingDocument } from '@hancad/sysvars';
 
 export function DocumentApp({
@@ -73,6 +75,22 @@ export function DocumentApp({
     messages,
     surface: canvasSurface,
   });
+  const onNavigate = useViewHistory(session.database, canvasSurface);
+  useEffect(() => {
+    const saved = session.database.getVariable('CLAYOUT');
+    const initial = typeof saved === 'string' ? layoutFromName(saved) : undefined;
+    if (initial) setLayout(initial);
+  }, [session.database]);
+  useEffect(
+    () =>
+      session.sysvars.events.subscribe((event) => {
+        if (event.name !== 'CLAYOUT' || typeof event.value !== 'string') return;
+        const next = layoutFromName(event.value);
+        if (next) setLayout(next);
+      }),
+    [session.sysvars],
+  );
+  useHostVariables(drawingDocument.id, { locale, layout, state: tools.state }, canvasSurface);
   const inputRef = useRef<HTMLDivElement | HTMLInputElement>(null);
 
   function focusCommand(): void {
@@ -141,7 +159,8 @@ export function DocumentApp({
       description: { 'ko-KR': korean.fitDrawing, 'en-US': english.fitDrawing },
       execute: (context) => {
         const option = context.input.take();
-        if (typeof option === 'string' && /^_?E$/i.test(option)) canvasSurface.current?.fit();
+        if (typeof option === 'string' && /^_?E$/i.test(option))
+          canvasSurface.current?.zoomExtents();
         else context.print(messages.zoomExtentsOnly);
       },
     });
@@ -235,6 +254,7 @@ export function DocumentApp({
           onSelectionDrag={interaction.selectionDrag}
           suppressSelectionBox={interaction.suppressSelectionBox}
           getNavigationSettings={interaction.getNavigationSettings}
+          onNavigate={onNavigate}
         />
         <div className="drawing-tools">
           <span>
@@ -303,7 +323,16 @@ export function DocumentApp({
       <StatusBar
         messages={messages}
         layout={layout}
-        onLayout={setLayout}
+        onLayout={(next) => {
+          // Switching tabs is not a drawing edit; SETVAR CLAYOUT remains undoable.
+          const layout = session.database.find('LAYOUT', layoutName(next));
+          if (layout)
+            session.database.writeUntrackedVariable(
+              'CLAYOUT',
+              `${layoutName(next)}*${layout.handle}`,
+            );
+          setLayout(next);
+        }}
         sysvars={session.sysvars}
         toggle={toggle}
         mode={platform.mode}

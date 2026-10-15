@@ -116,6 +116,22 @@ export class HeadlessCommandRunner {
     }
   }
 
+  /**
+   * Runs the commands of one menu/toolbar macro. With UNDO Auto on (the default)
+   * they are undone by a single U, as AutoCAD groups a menu item's operations.
+   */
+  async runMacro(
+    lines: readonly { command: string; inputs?: readonly CommandInput[] }[],
+  ): Promise<CommandResult[]> {
+    const group = this.database.undoAutoEnabled && !this.database.undoGroupActive;
+    if (group) this.database.beginUndoGroup();
+    try {
+      return await this.runScript(lines);
+    } finally {
+      if (group && this.database.undoGroupActive) this.database.endUndoGroup();
+    }
+  }
+
   async runScript(
     lines: readonly { command: string; inputs?: readonly CommandInput[] }[],
   ): Promise<CommandResult[]> {

@@ -17,7 +17,9 @@ export function systemVariableMarkdown(
       ]
         .filter(Boolean)
         .join('; ');
-    return variable.validationNote ? 'Type only; numeric range pending' : 'Documented type';
+    return variable.validationNote
+      ? 'Type only (no documented rejecting range)'
+      : 'Documented type';
   };
   const rows = variables.map(
     (variable) =>

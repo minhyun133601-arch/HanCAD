@@ -1,86 +1,50 @@
 # HanCAD progress
 
-## Active phase: Phase 01 database foundations (2026-10-15)
+## Completed phase: Phase 01 database foundations (2026-10-15)
 
-The user explicitly requested advancing to Phase 01 after the bootstrap delivery.
-This supersedes the earlier instruction to wait for native Phase 00 acceptance.
-That native check remains deferred and unverified, not marked complete. Work stays
-inside the original Phase 01 prompt; later-phase features remain preserved.
+Phase 01 is complete. All four original acceptance checks pass and every build
+item is implemented or tied to the later phase that owns its producer. Items that
+need the user's installed AutoCAD are on `PARITY_CHECKLIST.md`. Phase 00 native
+acceptance remains deferred by user instruction (MSVC/Windows SDK unavailable).
 
-Fresh baseline: `HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=1 pnpm verify` passes
-WASM, lint, formatting, strict TypeScript, 235 unit, 30 compatibility and 50 Edge
-tests (54.1 seconds), with one opt-in private-file skip.
+Final `HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=1 pnpm verify` passes real WASM round
+trip, ESLint, formatting, strict TypeScript, 315 unit tests, 30 compatibility tests,
+a production build and 57 Edge E2E tests (1.2 minutes), with the single opt-in
+private-file case skipped. SYSVARS docs are current (860 variables / 214 headers).
 
-Final integrated verification passes real WASM round trip, ESLint, formatting,
-strict TypeScript, 307 unit tests, 30 compatibility tests, a production build and
-55 Edge E2E tests (1.1 minutes), with the single opt-in private-file case skipped.
-No private drawing benchmark or native desktop build was repeated. Generated
-SYSVARS docs are current (860 variables / 214 headers). Actual 1280x720 browser
-exercise verifies Korean/English prompts, DIST precision, independent tabs and
-grouped undo/redo; screenshots remain ignored under
-`test-artifacts/database-foundations/`. The build retains its known bundle-size
-warning; it does not constitute a completed Phase 02 performance check.
+| Milestone                            | Status | Acceptance                                                                                                                  |
+| ------------------------------------ | ------ | --------------------------------------------------------------------------------------------------------------------------- |
+| 1.2 Entity schemas and metric graph  | Done   | Published DXF inventory/code facts, 16 editable codecs, ordered opaque groups, common properties and linked metric defaults |
+| 1.3 Basic geometry behavior          | Done   | Analytic/OCS curves, widths/bulges, NURBS and cubic fit geometry with explicit numerical quality and constrained-fit limits |
+| 1.4 Declarative variable coverage    | Done   | 860 sourced variables, 214 DXF header definitions, generated docs, validated enums/bitmasks and live runtime values         |
+| 1.5 Undo and document integration    | Done   | Advanced UNDO/UNDOCTL/OOPS, independent tabs/journals, shared profile, native HCD save/open and ordered recovery            |
+| 1.6 Complete original Phase 01 build | Done   | Runtime providers, CLAYOUT `name*handle`, 28 audited ranges, zoom/pan navigation undo, UNDO Auto macro grouping             |
 
-The final review also fixes POLYLINE header-width inheritance, distinguishes
-omitted VERTEX widths from explicit zero, and clears optional mapped fields without
-leaving invalid canonical nulls. OOPS retains the erased objects' original draw
-order before later objects. Browser regressions now check the changed native
-document semantics: foreign overlays fall back to the durable graph's style,
-each OPEN creates an independent document, and MREDO remains usable after a
-GETVAR that has correctly closed the immediate REDO window.
+Milestone 1.6 delivered:
 
-The user requested finishing the currently actionable work and leaving the next
-work recorded so the workspace can be used elsewhere. Stop at this tested commit;
-resume Phase 01 milestone 1.6 below, not Phase 02.
+- Pure clock module: DATE/CDATE, TDCREATE/TDUCREATE/TDUPDATE/TDUUPDATE stamped on
+  NEW and HANSAVE outside the journal, TDINDWG/TDUSRTIMER accumulate session time.
+- Lazy per-name host provider: VIEWCTR, VIEWSIZE, SCREENSIZE, EXTMIN/EXTMAX,
+  LOCALE, CLAYOUT and closed-palette states; UCSNAME `""` for World.
+- CLAYOUT follows Autodesk's `name*handle` contract and drives the layout tabs.
+- Wheel zoom, middle pan, double-middle and ZOOM E are `navigation` undo steps;
+  Combine merges them, U/REDO/MREDO restore the exact view.
+- `HeadlessCommandRunner.runMacro` groups a macro into one undo step while Auto is on.
+- 185 type-only numeric variables audited: 28 now enforce documented ranges;
+  SELECTIONEFFECTCOLOR accepts 0-255 (documented initial 0 plus ACI 1-255).
 
-| Milestone                            | Status           | Acceptance                                                                                                                        |
-| ------------------------------------ | ---------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| 1.2 Entity schemas and metric graph  | Delivered subset | Published DXF inventory/code facts, 16 editable codecs, ordered opaque groups, common properties and linked metric defaults       |
-| 1.3 Basic geometry behavior          | Delivered subset | Analytic/OCS curves, widths/bulges, NURBS and cubic fit geometry with explicit numerical quality and constrained-fit limits       |
-| 1.4 Declarative variable coverage    | Delivered subset | 860 sourced variables, 214 DXF header definitions, generated docs, validated enums/bitmasks and live runtime values               |
-| 1.5 Undo and document integration    | Delivered subset | Advanced UNDO/UNDOCTL/OOPS, independent tabs/journals, shared profile, native HCD save/open and ordered recovery                  |
-| 1.6 Complete original Phase 01 build | In progress      | Remaining host defaults/ranges, macro/navigation/layer grouping, exact metric defaults and general constrained fit reconstruction |
+Deliberately owned elsewhere: layer-category undo producer (Phase 08 Layer
+Properties Manager), menu-macro syntax (Phase 03), OS identity/path/codepage
+variables (native Platform provider, blocked with Phase 00 native work), ZOOM
+options other than Extents (Phase 02). Reference-only comparisons: acadiso numeric
+style fields/scale-list order and the fit-only periodic spline tangent case.
 
-The four original acceptance checks are implemented: seeded 1,000-operation exact
-undo/redo, headless OSMODE 4133/invalid 99999/LUPREC 2, generated registry docs and
-identical native HCD graph/blob reload. Actual browser DIST verifies two versus
-four decimal places, and document switching retains separate drawing variables,
-geometry and journals. These tests do not complete the entire original build list.
+Exact next step: start Phase 02 (rendering engine and view navigation) by reading
+`docs/prompt-source/prompts/phase-02-rendering-engine-and-view-navigation.md`,
+running the full suite and writing milestones 2.x here. Keep the zoom/pan journal
+entries working when the renderer changes (see `apps/web/src/view-history.ts`).
 
-The native graph includes layouts/block links, NOD entries, original metric
-styles/scales and persistent common metadata. Published group-code facts remain
-separate from implemented editing/geometry behavior. Unsupported records retain
-ordered data. General spline inquiries use numerical operations and conservative
-bounds; inconsistent fit-only periodic tangent constraints remain unsupported.
-
-The app uses DocumentManager per document, preserving the existing editable view
-adapter inside a private drawing variable. NEW and OPEN create independent graphs;
-HANSAVE downloads zipped JSON/binary .hcd, while QSAVE remains supported-entity DXF.
-Native recovery carries the complete graph/blobs separately from its view to avoid
-recursive snapshots. A shared queue prevents stale cross-document cache writes.
-Style overlays are applied to the recovered graph, and tab reactivation reads
-current database values. Typed HCD and unavailable-variable errors retain a usable
-shell in both locales. Host-dependent defaults are explicit rather than invented.
-
-Exact next step: continue Phase 01 milestone 1.6. Start with a pure tested local
-clock provider for DATE/CDATE, injected through the existing runtimeValues callback
-without writing the drawing journal. DATE uses local calendar epoch days plus
-2440588 (official 1998-01-01 noon anchor 2450815.5); both values discard subsecond
-time. Then connect view/document lifecycle providers, keeping CLAYOUT's actual
-`layoutName*handle` contract and checking SCREENSIZE DPI semantics. The 62 definitions
-without fixed defaults comprise 31 runtime values, 18 paths and 13 feature states;
-HANDSEED and DWGPREFIX already have live providers, so this is not a count of
-62 failing reads. Keep unavailable OS facilities explicit in browser mode and
-never substitute guessed Autodesk identity strings, codepages or user paths.
-Then resolve deferred numeric ranges and
-the SELECTIONEFFECTCOLOR source conflict; connect Auto macro and navigation/layer
-undo categories to real UI operations. Compare metric style/layout/scale defaults
-and general fit-only tangent reconstruction with reference fixtures, filling the
-SCALE-specific mapping only when verified. Keep the app runnable, rerun complete
-verification and commit each remaining milestone. Do not claim complete Phase 01
-or advance to Phase 02 while these build requirements remain open.
-
-Manual checks for this delivery:
+Manual checks for Phase 01:
 
 1. Launch `HanCAD 실행.cmd`. Type `OSMODE`, Enter: the default is 4133. Type
    99999, Enter: the Korean validation error appears. Press Esc.
@@ -91,14 +55,15 @@ Manual checks for this delivery:
    remain. Type U, Enter, then REDO, Enter without another command between them.
 4. Type `UNDO`, Enter, `BE`, Enter. Draw two lines. Type `UNDO`, Enter, `E`,
    Enter, then U, Enter: both lines disappear. REDO, Enter restores the group.
-   UNDO M creates a mark; UNDO B returns to it. UNDO C None/All/One changes mode;
-   GETVAR UNDOCTL exposes the actual flags. MREDO accepts a number, A or L.
-5. Select a line, ERASE, Enter; draw another line; OOPS, Enter restores the last
-   erased set. U/REDO reverses/restores that OOPS independently.
-6. Choose File > HCD save, then OPEN the downloaded .hcd. Check the new tab's
-   objects and LUPREC/TEXTSIZE, reload and repeat. Invalid .hcd retains the prior
-   graph. ACTRECPATH prints an explicit unavailable-value diagnostic and leaves
-   the command line usable; switch English and repeat.
+5. Select a line, ERASE, Enter; draw another line; OOPS, Enter restores it.
+6. Roll the wheel several times and pan with the middle button. Type `U`, Enter:
+   the whole zoom/pan sequence returns to the previous view in one step. Type
+   `UNDO`, `C`, `C`, `OFF`: each wheel step is now undone separately.
+7. `GETVAR` `CDATE`, `DATE`, `TDCREATE`, `TDINDWG`, `VIEWSIZE`, `SCREENSIZE`,
+   `EXTMIN`. Click the 배치1 tab, then `GETVAR` `CLAYOUT` shows `Layout1*<handle>`;
+   type `CLAYOUT`, Enter, `Model`, Enter: the 모형 tab is selected.
+8. `CBARTRANSPARENCY`, Enter, `95`, Enter is rejected (10-90).
+9. Choose File > HCD save, OPEN the .hcd: objects, LUPREC, TDCREATE are kept.
 
 ## Delivered Phase 00 diagnostic continuation (2026-10-15)
 
@@ -334,7 +299,7 @@ accepted merely because a subset works.
 | Phase | Name                                  | Status      |
 | ----- | ------------------------------------- | ----------- |
 | 00    | Bootstrap                             | In progress |
-| 01    | Database, sysvars, undo and documents | In progress |
+| 01    | Database, sysvars, undo and documents | Done        |
 | 02    | Rendering/navigation                  | In progress |
 | 03    | Commands/Korean IME                   | In progress |
 | 04    | Coordinates/drafting aids             | In progress |

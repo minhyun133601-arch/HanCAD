@@ -91,7 +91,7 @@
       "savedIn": "Drawing",
       "initial": "6"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "SURFTAB2",
@@ -105,7 +105,7 @@
       "savedIn": "Drawing",
       "initial": "6"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "SURFTYPE",
@@ -135,7 +135,8 @@
       "savedIn": "Drawing",
       "initial": "6"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": 0,
+    "max": 200
   },
   {
     "name": "SURFV",
@@ -149,7 +150,8 @@
       "savedIn": "Drawing",
       "initial": "6"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": 0,
+    "max": 200
   },
   {
     "name": "SYSCODEPAGE",
@@ -237,7 +239,7 @@
       "initial": "Varies"
     },
     "readonly": true,
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "TDINDWG",
@@ -252,7 +254,7 @@
       "initial": "Varies"
     },
     "readonly": true,
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "TDUCREATE",
@@ -267,7 +269,7 @@
       "initial": "Varies"
     },
     "readonly": true,
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "TDUPDATE",
@@ -282,7 +284,7 @@
       "initial": "Varies"
     },
     "readonly": true,
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "TDUSRTIMER",
@@ -297,6 +299,6 @@
       "initial": "Varies"
     },
     "readonly": true,
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   }
 ]

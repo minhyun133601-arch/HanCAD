@@ -11,7 +11,7 @@
       "savedIn": "Registry",
       "initial": "10000000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "TRIMEDGES",
@@ -196,7 +196,7 @@
       "savedIn": "Registry",
       "initial": "90"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "UCSBASE",

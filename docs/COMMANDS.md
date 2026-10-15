@@ -182,7 +182,7 @@ Registered canonical names and aliases from the supplied reference. Registration
 | U                  |            | Partial / Undo one group; LINE/PLINE local segment undo                                |
 | UCSMAN             | UC         | Not implemented; explicit message                                                      |
 | UNDEFINE           |            | Partial / Disable a command; argument form                                             |
-| UNDO               |            | Partial / Count, Auto, Control, BEgin, End, Mark, Back; UI grouping pending            |
+| UNDO               |            | Partial / All options; Auto groups runner macros; zoom/pan steps combine; Layer UI P08 |
 | UNION              | UNI        | Not implemented; explicit message                                                      |
 | UNITS              | UN, -UN    | Not implemented; explicit message                                                      |
 | VIEW               | V, -V      | Not implemented; explicit message                                                      |

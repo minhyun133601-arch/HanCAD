@@ -1,5 +1,50 @@
 # Decisions
 
+## 2026-10-15: Phase 01 milestone 1.6 closes the original build list
+
+Runtime values come from typed providers rather than invented defaults. DATE and
+CDATE use the local clock (Julian day boundary at midnight, 1970-01-01 = 2440588;
+CDATE `YYYYMMDD.HHMMSS`); both discard subsecond time, matching Autodesk's note
+that the value changes only after a whole second. NEW stamps TDCREATE/TDUPDATE
+(local) and TDUCREATE/TDUUPDATE (universal) once, outside the journal. HANSAVE
+stamps TDUPDATE/TDUUPDATE and folds the session's editing time into TDINDWG and
+TDUSRTIMER (the user timer is on by default; TIME arrives with its command).
+Opened drawings keep their saved times. `DrawingDatabase.writeUntrackedVariable`
+is the only non-journal write; it is reserved for host facts.
+
+The [CLAYOUT reference](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0C492884-3B3F-4C35-8BAE-8233342A9203.htm)
+defines the value as `name*handle` and accepts the name, `*handle` or both. SETVAR
+CLAYOUT validates against LAYOUT objects, is journaled like other drawing
+variables and switches the tab. A tab click writes the value without an undo step
+(pending reference check). UCSNAME is `""` for the unnamed World UCS. EXTMIN/EXTMAX
+report live geometry bounds, or the inverted 1E+20 pair for an empty drawing.
+VIEWCTR/VIEWSIZE/SCREENSIZE read the displayed viewport. LOCALE follows the UI
+language (KOR/ENU). Palettes HanCAD does not provide report state 0, which is their
+real state, as do PERSPECTIVE and VIEWBACKSTATUS/VIEWFWDSTATUS. OS identity, paths
+and codepages stay explicitly unavailable in browser mode; a native Platform
+provider must supply them rather than guessed Autodesk strings.
+
+Completed wheel zoom, middle-button pan, double-middle extents and ZOOM E record
+VIEWCTR/VIEWSIZE as `navigation` journal entries; Combine (default on) merges
+consecutive steps, and U/REDO/MREDO restore the exact view. Before recording, the
+stored view is resynchronized to the displayed one, so a fit performed by OPEN/NEW
+is restored correctly. View variables never trigger the full-drawing cache write.
+UNDO Auto groups a whole `HeadlessCommandRunner.runMacro` call into one step; the
+menu-macro syntax that feeds it is Phase 03 work. Layer-category combination is
+journal-ready; its only producer, the Layer Properties Manager, is Phase 08.
+
+The 185 numeric variables previously marked "range pending" were audited against
+their Autodesk 2026 pages. Twenty-eight have documented rejecting ranges and now
+enforce them. SELECTIONEFFECTCOLOR accepts 0-255: 0 is the documented initial value
+and 1-255 the documented ACI range. Angles that Autodesk normalizes (GFANG,
+LOFTANG1/2) and limits that depend on other variables (FACETERSMOOTHLEV, MAXACTVP,
+FACETERMINUGRID versus FACETERMAXGRID) are not rejected. The rest document no range.
+
+Phase 01 is complete: all four acceptance checks pass and every build item is
+implemented or tied to its owning later phase. Template numeric fields, scale-list
+order and the fit-only periodic tangent case need the user's installed AutoCAD and
+remain on the parity checklist; they do not block Phase 02.
+
 ## 2026-10-15: User-directed advance to Phase 01
 
 The latest explicit user request advances implementation to Phase 01. It

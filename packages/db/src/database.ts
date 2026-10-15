@@ -54,6 +54,13 @@ export class DrawingDatabase {
   get undoMarkCount(): number {
     return this.history.markCount;
   }
+  /** UNDO Auto: a menu macro's commands form one undo step. */
+  get undoAutoEnabled(): boolean {
+    return this.history.autoEnabled;
+  }
+  get undoGroupActive(): boolean {
+    return this.history.groupActive;
+  }
   get undoReachedMark(): boolean {
     return this.history.reachedMark;
   }
@@ -182,6 +189,21 @@ export class DrawingDatabase {
       for (const handle of handles) transaction.unerase(handle);
     });
     return handles.length;
+  }
+
+  /**
+   * Host-maintained drawing facts (creation/update times, the displayed view) are
+   * saved with the drawing but are not edits. They bypass the journal; journaled
+   * entries that touch the same name still restore their own before/after values.
+   */
+  writeUntrackedVariable(name: string, value: JsonValue, publish = false): void {
+    if (this.active) throw new Error('Untracked variables cannot be written inside a transaction.');
+    assertJson(value);
+    name = name.toUpperCase();
+    const before = this.getVariable(name);
+    this.variables[name] = cloneJson(value);
+    if (publish)
+      this.events.publish({ type: 'sysvar-changed', name, before, value: cloneJson(value) });
   }
 
   clearHistory(): void {

@@ -27,7 +27,7 @@
       "savedIn": "Registry",
       "initial": "10000000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DGNIMPORTMODE",
@@ -105,7 +105,7 @@
       "initial": "0"
     },
     "readonly": true,
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIMADEC",
@@ -165,7 +165,7 @@
       "savedIn": "Drawing",
       "initial": "25.4000 (imperial) or 0.0394 (metric)"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIMALTRND",
@@ -179,7 +179,7 @@
       "savedIn": "Drawing",
       "initial": "0.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIMALTTD",

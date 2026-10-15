@@ -120,7 +120,7 @@
       "savedIn": "Drawing",
       "initial": "1.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIMTFILL",
@@ -150,7 +150,7 @@
       "savedIn": "Drawing",
       "initial": "0"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIMTIH",
@@ -196,7 +196,7 @@
       "savedIn": "Drawing",
       "initial": "0.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   },
   {
     "name": "DIMTMOVE",
@@ -290,6 +290,6 @@
       "savedIn": "Drawing",
       "initial": "0.0000"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   }
 ]

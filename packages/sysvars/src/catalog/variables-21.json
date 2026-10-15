@@ -24,7 +24,8 @@
       "savedIn": "Drawing",
       "initial": "0"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": -11,
+    "max": 11
   },
   {
     "name": "IMAGEASYNC",
@@ -154,7 +155,8 @@
       "savedIn": "Registry",
       "initial": "300"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "min": 100,
+    "max": 10000
   },
   {
     "name": "INSBASE",
@@ -244,6 +246,6 @@
       "savedIn": "Registry",
       "initial": "20"
     },
-    "validationNote": "Only the documented type is enforced; no complete numeric range was obtained from this topic."
+    "validationNote": "Audited 2026-10-15: the Autodesk topic documents no rejecting numeric range; only the type is enforced."
   }
 ]

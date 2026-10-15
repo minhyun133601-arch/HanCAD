@@ -229,14 +229,16 @@ describe('Autodesk-sourced declarative catalog', () => {
     const variables = new SystemVariables(),
       events: unknown[] = [];
     variables.events.subscribe((event) => events.push(event));
-    variables.set('CLAYOUT', 'Model*FF');
-    expect(variables.get('CLAYOUT')).toBe('Model*FF');
+    const model = variables.database.find('LAYOUT', 'Model')?.handle;
+    expect(() => variables.set('CLAYOUT', 'Model*FF')).toThrow(SystemVariableError);
+    variables.set('CLAYOUT', `*${model}`);
+    expect(variables.get('CLAYOUT')).toBe(`Model*${model}`);
     variables.database.undo();
     expect(events).toContainEqual({ name: 'CLAYOUT', value: undefined });
     expect(variables.database.events.failures).toHaveLength(0);
     expect(() => variables.get('CLAYOUT')).toThrow(SystemVariableError);
     variables.database.redo();
-    expect(variables.get('CLAYOUT')).toBe('Model*FF');
+    expect(variables.get('CLAYOUT')).toBe(`Model*${model}`);
   });
 
   it('deeply freezes catalog metadata and reproduces the checked-in documentation without network access', () => {

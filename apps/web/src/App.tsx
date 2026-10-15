@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DocumentManager } from '@hancad/sysvars';
 import { DocumentApp } from './DocumentApp';
+import { hostValue } from './host-variables';
 import { restoreProfileVariables, subscribeProfileVariables } from './profile-storage';
 import { createDocument } from './document-actions';
 import type { Locale } from '@hancad/ui';
@@ -11,7 +12,7 @@ import { cachedNativeDatabase, cachedNativeBlobs, nativeDrawingView } from './na
 export function App() {
   const [locale, setLocale] = useState<Locale>('ko-KR');
   const [manager] = useState(() => {
-    const value = new DocumentManager();
+    const value = new DocumentManager({ hostValue });
     restoreProfileVariables(value.profile);
     const restored = restoreDrawing();
     const native = cachedNativeDatabase(restored.drawing);
