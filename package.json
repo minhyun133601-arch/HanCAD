@@ -22,7 +22,9 @@
     "test:e2e": "playwright test",
     "test": "pnpm test:unit && pnpm test:compat",
     "smoke": "pnpm test:e2e",
-    "verify": "pnpm build:wasm && pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build:web && pnpm test:e2e",
+    "verify": "pnpm build:wasm && pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build:web && pnpm test:render && pnpm test:e2e",
+    "test:render": "node packages/render/qa/verify-golden.mjs",
+    "test:render:stress": "node packages/render/qa/benchmark-stress.mjs",
     "test:compat": "node --test test/*.test.mjs",
     "docs:sysvars": "node scripts/generate-sysvars.mjs",
     "docs:sysvars:check": "node scripts/generate-sysvars.mjs --check"

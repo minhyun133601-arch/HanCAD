@@ -401,15 +401,49 @@ test('a replacement DXF wins over a DWG still being decoded and can be reopened'
   page,
 }) => {
   test.setTimeout(120000);
+  await page.addInitScript(() => {
+    const NativeWorker = Worker;
+    const diagnostics = { posted: 0, terminated: 0 };
+    const scope = globalThis as typeof globalThis & { pendingDwgRead?: typeof diagnostics };
+    scope.pendingDwgRead = diagnostics;
+    globalThis.Worker = new Proxy(NativeWorker, {
+      construct(target, args: [string | URL, WorkerOptions?]) {
+        const worker = new target(...args);
+        if (args[1]?.name === 'local-dwg-reader') {
+          // Hold only decoding, so replacement must abort the real pending reader.
+          worker.postMessage = () => {
+            diagnostics.posted++;
+          };
+          const terminate = worker.terminate.bind(worker);
+          worker.terminate = () => {
+            diagnostics.terminated++;
+            terminate();
+          };
+        }
+        return worker;
+      },
+    });
+  });
+  const pendingRead = () =>
+    page.evaluate(
+      () =>
+        (
+          globalThis as typeof globalThis & {
+            pendingDwgRead?: { posted: number; terminated: number };
+          }
+        ).pendingDwgRead,
+    );
   await page.goto('/');
   await chooseFile(page, official);
   await expect(page.locator('.drawing-loading')).toHaveCount(1);
+  await expect.poll(pendingRead).toEqual({ posted: 1, terminated: 0 });
   const replacement = {
     name: 'replacement.dxf',
     mimeType: 'application/dxf',
     buffer: Buffer.from(replacementDxf),
   };
   await page.getByTestId('cad-file-input').setInputFiles(replacement);
+  await expect.poll(pendingRead).toEqual({ posted: 1, terminated: 1 });
   await waitForRead(page);
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('1');
   await expect(page.getByRole('navigation', { name: '도면 탭' })).toContainText(replacement.name);

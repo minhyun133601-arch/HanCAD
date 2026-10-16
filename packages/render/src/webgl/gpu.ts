@@ -8,6 +8,21 @@ interface GeometryBuffer {
   vao: WebGLVertexArrayObject;
   count: number;
 }
+const uniformNames = [
+  'uStyles',
+  'uPatterns',
+  'uViewport',
+  'uOrigin',
+  'uScale',
+  'uCount',
+  'uPass',
+  'uWide',
+  'uFill',
+  'uSmooth',
+  'uForceWide',
+  'uRatio',
+] as const;
+type ProgramUniforms = Record<(typeof uniformNames)[number], WebGLUniformLocation | null>;
 export interface GpuChunk {
   origin: Vec2;
   bounds: Bounds2;
@@ -16,6 +31,8 @@ export interface GpuChunk {
   wide: GeometryBuffer;
   fills: GeometryBuffer;
   points: GeometryBuffer;
+  /** Retained only when packed thin lines have not needed an instanced-wide representation. */
+  wideSource?: Float32Array;
   viewDependent?: boolean;
 }
 /** Owns GL resources only. Geometry/model/database remain independent of the GPU. */
@@ -26,6 +43,7 @@ export class GpuDevice {
   private readonly styles: WebGLTexture;
   private readonly patterns: WebGLTexture;
   private readonly presentation: PresentationDevice;
+  private readonly uniforms = new Map<WebGLProgram, ProgramUniforms>();
   constructor(readonly canvas: HTMLCanvasElement) {
     const gl = canvas.getContext('webgl2', {
       antialias: false,
@@ -37,6 +55,13 @@ export class GpuDevice {
     this.gl = gl;
     this.thin = createProgram(gl, lineVertex, lineFragment);
     this.wideProgram = createProgram(gl, wideVertex, lineFragment);
+    for (const program of [this.thin, this.wideProgram])
+      this.uniforms.set(
+        program,
+        Object.fromEntries(
+          uniformNames.map((name) => [name, gl.getUniformLocation(program, name)]),
+        ) as ProgramUniforms,
+      );
     this.styles = this.texture();
     this.patterns = this.texture();
     this.presentation = new PresentationDevice(gl);
@@ -72,23 +97,34 @@ export class GpuDevice {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.R32F, 13, height, 0, gl.RED, gl.FLOAT, data);
   }
   upload(mesh: MeshData): GpuChunk {
-    if (!mesh.wide.length && mesh.lines.length) {
-      const wide = new Float32Array((mesh.lines.length / 10) * 8),
-        v = mesh.lines;
-      for (let i = 0, j = 0; i < v.length; i += 10, j += 8)
-        wide.set(
-          [v[i]!, v[i + 1]!, v[i + 5]!, v[i + 6]!, v[i + 2]!, v[i + 3]!, v[i + 4]!, v[i + 7]!],
-          j,
-        );
-      mesh = { ...mesh, wide };
-    }
     return {
       ...mesh,
+      ...(!mesh.wide.length && mesh.lines.length ? { wideSource: mesh.lines } : {}),
       lines: this.geometry(mesh.lines, false),
       wide: this.geometry(mesh.wide, true),
       fills: this.geometry(mesh.fills, false),
       points: this.geometry(mesh.points ?? new Float32Array(), false),
     };
+  }
+  private prepareWide(chunk: GpuChunk): void {
+    const source = chunk.wideSource;
+    if (!source) return;
+    const wide = new Float32Array((source.length / 10) * 8);
+    for (let i = 0, j = 0; i < source.length; i += 10, j += 8) {
+      wide[j] = source[i]!;
+      wide[j + 1] = source[i + 1]!;
+      wide[j + 2] = source[i + 5]!;
+      wide[j + 3] = source[i + 6]!;
+      wide[j + 4] = source[i + 2]!;
+      wide[j + 5] = source[i + 3]!;
+      wide[j + 6] = source[i + 4]!;
+      wide[j + 7] = source[i + 7]!;
+    }
+    const previous = chunk.wide;
+    chunk.wide = this.geometry(wide, true);
+    this.gl.deleteBuffer(previous.buffer);
+    this.gl.deleteVertexArray(previous.vao);
+    delete chunk.wideSource;
   }
   private geometry(data: Float32Array, wide: boolean): GeometryBuffer {
     const gl = this.gl,
@@ -141,6 +177,7 @@ export class GpuDevice {
     const gl = this.gl;
     let calls = 0;
     const forceWide = this.canvas.width / width > 1 || (pass === 1 && smooth === 1);
+    if (hasWide || forceWide) this.prepareWide(chunk);
     gl.depthMask(pass === 0);
     for (const [program, buffer, isWide, isFill] of [
       [this.thin, chunk.lines, false, false],
@@ -151,19 +188,19 @@ export class GpuDevice {
       if (!buffer.count || (isWide && !hasWide && !forceWide) || (!isWide && !isFill && forceWide))
         continue;
       gl.useProgram(program);
-      const u = (name: string) => gl.getUniformLocation(program, name);
-      gl.uniform1i(u('uStyles'), 0);
-      gl.uniform1i(u('uPatterns'), 1);
-      gl.uniform2f(u('uViewport'), width, height);
-      gl.uniform2f(u('uOrigin'), chunk.origin.x - eye.x, chunk.origin.y - eye.y);
-      gl.uniform1f(u('uScale'), scale);
-      gl.uniform1f(u('uCount'), count);
-      gl.uniform1i(u('uPass'), pass);
-      gl.uniform1i(u('uWide'), isWide ? 1 : 0);
-      gl.uniform1i(u('uFill'), isFill ? 1 : 0);
-      gl.uniform1i(u('uSmooth'), smooth);
-      gl.uniform1i(u('uForceWide'), forceWide ? 1 : 0);
-      gl.uniform1f(u('uRatio'), this.canvas.width / width);
+      const u = this.uniforms.get(program)!;
+      gl.uniform1i(u.uStyles, 0);
+      gl.uniform1i(u.uPatterns, 1);
+      gl.uniform2f(u.uViewport, width, height);
+      gl.uniform2f(u.uOrigin, chunk.origin.x - eye.x, chunk.origin.y - eye.y);
+      gl.uniform1f(u.uScale, scale);
+      gl.uniform1f(u.uCount, count);
+      gl.uniform1i(u.uPass, pass);
+      gl.uniform1i(u.uWide, isWide ? 1 : 0);
+      gl.uniform1i(u.uFill, isFill ? 1 : 0);
+      gl.uniform1i(u.uSmooth, smooth);
+      gl.uniform1i(u.uForceWide, forceWide ? 1 : 0);
+      gl.uniform1f(u.uRatio, this.canvas.width / width);
       gl.bindVertexArray(buffer.vao);
       if (isWide) gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, buffer.count);
       else
@@ -177,6 +214,7 @@ export class GpuDevice {
     return calls;
   }
   release(chunk: GpuChunk) {
+    delete chunk.wideSource;
     for (const buffer of [chunk.lines, chunk.wide, chunk.fills, chunk.points]) {
       this.gl.deleteBuffer(buffer.buffer);
       this.gl.deleteVertexArray(buffer.vao);
@@ -191,5 +229,6 @@ export class GpuDevice {
     this.gl.deleteTexture(this.patterns);
     this.gl.deleteProgram(this.thin);
     this.gl.deleteProgram(this.wideProgram);
+    this.uniforms.clear();
   }
 }

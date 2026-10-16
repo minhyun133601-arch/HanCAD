@@ -1,101 +1,110 @@
 # HanCAD progress
 
-## Active phase: Phase 02 rendering engine and view navigation (started 2026-10-15)
+## Completed phase: Phase 02 rendering engine and view navigation (2026-10-16)
 
 Source: `docs/prompt-source/prompts/phase-02-rendering-engine-and-view-navigation.md`.
-Baseline before changes: strict TypeScript, ESLint, 315 unit and 30 compatibility
-tests pass. Reference PC for the 60 fps budget: Intel Core i3-12100 with Intel UHD
-Graphics 730 (integrated), 1920x1080 at 60 Hz, 32 GB RAM.
+The user requested the entire phase, paused it briefly, then requested completion
+on 2026-10-16. Phase 00 native verification remains deferred by user instruction.
 
-| Milestone                          | Status  | Acceptance                                                                                                                                                                    |
-| ---------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2.1 Display style foundations      | Done    | Exact ACI table, true color, ByLayer/ByBlock, color 7 by background, transparency; lineweight resolution and pixels; original .lin resource, parser, scales, end-dash fitting |
-| 2.2 Tessellation and spatial index | Planned | Adaptive arcs/circles/ellipses/bulges/widths/NURBS, POINT PDMODE/PDSIZE, XLINE/RAY clipping, text/dimension display geometry, dynamic R-tree with exact pick distances        |
-| 2.3 WebGL2 renderer core           | Planned | High-DPI chunked floating-origin buffers, style textures, thin/wide/linetype shaders, fills, GPU text, draw order, transparency, incremental updates replace Canvas2D         |
-| 2.4 View navigation commands       | Planned | ZOOM All/Center/Dynamic/Extents/Previous/Scale nX nXP/Window/Object/Realtime, PAN, -PAN, previous stack, VTENABLE/VTDURATION/VTFPS, REGEN/REGENALL/REDRAW/REDRAWALL           |
-| 2.5 Cursor and drafting aids       | Planned | Crosshair CURSORSIZE, pickbox PICKBOX, hidden outside canvas, UCS icon UCSICON, grid GRIDMODE/GRIDUNIT/GRIDMAJOR/GRIDDISPLAY/GRIDSTYLE, background option                     |
-| 2.6 Stress, precision and goldens  | Planned | DEVSTRESS N, 60 fps pan/zoom at 1,000,000 on the reference PC, no jitter at (200000000, 450000000), 20+ golden reference scenes, docs and phase report                        |
+| Milestone                          | Status | Delivered scope                                                                                                                               |
+| ---------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2.1 Display style foundations      | Done   | ACI/true color, inheritance, transparency, original metric linetypes and weights                                                              |
+| 2.2 Tessellation and spatial index | Done   | Adaptive display curves, bulges/widths, POINT, clipped infinite geometry, native/legacy sources, dynamic R-tree and refined picks             |
+| 2.3 WebGL2 renderer core           | Done   | High-DPI floating-origin chunks, shader dashes/wide strokes, fills, glyph atlases, ordered transparency, texture-only selection/color updates |
+| 2.4 View navigation commands       | Done   | All ZOOM options, PAN/-PAN, Previous, transitions, regeneration/redraw and navigation undo                                                    |
+| 2.5 Cursor and drafting aids       | Done   | Crosshair/pickbox, UCS icon, GPU grid, background options and status toggles                                                                  |
+| 2.6 Stress, precision and goldens  | Done   | DEVSTRESS, measured 60 Hz performance, translated geometry equality, 28 GPU reference scenes and exact-color contracts                        |
 
-Each milestone ends with lint, typecheck, unit/compat tests, a production build,
-the Edge E2E suite and a real browser check, then a `feat(phase2.N)` commit.
+### Final verification (2026-10-16)
 
-### Full Phase 02 continuation (2026-10-16)
+The original baseline was repaired before implementation: an obsolete progress
+assertion and a race in fast DWG cancellation. Commit `f732c97` records those fixes.
+The fresh baseline passed WASM, lint, formatting, strict TypeScript, 326 unit,
+30 compatibility and 57 production Edge E2E tests (one opt-in private drawing skip).
 
-The user requested the entire next phase. Finish the active Phase 02 milestones
-2.2 through 2.6 before advancing to Phase 03. The existing milestone table is
-the implementation plan. Geometry/index, renderer sources, and navigation/aids
-are implemented in parallel with the WebGL2 backend, then integrated and verified.
+The complete `HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=1 pnpm verify` passes WASM,
+lint, formatting, strict TypeScript, 402 unit tests, 30 compatibility tests, the
+production build and 61 Edge E2E tests (one opt-in private drawing skip). GPU QA
+passes 28 independently specified reference scenes, translated legacy/native
+framebuffer equality, 37 exact pixel-color contracts, three retained viewport
+boundary contracts and 20 high-zoom precision comparisons. These are
+HanCAD/analytic references, not certified AutoCAD screenshots.
 
-Fresh baseline: WASM, lint, format, strict TypeScript, 326 unit tests, 30
-compatibility tests, production build and 57 Edge E2E tests pass (one opt-in
-private-file test skipped). Fixed two baseline E2E defects before implementation:
-an outdated progress-text assertion and nondeterministic cancellation of a fast
-DWG reader. The cancellation test now deliberately keeps its worker pending.
+Browser review opened the original four-linetype DXF, changed LTSCALE and
+LWDISPLAY, exercised ZOOM Previous and PAN, checked Korean/English OPTIONS, and
+ran DEVSTRESS 1000000 followed by 0 without changing the four drawing entities.
+Screenshots are ignored under `test-artifacts/render-golden/` and
+`test-artifacts/render-stress/`.
 
-### Prior session handoff (2026-10-15, paused by the user after 2.1)
+The exclusive stress run used the actual Intel Core i3-12100, Intel UHD Graphics
+730 via ANGLE D3D11, 31.76 GiB RAM and 1920x1080. With 1,000,000 random lines,
+arcs and polylines, 300 frames each measured 59.999 fps pan and 59.404 fps zoom;
+95th-percentile frame intervals were 16.8 ms for both. Zoom crossed an LOD boundary
+and rebuilt 88 visible chunks within the frame budget. Submission p95 was 1.5 ms
+pan / 7.3 ms zoom, startup 223.5 ms, and 1,051,824 visible ink pixels. One percent
+of zoom frames missed a refresh; this is measured 60 Hz-class performance, not a
+promise that every frame on every drawing is below 16.67 ms. Evidence is ignored
+under `test-artifacts/render-stress/`; repeat with `pnpm test:render:stress` while
+other GPU tests are stopped.
 
-Done: 2.1 committed (`32974dd`): `packages/render/src/style/` (aci.ts, lineweight.ts,
-linetype.ts, hancad-iso-lin.ts, style.test.ts), exported from the render index;
-decisions and parity items recorded. The working tree was clean at the pause.
+Final repeated measurements exposed allocation/upload spikes below the cadence
+gate before optimization. Packed stress geometry now writes directly into a
+growable Float32Array, and thin-only chunks defer their unused wide representation
+until lineweight, transparency smoothing or high-DPI display requires it. Shader
+uniform locations are cached. Three LODs retain byte-identical generated geometry,
+and lifecycle tests cover DPR 1-to-2 promotion and buffer disposal. The final
+post-optimization run above passes the unchanged 59 fps / p95 18.5 ms gates.
 
-Exact next step: implement 2.2 in `packages/render/src/` with this design (agreed
-while planning, not yet written):
+All five original acceptance items pass:
 
-- `display/types.ts`: renderer-neutral `DisplayEntity { id, geometry, layer,
-color: EntityColor, linetype, linetypeScale, lineweight, transparency, plinegen }`.
-  2D fast-path geometry: `line`, `arc` (cx, cy, r, start, sweep CCW; circle = full
-  sweep), `polyline` (Float64Array stride 5: x, y, bulge, startWidth, endWidth;
-  closed), `point`, `xline`/`ray`, `text` (baseline-left, em height, rotation,
-  `left`/`center` alignment, lines 1.25 em apart), `composite` (dimension parts +
-  filled arrow polygons), and generic `curve` (geom CurveGeometry: ellipse,
-  spline, non-planar arcs, projected to XY by dropping Z).
-- `display/tessellate.ts`: writes into a `GeometrySink` (begin/vertex/end run,
-  point, triangle, text) with a model-unit chord tolerance (0.25 px at the LOD
-  scale); arc segments `ceil(sweep / (2 acos(1 - tol/r)))`, minimum 4 for circles,
-  cap ~8192 (above the cap the renderer tessellates the visible part per view).
-  PLINEGEN 0 = one run per polyline segment, 1 = one run for the whole polyline.
-  Wide polylines become filled trapezoids with joint fills (FILLMODE 0 = outline).
-  Splines/ellipses: adaptive subdivision from geom `splineEvaluation`/
-  `conicEvaluation` starting at `splineBreakpoints`.
-- `display/point-symbols.ts`: PDMODE base 0 dot, 1 none, 2 plus, 3 X, 4 tick, +32
-  circle, +64 square; PDSIZE > 0 absolute, 0 = 5% and < 0 = |PDSIZE|% of the view
-  height captured at the last regen.
-- `display/infinite.ts` XLINE/RAY clipped to the view; `display/bounds.ts`;
-  `display/distance.ts` exact pick distance (inside text box/arrow/wide fill = 0;
-  ties go to the later entity, matching the legacy hit test).
-- `spatial/rtree.ts`: dynamic R-tree (rbush-style OMT bulk load, insert, remove,
-  search) and `pick(point, tolerance)` returning candidates sorted by distance.
-- `sources/legacy-source.ts`: legacy Y-down state to WCS (y -> -y; legacy arc
-  clockwise=true becomes CCW from -end to -start, otherwise CCW from -start to
-  -end; text rotation negated); hex colors -> true color; dimensions via
-  `cadEngine.dimensionGeometry`. `sources/database-source.ts`: native DB entity
-  fields through geom `geometryFromFields`, colors via `colorFromDxf`,
-  transparency via `transparencyFromDxf`.
-- Unit tests for every module, then mark 2.2 Done and commit `feat(phase2.2)`.
+- [x] Million-entity pan/zoom meets the measured 60 Hz-class budget on this PC.
+- [x] Survey-coordinate geometry tracks 1/8-pixel pans at scales 65536 and 262144:
+      straight binary-coordinate geometry has identical translated frame hashes;
+      small arcs/widths retain the same one-pixel shape neighborhood.
+- [x] Cursor-anchored wheel zoom, middle pan and double-middle Extents pass E2E.
+- [x] DASHED/CENTER/HIDDEN/PHANTOM, LTSCALE and LWDISPLAY pass GPU and browser checks.
+- [x] Twenty-eight independent reference scenes pass, exceeding the required 20.
 
-Agreed 2.3 renderer design: WebGL2 context (fail with the existing localized
-renderer alert when unavailable); spatial chunks (STR bulk partition) each with a
-double-precision origin uploaded as `origin - eye` per draw (floating origin);
-vertex = x, y (float32 relative to chunk origin), run distance, run length, entity
-slot (20 bytes); thin 1 px pass with indexed GL_LINES, instanced quads only for
-objects wider than 1 px when LWDISPLAY is on; per-entity RGBA32UI texture (color
-mode/RGB, layer, linetype, lineweight, transparency, hidden/selected flags, draw
-rank) plus layer and linetype (R32F, 12 elements) textures so layer/selection
-changes never rebuild buffers; draw order via depth = rank (transparent objects in
-a sorted second pass); linetype dashes in the fragment shader using the 2.1 A-fit
-with dashes widened by half a pixel; per-chunk LOD re-tessellation within a frame
-budget; GPU glyph-atlas text (Arial/Malgun Gothic like the legacy drawer); the
-legacy adapter diffs entity ids per snapshot for incremental updates; previews,
-snap markers, selection box, crosshair stay on the Canvas2D overlay. The public
-`CadCanvasSurface` API keeps legacy Y-down coordinates. E2E tests that read the
-main canvas with `getContext('2d')` (shell.spec.ts background pixel,
-drawing-files.spec.ts ink count, diagnostic-i18n.spec.ts main-context failure)
-must switch to a renderer readback hook / `webgl2` failure injection.
-DEVSTRESS (2.6) fills a renderer-only, non-undoable dev dataset (the legacy model
-caps at 500,000 entities and journals JSON). Linetype definitions come from the
-native DB LTYPE table (fields from `linetypeFields`), so the legacy runtime must
-keep optional entity/layer `linetype`, `lineweight`, `linetypeScale`, ACI and
-transparency fields and drafting must apply CELTYPE/CELWEIGHT/CECOLOR/CELTSCALE.
+Exact next step: start original Phase 03 (commands, command line, shortcuts and
+Korean IME) by reading
+`docs/prompt-source/prompts/phase-03-command-system-command-line-shortcuts-korean-ime.md`,
+running the baseline and writing milestones 3.x. Keep Phase 00 native acceptance
+deferred; do not change its status without actual native verification.
+
+### Manual Phase 02 checks
+
+1. Launch `HanCAD 실행.cmd`. Draw `LINE`, Enter, `0,0`, Enter, `100,100`, Enter,
+   Enter. Type `Z`, Enter, `E`, Enter. Roll the wheel away from the center: the
+   cursor's model point stays fixed. Middle-drag pans; double-middle fits extents.
+2. Type `Z`, Enter, `2X`, Enter, then `Z`, Enter, `P`, Enter. Repeat Previous to
+   consume earlier views. Use `U`, Enter and `REDO`, Enter to replay navigation.
+3. Type `Z`, Enter, `W`, Enter, `0,0`, Enter, `50,50`, Enter. Try `Z`/`A`,
+   `Z`/`C`/`50,50`/`100`, `Z`/`O`/`ALL`/Enter, and `Z`/Enter plus a left drag.
+4. Type `Z`, Enter, `D`, Enter: move the overview box, click to resize, then Enter
+   to apply. Esc restores the original view. `PAN` plus left drag pans until Esc;
+   `-PAN`, `0,0`, `20,10` performs a precise displacement.
+5. Press F7 to toggle the grid. Set `CURSORSIZE` to `100`, `PICKBOX` to `10`, and
+   try `UCSICON`/`OFF`, then `UCSICON`/`ON`. The crosshair disappears outside the
+   drawing. `OPTIONS` opens the supported background-color controls.
+6. OPEN `packages/render/qa/linetype-reference.dxf`. Its four original reference
+   lines use DASHED/CENTER/HIDDEN/PHANTOM and 1.00 mm lineweights. Change `LTSCALE`
+   from `1` to `2`, then toggle the lineweight status button. `REGEN` rebuilds
+   display geometry; `REDRAW` refreshes the viewport. New-object CELTYPE requires
+   an existing native LTYPE record; interactive linetype loading belongs to Phase 08.
+7. Open `http://127.0.0.1:1420/?devtools=1`, type `DEVSTRESS`, Enter, `1000000`,
+   Enter, and pan/zoom. `DEVSTRESS`, Enter, `0`, Enter restores the drawing. Test
+   data is renderer-only and is excluded from saved files and undo.
+
+### Deliberate later-phase boundaries
+
+The nXP scale calculation accepts paper viewport height through the pure host API;
+the model-only UI explicitly reports that a floating layout viewport is required
+(Phase 14). REGENALL/REDRAWALL currently have one active viewport. UCSICON
+Properties/Selectable/All, 3D UCS, full OPTIONS tabs, complex linetype text/shapes,
+SHX/BigFont and complete native text/block/dimension expansion retain their later
+phase owners. Numerical arbitrary spline picks are not proofs of global minima;
+extreme generic-curve subdivision caps and fallback text bounds remain documented
+reference limitations. Imported DWG/DXF editing remains lossy.
 
 ## Completed phase: Phase 01 database foundations (2026-10-15)
 

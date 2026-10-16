@@ -1,11 +1,23 @@
 import { getLegacyRuntime, visibleCadEntities } from '@hancad/legacy-bridge';
 import type { CadEntity, CadPoint } from '@hancad/legacy-bridge';
-import { RetainedScene } from '../src/scene';
+import { WebGlRenderer } from '../src/webgl/renderer';
+import { compareGolden, goldenCanvases } from './pixel-comparison';
+import { runNativeGolden } from './native-goldens';
+export { runPainterContracts } from './painter-contracts';
+export { runLinetypeContracts } from './linetype-contracts';
+export { runPrecisionContracts } from './precision-contracts';
+export { runViewportContracts } from './viewport-contracts';
 
 export function runGolden(index: number) {
+  if (index >= 20) return runNativeGolden(index);
   const origin = index === 19 ? { x: 200000000, y: 450000000 } : { x: 0, y: 0 };
   const p = (x: number, y: number): CadPoint => ({ x: x + origin.x, y: y + origin.y });
-  const base = { layer: '0', lineWidth: 1 + (index % 3), color: '#ffffff' };
+  const base = {
+    layer: '0',
+    lineWidth: 1 + (index % 3),
+    lineweight: [25, 50, 70][index % 3]!,
+    color: '#ffffff',
+  };
   const entities: CadEntity[] = [
     ...Array.from({ length: 6 }, (_, i): CadEntity => ({
       ...base,
@@ -86,19 +98,7 @@ export function runGolden(index: number) {
     ],
   });
   const selected = new Set(index % 5 === 0 ? ['line-2', 'dimension'] : []);
-  document.body.replaceChildren();
-  document.body.style.cssText = 'display:flex;gap:10px;margin:10px;background:#10151c';
-  const canvases = [document.createElement('canvas'), document.createElement('canvas')];
-  for (const canvas of canvases) {
-    canvas.width = 500;
-    canvas.height = 420;
-    document.body.append(canvas);
-    const ctx = canvas.getContext('2d')!;
-    ctx.fillStyle = '#212830';
-    ctx.fillRect(0, 0, 500, 420);
-  }
-  const reference = canvases[0]!.getContext('2d')!,
-    cached = canvases[1]!.getContext('2d')!;
+  const { reference, gpuCanvas } = goldenCanvases();
   const scale = 3;
   reference.scale(scale, scale);
   const relative = (point: CadPoint): CadPoint => ({
@@ -126,73 +126,26 @@ export function runGolden(index: number) {
       selected: selected.has(entity.id),
     });
   }
-  cached.setTransform(scale, 0, 0, scale, -origin.x * scale, -origin.y * scale);
-  const stats = new RetainedScene(state).draw(
-    cached,
-    { minX: origin.x, minY: origin.y, maxX: origin.x + 500 / scale, maxY: origin.y + 420 / scale },
+  const renderer = new WebGlRenderer(gpuCanvas, {
+    variable: (name) => (name === 'LWDISPLAY' ? 1 : undefined),
+  });
+  renderer.setDrawing(state);
+  renderer.setSelection(selected, new Set());
+  const stats = renderer.draw(
+    { x: origin.x + 500 / scale / 2, y: -origin.y - 420 / scale / 2 },
     scale,
-    selected,
-    { origin, ratio: 1, scale, tx: 0, ty: 0 },
+    500,
+    420,
+    0x212830,
   );
-  const a = reference.getImageData(0, 0, 500, 420).data,
-    b = cached.getImageData(0, 0, 500, 420).data;
-  let error = 0,
-    differingPixels = 0,
-    referenceInk = 0,
-    cachedInk = 0,
-    referenceCoverage = 0,
-    cachedCoverage = 0;
-  const referenceMask = new Uint8Array(500 * 420),
-    cachedMask = new Uint8Array(500 * 420);
-  for (let i = 0; i < a.length; i += 4) {
-    let maximum = 0;
-    for (let channel = 0; channel < 3; channel++) {
-      const delta = Math.abs(a[i + channel]! - b[i + channel]!);
-      error += delta;
-      maximum = Math.max(maximum, delta);
-    }
-    if (maximum > 8) differingPixels++;
-    const ra = Math.max(0, a[i]! - 33, a[i + 1]! - 40, a[i + 2]! - 48);
-    const rb = Math.max(0, b[i]! - 33, b[i + 1]! - 40, b[i + 2]! - 48);
-    referenceCoverage += ra;
-    cachedCoverage += rb;
-    if (ra > 8) {
-      referenceInk++;
-      referenceMask[i / 4] = 1;
-    }
-    if (rb > 8) {
-      cachedInk++;
-      cachedMask[i / 4] = 1;
-    }
-  }
-  let geometryMissing = 0;
-  for (let i = 0; i < referenceMask.length; i++) {
-    if (!referenceMask[i]) continue;
-    let matched = false;
-    const x = i % 500,
-      y = Math.floor(i / 500);
-    for (let dy = -1; dy <= 1; dy++)
-      for (let dx = -1; dx <= 1; dx++) {
-        if (
-          x + dx >= 0 &&
-          x + dx < 500 &&
-          y + dy >= 0 &&
-          y + dy < 420 &&
-          cachedMask[(y + dy) * 500 + x + dx]
-        )
-          matched = true;
-      }
-    if (!matched) geometryMissing++;
-  }
+  const comparison = compareGolden(reference, renderer);
+  renderer.dispose();
+  const { sample: _sample, ...metrics } = comparison;
   return {
     index,
-    meanChannelError: error / (500 * 420 * 3),
-    differingPixels,
-    referenceInk,
-    cachedInk,
-    referenceCoverage,
-    cachedCoverage,
-    geometryMissing,
+    name: `legacy-${index}-width${base.lineWidth}-${index % 2 ? 'ccw' : 'cw'}`,
+    thinLines: base.lineWidth === 1,
     stats,
+    ...metrics,
   };
 }

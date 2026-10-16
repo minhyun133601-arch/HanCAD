@@ -1,53 +1,132 @@
-﻿# @hancad/render
+# @hancad/render
 
-## Responsibility
+## Responsibility and dependencies
 
-Imperative drawing renderer, display lists and view navigation. Drawing canvas rendering stays outside React.
+Imperative WebGL2 model rendering, renderer-neutral display geometry, spatial
+picking and view navigation. React never renders drawing geometry. Current
+dependencies are `@hancad/legacy-bridge`, `@hancad/geom` and type-only native
+database contracts. System variables and style tables enter through callbacks.
 
-## Allowed dependencies
+## Sources and geometry
 
-Current adapter: @hancad/legacy-bridge. Future renderer: @hancad/db, @hancad/geom, @hancad/sysvars.
+`sources/legacy-source.ts` converts immutable Y-down snapshots into WCS display
+entities and reports ID-based additions/modifications/removals. Legacy arcs,
+text rotations and dimension graphics cross that boundary exactly once. Optional
+ACI/true color, lineweight, linetype, scale, transparency and PLINEGEN fields
+survive normalization and recovery. Imported original LTYPE patterns are retained.
 
-## Current status
+`sources/database-source.ts` adapts supported native fields through the pure
+geometry package. It returns explicit unsupported/invalid diagnostics. Native
+TEXT/MTEXT, complete dimensions, block expansion and opaque objects remain owned
+by their later producers; the ordinary app still uses its transitional geometry
+state. `sources/style-tables.ts` combines original built-ins, imported LTYPEs and
+native LTYPE records. Matching imported legacy layers remain authoritative over
+the transitional database's metric placeholders.
 
-Canvas context failures expose `CanvasContextError` with main/preview/cache
-identities. Failed initialization releases the overlay, pointer listeners and
-resize observer; application chrome owns localized failure presentation.
+Adaptive display geometry covers arcs/circles, ellipses, rational/fit splines,
+bulged and tapered polylines, POINT symbols, XLINE/RAY, text and composite arrows.
+The LOD chord target is 0.25 CSS pixels. FILLMODE controls wide-polyline fills;
+PLINEGEN controls run continuity. View-relative PDSIZE is captured at regeneration.
+The dynamic R-tree refines picks with exact primitive distances and source-order
+tie breaking. Running object snaps retain their separate input implementation.
 
-The imperative Canvas2D adapter renders real imported and drafted 2D geometry, with fit, cursor-centered wheel zoom, middle-button pan and resize handling. Editing updates can preserve the view; rubber-band previews, selected objects, geometric click picking and a fixed-size snap marker are supported. A new empty drawing starts at metric 0,0 to 420,297 limits. The custom WebGL2 renderer, million-entity performance budget and instancing remain pending Phase 2.
+## GPU and overlays
 
-Pointer handling is isolated in `pointer-controller.ts`. Live navigation settings
-read ZOOMFACTOR, ZOOMWHEEL and MBUTTONPAN through the application boundary. Wheel
-steps retain the cursor's model position and equal forward/backward steps restore
-the view; middle-button double-click fits the drawing. Browser pixel/line/page
-wheel events normalize to 100 pixels, three lines or one page per wheel notch.
-This browser mapping remains a documented comparison item for physical devices.
+The main canvas requires WebGL2. Spatial cell chunks retain opaque geometry buffers;
+changed chunks, LOD changes and view-dependent clipping rebuild only the affected
+geometry. Double-precision chunk origins are subtracted before float32 upload;
+draw uniforms contain origin minus eye. Extremely broad geometry is clipped
+around the eye when needed for precision. Unit-DPI thin strokes use
+one-physical-pixel GL_LINES; high-DPI thin strokes and heavier visible lineweights
+use instanced quads to preserve CSS width. The canvas uses a single-sample
+framebuffer and a LINESMOOTHING-controlled screen presentation pass. Shaders evaluate cumulative-distance
+linetype dashes. Fills and glyphs share the same entity style/rank representation.
 
-Idle clicks are distinguished from drags at four CSS pixels. Drag callbacks carry
-model start/end points and modifier state; the overlay draws a blue solid window
-or green dashed crossing box. The application can suppress that box for selected
-object moving/copying. Active point prompts keep immediate pointer-down input.
-Pointer capture, Escape, window blur, lost capture and cancellation clear gestures
-without delivering an extra pick. Full PICKAUTO/PICKDRAG and lasso parity is pending.
+Two RGBA32F texels per entity hold CPU-resolved RGBA, lineweight, pattern index and
+scale; a separate R32F texture holds dash patterns. Selection, visibility, color
+and lineweight updates replace style data without rebuilding geometry.
+Linetype/scale changes invalidate distance-phase caches; long runs rebase phase
+in double precision and wide-polyline fill triangles retain measured dash
+coordinates. Layer properties are
+currently resolved on the CPU, not through a separate GPU layer table. Opaque and
+transparent passes use global source rank and depth to preserve tested overlaps.
+Opaque glyphs draw after the screen filter with copied depth, then transparent
+entities replay individually in source order across primitive types and chunks.
 
-Snap overlays use original endpoint, midpoint, center, quadrant, intersection and
-nearest symbols, plus an optional localized tooltip. Marker and tooltip display
-can be controlled independently while snapping remains active.
+Arial/Malgun Gothic glyphs are rasterized into cached atlas pages keyed by
+character and projected device-pixel font size, then drawn
+as GPU triangles. Text uses an alphabetic baseline, WCS rotation and 1.25-height
+line spacing. Legacy dimension middle anchors receive a documented baseline
+adaptation. Half-pixel raster sizes preserve 7.5-pixel dimension labels; sizes are
+bounded to 4-256 pixels. SHX/BigFont, rich MTEXT and full font substitution remain Phase 10 work.
 
-An optional fence gesture emits sampled model points and draws a dotted path;
-ordinary window/crossing selection remains separate. Edit previews can suppress
-original IDs in retained scene drawing without hiding them from picking or
-rebuilding the scene. `worldToScreen` maps model points into local CSS pixels for
-the Korean inline text input. Renderer tests cover those contracts.
+A transparent Canvas2D overlay owns previews, AutoSnap symbols/tooltips,
+window/crossing/fence gestures, the crosshair/pickbox and the WCS icon. Preview
+motion reuses the GPU framebuffer without a bitmap copy. The grid is drawn on the
+GPU. Canvas context failures expose `CanvasContextError`; failed initialization
+releases owned overlays, observers and pointer resources. Application chrome
+owns localized failure presentation. There is no Canvas2D model fallback.
 
-`setDrawing` borrows an immutable drawing snapshot; callers must replace the snapshot for edits and must not mutate its geometry in place. The renderer changes only its own view, preview and selection, which avoids duplicating a large drawing for every visibility change.
+## Navigation
 
-Visible geometry is retained in `Path2D` batches of at most 256 adjacent entities with matching layer, color and width. Text and dimensions keep the existing drawing implementation. Bounds culling includes stroke and text margins, and CPU floating origins preserve small coordinates around large drawing origins. Selection keeps nonselected colors and painter order. Click picking filters cached bounds before exact geometry checks.
+`CadCanvasSurface` retains the public legacy Y-down input API. World views expose
+a center and height. `view-navigation.ts` provides fit/window/scale calculations,
+ten previous views and cancellable transitions. The command layer drives ZOOM,
+PAN/-PAN and regeneration through the same pointer/text state machines.
 
-The static drawing renders directly into the main canvas. A separate transparent viewport canvas draws preview and snap markers, so their motion does not redraw the model or force a backing-canvas bitmap copy. Unattached canvases use a bitmap fallback. Drawing, selection, resize and view changes invalidate static geometry. Wheel, middle-pan and coordinate updates coalesce through `requestAnimationFrame`. No cache of previous drawings is retained. The additional overlay uses roughly four bytes per physical viewport pixel.
+Wheel zoom retains the cursor point and reads ZOOMFACTOR/ZOOMWHEEL live. Middle
+pan uses pointer capture and MBUTTONPAN; double-middle fits extents. Escape, blur,
+capture loss and disposal release gestures without delivering an extra pick.
+The cursor appears only inside the canvas. Area selection begins after four CSS
+pixels, uses directional window/crossing colors, and supports separate fence paths.
+Full lasso/PICKAUTO/PICKDRAG, selectable/3D UCS icons and layout viewports belong to
+later producers. Numeric nXP is explicitly unavailable without a floating layout
+model viewport. Dynamic UCS grid orientation is likewise deferred.
 
-At distant zoom, polyline display paths use Douglas–Peucker simplification with at most 0.25 CSS pixel model deviation. Shapes whose entire bounds fit within that tolerance use a round stroke dot. One zoom bucket is retained for each adjacent style run; zooming in rebuilds the display path from unchanged source geometry. This avoids tessellating thousands of invisible curve steps into a handful of screen pixels. Native path storage and bounds grow with visible geometry; export geometry and measurements remain unchanged.
+## Verification
 
-Feature tests cover order, hidden/locked layers, boundary strokes, selection, bitmap reuse and frame coalescing. `node packages/render/qa/verify-golden.mjs` compares 20 small real-browser scenes with the existing renderer, including Korean text, dimensions, both arc directions, full circles and large coordinates. It permits small anti-aliasing differences and checks geometry coverage; these scenes do not constitute an AutoCAD parity certification.
+`node packages/render/qa/verify-golden.mjs` bundles the actual WebGL renderer in
+memory and compares 28 Edge scenes against independent Canvas2D instructions.
+The scenes include Korean text/dimensions, both arc directions, native widths,
+NURBS/ellipses, POINT/XLINE/RAY, light-background ACI 7, custom dashes and
+transparent/text/fill overlap. Exact-color probes allow at most two channel
+levels, including mixed transparent primitives inside and across chunk boundaries;
+geometry coverage allows at most 0.5% unmatched pixels within a one-pixel
+neighborhood. GPU antialiasing permits mean channel error below 1.25/255 and
+coverage differences of 30% for thin-line scenes or 8% otherwise. Translated
+legacy and native scenes must have identical framebuffer hashes at
+(200000000, 450000000). These are independent renderer references, not AutoCAD
+screenshot certification. PNGs and metrics stay in ignored
+`test-artifacts/render-golden/`.
 
-For a local drawing, set `HANCAD_PRIVATE_DWG` and run `node packages/render/qa/benchmark-real.mjs` against the running production app. It records actual frame CPU time and event-to-paint latency with canvas readback, visible counts, local cache status and heap usage. Artifacts stay in ignored `test-artifacts/`. `data-render-ms`, `data-geometry-ms`, `data-frame`, `data-draw-calls` and `data-base-reused` are diagnostics; raw event callback time alone does not measure deferred rendering.
+The same command runs 37 exact-color contracts for mixed transparent primitive
+ordering across chunks, two-hundred-million-unit dash phases, wide dashed fills,
+object scale and PDMODE 0/1. All contract probes allow at most two channel levels
+of error and assert zero WebGL errors. Current machine results are in DECISIONS.
+
+Twenty further precision comparisons use view scales 65536/262144 and five
+one-eighth-pixel pan steps near zero and (200000000, 450000000). Binary-fraction
+lines must have identical hashes at both origins and all pan steps must produce
+distinct frames. Small-circle/tapered-width differences must remain below mean
+error 0.005/255 and maximum channel error 16, with zero missing/extra geometry in
+a one-pixel neighborhood. Reports and the final high-zoom comparison image are
+saved beside the golden evidence.
+
+Three retained-viewport contracts additionally sample two frames each: opaque and
+translucent 9-pixel strokes whose centerline is one pixel outside the viewport,
+and a precise 200-million-unit line after a same-center zoom from scale 4 to 1.
+Each frame must retain its expected visible stroke color. Results are written to
+`viewport-contracts.json`.
+
+`benchmark-stress.mjs` exercises a renderer-only DEVSTRESS dataset independently
+of the legacy model/journal limits. `benchmark-real.mjs` retains the opt-in local
+DWG workflow. Performance acceptance and machine results are recorded in
+`docs/PROGRESS.md`; passing functional/golden tests alone does not establish
+the million-entity frame budget. Diagnostic datasets expose CPU submission,
+chunk rebuilds and frame reuse separately from real event-to-paint timings.
+
+Packed stress geometry writes directly into growable Float32Arrays. Thin-only
+chunks retain their source array and create wide instances only when the draw
+first requires them (including a DPR change), avoiding unused GPU uploads.
+Uniform locations are cached per program; buffer lifecycle tests cover promotion
+and disposal.

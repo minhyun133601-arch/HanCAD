@@ -1,5 +1,161 @@
 # Decisions
 
+## 2026-10-16: Phase 02 display geometry, GPU backend and reference QA
+
+The renderer-neutral display model uses WCS Y up and double precision. Legacy
+snapshots remain Y down at their public boundary; the source converts coordinates,
+arc direction and text rotation once. Native supported geometry adapts through
+`geometryFromFields`; unsupported/invalid records return diagnostics rather than
+fabricated graphics. Native TEXT/MTEXT, block expansion and complete DIMENSION
+production remain with later feature phases. Legacy dimensions supply their
+existing annotation geometry. Their Canvas middle anchor becomes an alphabetic
+baseline with a 0.35-em local offset; exact font cap-height/middle alignment still
+requires the installed Windows reference.
+
+Display tessellation targets 0.25 CSS pixels at a power-of-two LOD. Stable asin
+arc steps avoid cancellation for very large radii. Visible-arc clipping limits
+extreme segment counts; native splines subdivide from knot breakpoints with
+quarter/midpoint error checks. Wide polylines retain bulges and tapered widths;
+FILLMODE chooses fill/outline and PLINEGEN chooses dash-run continuity. The
+8192-segment cap is a display bound, not an exact-geometry alteration. PDSIZE 0
+means 5% of the last regenerated view height; negative values are percentages.
+Text fallback bounds assume one em per CJK character and estimated Latin advances
+until the full font provider owns measurement.
+
+The production model canvas now requires WebGL2. Opaque geometry is retained in
+spatial grid-cell chunks, with global entity slots carrying source draw rank.
+Transparent entities replay individually in source order rather than sharing
+primitive-type batches. This implementation uses fixed spatial cells instead of
+the initially proposed STR chunk partition. CPU double origins
+are subtracted before float32 upload; exceptionally broad geometry is clipped
+around the visible region when float error would exceed tolerance. Thin strokes
+use GL_LINES and heavier displayed lineweights use instanced screen-space quads.
+Cumulative distances drive shader dash fitting. An R-tree indexes finite display
+bounds and exact distances refine picking; existing object snaps still use their
+separate candidate pipeline.
+
+The implemented style representation is two RGBA32F texels per entity containing
+resolved RGBA/lineweight/pattern/scale data, plus an R32F dash table. The original
+proposal of RGBA32UI entity properties and separate GPU layer tables was not
+needed for this increment. Style changes resolve on the CPU and upload textures
+without rebuilding geometry for color/selection/visibility/lineweight changes.
+Linetype/scale changes also invalidate geometry's dash-phase caches. Long runs
+split/rebase cumulative distances in double precision before float32 upload, and
+wide-polyline fill triangles retain measured run coordinates for shader gaps.
+This retains an O(entity-count) style update cost;
+it must not be described as a constant-time GPU layer edit. Native LTYPEs override
+imported and original built-in patterns. Matching legacy layers remain
+authoritative over native metric placeholders until native layer editing owns
+the source. Complex linetype text/shapes remain retained for Phase 10.
+
+The importer now retains original ACI, true color, linetype, lineweight, object
+scale and LTYPE patterns when its parser provides them. This does not upgrade
+the lossy I/O adapter to preservation of unsupported geometry, objects or every
+style property. Creation snapshots CECOLOR/CELTYPE/CELWEIGHT/CELTSCALE,
+CETRANSPARENCY and PLINEGEN. Supported CECOLOR inputs are ByLayer/ByBlock,
+ACI 1-255, the first seven English color names and RGB:r,g,b; HSL and color-book
+inputs currently produce an explicit diagnostic. Autodesk documents the broader
+[CECOLOR forms](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-703858E3-9038-406A-B499-90A0C05BECBF.htm)
+and [new-object transparency values](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-058580C9-43DE-4770-93C4-3DE1AB2F5287.htm).
+
+Text rasterizes installed Arial/Malgun Gothic glyphs into multiple atlas
+pages and draws them on the GPU. Projected size times device pixel ratio enters
+the glyph cache key, quantized to half pixels and bounded to 4-256 pixels. This
+keeps 7.5/15-pixel labels closer to native font hinting than fixed 64-pixel atlas
+downsampling. The optional size argument defaults to 64 for scale-independent
+callers. No Autodesk fonts are bundled. A transparent
+Canvas2D overlay owns transient drafting aids, and the main framebuffer is reused
+during preview motion. There is no Canvas2D fallback for the main model canvas;
+context failure leaves application chrome and command input available.
+
+The renderer QA uses 28 actual WebGL scenes and independent Canvas2D reference
+instructions, not screenshots from AutoCAD. Exact-color probes, strict geometry
+coverage and translated-scene framebuffer hashes constrain correctness. Thirty-seven
+additional exact-color contracts cover mixed transparent primitives within/across
+chunks, 200-million-unit dashed lines and wide fills, object linetype scale and
+PDMODE 0/1. All 37 contract probes matched exactly on the tested Intel UHD 730.
+The final 28-scene mean error peaked at 1.2376/255 after single-sample smoothing
+and projected-size glyph caching; the gate is below 1.25. Unmatched reference
+pixels peaked at 7 and unmatched GPU pixels at 18, both below the unchanged 0.5%
+one-pixel-neighborhood gate. Native compositor probes differed by at most one
+channel level. Thin-line coverage tolerance remains 30%, other scenes 8%; observed
+final coverage differences were below 7.2% and 2.8%, respectively. Large-coordinate
+legacy and native framebuffer hashes were identical. Detailed
+results and acceptance thresholds are documented in the renderer README and
+ignored `test-artifacts/render-golden` evidence. Functional results do not establish
+the performance budget; final benchmark acceptance belongs in PROGRESS.
+
+Twenty additional extreme-zoom comparisons cover scales 65536 and 262144 at
+origin zero and (200000000, 450000000), with fractional model lines, a small
+circle, tapered widths and five one-eighth-pixel pan steps. Binary-fraction line
+framebuffers were identical at every step; each origin produced five distinct
+frames, so small camera movement did not stick or jump. Circle/width comparisons
+had no unmatched pixels in either one-pixel geometry neighborhood. Maximum
+channel differences were 1 at scale 65536 and 8 at scale 262144, with maximum mean
+error 0.001851/255. These small arc differences reflect double-precision model
+coordinate rounding before float upload. The gate requires mean error at most
+0.005/255, maximum channel error 16 and zero unmatched geometry pixels; binary
+lines require identical hashes. Evidence is in `precision-contracts.json` with
+the main renderer artifacts.
+
+Viewport culling and precise geometry clipping include half the maximum displayed
+stroke width plus its half-pixel shader fringe, converted to model units. A line
+center outside the geometric view can therefore still contribute visible pixels.
+View-dependent buffer keys include scale as well as eye and viewport dimensions;
+same-center zooming must not reuse endpoints clipped for an earlier view height.
+Three GPU contracts sample opaque/translucent 9-pixel boundary strokes on two
+successive frames and a 200-million-unit line during scale 4-to-1 zoom-out. The
+contracts use expected pixel colors independently of the culling implementation.
+
+The canvas uses `antialias: false` and an owned single-sample color/depth
+framebuffer. The isolated 1920x1080 million-line test on Intel UHD Graphics 730
+measured roughly 36 fps with browser MSAA and 60 fps without it. A
+LINESMOOTHING-controlled screen-space presentation pass and analytic wide-stroke
+coverage replace that costly per-vertex MSAA path. Opaque glyphs draw after the
+screen filter, reusing copied opaque depth, to avoid filtering glyph coverage a
+second time. Ordered transparent graphics follow those glyphs. Unit-DPI thin strokes use
+one-physical-pixel GL_LINES; high-DPI thin strokes use screen-space quads so their
+CSS width remains stable. The quality gate must be rerun after smoothing changes;
+this isolated backend comparison is not the final sustained app acceptance.
+
+Final stress profiling also removed per-segment temporary arrays from the packed
+generator and deferred thin-only chunks' instanced-wide data until first needed.
+The original thin Float32Array is retained without copying; DPR changes, enabled
+lineweights and smoothed transparency promote it during draw and dispose the empty
+buffer. Existing model meshes with explicit wide data keep their original path.
+Program uniform locations are cached. The packed generator matches its previous
+output byte for byte at three LODs, and four lifecycle tests cover lazy upload,
+DPR transitions, other promotion paths and resource disposal. Final measured
+cadence and startup times are recorded in PROGRESS.
+
+## 2026-10-16: Phase 02 view and drafting-aid scope
+
+The shared navigation state machine accepts queued command text and actual mouse
+events. [ZOOM](https://help.autodesk.com/cloudhelp/2027/KOR/AutoCAD-Core/files/GUID-66E7DB72-B2A7-4166-9970-9E19CC06F739.htm)
+uses the larger of limits/extents for All, retains ten Previous views, interprets
+bare scales relative to limits and X scales relative to the current view. Dynamic
+uses a temporary overview and move/resize box; Enter commits one navigation from
+the original view, while cancellation restores it. Object zoom finishes selection
+before changing the view. The XP calculation exists, but the model-only UI rejects
+it until an active floating layout model viewport can supply paper height. No
+paper-size value is invented. REGENALL/REDRAWALL currently affect the sole active
+model viewport. PAN and -PAN share the same view/journal boundary. Transition
+settings read VTENABLE, VTDURATION and the VTFPS minimum-rate fallback.
+Extents and middle-button double-click use the same 0.95 viewport fill factor;
+the resulting 5% fit margin is an implementation assumption awaiting reference
+measurement. ZOOM All captures relative point size from its final regenerated
+view, rather than the temporary preceding view.
+
+Grid limits, adaptive density and extra subdivisions follow
+[GRIDDISPLAY bits 1/2/4](https://help.autodesk.com/cloudhelp/2027/KOR/AutoCAD-Core/files/GUID-4D6AC943-FC9C-4CB8-A4E6-AD7313BF9C3A.htm);
+dynamic UCS bit 8 awaits a UCS-plane producer. Model-space dots use
+[GRIDSTYLE bit 1](https://help.autodesk.com/cloudhelp/2027/KOR/AutoCAD-Core/files/GUID-30FC52C7-A734-43EE-A08D-96717A4B4959.htm).
+The original WCS icon implements visibility and origin/lower-left placement from
+[UCSICON](https://help.autodesk.com/cloudhelp/2022/ENU/AutoCAD-Core/files/GUID-EA2D8ACA-336A-4656-BFD3-43BC371C6171.htm);
+selectable grips, Properties/3D icons and multiple viewports remain later work.
+OPTIONS exposes the model-background subset with the existing RGB 33,40,48
+default and an explicit user-selected color, stored as a local preference.
+
 ## 2026-10-15: Phase 02 display styles (milestone 2.1)
 
 Public ACI tables disagree (Autodesk forum posts, gohtx, ezdxf captures of AutoCAD

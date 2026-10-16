@@ -1,7 +1,7 @@
 # Architecture
 
-The user explicitly advanced work to original Phase 01. Phase 00 native acceptance
-remains deferred and unverified. Subsequent work stays in original phase order.
+Original Phases 01 and 02 are complete. Phase 00 native acceptance remains
+deferred and unverified. Subsequent work stays in original phase order.
 Previously delivered later-phase adapters remain supported, but their presence
 does not imply acceptance of the preceding phases.
 
@@ -162,11 +162,12 @@ paths are retired after the new import/export workflow passes browser validation
 The pre-migration backup remains in `archive/pre-hancad-20261014.zip`.
 
 `scripts/build-runtime.mjs` bundles the preserved vendor and adapted geometry/I/O
-code into a local asset. There are no remote runtime dependencies. Rendering is
-imperative Canvas2D during this usable transition; the specified WebGL renderer
-and performance budgets remain Phase 2 requirements. Existing importer data uses
-Y down only inside its adapter. The new database uses CAD WCS Y up. Conversion
-between these schemas must explicitly invert Y once at the migration boundary.
+code into a local asset. There are no remote runtime dependencies. The main model
+canvas now requires WebGL2; Canvas2D remains for transient drafting overlays,
+font rasterization and existing exports. Existing importer data uses Y down only
+inside its adapter. The renderer-neutral display model and native database use
+CAD WCS Y up. The legacy source explicitly inverts Y, arc direction and text
+rotation once at that boundary; the public canvas/input API retains legacy Y down.
 
 Compatibility requires preservation of unsupported data and reference graphs.
 The transitional importer is a lossy editable-geometry conversion and must never be
@@ -214,19 +215,84 @@ stores the supported current style variables alongside the drawing. DXF output
 writes editable DIMENSION records, anonymous *D graphics blocks and per-definition
 style records; full associativity and lossless style-table preservation are pending.
 
-The transitional Canvas2D renderer retains adjacent same-style Path2D runs while
-preserving painter order. Bounds skip offscreen runs/entities; text and dimensions
-keep the shared geometry implementation. CPU relative origins reduce transform
-precision loss at large coordinates. The main canvas retains the static scene;
-a separate transparent canvas draws previews and snaps without copying that scene.
-View/drawing/selection/resize changes invalidate it, and input updates coalesce
-through requestAnimationFrame. Display paths use one zoom bucket with at most
-0.25 CSS-pixel geometric deviation; source and export geometry remain unchanged.
-Diagnostic
-frame/geometry timers distinguish real drawing work from deferred event callbacks.
-This is practical transitional optimization, not the complete WebGL/R-tree engine
-or million-entity/60 fps acceptance. Native path memory grows with visible geometry;
-the additional overlay costs about four bytes per physical viewport pixel.
+Phase 02 display geometry is independent of the database and GPU. It includes
+lines, directed arcs, stride-five Float64 polylines with bulges/widths, points,
+infinite lines/rays, baseline text, composite dimension graphics and native curves.
+Adaptive tessellation uses a 0.25 CSS-pixel chord target at the current power-of-two
+LOD bucket. Rational splines use their actual weights and knot intervals. Wide
+polylines produce fills or FILLMODE-controlled outlines. PDMODE/PDSIZE symbols
+capture view-relative size at regeneration. Large arcs and infinite geometry can
+be clipped against the current view. An R-tree maintains finite bounds; exact
+primitive distance refines picks and later source order breaks equal-distance ties.
+The existing running-snap subsystem retains its separate candidate pipeline.
+
+The WebGL2 backend groups retained geometry by spatial cells with bounded chunk
+sizes, performs chunk/view culling and rebuilds changed chunks or LODs. Culling
+and precise clipping retain stroke/fringe padding, and view-dependent keys include
+scale so same-center zooms do not reuse stale clipped endpoints. Global
+entity slots retain draw rank independently of spatial grouping. Every chunk has a double
+precision origin. Coordinates are subtracted in JavaScript before float32 upload,
+and the draw uniform contains only origin minus eye. Extremely broad geometry is
+clipped around the view before upload when its float precision would exceed the
+display tolerance. Thin lines use one-physical-pixel GL_LINES at unit DPI; higher
+DPI and enabled heavier lineweights use instanced screen-space quads to preserve
+CSS widths. The single-sample framebuffer uses a LINESMOOTHING-controlled screen
+presentation pass. Shaders fit linetype dashes from cumulative model
+distance. Fills and GPU glyph quads share entity style/rank data. Depth and an
+opaque/transparent pass structure preserve the tested overlap cases. Opaque
+glyphs draw after screen smoothing with copied depth; transparent entities replay
+in individual source-order chunks after glyphs so mixed primitives retain order.
+
+Resolved display properties occupy two RGBA32F texels per entity; a separate R32F
+texture stores linetype elements. Color, selection, visibility, lineweight and
+linetype scale are resolved on the CPU when styles change. Color, selection,
+visibility and lineweight updates upload textures without rebuilding geometry.
+View-clipped buffers additionally rebuild when a width change alters their
+conservative clip margin. Thin-only packed chunks defer their wide buffers until
+first needed, including high-DPI transitions; uniform locations are cached per
+shader program. The stress generator writes directly into growable Float32Arrays.
+Linetype/scale changes invalidate distance-phase caches: very long dash runs are
+split/rebased in double precision before float32 upload, and wide-polyline fill
+triangles carry measured run distances for shader gaps. This implementation does not keep separate GPU layer or
+integer entity-property tables. Native LTYPE records override imported and built-in
+definitions. Imported legacy layers remain authoritative over matching native
+metric placeholders until native layer editing owns that state. New drafting
+entities snapshot current CECOLOR/CELTYPE/CELWEIGHT/CELTSCALE, CETRANSPARENCY and
+PLINEGEN; optional native display attributes survive legacy normalization/recovery.
+
+Korean/Latin text uses cached Arial/Malgun Gothic glyphs rasterized into multiple
+atlas pages and drawn with GPU triangles. Atlas keys include the projected font
+size (including device pixel ratio), quantized to half pixels and bounded to
+4-256 pixels; this preserves small dimension-label hinting rather than always
+downsampling a 64-pixel glyph. Display text positions use an alphabetic
+baseline, 1.25-height line spacing and WCS rotation. Existing legacy dimension
+geometry supplies its text, lines and filled arrowheads; its middle anchor is
+adapted by an explicit 0.35-em baseline offset pending reference font validation.
+SHX/BigFont, rich MTEXT, font substitution and complete native TEXT/DIMENSION
+production remain owned by later font/dimension phases. The native geometry
+adapter explicitly reports invalid or unsupported entities; it does not render
+opaque database objects as fabricated geometry.
+
+A separate transparent canvas draws previews, snap markers, selection gestures,
+crosshair and UCS aids without copying the model framebuffer. Wheel, middle-pan
+and coordinate updates coalesce through requestAnimationFrame. Selection modifies
+only style data; previews reuse the current GPU frame. No Canvas2D model fallback
+is used. Context failure disposes overlays/listeners and leaves the application
+shell available for the localized error. CPU/frame diagnostics remain distinct
+from event-to-paint and GPU completion. Renderer benchmark acceptance is recorded
+in PROGRESS rather than inferred from the presence of this backend.
+
+The real-browser renderer QA compares 28 WebGL scenes against independent
+Canvas2D instructions, including native widths, NURBS/ellipses, POINT/XLINE/RAY,
+ACI 7 on white, custom dashes and overlapping transparent/text/fill graphics.
+Color probes, mixed-primitive transparency across chunk boundaries and
+translated-scene hashes constrain large-coordinate precision. Additional exact
+pixel contracts cover two-hundred-million-unit dash phases, scaled and wide
+linetypes, and visible/invisible default points. Extreme-zoom contracts compare
+binary-fraction lines, a small circle and tapered widths at scales 65536/262144
+with five one-eighth-pixel camera steps, both near zero and at survey coordinates.
+Thin-line antialiasing is measured separately from
+geometry coverage; these references are not screenshots from installed AutoCAD.
 
 Direct commits validate/normalize one owned session and serialize it once. The
 synchronous database observer can reuse that prepared graph only for the exact

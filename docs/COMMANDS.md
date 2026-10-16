@@ -2,201 +2,201 @@
 
 Registered canonical names and aliases from the supplied reference. Registration does not implement a feature. The current browser app connects the partial drafting and file operations listed below. Advanced 2D options and 3D are deferred. Full AutoCAD option/prompt parity is pending.
 
-| Command            | Aliases    | Implementation status                                                                  |
-| ------------------ | ---------- | -------------------------------------------------------------------------------------- |
-| 3DARRAY            | 3A         | Not implemented; explicit message                                                      |
-| 3DFACE             | 3F         | Not implemented; explicit message                                                      |
-| 3DMOVE             | 3M         | Not implemented; explicit message                                                      |
-| 3DORBIT            | 3DO, ORBIT | Not implemented; explicit message                                                      |
-| 3DPOLY             | 3P         | Not implemented; explicit message                                                      |
-| 3DROTATE           | 3R         | Not implemented; explicit message                                                      |
-| 3DSCALE            | 3S         | Not implemented; explicit message                                                      |
-| 3DWALK             | 3DW        | Not implemented; explicit message                                                      |
-| ADCENTER           | ADC, DC    | Not implemented; explicit message                                                      |
-| ALIGN              | AL         | Not implemented; explicit message                                                      |
-| APPLOAD            | AP         | Not implemented; explicit message                                                      |
-| ARC                | A          | Not implemented; explicit message                                                      |
-| AREA               | AA         | Not implemented; explicit message                                                      |
-| ARRAY              | AR         | Not implemented; explicit message                                                      |
-| ATTDEF             | ATT, -ATT  | Not implemented; explicit message                                                      |
-| ATTEDIT            | ATE, -ATE  | Not implemented; explicit message                                                      |
-| BACTION            | AC         | Not implemented; explicit message                                                      |
-| BCLOSE             | BC         | Not implemented; explicit message                                                      |
-| BEDIT              | BE         | Not implemented; explicit message                                                      |
-| BLOCK              | B, -B      | Not implemented; explicit message                                                      |
-| BOUNDARY           | BO, -BO    | Not implemented; explicit message                                                      |
-| BPARAMETER         | PARAM      | Not implemented; explicit message                                                      |
-| BREAK              | BR         | Not implemented; explicit message                                                      |
-| BSAVE              | BS         | Not implemented; explicit message                                                      |
-| BVSTATE            | BVS        | Not implemented; explicit message                                                      |
-| CHAMFER            | CHA        | Not implemented; explicit message                                                      |
-| CHANGE             | -CH        | Not implemented; explicit message                                                      |
-| CIRCLE             | C          | Partial / Center and numeric or picked radius                                          |
-| COLOR              | COL        | Not implemented; explicit message                                                      |
-| COMMANDLINE        | CLI        | Not implemented; explicit message                                                      |
-| CONSTRAINTBAR      | CBAR       | Not implemented; explicit message                                                      |
-| COPY               | CO, CP     | Selection, base/second point, repeated copies, Exit/Enter/Esc; one undo group          |
-| CYLINDER           | CYL        | Not implemented; explicit message                                                      |
-| DATAEXTRACTION     | DX         | Not implemented; explicit message                                                      |
-| DDVPOINT           | VP         | Not implemented; explicit message                                                      |
-| DELCONSTRAINT      | DELCON     | Not implemented; explicit message                                                      |
-| DIMALIGNED         | DAL        | Two points or object, placement, Text and text Angle                                   |
-| DIMANGULAR         | DAN        | Three points, two lines, arc or circle; placement, Text and text Angle                 |
-| DIMARC             | DAR        | Not implemented; explicit message                                                      |
-| DIMBASELINE        | DBA        | Not implemented; explicit message                                                      |
-| DIMCENTER          | DCE        | Not implemented; explicit message                                                      |
-| DIMCONSTRAINT      | DCON       | Not implemented; explicit message                                                      |
-| DIMCONTINUE        | DCO        | Not implemented; explicit message                                                      |
-| DIMDIAMETER        | DDI        | Circle/arc selection, placement, Text and text Angle                                   |
-| DIMEDIT            | DED        | Not implemented; explicit message                                                      |
-| DIMJOGGED          | DJO, JOG   | Not implemented; explicit message                                                      |
-| DIMJOGLINE         | DJL        | Not implemented; explicit message                                                      |
-| DIMLINEAR          | DLI        | Two points or object, H/V/Rotated, placement, Text and text Angle                      |
-| DIMORDINATE        | DOR        | Not implemented; explicit message                                                      |
-| DIMOVERRIDE        | DOV        | Not implemented; explicit message                                                      |
-| DIMRADIUS          | DRA        | Circle/arc selection, placement, Text and text Angle                                   |
-| DIMREASSOCIATE     | DRE        | Not implemented; explicit message                                                      |
-| DIMSTYLE           | D, DST     | Basic supported-variable dialog; explicit selected-dimension application               |
-| DIMTEDIT           | DIMTED     | Not implemented; explicit message                                                      |
-| DIST               | DI         | Two-point decimal distance, WCS deltas and angle; read-only preview                    |
-| DIVIDE             | DIV        | Not implemented; explicit message                                                      |
-| DONUT              | DO         | Not implemented; explicit message                                                      |
-| DRAWORDER          | DR         | Not implemented; explicit message                                                      |
-| DSETTINGS          | DS         | Not implemented; explicit message                                                      |
-| DVIEW              | DV         | Not implemented; explicit message                                                      |
-| ELLIPSE            | EL         | Not implemented; explicit message                                                      |
-| ERASE              | E          | Partial / Pick or preselection; Delete shortcut                                        |
-| EXPLODE            | X          | Not implemented; explicit message                                                      |
-| EXPORT             | EXP        | Not implemented; explicit message                                                      |
-| EXPORTPDF          | EPDF       | Partial / Visible supported geometry on A4 raster PDF                                  |
-| EXTEND             | EX         | LINE targets, supported boundaries, Quick/Standard, Shift, fence, Edge, local Undo     |
-| EXTERNALREFERENCES | ER         | Not implemented; explicit message                                                      |
-| EXTRUDE            | EXT        | Not implemented; explicit message                                                      |
-| FILLET             | F          | Not implemented; explicit message                                                      |
-| FILTER             | FI         | Not implemented; explicit message                                                      |
-| FLATSHOT           | FSHOT      | Not implemented; explicit message                                                      |
-| GEOCONSTRAINT      | GCON       | Not implemented; explicit message                                                      |
-| GETVAR             |            | Partial / 860 typed definitions; unresolved host defaults report unavailable           |
-| GRADIENT           | GD         | Not implemented; explicit message                                                      |
-| GROUP              | G, -G      | Not implemented; explicit message                                                      |
-| HATCH              | BH, H, -H  | Not implemented; explicit message                                                      |
-| HATCHEDIT          | HE         | Not implemented; explicit message                                                      |
-| HIDE               | HI         | Not implemented; explicit message                                                      |
-| HIDEPALETTES       | POFF       | Not implemented; explicit message                                                      |
-| IMAGE              | IM         | Not implemented; explicit message                                                      |
-| IMAGEADJUST        | IAD        | Not implemented; explicit message                                                      |
-| IMAGEATTACH        | IAT        | Not implemented; explicit message                                                      |
-| IMAGECLIP          | ICL        | Not implemented; explicit message                                                      |
-| IMPORT             | IMP        | Not implemented; explicit message                                                      |
-| INSERT             | I, -I      | Not implemented; explicit message                                                      |
-| INSERTOBJ          | IO         | Not implemented; explicit message                                                      |
-| INTERFERE          | INF        | Not implemented; explicit message                                                      |
-| INTERSECT          | IN         | Not implemented; explicit message                                                      |
-| JOIN               | J          | Not implemented; explicit message                                                      |
-| LAYER              | LA, -LA    | Not implemented; explicit message                                                      |
-| LAYERSTATE         | LAS        | Not implemented; explicit message                                                      |
-| LAYOUT             | LO         | Not implemented; explicit message                                                      |
-| LEADER             | LEAD       | Not implemented; explicit message                                                      |
-| LENGTHEN           | LEN        | Not implemented; explicit message                                                      |
-| LINE               | L          | Partial / Points, relative/polar, direct distance, Undo/Close, Enter/Esc               |
-| LINETYPE           | LT, -LT    | Not implemented; explicit message                                                      |
-| LIST               | LI, LS     | Not implemented; explicit message                                                      |
-| LTSCALE            | LTS        | Partial / System variable alias                                                        |
-| LWEIGHT            | LW         | Not implemented; explicit message                                                      |
-| MATCHPROP          | MA         | Not implemented; explicit message                                                      |
-| MEASURE            | ME         | Not implemented; explicit message                                                      |
-| MEASUREGEOM        | MEA        | Not implemented; explicit message                                                      |
-| MIRROR             | MI         | Not implemented; explicit message                                                      |
-| MLEADER            | MLD        | Not implemented; explicit message                                                      |
-| MLEADEREDIT        | MLE        | Not implemented; explicit message                                                      |
-| MLEADERSTYLE       | MLS        | Not implemented; explicit message                                                      |
-| MLINE              | ML         | Not implemented; explicit message                                                      |
-| MOVE               | M          | Preselection or pick/window selection, base/second point, exact/snapped input          |
-| MREDO              |            | Partial / Redo by count, All or Last                                                   |
-| MSPACE             | MS         | Not implemented; explicit message                                                      |
-| MTEXT              | MT, T, -T  | Not implemented; explicit message                                                      |
-| MVIEW              | MV         | Not implemented; explicit message                                                      |
-| OFFSET             | O          | Distance/two points/Through, Erase/Layer/Multiple/Exit/Undo; supported 2D subset       |
-| OPTIONS            | OP         | Not implemented; explicit message                                                      |
-| OSNAP              | OS, -OS    | Not implemented; explicit message                                                      |
-| PAN                | P, -P      | Not implemented; explicit message                                                      |
-| PARAMETERS         | PAR        | Not implemented; explicit message                                                      |
-| PASTESPEC          | PA         | Not implemented; explicit message                                                      |
-| PEDIT              | PE         | Not implemented; explicit message                                                      |
-| PLINE              | PL         | Partial / Straight vertices, Undo/Close; arc and width pending                         |
-| PLOT               | PRINT      | Not implemented; explicit message                                                      |
-| POINT              | PO         | Not implemented; explicit message                                                      |
-| POLYGON            | POL        | Not implemented; explicit message                                                      |
-| POLYSOLID          | PSOLID     | Not implemented; explicit message                                                      |
-| PREVIEW            | PRE        | Not implemented; explicit message                                                      |
-| PROPERTIES         | CH, MO, PR | Not implemented; explicit message                                                      |
-| PSPACE             | PS         | Not implemented; explicit message                                                      |
-| PURGE              | PU, -PU    | Not implemented; explicit message                                                      |
-| PYRAMID            | PYR        | Not implemented; explicit message                                                      |
-| QLEADER            | LE         | Not implemented; explicit message                                                      |
-| QUICKCALC          | QC         | Not implemented; explicit message                                                      |
-| QUICKPROPERTIES    | QP         | Not implemented; explicit message                                                      |
-| QUIT               | EXIT       | Not implemented; explicit message                                                      |
-| QVDRAWING          | QVD        | Not implemented; explicit message                                                      |
-| QVLAYOUT           | QVL        | Not implemented; explicit message                                                      |
-| RECTANG            | REC        | Partial / Two opposite corners                                                         |
-| REDEFINE           |            | Partial / Restore a command; argument form                                             |
-| REDO               |            | Partial / Restore last U/UNDO batch immediately; intervening command closes window     |
-| REDRAW             | R          | Not implemented; explicit message                                                      |
-| REDRAWALL          | RA         | Not implemented; explicit message                                                      |
-| REGEN              | RE         | Not implemented; explicit message                                                      |
-| REGENALL           | REA        | Not implemented; explicit message                                                      |
-| REGION             | REG        | Not implemented; explicit message                                                      |
-| RENAME             | REN, -REN  | Not implemented; explicit message                                                      |
-| RENDER             | RR         | Not implemented; explicit message                                                      |
-| REVOLVE            | REV        | Not implemented; explicit message                                                      |
-| ROTATE             | RO         | Not implemented; explicit message                                                      |
-| SCALE              | SC         | Not implemented; explicit message                                                      |
-| SCRIPT             | SCR        | Not implemented; explicit message                                                      |
-| SECTION            | SEC        | Not implemented; explicit message                                                      |
-| SECTIONPLANE       | SPLANE     | Not implemented; explicit message                                                      |
-| SETVAR             | SET        | Partial / Typed/scoped validation; drawing values undoable; some ranges pending        |
-| SHADEMODE          | SHA        | Not implemented; explicit message                                                      |
-| SHEETSET           | SSM        | Not implemented; explicit message                                                      |
-| SHOWPALETTES       | PON        | Not implemented; explicit message                                                      |
-| SLICE              | SL         | Not implemented; explicit message                                                      |
-| SNAP               | SN         | Not implemented; explicit message                                                      |
-| SOLID              | SO         | Not implemented; explicit message                                                      |
-| SPELL              | SP         | Not implemented; explicit message                                                      |
-| SPLINE             | SPL        | Not implemented; explicit message                                                      |
-| SPLINEDIT          | SPE        | Not implemented; explicit message                                                      |
-| STRETCH            | S          | Not implemented; explicit message                                                      |
-| STYLE              | ST         | Not implemented; explicit message                                                      |
-| SUBTRACT           | SU         | Not implemented; explicit message                                                      |
-| TABLE              | TB         | Not implemented; explicit message                                                      |
-| TABLESTYLE         | TS         | Not implemented; explicit message                                                      |
-| TEXT               | DT, DTEXT  | Left-baseline point/height/rotation, inline Korean text and repeated independent lines |
-| TEXTEDIT           | ED, TEDIT  | Not implemented; explicit message                                                      |
-| THICKNESS          | TH         | Partial / System variable alias                                                        |
-| TILEMODE           | TI         | Partial / System variable alias                                                        |
-| TOLERANCE          | TOL        | Not implemented; explicit message                                                      |
-| TOOLBAR            | TO         | Not implemented; explicit message                                                      |
-| TOOLPALETTES       | TP         | Not implemented; explicit message                                                      |
-| TORUS              | TOR        | Not implemented; explicit message                                                      |
-| TRIM               | TR         | LINE targets, Quick/Standard boundaries, Shift, fence, Edge and command-local Undo     |
-| U                  |            | Partial / Undo one group; LINE/PLINE local segment undo                                |
-| UCSMAN             | UC         | Not implemented; explicit message                                                      |
-| UNDEFINE           |            | Partial / Disable a command; argument form                                             |
-| UNDO               |            | Partial / All options; Auto groups runner macros; zoom/pan steps combine; Layer UI P08 |
-| UNION              | UNI        | Not implemented; explicit message                                                      |
-| UNITS              | UN, -UN    | Not implemented; explicit message                                                      |
-| VIEW               | V, -V      | Not implemented; explicit message                                                      |
-| VISUALSTYLES       | VSM        | Not implemented; explicit message                                                      |
-| VPOINT             | -VP        | Not implemented; explicit message                                                      |
-| VSCURRENT          | VS         | Not implemented; explicit message                                                      |
-| WBLOCK             | W, -W      | Not implemented; explicit message                                                      |
-| WEDGE              | WE         | Not implemented; explicit message                                                      |
-| XATTACH            | XA         | Not implemented; explicit message                                                      |
-| XBIND              | XB, -XB    | Not implemented; explicit message                                                      |
-| XCLIP              | XC         | Not implemented; explicit message                                                      |
-| XLINE              | XL         | Not implemented; explicit message                                                      |
-| XREF               | XR, -XR    | Not implemented; explicit message                                                      |
-| ZOOM               | Z          | Extents E, cursor wheel zoom with live variables, middle pan/double-fit                |
+| Command            | Aliases    | Implementation status                                                                               |
+| ------------------ | ---------- | --------------------------------------------------------------------------------------------------- |
+| 3DARRAY            | 3A         | Not implemented; explicit message                                                                   |
+| 3DFACE             | 3F         | Not implemented; explicit message                                                                   |
+| 3DMOVE             | 3M         | Not implemented; explicit message                                                                   |
+| 3DORBIT            | 3DO, ORBIT | Not implemented; explicit message                                                                   |
+| 3DPOLY             | 3P         | Not implemented; explicit message                                                                   |
+| 3DROTATE           | 3R         | Not implemented; explicit message                                                                   |
+| 3DSCALE            | 3S         | Not implemented; explicit message                                                                   |
+| 3DWALK             | 3DW        | Not implemented; explicit message                                                                   |
+| ADCENTER           | ADC, DC    | Not implemented; explicit message                                                                   |
+| ALIGN              | AL         | Not implemented; explicit message                                                                   |
+| APPLOAD            | AP         | Not implemented; explicit message                                                                   |
+| ARC                | A          | Not implemented; explicit message                                                                   |
+| AREA               | AA         | Not implemented; explicit message                                                                   |
+| ARRAY              | AR         | Not implemented; explicit message                                                                   |
+| ATTDEF             | ATT, -ATT  | Not implemented; explicit message                                                                   |
+| ATTEDIT            | ATE, -ATE  | Not implemented; explicit message                                                                   |
+| BACTION            | AC         | Not implemented; explicit message                                                                   |
+| BCLOSE             | BC         | Not implemented; explicit message                                                                   |
+| BEDIT              | BE         | Not implemented; explicit message                                                                   |
+| BLOCK              | B, -B      | Not implemented; explicit message                                                                   |
+| BOUNDARY           | BO, -BO    | Not implemented; explicit message                                                                   |
+| BPARAMETER         | PARAM      | Not implemented; explicit message                                                                   |
+| BREAK              | BR         | Not implemented; explicit message                                                                   |
+| BSAVE              | BS         | Not implemented; explicit message                                                                   |
+| BVSTATE            | BVS        | Not implemented; explicit message                                                                   |
+| CHAMFER            | CHA        | Not implemented; explicit message                                                                   |
+| CHANGE             | -CH        | Not implemented; explicit message                                                                   |
+| CIRCLE             | C          | Partial / Center and numeric or picked radius                                                       |
+| COLOR              | COL        | Not implemented; explicit message                                                                   |
+| COMMANDLINE        | CLI        | Not implemented; explicit message                                                                   |
+| CONSTRAINTBAR      | CBAR       | Not implemented; explicit message                                                                   |
+| COPY               | CO, CP     | Selection, base/second point, repeated copies, Exit/Enter/Esc; one undo group                       |
+| CYLINDER           | CYL        | Not implemented; explicit message                                                                   |
+| DATAEXTRACTION     | DX         | Not implemented; explicit message                                                                   |
+| DDVPOINT           | VP         | Not implemented; explicit message                                                                   |
+| DELCONSTRAINT      | DELCON     | Not implemented; explicit message                                                                   |
+| DIMALIGNED         | DAL        | Two points or object, placement, Text and text Angle                                                |
+| DIMANGULAR         | DAN        | Three points, two lines, arc or circle; placement, Text and text Angle                              |
+| DIMARC             | DAR        | Not implemented; explicit message                                                                   |
+| DIMBASELINE        | DBA        | Not implemented; explicit message                                                                   |
+| DIMCENTER          | DCE        | Not implemented; explicit message                                                                   |
+| DIMCONSTRAINT      | DCON       | Not implemented; explicit message                                                                   |
+| DIMCONTINUE        | DCO        | Not implemented; explicit message                                                                   |
+| DIMDIAMETER        | DDI        | Circle/arc selection, placement, Text and text Angle                                                |
+| DIMEDIT            | DED        | Not implemented; explicit message                                                                   |
+| DIMJOGGED          | DJO, JOG   | Not implemented; explicit message                                                                   |
+| DIMJOGLINE         | DJL        | Not implemented; explicit message                                                                   |
+| DIMLINEAR          | DLI        | Two points or object, H/V/Rotated, placement, Text and text Angle                                   |
+| DIMORDINATE        | DOR        | Not implemented; explicit message                                                                   |
+| DIMOVERRIDE        | DOV        | Not implemented; explicit message                                                                   |
+| DIMRADIUS          | DRA        | Circle/arc selection, placement, Text and text Angle                                                |
+| DIMREASSOCIATE     | DRE        | Not implemented; explicit message                                                                   |
+| DIMSTYLE           | D, DST     | Basic supported-variable dialog; explicit selected-dimension application                            |
+| DIMTEDIT           | DIMTED     | Not implemented; explicit message                                                                   |
+| DIST               | DI         | Two-point decimal distance, WCS deltas and angle; read-only preview                                 |
+| DIVIDE             | DIV        | Not implemented; explicit message                                                                   |
+| DONUT              | DO         | Not implemented; explicit message                                                                   |
+| DRAWORDER          | DR         | Not implemented; explicit message                                                                   |
+| DSETTINGS          | DS         | Not implemented; explicit message                                                                   |
+| DVIEW              | DV         | Not implemented; explicit message                                                                   |
+| ELLIPSE            | EL         | Not implemented; explicit message                                                                   |
+| ERASE              | E          | Partial / Pick or preselection; Delete shortcut                                                     |
+| EXPLODE            | X          | Not implemented; explicit message                                                                   |
+| EXPORT             | EXP        | Not implemented; explicit message                                                                   |
+| EXPORTPDF          | EPDF       | Partial / Visible supported geometry on A4 raster PDF                                               |
+| EXTEND             | EX         | LINE targets, supported boundaries, Quick/Standard, Shift, fence, Edge, local Undo                  |
+| EXTERNALREFERENCES | ER         | Not implemented; explicit message                                                                   |
+| EXTRUDE            | EXT        | Not implemented; explicit message                                                                   |
+| FILLET             | F          | Not implemented; explicit message                                                                   |
+| FILTER             | FI         | Not implemented; explicit message                                                                   |
+| FLATSHOT           | FSHOT      | Not implemented; explicit message                                                                   |
+| GEOCONSTRAINT      | GCON       | Not implemented; explicit message                                                                   |
+| GETVAR             |            | Partial / 860 typed definitions; unresolved host defaults report unavailable                        |
+| GRADIENT           | GD         | Not implemented; explicit message                                                                   |
+| GROUP              | G, -G      | Not implemented; explicit message                                                                   |
+| HATCH              | BH, H, -H  | Not implemented; explicit message                                                                   |
+| HATCHEDIT          | HE         | Not implemented; explicit message                                                                   |
+| HIDE               | HI         | Not implemented; explicit message                                                                   |
+| HIDEPALETTES       | POFF       | Not implemented; explicit message                                                                   |
+| IMAGE              | IM         | Not implemented; explicit message                                                                   |
+| IMAGEADJUST        | IAD        | Not implemented; explicit message                                                                   |
+| IMAGEATTACH        | IAT        | Not implemented; explicit message                                                                   |
+| IMAGECLIP          | ICL        | Not implemented; explicit message                                                                   |
+| IMPORT             | IMP        | Not implemented; explicit message                                                                   |
+| INSERT             | I, -I      | Not implemented; explicit message                                                                   |
+| INSERTOBJ          | IO         | Not implemented; explicit message                                                                   |
+| INTERFERE          | INF        | Not implemented; explicit message                                                                   |
+| INTERSECT          | IN         | Not implemented; explicit message                                                                   |
+| JOIN               | J          | Not implemented; explicit message                                                                   |
+| LAYER              | LA, -LA    | Not implemented; explicit message                                                                   |
+| LAYERSTATE         | LAS        | Not implemented; explicit message                                                                   |
+| LAYOUT             | LO         | Not implemented; explicit message                                                                   |
+| LEADER             | LEAD       | Not implemented; explicit message                                                                   |
+| LENGTHEN           | LEN        | Not implemented; explicit message                                                                   |
+| LINE               | L          | Partial / Points, relative/polar, direct distance, Undo/Close, Enter/Esc                            |
+| LINETYPE           | LT, -LT    | Not implemented; explicit message                                                                   |
+| LIST               | LI, LS     | Not implemented; explicit message                                                                   |
+| LTSCALE            | LTS        | Partial / System variable alias                                                                     |
+| LWEIGHT            | LW         | Not implemented; explicit message                                                                   |
+| MATCHPROP          | MA         | Not implemented; explicit message                                                                   |
+| MEASURE            | ME         | Not implemented; explicit message                                                                   |
+| MEASUREGEOM        | MEA        | Not implemented; explicit message                                                                   |
+| MIRROR             | MI         | Not implemented; explicit message                                                                   |
+| MLEADER            | MLD        | Not implemented; explicit message                                                                   |
+| MLEADEREDIT        | MLE        | Not implemented; explicit message                                                                   |
+| MLEADERSTYLE       | MLS        | Not implemented; explicit message                                                                   |
+| MLINE              | ML         | Not implemented; explicit message                                                                   |
+| MOVE               | M          | Preselection or pick/window selection, base/second point, exact/snapped input                       |
+| MREDO              |            | Partial / Redo by count, All or Last                                                                |
+| MSPACE             | MS         | Not implemented; explicit message                                                                   |
+| MTEXT              | MT, T, -T  | Not implemented; explicit message                                                                   |
+| MVIEW              | MV         | Not implemented; explicit message                                                                   |
+| OFFSET             | O          | Distance/two points/Through, Erase/Layer/Multiple/Exit/Undo; supported 2D subset                    |
+| OPTIONS            | OP         | Display background controls; other Options tabs explicitly pending                                  |
+| OSNAP              | OS, -OS    | Not implemented; explicit message                                                                   |
+| PAN                | P, -P      | Realtime left drag; -PAN base/second point or displacement, one navigation undo                     |
+| PARAMETERS         | PAR        | Not implemented; explicit message                                                                   |
+| PASTESPEC          | PA         | Not implemented; explicit message                                                                   |
+| PEDIT              | PE         | Not implemented; explicit message                                                                   |
+| PLINE              | PL         | Partial / Straight vertices, Undo/Close; arc and width pending                                      |
+| PLOT               | PRINT      | Not implemented; explicit message                                                                   |
+| POINT              | PO         | Not implemented; explicit message                                                                   |
+| POLYGON            | POL        | Not implemented; explicit message                                                                   |
+| POLYSOLID          | PSOLID     | Not implemented; explicit message                                                                   |
+| PREVIEW            | PRE        | Not implemented; explicit message                                                                   |
+| PROPERTIES         | CH, MO, PR | Not implemented; explicit message                                                                   |
+| PSPACE             | PS         | Not implemented; explicit message                                                                   |
+| PURGE              | PU, -PU    | Not implemented; explicit message                                                                   |
+| PYRAMID            | PYR        | Not implemented; explicit message                                                                   |
+| QLEADER            | LE         | Not implemented; explicit message                                                                   |
+| QUICKCALC          | QC         | Not implemented; explicit message                                                                   |
+| QUICKPROPERTIES    | QP         | Not implemented; explicit message                                                                   |
+| QUIT               | EXIT       | Not implemented; explicit message                                                                   |
+| QVDRAWING          | QVD        | Not implemented; explicit message                                                                   |
+| QVLAYOUT           | QVL        | Not implemented; explicit message                                                                   |
+| RECTANG            | REC        | Partial / Two opposite corners                                                                      |
+| REDEFINE           |            | Partial / Restore a command; argument form                                                          |
+| REDO               |            | Partial / Restore last U/UNDO batch immediately; intervening command closes window                  |
+| REDRAW             | R          | Refresh active viewport; retained geometry reused                                                   |
+| REDRAWALL          | RA         | Refresh the sole active viewport; multiple viewports belong to Phase 14                             |
+| REGEN              | RE         | Regenerate LOD, point symbols, fills and pick bounds                                                |
+| REGENALL           | REA        | Regenerate the sole active viewport                                                                 |
+| REGION             | REG        | Not implemented; explicit message                                                                   |
+| RENAME             | REN, -REN  | Not implemented; explicit message                                                                   |
+| RENDER             | RR         | Not implemented; explicit message                                                                   |
+| REVOLVE            | REV        | Not implemented; explicit message                                                                   |
+| ROTATE             | RO         | Not implemented; explicit message                                                                   |
+| SCALE              | SC         | Not implemented; explicit message                                                                   |
+| SCRIPT             | SCR        | Not implemented; explicit message                                                                   |
+| SECTION            | SEC        | Not implemented; explicit message                                                                   |
+| SECTIONPLANE       | SPLANE     | Not implemented; explicit message                                                                   |
+| SETVAR             | SET        | Partial / Typed/scoped validation; drawing values undoable; some ranges pending                     |
+| SHADEMODE          | SHA        | Not implemented; explicit message                                                                   |
+| SHEETSET           | SSM        | Not implemented; explicit message                                                                   |
+| SHOWPALETTES       | PON        | Not implemented; explicit message                                                                   |
+| SLICE              | SL         | Not implemented; explicit message                                                                   |
+| SNAP               | SN         | Not implemented; explicit message                                                                   |
+| SOLID              | SO         | Not implemented; explicit message                                                                   |
+| SPELL              | SP         | Not implemented; explicit message                                                                   |
+| SPLINE             | SPL        | Not implemented; explicit message                                                                   |
+| SPLINEDIT          | SPE        | Not implemented; explicit message                                                                   |
+| STRETCH            | S          | Not implemented; explicit message                                                                   |
+| STYLE              | ST         | Not implemented; explicit message                                                                   |
+| SUBTRACT           | SU         | Not implemented; explicit message                                                                   |
+| TABLE              | TB         | Not implemented; explicit message                                                                   |
+| TABLESTYLE         | TS         | Not implemented; explicit message                                                                   |
+| TEXT               | DT, DTEXT  | Left-baseline point/height/rotation, inline Korean text and repeated independent lines              |
+| TEXTEDIT           | ED, TEDIT  | Not implemented; explicit message                                                                   |
+| THICKNESS          | TH         | Partial / System variable alias                                                                     |
+| TILEMODE           | TI         | Partial / System variable alias                                                                     |
+| TOLERANCE          | TOL        | Not implemented; explicit message                                                                   |
+| TOOLBAR            | TO         | Not implemented; explicit message                                                                   |
+| TOOLPALETTES       | TP         | Not implemented; explicit message                                                                   |
+| TORUS              | TOR        | Not implemented; explicit message                                                                   |
+| TRIM               | TR         | LINE targets, Quick/Standard boundaries, Shift, fence, Edge and command-local Undo                  |
+| U                  |            | Partial / Undo one group; LINE/PLINE local segment undo                                             |
+| UCSMAN             | UC         | Not implemented; explicit message                                                                   |
+| UNDEFINE           |            | Partial / Disable a command; argument form                                                          |
+| UNDO               |            | Partial / All options; Auto groups runner macros; zoom/pan steps combine; Layer UI P08              |
+| UNION              | UNI        | Not implemented; explicit message                                                                   |
+| UNITS              | UN, -UN    | Not implemented; explicit message                                                                   |
+| VIEW               | V, -V      | Not implemented; explicit message                                                                   |
+| VISUALSTYLES       | VSM        | Not implemented; explicit message                                                                   |
+| VPOINT             | -VP        | Not implemented; explicit message                                                                   |
+| VSCURRENT          | VS         | Not implemented; explicit message                                                                   |
+| WBLOCK             | W, -W      | Not implemented; explicit message                                                                   |
+| WEDGE              | WE         | Not implemented; explicit message                                                                   |
+| XATTACH            | XA         | Not implemented; explicit message                                                                   |
+| XBIND              | XB, -XB    | Not implemented; explicit message                                                                   |
+| XCLIP              | XC         | Not implemented; explicit message                                                                   |
+| XLINE              | XL         | Not implemented; explicit message                                                                   |
+| XREF               | XR, -XR    | Not implemented; explicit message                                                                   |
+| ZOOM               | Z          | All/Center/Dynamic/Extents/Previous/Scale/X/Window/Object/Realtime; XP host math, layout UI pending |
 
 ## Additional registered bootstrap commands
 
@@ -403,3 +403,20 @@ annotation fit behavior are also pending.
 DIMASSOC is registered but geometry associativity is not implemented. Dimensions
 do not yet update from geometry edits. Leaders, tolerances, arc-length/ordinate/
 jogged/baseline/continued dimensions and advanced Phase 11 commands remain pending.
+
+## Phase 02 display/navigation verification
+
+UCSICON implements ON/OFF/Noorigin/ORigin through the registered UCSICON variable
+and interactive options. Extended/3D options retain their later-phase owner.
+DEVSTRESS is registered only in dev mode or with `?devtools=1`; count 0-1000000,
+default 100000, generates nonpersistent renderer data (0 restores the drawing).
+
+Navigation options run through `NavigationSession` with both queued text and
+mouse input. Keyword buttons feed the same command input. Tests include
+`navigation-session.test.ts`, `view-navigation.test.ts`, `realtime-navigation.test.ts`
+and `view-navigation.spec.ts`, including Dynamic cancellation, Object selection,
+Previous, animated undo interruption and wheel/middle-button regressions.
+`pnpm test:render` checks 28 actual GPU scenes, translated precision, linetypes,
+widths, colors and painter order; `pnpm test:render:stress` measures the 60 Hz
+million-entity budget on the reference PC. Full editable POINT/XLINE/SPLINE
+creation commands remain with Phase 06; their renderer display is implemented.

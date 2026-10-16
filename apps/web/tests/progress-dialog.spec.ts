@@ -34,7 +34,7 @@ test('progress features, limitations and all 26 phases follow the shell language
   await expect(english.locator('tbody th').first()).toHaveText('Bootstrap');
   await expect(english.locator('tbody tr').first()).toContainText('await MSVC and the Windows SDK');
   await expect(english.locator('tbody tr').first()).toContainText('In progress');
-  await expect(english.locator('.development-dialog-content > ul > li')).toHaveCount(9);
+  await expect(english.locator('.development-dialog-content > ul > li')).toHaveCount(11);
   await expect(english).toContainText('TRIM/EXTEND Quick and Standard modes');
   if ((await english.locator('details').getAttribute('open')) === null)
     await english.locator('summary').click();
@@ -48,5 +48,5 @@ test('progress features, limitations and all 26 phases follow the shell language
   await openProgress(page, '개발 현황');
   await expect(korean.locator('tbody th').last()).toHaveText('패키징·배포');
   await expect(korean).toContainText('TEXT/DTEXT 도면 위 한글 문자 입력');
-  await expect(korean.locator('details')).toContainText('페이즈 1을 완료했습니다');
+  await expect(korean.locator('details')).toContainText('페이즈 2');
 });

@@ -10,9 +10,24 @@ export function stressMesh(first: number, count: number, scale: number): MeshDat
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
     return seed / 4294967296;
   };
-  const values: number[] = [];
+  let values = new Float32Array(count * 30),
+    used = 0;
   const edge = (ax: number, ay: number, bx: number, by: number, d: number, length: number) => {
-    values.push(ax, ay, d, length, 0, bx, by, d + Math.hypot(bx - ax, by - ay), length, 0);
+    if (used + 10 > values.length) {
+      const larger = new Float32Array(Math.max(10, values.length * 2));
+      larger.set(values);
+      values = larger;
+    }
+    values[used++] = ax;
+    values[used++] = ay;
+    values[used++] = d;
+    values[used++] = length;
+    values[used++] = 0;
+    values[used++] = bx;
+    values[used++] = by;
+    values[used++] = d + Math.hypot(bx - ax, by - ay);
+    values[used++] = length;
+    values[used++] = 0;
   };
   for (let i = 0; i < count; i++) {
     const x = random() * 980 + 10,
@@ -47,7 +62,7 @@ export function stressMesh(first: number, count: number, scale: number): MeshDat
   return {
     origin: { x: ox, y: oy },
     bounds: { minX: ox, minY: oy, maxX: ox + 1000, maxY: oy + 1000 },
-    lines: new Float32Array(values),
+    lines: values.subarray(0, used),
     wide: new Float32Array(),
     fills: new Float32Array(),
     entities: count,
