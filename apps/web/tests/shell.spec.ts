@@ -41,7 +41,11 @@ test('Korean shell is local, readable, and uses the required canvas background',
   );
   const background = await page.getByTestId('drawing-canvas').evaluate((canvas) => {
     if (!(canvas instanceof HTMLCanvasElement)) throw new Error('Expected a drawing canvas.');
-    return Array.from(canvas.getContext('2d')?.getImageData(0, 0, 1, 1).data ?? []);
+    const gl = canvas.getContext('webgl2');
+    if (!gl) throw new Error('Expected WebGL2.');
+    const pixel = new Uint8Array(4);
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+    return Array.from(pixel);
   });
   expect(background).toEqual([33, 40, 48, 255]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(

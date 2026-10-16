@@ -126,13 +126,6 @@ export function DrawingSurface({
           <button onClick={() => execute('OPEN')}>{messages.openCad}</button>
         </div>
       )}
-      <div className="ucs-icon" aria-hidden="true">
-        <span className="ucs-label-y">{messages.ucsY}</span>
-        <span className="ucs-axis-y" />
-        <span className="ucs-origin" />
-        <span className="ucs-axis-x" />
-        <span className="ucs-label-x">{messages.ucsX}</span>
-      </div>
     </section>
   );
 }

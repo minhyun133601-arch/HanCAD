@@ -5,6 +5,7 @@ import { createTestRuntime } from '../../legacy-bridge/src/test-runtime';
 import { createTestCanvas } from '../../legacy-bridge/src/test-canvas';
 import { CadCanvasSurface } from './surface';
 import type { CadSelectionDrag } from './surface';
+import { defaultAidSettings } from './drafting-aids';
 
 class TestPath {
   moveTo(): void {}
@@ -45,6 +46,7 @@ describe('editing preview integration', () => {
       observeResize: false,
       canSelectArea: () => true,
       selectionGesture: () => gesture,
+      getAidSettings: () => ({ ...defaultAidSettings, gridMode: 0, ucsIcon: 0, pickbox: 0 }),
       onSelectionDrag: (event) => events.push(event),
     });
     surface.setDrawing(createEmptyCadState());

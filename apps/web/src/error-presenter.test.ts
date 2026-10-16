@@ -6,6 +6,7 @@ import { CanvasContextError } from '@hancad/render';
 import { PdfExportError } from '@hancad/io-pdf';
 import { CommandInputError } from '@hancad/commands';
 import { InputValueError } from '@hancad/editor';
+import { CreationStyleError } from './creation-style-error';
 
 describe('browser domain error presentation', () => {
   it('presents typed sysvar errors with their reason and range in the active UI language', () => {
@@ -63,6 +64,10 @@ describe('browser domain error presentation', () => {
       new PdfExportError('invalid-jpeg'),
       new CommandInputError('invalid-point', 'LASTPOINT'),
       new InputValueError('finite-number-required'),
+      new CreationStyleError('invalid-color'),
+      new CreationStyleError('invalid-rgb'),
+      new CreationStyleError('unsupported-hsl'),
+      new CreationStyleError('unsupported-color-book'),
     ]) {
       expect(errorMessage(error, korean)).toMatch(/[가-힣]/);
       expect(errorMessage(error, english)).not.toMatch(/[가-힣]/);

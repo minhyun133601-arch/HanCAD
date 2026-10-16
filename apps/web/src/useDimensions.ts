@@ -17,6 +17,7 @@ import type { SystemVariables } from '@hancad/sysvars';
 import { getMessages } from '@hancad/ui';
 import type { MessageKey, Messages } from '@hancad/ui';
 import type { DimensionStyleValues } from './dimension-style';
+import { creationSettings } from './creation-settings';
 
 interface DimensionOptions {
   registry: CommandRegistry;
@@ -84,7 +85,7 @@ export function useDimensions(options: DimensionOptions) {
   function settings() {
     const live = latest.current;
     return dimensionSettingsFromVariables(
-      live.getState().settings,
+      creationSettings(live.getState().settings, (name) => live.sysvars.get(name)),
       (name) => live.sysvars.getNumber(name),
       (name) => String(live.sysvars.get(name)),
     );

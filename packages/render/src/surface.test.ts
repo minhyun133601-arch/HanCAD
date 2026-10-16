@@ -18,13 +18,20 @@ describe('imperative imported drawing surface', () => {
     });
     surface.setDrawing(state);
     expect(fixture.canvas.dataset.entityCount).toBe('3');
-    expect(fixture.operations.some((operation) => operation.name === 'lineTo')).toBe(true);
-    expect(fixture.operations.some((operation) => operation.name === 'arc')).toBe(true);
+    expect(fixture.canvas.dataset.renderer).toBe('webgl2');
+    expect(fixture.operations.some((operation) => operation.name === 'gl:drawArrays')).toBe(true);
+    const geometry = fixture.operations.filter((operation) => operation.name === 'gl:bufferData');
     expect(
-      fixture.operations.some(
-        (operation) => operation.name === 'fillText' && operation.args[0] === '한글 검사 도면',
+      geometry.some(
+        (operation) => operation.args[1] instanceof Float32Array && operation.args[1].length > 100,
       ),
     ).toBe(true);
+    const glyphs = new Set(
+      fixture.operations
+        .filter((operation) => operation.name === 'fillText')
+        .map((operation) => operation.args[0]),
+    );
+    for (const character of '한글검사도면') expect(glyphs.has(character)).toBe(true);
     const previousScale = surface.getView().scale;
     fixture.fire('wheel', { deltaY: -100, clientX: 400, clientY: 300, preventDefault: () => {} });
     expect(surface.getView().scale).toBeGreaterThan(previousScale);
@@ -56,11 +63,14 @@ describe('imperative imported drawing surface', () => {
     expect(surface.pick({ x: 50, y: -25 })).toBe('import-1');
     surface.setSelection(['import-1']);
     expect(fixture.canvas.dataset.selectionCount).toBe('1');
-    expect(
-      fixture.operations.some(
-        (operation) => operation.name === 'set:strokeStyle' && operation.args[0] === '#38bdf8',
-      ),
-    ).toBe(true);
+    const styleUploads = fixture.operations.filter(
+      (operation) =>
+        operation.name === 'gl:texImage2D' && operation.args[8] instanceof Float32Array,
+    );
+    const selectedStyle = styleUploads.at(-1)?.args[8] as Float32Array;
+    expect(selectedStyle[0]).toBeCloseTo(0x38 / 255);
+    expect(selectedStyle[1]).toBeCloseTo(0xbd / 255);
+    expect(selectedStyle[2]).toBeCloseTo(0xf8 / 255);
     surface.setPreview([state.entities[0]].filter((entity) => entity !== undefined));
     expect(fixture.canvas.dataset.previewCount).toBe('1');
     const view = surface.getView();

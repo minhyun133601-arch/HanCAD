@@ -188,6 +188,14 @@ export const ko: Messages = {
   commandStringValueRequired: (name) => `${name}에는 문자 값이 필요합니다.`,
   inputStringRequired: '문자 입력이 필요합니다.',
   inputFiniteNumberRequired: '유한한 숫자 입력이 필요합니다.',
+  creationColorInvalid:
+    'CECOLOR 색상은 ByLayer, ByBlock, 1~255의 ACI 값, 표준 색상 이름 또는 RGB:r,g,b 형식으로 지정하십시오.',
+  creationRgbInvalid:
+    'CECOLOR RGB 값이 유효하지 않습니다. RGB:r,g,b 형식으로 0~255의 정수 세 개를 지정하십시오.',
+  creationHslUnsupported:
+    'HSL 색상 직접 입력은 지원하지 않습니다. 대응하는 RGB 값을 RGB:r,g,b 형식으로 지정하십시오.',
+  creationColorBookUnsupported:
+    '색상표 색상을 사용할 수 없습니다. 대응하는 RGB 값을 RGB:r,g,b 형식으로 지정하십시오.',
   cancelImport: '읽기 취소',
   importReport: '도면 읽기 결과',
   sourceObjects: '원본 최상위 객체',

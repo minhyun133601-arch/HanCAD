@@ -141,7 +141,7 @@ describe('retained ordered scene rendering', () => {
     expect(new RetainedScene(state).pick({ x: 200000000.75, y: 0.5 }, 0.05)).toBeUndefined();
   });
 
-  it('reuses the base bitmap during previews and snap marker motion', () => {
+  it('reuses GPU geometry during overlays and updates only style textures for selection', () => {
     const fixture = createTestCanvas(),
       base = createTestCanvas();
     Object.defineProperty(fixture.canvas, 'ownerDocument', {
@@ -150,14 +150,20 @@ describe('retained ordered scene rendering', () => {
     const surface = new CadCanvasSurface(fixture.canvas, { observeResize: false });
     const state = drawing([line('a', 0), line('b', 3)]);
     surface.setDrawing(state);
-    const strokes = base.operations.filter((op) => op.name === 'stroke').length;
+    const uploads = fixture.operations.filter((op) => op.name === 'gl:bufferData').length;
+    const draws = fixture.operations.filter((op) => op.name === 'gl:drawArrays').length;
     surface.setPreview([line('preview', 2)]);
     surface.setSnapMarker({ x: 1, y: 1 });
     surface.setSnapMarker({ x: 2, y: 2 });
-    expect(base.operations.filter((op) => op.name === 'stroke')).toHaveLength(strokes);
-    expect(fixture.operations.filter((op) => op.name === 'drawImage').length).toBeGreaterThan(3);
+    expect(fixture.operations.filter((op) => op.name === 'gl:bufferData')).toHaveLength(uploads);
+    expect(fixture.operations.filter((op) => op.name === 'gl:drawArrays')).toHaveLength(draws);
+    expect(base.operations.some((op) => op.name === 'lineTo')).toBe(true);
+    expect(fixture.operations.some((op) => op.name === 'drawImage')).toBe(false);
     surface.setSelection(['a']);
-    expect(base.operations.filter((op) => op.name === 'stroke').length).toBeGreaterThan(strokes);
+    expect(fixture.operations.filter((op) => op.name === 'gl:bufferData')).toHaveLength(uploads);
+    expect(fixture.operations.filter((op) => op.name === 'gl:drawArrays').length).toBeGreaterThan(
+      draws,
+    );
     surface.dispose();
   });
 

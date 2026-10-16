@@ -35,11 +35,13 @@ test('official DWG opens locally, zooms, persists, and exports real PDF and imag
   expect(
     await canvas.evaluate((node) => {
       if (!(node instanceof HTMLCanvasElement)) throw new Error('Expected a canvas.');
-      const image = node.getContext('2d')?.getImageData(0, 0, node.width, node.height);
-      if (!image) return 0;
+      const gl = node.getContext('webgl2');
+      if (!gl) throw new Error('Expected WebGL2.');
+      const pixels = new Uint8Array(node.width * node.height * 4);
+      gl.readPixels(0, 0, node.width, node.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
       let marks = 0;
-      for (let i = 0; i < image.data.length; i += 4)
-        if (image.data[i] !== 33 || image.data[i + 1] !== 40 || image.data[i + 2] !== 48) marks++;
+      for (let i = 0; i < pixels.length; i += 4)
+        if (pixels[i] !== 33 || pixels[i + 1] !== 40 || pixels[i + 2] !== 48) marks++;
       return marks;
     }),
   ).toBeGreaterThan(100);

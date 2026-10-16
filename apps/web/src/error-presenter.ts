@@ -8,10 +8,19 @@ import { getCadImportDiagnostic } from '@hancad/legacy-bridge';
 import { formatCadImportDiagnostic } from '@hancad/ui';
 import { UndoStateError } from '@hancad/db';
 import { NativeDrawingFileError } from './native-file-error';
+import { CreationStyleError } from './creation-style-error';
+
+const creationStyleMessages = {
+  'invalid-color': 'creationColorInvalid',
+  'invalid-rgb': 'creationRgbInvalid',
+  'unsupported-hsl': 'creationHslUnsupported',
+  'unsupported-color-book': 'creationColorBookUnsupported',
+} as const;
 
 /** Localize recognized domain errors without rewriting unrelated diagnostics. */
 export function errorMessage(error: unknown, messages: Messages): string {
   if (error instanceof NativeDrawingFileError) return messages.nativeOpenFailed;
+  if (error instanceof CreationStyleError) return messages[creationStyleMessages[error.code]];
   if (error instanceof UndoStateError)
     return messages[
       error.code === 'no-group'

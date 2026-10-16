@@ -6,6 +6,7 @@ import type { CommandRegistry } from '@hancad/commands';
 import type { SystemVariables } from '@hancad/sysvars';
 import { getMessages } from '@hancad/ui';
 import type { MessageKey, Messages } from '@hancad/ui';
+import { creationSettings } from './creation-settings';
 
 interface DraftingOptions {
   registry: CommandRegistry;
@@ -53,7 +54,9 @@ export function useDrafting(options: DraftingOptions) {
 
   function settings() {
     return {
-      ...latest.current.getState().settings,
+      ...creationSettings(latest.current.getState().settings, (name) =>
+        latest.current.sysvars.get(name),
+      ),
       ortho: latest.current.sysvars.getNumber('ORTHOMODE') === 1,
     };
   }

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { settleView } from './cad-actions';
 
 async function enter(page: Page, value: string): Promise<void> {
   const input = page.getByRole('textbox', { name: /^(명령 입력|Type a command)$/ });
@@ -32,6 +33,7 @@ test('wheel zoom and pan are undoable navigation steps reported by VIEWSIZE/VIEW
   for (const value of ['LINE', '0,0', '200,100', '']) await enter(page, value);
   const initial = await readVariable(page, 'VIEWSIZE');
   await page.getByRole('button', { name: '도면 전체 맞춤', exact: true }).click();
+  await settleView(page);
   const canvas = page.getByTestId('drawing-canvas');
   const box = await canvas.boundingBox();
   if (!box) throw new Error('Canvas is not visible.');

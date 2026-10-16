@@ -300,7 +300,8 @@ for (const failureTarget of ['main', 'preview'] as const) {
         apply(method, canvas: HTMLCanvasElement, args: unknown[]) {
           const main = canvas.dataset.testid === 'drawing-canvas';
           const preview = !main && canvas.parentElement?.classList.contains('canvas-host');
-          if (args[0] === '2d' && (target === 'main' ? main : preview)) return null;
+          if (target === 'main' ? args[0] === 'webgl2' && main : args[0] === '2d' && preview)
+            return null;
           return Reflect.apply(method, canvas, args);
         },
       });

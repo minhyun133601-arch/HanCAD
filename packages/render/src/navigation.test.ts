@@ -5,6 +5,7 @@ import { createTestRuntime } from '../../legacy-bridge/src/test-runtime';
 import { createTestCanvas } from '../../legacy-bridge/src/test-canvas';
 import { CadCanvasSurface } from './surface';
 import type { CadSelectionDrag } from './surface';
+import { defaultAidSettings } from './drafting-aids';
 
 beforeEach(() => vi.stubGlobal('HeechangTool', createTestRuntime()));
 afterEach(() => vi.unstubAllGlobals());
@@ -159,9 +160,10 @@ describe('drafting view navigation and pointer gestures', () => {
     const fixture = createTestCanvas();
     const documentHandlers = new Map<string, (event: KeyboardEvent) => void>();
     const windowHandlers = new Map<string, () => void>();
+    const createElement = fixture.canvas.ownerDocument.createElement;
     Object.defineProperty(fixture.canvas, 'ownerDocument', {
       value: {
-        createElement: () => undefined,
+        createElement,
         addEventListener: (name: string, handler: (event: KeyboardEvent) => void) =>
           documentHandlers.set(name, handler),
         removeEventListener: (name: string) => documentHandlers.delete(name),
@@ -204,7 +206,10 @@ describe('drafting view navigation and pointer gestures', () => {
 
   it('changes snap symbols and Korean tooltips at one point and honors hidden marker display', () => {
     const fixture = createTestCanvas();
-    const surface = new CadCanvasSurface(fixture.canvas, { observeResize: false });
+    const surface = new CadCanvasSurface(fixture.canvas, {
+      observeResize: false,
+      getAidSettings: () => ({ ...defaultAidSettings, gridMode: 0, ucsIcon: 0 }),
+    });
     surface.setDrawing(createEmptyCadState());
     const point = { x: 50, y: -50 };
     surface.setSnapMarker(point, 'endpoint', '끝점');

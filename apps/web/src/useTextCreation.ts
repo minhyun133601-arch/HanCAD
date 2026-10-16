@@ -7,6 +7,7 @@ import type { CommandRegistry } from '@hancad/commands';
 import type { SystemVariables } from '@hancad/sysvars';
 import { getMessages } from '@hancad/ui';
 import type { MessageKey, Messages } from '@hancad/ui';
+import { creationSettings } from './creation-settings';
 
 interface Options {
   registry: CommandRegistry;
@@ -84,24 +85,27 @@ export function useTextCreation(options: Options) {
       return;
     }
     committed.current = false;
-    const session = new TextSession(model.settings, {
-      textSize: live.sysvars.getNumber('TEXTSIZE'),
-      availableEntities: CAD_ENTITY_LIMIT - model.entities.length,
-      onChange: changed,
-      onCommit: (entities) => {
-        const current = latest.current;
-        const textSize = controller.current?.getSnapshot().textSize;
-        if (textSize === undefined) throw new Error('Text command height is unavailable.');
-        const state = appendCadEntities(current.getState(), entities);
-        current.commitState(
-          'TEXT',
-          { ...state, settings: { ...state.settings, textSize } },
-          { TEXTSIZE: textSize },
-        );
-        committed.current = true;
-        current.print(current.messages.committedObjects(entities.length));
+    const session = new TextSession(
+      creationSettings(model.settings, (name) => live.sysvars.get(name)),
+      {
+        textSize: live.sysvars.getNumber('TEXTSIZE'),
+        availableEntities: CAD_ENTITY_LIMIT - model.entities.length,
+        onChange: changed,
+        onCommit: (entities) => {
+          const current = latest.current;
+          const textSize = controller.current?.getSnapshot().textSize;
+          if (textSize === undefined) throw new Error('Text command height is unavailable.');
+          const state = appendCadEntities(current.getState(), entities);
+          current.commitState(
+            'TEXT',
+            { ...state, settings: { ...state.settings, textSize } },
+            { TEXTSIZE: textSize },
+          );
+          committed.current = true;
+          current.print(current.messages.committedObjects(entities.length));
+        },
       },
-    });
+    );
     controller.current = session;
     setSnapshot(session.getSnapshot());
   }

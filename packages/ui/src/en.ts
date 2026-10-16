@@ -191,6 +191,14 @@ export const en: Messages = {
   commandStringValueRequired: (name) => `A string value is required for ${name}.`,
   inputStringRequired: 'A string input is required.',
   inputFiniteNumberRequired: 'A finite number input is required.',
+  creationColorInvalid:
+    'Specify CECOLOR as ByLayer, ByBlock, an ACI value from 1 to 255, a standard color name, or RGB:r,g,b.',
+  creationRgbInvalid:
+    'Invalid CECOLOR RGB value. Specify three integer channels from 0 to 255 as RGB:r,g,b.',
+  creationHslUnsupported:
+    'Direct HSL color input is not supported. Specify the RGB equivalent as RGB:r,g,b.',
+  creationColorBookUnsupported:
+    'Color book colors are not available. Specify the RGB equivalent as RGB:r,g,b.',
   cancelImport: 'Cancel import',
   importReport: 'Drawing import report',
   sourceObjects: 'Source top-level objects',

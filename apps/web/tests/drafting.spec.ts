@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { saveFromFileMenu } from './file-menu';
+import { mapping } from './cad-actions';
 
 const output = fileURLToPath(new URL('../../../test-artifacts/basic-cad', import.meta.url));
 async function enter(page: Page, value: string): Promise<void> {
@@ -20,38 +21,6 @@ async function state(page: Page) {
   return page.evaluate(
     () => JSON.parse(localStorage.getItem('hancad.active-drawing.v1') ?? '{}').state,
   );
-}
-async function mapping(page: Page) {
-  await page.getByRole('button', { name: '도면 전체 맞춤', exact: true }).click();
-  return page.getByTestId('drawing-canvas').evaluate((node) => {
-    const state = JSON.parse(localStorage.getItem('hancad.active-drawing.v1') ?? '{}').state;
-    const runtime = (
-      globalThis as typeof globalThis & {
-        HeechangTool?: {
-          core: {
-            cadExporters: {
-              boundsOf: (
-                state: unknown,
-                visible: boolean,
-              ) => { minX: number; minY: number; maxX: number; maxY: number };
-            };
-          };
-        };
-      }
-    ).HeechangTool;
-    if (!runtime) throw new Error('Local CAD runtime is unavailable');
-    const bounds = runtime.core.cadExporters.boundsOf(state, true),
-      rect = node.getBoundingClientRect();
-    return {
-      x: rect.x,
-      y: rect.y,
-      width: rect.width,
-      height: rect.height,
-      zoom: Number((node as HTMLElement).dataset.zoom),
-      originX: (bounds.minX + bounds.maxX) / 2,
-      originY: (bounds.minY + bounds.maxY) / 2,
-    };
-  });
 }
 async function point(page: Page, view: Awaited<ReturnType<typeof mapping>>, x: number, y: number) {
   await page.mouse.click(

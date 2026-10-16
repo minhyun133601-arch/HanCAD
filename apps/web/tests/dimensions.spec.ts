@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
-import { dimensions, drawing, enter, mapping, point } from './cad-actions';
+import { dimensions, drawing, enter, mapping, point, settleView } from './cad-actions';
 import { saveFromFileMenu } from './file-menu';
 
 const output = fileURLToPath(new URL('../../../test-artifacts/dimensions', import.meta.url));
@@ -92,6 +92,7 @@ test('dimension coordinates, styles, Korean text, circle picks, undo, and export
   await expect(page.getByTestId('drawing-canvas')).toHaveAttribute('data-preview-count', '0');
   const before = JSON.stringify((await drawing(page)).entities);
   await page.getByRole('button', { name: '도면 전체 맞춤', exact: true }).click();
+  await settleView(page);
   await fs.mkdir(output, { recursive: true });
   await page.screenshot({ path: path.join(output, 'dimension-sample-view.png') });
   for (const [label, extension] of [
@@ -312,7 +313,8 @@ test('smart dimension previews line and circle picks, and angular dimensions acc
     /[1-9]\d*/,
   );
   await point(page, view, 90, 30);
-  await point(page, view, 110, 50);
+  // Keep the mouse placement below the viewport's top-right drawing-tools overlay.
+  await point(page, view, 95, 42);
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('5');
   expect((await dimensions(page))[1]?.kind).toBe('diameter');
   expect((await dimensions(page))[1]?.measurement).toBe(20);

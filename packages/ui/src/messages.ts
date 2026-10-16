@@ -182,6 +182,10 @@ export interface Messages {
   commandStringValueRequired: (name: string) => string;
   inputStringRequired: string;
   inputFiniteNumberRequired: string;
+  creationColorInvalid: string;
+  creationRgbInvalid: string;
+  creationHslUnsupported: string;
+  creationColorBookUnsupported: string;
   cancelImport: string;
   importReport: string;
   sourceObjects: string;

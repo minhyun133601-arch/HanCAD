@@ -1,4 +1,7 @@
 import type { CadPoint } from '@hancad/legacy-bridge';
+import type { CadAidSettings } from './drafting-aids';
+import type { DisplayLayerStyle } from './sources/style-tables';
+import type { LinetypeDefinition } from './style/linetype';
 
 export interface CadView {
   scale: number;
@@ -30,6 +33,9 @@ export interface CadNavigationSettings {
   zoomFactor: number;
   zoomWheel: number;
   middleButtonPan: number;
+  transitionEnabled?: number;
+  transitionDuration?: number;
+  transitionFps?: number;
 }
 export interface CadCanvasOptions {
   onCoordinates?: (point: CadPoint) => void;
@@ -39,6 +45,12 @@ export interface CadCanvasOptions {
   suppressSelectionBox?: (start: CadPoint) => boolean;
   onSelectionDrag?: (event: CadSelectionDrag) => void;
   getNavigationSettings?: () => CadNavigationSettings;
+  getNavigationMode?: () => 'pan' | 'zoom' | undefined;
+  getNavigationWindow?: () => CadWorldView | undefined;
+  getAidSettings?: () => CadAidSettings;
+  getSystemVariable?: (name: string) => unknown;
+  getLinetypes?: () => ReadonlyMap<string, LinetypeDefinition>;
+  getLayerStyles?: () => ReadonlyMap<string, DisplayLayerStyle>;
   /** Called once per completed wheel step, pan drag or extents fit with the prior view. */
   onNavigate?: (kind: CadNavigationKind, before: CadWorldView, after: CadWorldView) => void;
   observeResize?: boolean;
@@ -53,6 +65,7 @@ interface PointerHost {
   fit: () => void;
   invalidate: () => void;
   worldView: () => CadWorldView;
+  cursorLocal?: (point?: CadPoint) => void;
 }
 interface Press {
   pointerId: number;
@@ -70,7 +83,15 @@ interface Press {
 /** Keeps canvas capture, selection gestures and view navigation out of drawing code. */
 export class CadPointerController {
   private pan:
-    | { pointerId: number; local: CadPoint; view: CadView; moved: boolean; before: CadWorldView }
+    | {
+        pointerId: number;
+        button: number;
+        mode: 'pan' | 'zoom';
+        local: CadPoint;
+        view: CadView;
+        moved: boolean;
+        before: CadWorldView;
+      }
     | undefined;
   private press: Press | undefined;
   private middleClick: { time: number; local: CadPoint } | undefined;
@@ -83,6 +104,8 @@ export class CadPointerController {
     canvas.addEventListener('wheel', this.onWheel, { passive: false });
     canvas.addEventListener('pointerdown', this.onPointerDown);
     canvas.addEventListener('pointermove', this.onPointerMove);
+    canvas.addEventListener('pointerenter', this.onPointerEnter);
+    canvas.addEventListener('pointerleave', this.onPointerLeave);
     canvas.addEventListener('pointerup', this.onPointerUp);
     canvas.addEventListener('pointercancel', this.onPointerCancel);
     canvas.addEventListener('lostpointercapture', this.onPointerCancel);
@@ -114,6 +137,8 @@ export class CadPointerController {
     this.canvas.removeEventListener('wheel', this.onWheel);
     this.canvas.removeEventListener('pointerdown', this.onPointerDown);
     this.canvas.removeEventListener('pointermove', this.onPointerMove);
+    this.canvas.removeEventListener('pointerenter', this.onPointerEnter);
+    this.canvas.removeEventListener('pointerleave', this.onPointerLeave);
     this.canvas.removeEventListener('pointerup', this.onPointerUp);
     this.canvas.removeEventListener('pointercancel', this.onPointerCancel);
     this.canvas.removeEventListener('lostpointercapture', this.onPointerCancel);
@@ -176,7 +201,8 @@ export class CadPointerController {
     if (event.button === 1 && this.options.getNavigationSettings?.().middleButtonPan === 0) return;
     this.canvas.focus?.({ preventScroll: true });
     const local = this.localPoint(event);
-    if (event.button === 0) {
+    const mode = event.button === 0 ? this.options.getNavigationMode?.() : 'pan';
+    if (event.button === 0 && !mode) {
       const point = this.host.worldPoint(local);
       if (!this.options.canSelectArea?.()) {
         this.pick(point, event.shiftKey);
@@ -199,6 +225,7 @@ export class CadPointerController {
       const previous = this.middleClick;
       this.middleClick = undefined;
       if (
+        event.button === 1 &&
         previous &&
         event.timeStamp - previous.time <= 500 &&
         Math.hypot(local.x - previous.local.x, local.y - previous.local.y) <= 6
@@ -211,6 +238,8 @@ export class CadPointerController {
       this.cancel();
       this.pan = {
         pointerId: event.pointerId,
+        button: event.button,
+        mode: mode ?? 'pan',
         local,
         view: this.host.view(),
         moved: false,
@@ -221,17 +250,32 @@ export class CadPointerController {
   };
   private readonly onPointerMove = (event: PointerEvent): void => {
     const local = this.localPoint(event);
+    this.updateCursorLocal(local);
     if (this.pan && (event.pointerId === undefined || event.pointerId === this.pan.pointerId)) {
-      if (event.buttons !== undefined && !(event.buttons & 4)) this.cancel();
+      if (event.buttons !== undefined && !(event.buttons & (this.pan.button === 1 ? 4 : 1)))
+        this.cancel();
       else {
         const dx = local.x - this.pan.local.x;
         const dy = local.y - this.pan.local.y;
         this.pan.moved ||= Math.hypot(dx, dy) >= 4;
-        this.host.changeView({
-          ...this.pan.view,
-          tx: this.pan.view.tx + dx,
-          ty: this.pan.view.ty + dy,
-        });
+        if (this.pan.mode === 'zoom') {
+          const height = this.host.viewport().y;
+          const scale = Math.max(
+            1e-6,
+            Math.min(1e6, this.pan.view.scale * 2 ** ((-dy * 2) / height)),
+          );
+          const ratio = scale / this.pan.view.scale;
+          this.host.changeView({
+            scale,
+            tx: this.pan.view.tx * ratio,
+            ty: this.pan.view.ty * ratio,
+          });
+        } else
+          this.host.changeView({
+            ...this.pan.view,
+            tx: this.pan.view.tx + dx,
+            ty: this.pan.view.ty + dy,
+          });
       }
     }
     const point = this.host.worldPoint(local);
@@ -254,10 +298,11 @@ export class CadPointerController {
   };
   private readonly onPointerUp = (event: PointerEvent): void => {
     const pan = this.pan;
-    if (pan && event.pointerId === pan.pointerId && event.button === 1) {
+    if (pan && event.pointerId === pan.pointerId && event.button === pan.button) {
       this.pan = undefined;
-      if (!pan.moved) this.middleClick = { time: event.timeStamp, local: this.localPoint(event) };
-      else this.options.onNavigate?.('pan', pan.before, this.host.worldView());
+      if (!pan.moved && pan.button === 1)
+        this.middleClick = { time: event.timeStamp, local: this.localPoint(event) };
+      else this.options.onNavigate?.(pan.mode, pan.before, this.host.worldView());
       this.release(pan.pointerId);
     }
     const press = this.press;
@@ -289,6 +334,22 @@ export class CadPointerController {
     this.cancel('escape');
   };
   private readonly onBlur = (): void => this.cancel();
+  private readonly onPointerEnter = (event: PointerEvent): void => {
+    this.updateCursorLocal(this.localPoint(event));
+    this.host.invalidate();
+  };
+  private readonly onPointerLeave = (): void => {
+    this.host.cursorLocal?.();
+    this.host.invalidate();
+  };
+  private updateCursorLocal(local: CadPoint): void {
+    const viewport = this.host.viewport();
+    this.host.cursorLocal?.(
+      local.x >= 0 && local.y >= 0 && local.x <= viewport.x && local.y <= viewport.y
+        ? local
+        : undefined,
+    );
+  }
   private readonly onAuxClick = (event: MouseEvent): void => {
     if (event.button === 1) event.preventDefault();
   };

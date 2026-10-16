@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import type { CadDimensionGeometry, LegacyCadRuntime, LegacyCadState } from '@hancad/legacy-bridge';
 
 export async function enter(page: Page, value: string): Promise<void> {
@@ -39,13 +39,16 @@ export async function dimensions(page: Page): Promise<CadDimensionGeometry[]> {
 
 export async function mapping(page: Page) {
   await page.getByRole('button', { name: '도면 전체 맞춤', exact: true }).click();
-  return page.getByTestId('drawing-canvas').evaluate((node) => {
-    const state = JSON.parse(localStorage.getItem('hancad.active-drawing.v1') ?? '{}')
-      .state as LegacyCadState;
-    const runtime = (globalThis as typeof globalThis & { HeechangTool?: LegacyCadRuntime })
-      .HeechangTool;
-    if (!runtime) throw new Error('Local CAD runtime is unavailable');
-    const bounds = runtime.core.cadExporters.boundsOf(state, true);
+  await settleView(page);
+  await enter(page, 'GETVAR');
+  await enter(page, 'VIEWCTR');
+  const output = page.getByRole('log', { name: '명령 기록' }).locator('.history-line').last();
+  await expect(output).toContainText('VIEWCTR = ');
+  const coordinates = ((await output.innerText()).split(' = ')[1] ?? '').split(',').map(Number);
+  if (!Number.isFinite(coordinates[0]) || !Number.isFinite(coordinates[1]))
+    throw new Error('Invalid current view center');
+  // Extents implementations can use different conservative label bounds; query the actual camera.
+  return page.getByTestId('drawing-canvas').evaluate((node, center) => {
     const rect = node.getBoundingClientRect();
     return {
       x: rect.x,
@@ -53,10 +56,20 @@ export async function mapping(page: Page) {
       width: rect.width,
       height: rect.height,
       zoom: Number((node as HTMLElement).dataset.zoom),
-      originX: (bounds.minX + bounds.maxX) / 2,
-      originY: (bounds.minY + bounds.maxY) / 2,
+      originX: center[0]!,
+      originY: -center[1]!,
     };
-  });
+  }, coordinates);
+}
+/** Waits for camera animation and its final GPU frame before coordinate-based input. */
+export async function settleView(page: Page): Promise<void> {
+  await expect(page.getByTestId('drawing-canvas')).toHaveAttribute('data-view-transition', '0');
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
 }
 export type CanvasMapping = Awaited<ReturnType<typeof mapping>>;
 export async function point(
