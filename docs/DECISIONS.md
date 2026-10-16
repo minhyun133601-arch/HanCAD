@@ -1,5 +1,32 @@
 # Decisions
 
+## 2026-10-16: Phase 03 transparent commands (milestone 3.5)
+
+An apostrophe entry at any prompt of a running command (a drawing tool, ZOOM/PAN
+or a session prompt such as UNDO) starts a transparent command. The entry is
+echoed after the outer prompt (`다음 점 지정 또는 [명령 취소(U)]: 'Z`), the
+transparent command's prompts start with `>>`, and when it ends HanCAD prints
+`LINE 명령 재개 중.` and shows the outer prompt again. The command window shows
+the transparent command's name with its apostrophe (`'ZOOM`) while it runs; this
+naming is an assumption. A transparent command does not become the command that
+Enter repeats.
+
+Owners: 'ZOOM/'PAN use the navigation session, 'DIST the measurement session
+(which now takes input and picks before the command it interrupts), and
+'SETVAR/'GETVAR/variable names a second "nested" prompt slot of the command
+session, so they never overwrite the outer command's own prompt state. Other
+transparent commands run through the same runner; unimplemented ones ('CAL,
+'OSNAP, 'HELP until milestone 3.10) print the not-implemented message and the
+outer command resumes. A non-transparent command, a second transparent command,
+or a command interrupting another instance of itself prints
+`** 해당 명령은 투명하게 호출할 수 없습니다 **` and the outer prompt stays.
+Esc cancels the transparent command together with the command it interrupted
+and prints `*취소*` once, as AutoCAD's Esc cancels the whole command stack.
+
+LINE now follows the AGENTS.md prompt sequence: `[명령 취소(U)]` after the first
+and second points, `[닫기(C)/명령 취소(U)]` from the third point, and C is
+rejected before that. PLINE keeps its interim prompt until Phase 06.
+
 ## 2026-10-16: Phase 03 AutoComplete and input search options (milestone 3.4)
 
 Suggestions come from one pure function (`suggestCommandInput`) over the command

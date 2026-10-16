@@ -42,7 +42,7 @@ export class DraftSession {
     if (!value) return this.finish();
     if (value === '\u001b') return this.cancel();
     if (/^(C|CLOSE)$/i.test(value) && (this.tool === 'LINE' || this.tool === 'PLINE'))
-      return this.finish(true);
+      return this.canClose() ? this.finish(true) : failure('point');
     if (/^(U|UNDO)$/i.test(value) && (this.tool === 'LINE' || this.tool === 'PLINE')) {
       if (this.points.length > 1) this.points.pop();
       this.notify();
@@ -117,17 +117,25 @@ export class DraftSession {
           ? this.points.length
             ? 'oppositeCorner'
             : 'firstPoint'
-          : this.points.length
-            ? 'nextPoint'
-            : 'firstPoint';
+          : !this.points.length
+            ? 'firstPoint'
+            : this.canClose() || this.tool !== 'LINE'
+              ? 'nextPoint'
+              : 'nextPointUndo';
     return {
       tool: this.tool,
       status: this.status,
       prompt,
       points: structuredClone(this.points),
       preview: this.preview(),
-      canClose: (this.tool === 'LINE' || this.tool === 'PLINE') && this.points.length >= 2,
+      canClose: this.canClose(),
     };
+  }
+
+  /** LINE offers Close from its second segment, as AutoCAD does. */
+  private canClose(): boolean {
+    if (this.tool === 'LINE') return this.points.length >= 3;
+    return this.tool === 'PLINE' && this.points.length >= 2;
   }
 
   /** Accepted segments remain snap targets before this command enters the journal. */

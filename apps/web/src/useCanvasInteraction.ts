@@ -149,7 +149,8 @@ export function useCanvasInteraction(options: Options) {
       return;
     }
     const target = resolve(event.point);
-    if (live.editing.isActive()) {
+    if (live.measurement.isActive()) live.measurement.pick(target.point);
+    else if (live.editing.isActive()) {
       const entity = live.editing.entityAt(
         event.point,
         8 / (live.surface.current?.getView().scale ?? 1),
@@ -161,8 +162,7 @@ export function useCanvasInteraction(options: Options) {
         ? live.files.getState().entities.find((item) => item.id === event.entityId)
         : undefined;
       live.dimensions.pick(target.point, entity);
-    } else if (live.measurement.isActive()) live.measurement.pick(target.point);
-    else if (live.modification.needsPoint()) live.modification.pick(target.point, target.snapped);
+    } else if (live.modification.needsPoint()) live.modification.pick(target.point, target.snapped);
     else live.draft.pick({ ...event, ...target });
   }
   function cursor(point: CadPoint): void {
@@ -175,7 +175,8 @@ export function useCanvasInteraction(options: Options) {
       return;
     }
     const target = resolve(point);
-    if (live.editing.isActive()) {
+    if (live.measurement.isActive()) live.measurement.cursor(target.point);
+    else if (live.editing.isActive()) {
       const entity = live.editing.entityAt(point, 8 / (live.surface.current?.getView().scale ?? 1));
       live.editing.cursor(target.point, entity, shift.current);
     } else if (live.text.isActive()) live.text.cursor(target.point);
@@ -183,8 +184,7 @@ export function useCanvasInteraction(options: Options) {
       const id = live.dimensions.needsEntity() ? live.surface.current?.pick(point) : undefined;
       const entity = id ? live.files.getState().entities.find((item) => item.id === id) : undefined;
       live.dimensions.cursor(target.point, entity);
-    } else if (live.measurement.isActive()) live.measurement.cursor(target.point);
-    else if (live.modification.isActive()) live.modification.cursor(target.point, target.snapped);
+    } else if (live.modification.isActive()) live.modification.cursor(target.point, target.snapped);
     else live.draft.cursor(target.point, { snapped: target.snapped });
   }
   function suppressSelectionBox(start: CadPoint): boolean {

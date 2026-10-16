@@ -74,6 +74,26 @@ describe('2D drafting command sessions', () => {
     expect(accepted.acceptText('100,100')).toEqual({ status: 'error', error: 'closedSession' });
   });
 
+  it('offers LINE Close only from the second segment, matching the AutoCAD prompt sequence', () => {
+    const settings = createEmptyCadState().settings;
+    const commits: CadEntity[][] = [];
+    const line = new DraftSession('LINE', settings, {
+      onCommit: (entities) => commits.push(entities),
+    });
+    expect(line.getSnapshot().prompt).toBe('firstPoint');
+    line.acceptText('0,0');
+    expect(line.getSnapshot()).toMatchObject({ prompt: 'nextPointUndo', canClose: false });
+    expect(line.acceptText('C')).toEqual({ status: 'error', error: 'point' });
+    line.acceptText('100,0');
+    expect(line.getSnapshot()).toMatchObject({ prompt: 'nextPointUndo', canClose: false });
+    expect(line.acceptText('CLOSE')).toEqual({ status: 'error', error: 'point' });
+    line.acceptText('100,100');
+    expect(line.getSnapshot()).toMatchObject({ prompt: 'nextPoint', canClose: true });
+    line.acceptText('U');
+    expect(line.getSnapshot().prompt).toBe('nextPointUndo');
+    expect(commits).toHaveLength(0);
+  });
+
   it('creates circles from positive radius input or mouse distance at survey coordinates', () => {
     const settings = createEmptyCadState().settings;
     const commits: CadEntity[][] = [];

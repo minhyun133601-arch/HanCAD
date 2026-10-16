@@ -178,6 +178,14 @@ builds the Input Settings menu; `useAutoComplete` owns the delay, highlight and
 key handling that `CommandLine` consults before its own Enter/Up/Down/Tab
 handling; `SuggestionList` and `InputSearchDialog` render them.
 
+`useCommandRouting` decides where command-line input goes and what the window
+shows: a transparent command first, then navigation, drawing tools and the
+command session. `useTransparentCommands` starts apostrophe entries inside a
+running command, refuses nested or non-transparent ones, and prints the resume
+line when the owner (navigation, measurement or the session's nested prompt
+slot) finishes. The session keeps two prompt slots, `main` for a command's own
+prompts and `nested` for transparent SETVAR/GETVAR/variable prompts.
+
 The bootstrap geometry crate is compiled to WASM and exercised from TypeScript.
 Native OS integration belongs to Rust behind a Platform interface. The browser
 adapter must explicitly report unavailable OS features. Drawing files must not be

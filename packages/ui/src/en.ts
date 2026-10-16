@@ -249,7 +249,8 @@ export const en: Messages = {
   draftingUsage:
     'L line · C circle · REC rectangle · DLI dimension · DI distance · F3 object snap · F8 Ortho · Drag select/move · Ctrl+drag copy · Wheel zoom · Middle-drag pan',
   firstPoint: 'Specify first point:',
-  nextPoint: 'Specify next point or [Close(C)/Undo(U)]:',
+  nextPointUndo: 'Specify next point or [Undo]:',
+  nextPoint: 'Specify next point or [Close/Undo]:',
   oppositeCorner: 'Specify opposite corner:',
   center: 'Specify center of circle:',
   radius: 'Specify radius of circle:',

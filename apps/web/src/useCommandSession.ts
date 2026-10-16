@@ -30,6 +30,12 @@ type PromptSession =
       values: string[];
     };
 
+type Slot = 'main' | 'nested';
+const idleSlots: Readonly<Record<Slot, PromptSession>> = {
+  main: { kind: 'idle' },
+  nested: { kind: 'idle' },
+};
+
 export function useCommandSession(locale: Locale, document?: DrawingDocument) {
   const messages = getMessages(locale);
   const messagesRef = useRef(messages);
@@ -63,8 +69,10 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [revision, setRevision] = useState(0);
-  const [promptSession, setPromptSession] = useState<PromptSession>({ kind: 'idle' });
-  const promptRef = useRef<PromptSession>({ kind: 'idle' });
+  // The main slot holds a command's own prompts; the nested slot a transparent
+  // command's >> prompts (SETVAR, GETVAR, a variable name) inside another command.
+  const [prompts, setPrompts] = useState<Record<Slot, PromptSession>>(idleSlots);
+  const slots = useRef<Record<Slot, PromptSession>>(idleSlots);
   const serial = useRef(1);
   const inputs = useRef(
     new InputHistory(() => {
@@ -80,12 +88,16 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
   const [startedCommand, setStartedCommand] = useState<string | null>(null);
   const pending = useRef(false);
 
-  function transition(next: PromptSession): void {
-    promptRef.current = next;
-    setPromptSession(next);
+  function transition(slot: Slot, next: PromptSession): void {
+    slots.current = { ...slots.current, [slot]: next };
+    setPrompts(slots.current);
   }
 
-  function promptText(session: PromptSession): string {
+  function promptText(session: PromptSession, slot: Slot = 'main'): string {
+    const text = basePrompt(session);
+    return slot === 'nested' && session.kind !== 'idle' ? `>>${text}` : text;
+  }
+  function basePrompt(session: PromptSession): string {
     if (session.kind === 'idle') return messages.commandPrompt;
     if (session.kind === 'variable-name') return messages.sysvarNamePrompt;
     if (session.kind === 'prompted')
@@ -105,13 +117,16 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     }
   }
 
-  function openVariablePrompt(next: Extract<PromptSession, { kind: 'variable-value' }>): void {
+  function openVariablePrompt(
+    slot: Slot,
+    next: Extract<PromptSession, { kind: 'variable-value' }>,
+  ): void {
     try {
       runtime.sysvars.get(next.name);
-      transition(next);
-      print(promptText(next));
+      transition(slot, next);
+      print(promptText(next, slot));
     } catch (error) {
-      transition({ kind: 'idle' });
+      transition(slot, { kind: 'idle' });
       print(messages.commandFailure(errorMessage(error, messages)));
     }
   }
@@ -136,53 +151,65 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     inputs.current.add(context, value);
   }
 
-  async function execute(value: string): Promise<void> {
+  /**
+   * Answers the active prompt or starts a command. With `transparent`, an apostrophe
+   * entry runs inside the current command: the caller has echoed it after the outer
+   * prompt, its prompts start with >> and it does not become the repeat command.
+   */
+  async function execute(value: string, options: { transparent?: boolean } = {}): Promise<void> {
     if (pending.current) return;
     setInput('');
     inputs.current.resetCursor();
-    const active = promptRef.current;
+    const slot: Slot =
+      options.transparent || slots.current.nested.kind !== 'idle' ? 'nested' : 'main';
+    const nested = slot === 'nested';
+    const active = slots.current[slot];
     if (active.kind === 'prompted') {
-      print(`${promptText(active)} ${value}`, 'echo');
+      print(`${promptText(active, slot)} ${value}`, 'echo');
       const values = [...active.values, value];
       const step = nextStep(active.command, active.prefixes, values);
-      if (step) showStep({ ...active, values }, step);
+      if (step) showStep(slot, { ...active, values }, step);
       else {
-        const result = await run(active.line, values);
-        if (result.status === 'ok') transition({ kind: 'idle' });
+        const result = await run(active.line, values, nested);
+        if (result.status === 'ok') transition(slot, { kind: 'idle' });
       }
       return;
     }
     if (active.kind === 'variable-name') {
       const name = value.trim().toUpperCase();
-      print(`${promptText(active)} ${name}`, 'echo');
+      print(`${promptText(active, slot)} ${name}`, 'echo');
       if (!name) {
-        transition({ kind: 'idle' });
+        transition(slot, { kind: 'idle' });
         return;
       }
       const definition = getSystemVariableDefinition(name);
       if (active.command === 'GETVAR' || !definition) {
-        const result = await run('GETVAR', [name]);
-        if (result.status === 'ok') transition({ kind: 'idle' });
+        const result = await run('GETVAR', [name], nested);
+        if (result.status === 'ok') transition(slot, { kind: 'idle' });
       } else {
         const next: PromptSession = { kind: 'variable-value', command: 'SETVAR', name };
-        openVariablePrompt(next);
+        openVariablePrompt(slot, next);
       }
       return;
     }
     if (active.kind === 'variable-value') {
-      print(`${promptText(active)} ${value}`, 'echo');
+      print(`${promptText(active, slot)} ${value}`, 'echo');
       const result = await run(
         active.command,
         active.command === 'SETVAR' ? [active.name, value] : [value],
+        nested,
       );
-      if (result.status === 'ok') transition({ kind: 'idle' });
+      if (result.status === 'ok') transition(slot, { kind: 'idle' });
       return;
     }
-    const line = value.trim() || lastCommand.current;
+    if (nested && !value.trim()) return;
+    const line = (nested ? value.trim().replace(/^'/, '') : value.trim()) || lastCommand.current;
     if (!line) return;
-    lastCommand.current = line;
-    inputs.current.add('command', line);
-    print(messages.commandEcho(line), 'echo');
+    inputs.current.add('command', nested ? value.trim() : line);
+    if (!nested) {
+      lastCommand.current = line;
+      print(messages.commandEcho(line), 'echo');
+    }
     const tokens = line.split(/\s+/);
     const resolution = runtime.registry.resolve(tokens[0] ?? '');
     const command = resolution?.canonicalName;
@@ -197,14 +224,14 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
       if (step) {
         const line = tokens[0] ?? command;
         const base = { kind: 'prompted', command, line, prefixes: resolution.prefixes } as const;
-        showStep({ ...base, values }, step);
+        showStep(slot, { ...base, values }, step);
         return;
       }
     }
     if ((command === 'SETVAR' || command === 'GETVAR') && tokens.length === 1) {
       const next: PromptSession = { kind: 'variable-name', command };
-      transition(next);
-      print(promptText(next));
+      transition(slot, next);
+      print(promptText(next, slot));
       return;
     }
     const variableCommand = resolution?.definition.systemVariable;
@@ -226,10 +253,10 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
         command: command === 'SETVAR' ? command : variableName,
         name: variableName,
       };
-      openVariablePrompt(next);
+      openVariablePrompt(slot, next);
       return;
     }
-    await run(line);
+    await run(nested ? value.trim() : line, [], nested);
   }
 
   function nextStep(
@@ -244,19 +271,30 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
       prefixes,
     });
   }
-  function showStep(next: Extract<PromptSession, { kind: 'prompted' }>, step: PromptStep): void {
+  function showStep(
+    slot: Slot,
+    next: Extract<PromptSession, { kind: 'prompted' }>,
+    step: PromptStep,
+  ): void {
     if (step.notice) print(step.notice);
-    transition(next);
-    print(step.prompt);
+    transition(slot, next);
+    print(promptText(next, slot));
   }
 
-  async function run(line: string, values: readonly string[] = []): Promise<CommandResult> {
+  async function run(
+    line: string,
+    values: readonly string[] = [],
+    transparent = false,
+  ): Promise<CommandResult> {
     pending.current = true;
     setBusy(true);
     try {
-      const result = await runner.run(line, values);
+      // Inside another command only apostrophe input runs; the outer command stays named.
+      const text = transparent && !line.startsWith("'") ? `'${line}` : line;
+      const result = await runner.run(text, values, transparent ? { commandActive: true } : {});
       for (const output of result.messages) print(output);
-      if (result.status === 'ok' && result.command) setStartedCommand(result.command);
+      if (result.status === 'ok' && result.command && !transparent)
+        setStartedCommand(result.command);
       return result;
     } catch (error) {
       print(messages.commandFailure(errorMessage(error, messages)));
@@ -268,13 +306,14 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     }
   }
 
-  function cancel(): void {
-    transition({ kind: 'idle' });
+  function cancel(notify = true): void {
+    transition('main', { kind: 'idle' });
+    transition('nested', { kind: 'idle' });
     changeInput('');
-    print(messages.cancel);
+    if (notify) print(messages.cancel);
   }
   function startCommand(value: string): void {
-    if (promptRef.current.kind !== 'idle') cancel();
+    if (slots.current.main.kind !== 'idle' || slots.current.nested.kind !== 'idle') cancel();
     void execute(value);
   }
   function refresh(): void {
@@ -288,17 +327,26 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     return getSystemVariableDefinition(session.name)?.type === 'string' ? 'text' : 'number';
   }
 
+  const nestedActive = prompts.nested.kind !== 'idle';
+  const shown = nestedActive ? prompts.nested : prompts.main;
+  const owner = (session: PromptSession): string | null =>
+    session.kind === 'idle'
+      ? null
+      : session.kind === 'prompted' && session.prefixes.commandLine
+        ? `-${session.command}`
+        : session.command;
   return {
     ...runtime,
     history,
-    inputMode: inputMode(promptSession),
+    inputMode: inputMode(shown),
     /** Command whose prompt the session itself owns (SETVAR, UNDO, a variable name). */
-    promptCommand:
-      promptSession.kind === 'idle'
-        ? null
-        : promptSession.kind === 'prompted' && promptSession.prefixes.commandLine
-          ? `-${promptSession.command}`
-          : promptSession.command,
+    promptCommand: owner(prompts.main),
+    /** Transparent command answering >> prompts in the nested slot. */
+    transparentCommand: owner(prompts.nested),
+    /** A transparent SETVAR/GETVAR/variable prompt is active inside another command. */
+    nestedActive,
+    isPrompting: (slot: Slot = 'main') => slots.current[slot].kind !== 'idle',
+    cancelNested: () => transition('nested', { kind: 'idle' }),
     startedCommand,
     remember,
     recentCommands: (): string[] => {
@@ -312,10 +360,9 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     input,
     busy,
     revision,
-    prompt: promptText(promptSession),
+    prompt: promptText(shown, nestedActive ? 'nested' : 'main'),
     editable:
-      promptSession.kind === 'variable-value' &&
-      getSystemVariableDefinition(promptSession.name)?.type === 'string',
+      shown.kind === 'variable-value' && getSystemVariableDefinition(shown.name)?.type === 'string',
     changeInput,
     recall,
     execute,

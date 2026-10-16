@@ -55,14 +55,16 @@ export function useDrawingCommands({
   });
   const editing = useEditingTools({ ...common, cancelOthers: () => cancelOthers('editing') });
   const text = useTextCreation({ ...common, cancelOthers: () => cancelOthers('text') });
-  controllers.current = { editing, text, modification, measurement, dimensions, draft };
+  // Measurement first: a transparent 'DIST answers before the command it interrupts.
+  controllers.current = { measurement, editing, text, modification, dimensions, draft };
   const active = Object.values(controllers.current).some((item) => item.isActive());
+  // A transparent 'DIST shows its rubber band instead of the interrupted command's preview.
   const preview =
+    measurement.snapshot?.preview ??
     editing.snapshot?.preview ??
     text.snapshot?.preview ??
     dimensions.snapshot?.preview ??
     modification.snapshot?.preview ??
-    measurement.snapshot?.preview ??
     draft.snapshot?.preview ??
     [];
   return {
@@ -84,11 +86,11 @@ export function useDrawingCommands({
         ? (editing.snapshot?.previewHiddenIds ?? [])
         : [],
     prompt:
+      measurement.prompt ??
       editing.prompt ??
       text.prompt ??
       dimensions.prompt ??
       modification.prompt ??
-      measurement.prompt ??
       draft.prompt ??
       session.prompt,
     usage: text.active

@@ -21,11 +21,12 @@ interface ToolStates {
 
 /** The first active tool owns the prompt, in the same order as its prompt text. */
 export function toolInputMode(state: ToolStates): PromptInputMode | undefined {
+  if (state.measuring) return 'point';
   if (state.editing) return sessionInputMode(state.editing.inputMode);
   if (state.text) return sessionInputMode(state.text.inputMode);
   if (state.dimensions) return sessionInputMode(state.dimensions.inputMode);
   if (state.modification) return state.modification.needsPoint ? 'point' : 'selection';
-  if (state.measuring || state.drafting) return 'point';
+  if (state.drafting) return 'point';
   if (state.selecting) return 'selection';
   return undefined;
 }

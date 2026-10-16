@@ -24,6 +24,8 @@ export function useViewNavigation(options: Options) {
   latest.current = options;
   const controller = useRef<NavigationSession | null>(null);
   const [snapshot, setSnapshot] = useState<NavigationSnapshot | null>(null);
+  /** A transparent ZOOM/PAN prefixes its prompts with >>. */
+  const transparent = useRef(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const ucsPending = useRef(false);
   const [ucsAwaiting, setUcsAwaiting] = useState(false);
@@ -77,12 +79,22 @@ export function useViewNavigation(options: Options) {
     );
     return true;
   }
+  function promptLine(current: NavigationSnapshot): string {
+    const live = latest.current;
+    const text = navigationPrompt(
+      current,
+      live.korean,
+      live.surface.current?.getWorldView().height ?? 0,
+    );
+    return transparent.current ? `>>${text}` : text;
+  }
   function begin(command: 'ZOOM' | 'PAN', context: CommandContext): void {
     cancel(false);
     const live = latest.current,
       surface = live.surface.current;
     if (!surface) return;
     if (!context.prefixes?.transparent) live.cancelOthers();
+    transparent.current = Boolean(context.prefixes?.transparent);
     const pair = (name: string): [number, number] => {
       const value = live.session.sysvars.get(name);
       return Array.isArray(value) && typeof value[0] === 'number' && typeof value[1] === 'number'
@@ -242,11 +254,7 @@ export function useViewNavigation(options: Options) {
       : ucsAwaiting
         ? ucsIconPrompt(options.korean)
         : snapshot
-          ? navigationPrompt(
-              snapshot,
-              options.korean,
-              options.surface.current?.getWorldView().height ?? 0,
-            )
+          ? promptLine(snapshot)
           : null,
     /** Prompt input type: counts and scale factors are numbers, option lists keywords. */
     inputMode: stressAwaiting
@@ -294,10 +302,7 @@ export function useViewNavigation(options: Options) {
       if (!controller.current) return false;
       const live = latest.current;
       const current = controller.current.getSnapshot();
-      if (current)
-        live.session.print(
-          `${navigationPrompt(current, live.korean, live.surface.current?.getWorldView().height ?? 0)} ${value}`,
-        );
+      if (current) live.session.print(`${promptLine(current)} ${value}`);
       controller.current.acceptText(value);
       return true;
     },

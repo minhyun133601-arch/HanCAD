@@ -22,6 +22,7 @@ import { useViewHistory } from './view-history';
 import { layoutFromName, layoutName, useHostVariables } from './host-variables';
 import type { DocumentManager, DrawingDocument } from '@hancad/sysvars';
 import { useViewNavigation } from './useViewNavigation';
+import { useCommandRouting } from './useCommandRouting';
 import { DisplayOptionsDialog } from './DisplayOptionsDialog';
 
 export function DocumentApp({
@@ -105,12 +106,15 @@ export function DocumentApp({
   );
   useHostVariables(drawingDocument.id, { locale, layout, state: tools.state }, canvasSurface);
   const inputRef = useRef<HTMLDivElement | HTMLInputElement>(null);
+  const routing = useCommandRouting({ session, navigation, tools, surface: canvasSurface, locale });
+  const { inputMode, commandActive, commandName, historyContext, submit, cancel } = routing;
 
   function focusCommand(): void {
     if (!text.editable) inputRef.current?.focus({ preventScroll: true });
   }
   function execute(command: string): void {
     canvasSurface.current?.cancelPointerInteraction();
+    routing.reset();
     if (files.restoring) files.cancelRestore(false);
     tools.cancelAll();
     navigation.cancel(false);
@@ -118,40 +122,6 @@ export function DocumentApp({
     commandWindow.show();
     session.startCommand(command);
     focusCommand();
-  }
-  const inputMode = navigation.inputMode ?? tools.inputMode ?? session.inputMode;
-  const commandActive = navigation.active || tools.active || session.promptCommand !== null;
-  const commandName = commandActive
-    ? (session.promptCommand ?? session.startedCommand ?? null)
-    : null;
-  /** Up/Down recall values given at the same kind of prompt of the same command. */
-  const historyContext = inputMode === 'command' ? 'command' : `${commandName ?? ''}:${inputMode}`;
-  async function submit(value: string): Promise<void> {
-    if (historyContext !== 'command') session.remember(historyContext, value);
-    if (navigation.submit(value)) {
-      session.changeInput('');
-      return;
-    }
-    if (
-      /^\s*['_.-]*(?:ZOOM|Z|PAN|P)\b/i.test(value) &&
-      (!tools.isActive() || value.trim().split(/\s/)[0]?.includes("'"))
-    ) {
-      await session.execute(value);
-      return;
-    }
-    if (tools.submit(value)) {
-      session.changeInput('');
-      if (!tools.isActive()) canvasSurface.current?.setSnapMarker();
-      return;
-    }
-    canvasSurface.current?.cancelPointerInteraction();
-    await session.execute(value);
-  }
-  function cancel(): void {
-    canvasSurface.current?.cancelPointerInteraction();
-    if (!navigation.cancel() && !tools.cancel()) session.cancel();
-    session.changeInput('');
-    canvasSurface.current?.setSnapMarker();
   }
   function openFile(file: File): void {
     navigation.cancel(false);
@@ -306,9 +276,9 @@ export function DocumentApp({
           text={commandText}
           session={session}
           drawingName={displayName}
-          prompt={navigation.prompt ?? tools.prompt}
+          prompt={routing.prompt}
           commandName={commandName}
-          editable={!navigation.active && tools.editable}
+          editable={routing.editable}
           mode={inputMode}
           commandActive={commandActive}
           blocked={files.reading || files.restoring}

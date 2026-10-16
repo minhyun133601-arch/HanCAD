@@ -232,6 +232,7 @@ export interface Messages {
   erase: string;
   draftingUsage: string;
   firstPoint: string;
+  nextPointUndo: string;
   nextPoint: string;
   oppositeCorner: string;
   center: string;

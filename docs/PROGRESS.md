@@ -15,7 +15,7 @@ shortcut menus, command aliases/AutoCorrect and the command window.
 | 3.2 Input parsing and ImeController       | Done    | Prompt input modes, Hangul normalization, Space/Enter rules, PGP grammar incl. external commands, transparent-command rules            |
 | 3.3 Command line window                   | Done    | Floating/docked bar, temporary prompt lines, F2/Ctrl+F2/Ctrl+9, command-name prompt, history recall, right-click menu                  |
 | 3.4 AutoComplete and input search options | Done    | Suggestion list, auto-append, mid-string, sysvars, frequency order, delay, AutoCorrect DB, INPUTSEARCHOPTIONS dialog                   |
-| 3.5 Transparent commands                  | Planned | `>>` prompts for 'ZOOM/'PAN/'SETVAR/sysvars/'DIST/'CAL/'OSNAP/'HELP, resume message and original prompt                                |
+| 3.5 Transparent commands                  | Done    | `>>` prompts for 'ZOOM/'PAN/'SETVAR/sysvars/'DIST/'CAL/'OSNAP/'HELP, resume message and original prompt                                |
 | 3.6 PGP import, ALIASEDIT and REINIT      | Planned | User acad.pgp import/merge (user wins), persistent profile copy, ALIASEDIT dialog, REINIT/RE-INIT reload                               |
 | 3.7 Macros and DIESEL                     | Planned | ^C^C, ;, space, \ pause, \*^C^C repeat, $M=, ^P and other controls; DIESEL evaluator; MODEMACRO; ribbon macros                         |
 | 3.8 Keyboard bindings and overrides       | Planned | Every SHORTCUTS.md binding with ordered scopes, toggle messages, TEMPOVERRIDES key-down/key-up macros                                  |
@@ -76,11 +76,30 @@ command-doc checks, the production build and the full E2E suite (including the
 new `autocomplete.spec.ts`) pass: 505 unit, 30 compatibility and 72 E2E tests
 (one opt-in skip).
 
-Exact next step: milestone 3.5 (transparent commands): `>>` prompts for 'ZOOM,
-'PAN, 'SETVAR, sysvar names, 'DIST, 'CAL, 'OSNAP and 'HELP inside a running
-command, the resume message and the return to the original prompt. Start from
-`interpretCommandInput` (it already classifies transparent input) and the
-`submit` path in DocumentApp, which currently special-cases ZOOM/PAN.
+### Milestone 3.5 transparent commands (2026-10-16)
+
+Delivered: apostrophe entries inside any running command with the outer-prompt
+echo, `>>` prompts and `LINE 명령 재개 중.`; 'ZOOM/'PAN (navigation), 'DIST
+(measurement takes priority over the interrupted command), 'SETVAR, 'GETVAR and
+'variable names (a nested session prompt slot), and other transparent commands
+through the runner, with unimplemented ones reporting and resuming. Nested,
+self-interrupting and non-transparent entries are refused with AutoCAD's message.
+Esc cancels the whole command stack once. Command-line routing moved from
+DocumentApp to `useCommandRouting`. LINE now offers Close only from its second
+segment, as AGENTS.md specifies.
+
+Verification: lint, formatting, strict TypeScript, unit, compatibility and
+command-doc checks, the production build and the full E2E suite (including the
+new `transparent-commands.spec.ts`) pass: 506 unit, 30 compatibility and 76 E2E
+tests (one opt-in skip). One full run hit a timing flake in the VTFPS=1 animation
+test (`view-navigation.spec.ts:77`); it passed 5 isolated and 3 parallel reruns.
+
+Exact next step: milestone 3.6 (PGP import, ALIASEDIT and REINIT): import and
+merge the user's acad.pgp (user wins) through the Platform file dialog, keep a
+persistent profile copy, the ALIASEDIT dialog (aliases, external commands,
+AutoCorrect list), REINIT/RE-INIT reload, and acadSynonymsGlobalDB.pgp-style
+synonyms for the suggestion list. `CommandRegistry.importPgp`, `reloadPgp` and
+`loadCorrections` already exist.
 
 ## Completed phase: Phase 02 rendering engine and view navigation (2026-10-16)
 

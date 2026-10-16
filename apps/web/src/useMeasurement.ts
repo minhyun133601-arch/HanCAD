@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { MeasureSession, formatMeasurement } from '@hancad/draft';
 import type { MeasureInputResult, MeasureSnapshot } from '@hancad/draft';
-import type { CommandRegistry } from '@hancad/commands';
+import type { CommandContext, CommandRegistry } from '@hancad/commands';
 import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import type { SystemVariables } from '@hancad/sysvars';
 import { getMessages } from '@hancad/ui';
@@ -21,6 +21,8 @@ export function useMeasurement(options: MeasurementOptions) {
   latest.current = options;
   const controller = useRef<MeasureSession | null>(null);
   const [snapshot, setSnapshot] = useState<MeasureSnapshot | null>(null);
+  /** 'DIST inside another command keeps that command and prefixes its prompts with >>. */
+  const transparent = useRef(false);
 
   function changed(next: MeasureSnapshot): void {
     if (next.status === 'active') setSnapshot(next);
@@ -37,16 +39,25 @@ export function useMeasurement(options: MeasurementOptions) {
     if (notify) latest.current.print(latest.current.messages.cancel);
     return active;
   }
+  function promptLine(current: MeasureSnapshot): string {
+    const messages = latest.current.messages;
+    const text =
+      current.prompt === 'firstPoint'
+        ? messages.measureFirstPointPrompt
+        : messages.measureSecondPointPrompt;
+    return transparent.current ? `>>${text}` : text;
+  }
   function report(result: MeasureInputResult): void {
     if (!result.error) return;
     const live = latest.current;
     const key = result.error === 'point' ? 'invalidPoint' : result.error;
     live.print(live.messages[key]);
   }
-  function begin(): void {
+  function begin(context: CommandContext): void {
     cancel(false);
     const live = latest.current;
-    live.cancelOthers();
+    transparent.current = Boolean(context.prefixes?.transparent);
+    if (!transparent.current) live.cancelOthers();
     const active = new MeasureSession(live.getState().settings, {
       precision: live.sysvars.getNumber('LUPREC'),
       onChange: changed,
@@ -94,11 +105,7 @@ export function useMeasurement(options: MeasurementOptions) {
   return {
     snapshot,
     active: snapshot !== null,
-    prompt: snapshot
-      ? options.messages[
-          snapshot.prompt === 'firstPoint' ? 'measureFirstPointPrompt' : 'measureSecondPointPrompt'
-        ]
-      : null,
+    prompt: snapshot ? promptLine(snapshot) : null,
     isActive: () => controller.current !== null,
     needsPoint: () => controller.current !== null,
     pick: (point: CadPoint) => {
@@ -109,12 +116,7 @@ export function useMeasurement(options: MeasurementOptions) {
     submit: (value: string): boolean => {
       const active = controller.current;
       if (!active) return false;
-      const live = latest.current;
-      const prompt =
-        active.getSnapshot().prompt === 'firstPoint'
-          ? live.messages.measureFirstPointPrompt
-          : live.messages.measureSecondPointPrompt;
-      live.print(`${prompt} ${value}`);
+      latest.current.print(`${promptLine(active.getSnapshot())} ${value}`);
       report(active.acceptText(value));
       return true;
     },

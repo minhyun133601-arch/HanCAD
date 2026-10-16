@@ -1,7 +1,14 @@
 import type { CadEntity, CadPoint } from '@hancad/legacy-bridge';
 
 export type DraftTool = 'LINE' | 'CIRCLE' | 'RECTANG' | 'PLINE';
-export type DraftPrompt = 'firstPoint' | 'nextPoint' | 'oppositeCorner' | 'center' | 'radius';
+export type DraftPrompt =
+  | 'firstPoint'
+  /** LINE before its second segment: Undo only. */
+  | 'nextPointUndo'
+  | 'nextPoint'
+  | 'oppositeCorner'
+  | 'center'
+  | 'radius';
 export type DraftError = 'point' | 'positiveRadius' | 'needPoints' | 'zeroLength' | 'closedSession';
 export interface DraftInputResult {
   status: 'continue' | 'committed' | 'cancelled' | 'error';
