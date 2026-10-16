@@ -21,15 +21,36 @@ function fixture() {
     redraw: vi.fn(),
   };
   const print = vi.fn();
+  const accepted = vi.fn();
   return {
     host,
     applied,
     print,
+    accepted,
     create: (command: 'ZOOM' | 'PAN' = 'ZOOM', line = false, transparent = false) =>
-      new NavigationSession(command, host, vi.fn(), print, line, transparent),
+      new NavigationSession(command, host, vi.fn(), print, line, transparent, accepted),
   };
 }
 describe('interactive and scripted navigation', () => {
+  it('reports accepted points without treating options, numbers or rejected windows as points', () => {
+    const test = fixture(),
+      zoom = test.create();
+    expect(zoom.needsPoint).toBe(true);
+    expect(zoom.acceptText('W')).toBe(false);
+    expect(zoom.acceptPoint({ x: 0, y: 0 })).toBe(true);
+    expect(zoom.acceptPoint({ x: 0, y: 0 })).toBe(false);
+    expect(zoom.acceptPoint({ x: NaN, y: 1 })).toBe(false);
+    expect(zoom.acceptText('100,50')).toBe(true);
+    expect(test.accepted.mock.calls).toEqual([[{ x: 0, y: 0 }], [{ x: 100, y: -50 }]]);
+    expect(zoom.needsPoint).toBe(false);
+    const center = test.create();
+    expect(center.acceptText('C')).toBe(false);
+    expect(center.needsPoint).toBe(true);
+    expect(center.acceptText('25,30')).toBe(true);
+    expect(center.needsPoint).toBe(false);
+    expect(center.acceptText('50')).toBe(false);
+    expect(test.accepted).toHaveBeenCalledTimes(3);
+  });
   it('supports all/extents/previous and enforces transparent All restriction', () => {
     const test = fixture();
     test.create().acceptText('A');

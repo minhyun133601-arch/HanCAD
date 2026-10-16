@@ -7,6 +7,8 @@ import type { CommandRegistry } from '@hancad/commands';
 import type { SystemVariables, SysvarValue } from '@hancad/sysvars';
 import { getMessages } from '@hancad/ui';
 import type { Messages, MessageKey } from '@hancad/ui';
+import { tempOverrides } from './temp-overrides';
+import { recordStatusPoint } from './status-point-store';
 
 interface Options {
   registry: CommandRegistry;
@@ -70,6 +72,7 @@ export function useEditingTools(options: Options) {
     controller.current =
       tool === 'OFFSET'
         ? new OffsetSession(live.getState(), {
+            onAcceptedPoint: (point) => recordStatusPoint(latest.current.sysvars, point),
             distance: live.sysvars.getNumber('OFFSETDIST'),
             gapType: live.sysvars.getNumber('OFFSETGAPTYPE'),
             onDistanceChange: (value) => {
@@ -173,7 +176,10 @@ export function useEditingTools(options: Options) {
     },
     pick: (point: CadPoint, entity?: CadEntity, shift = false) => {
       const active = controller.current;
-      if (active) report(active.acceptPick(point, entity, shift));
+      if (!active) return false;
+      const result = active.acceptPick(point, entity, shift);
+      report(result);
+      return !result.error;
     },
     cursor: (point: CadPoint, entity?: CadEntity, shift = false) => {
       const active = controller.current;
@@ -203,7 +209,11 @@ export function useEditingTools(options: Options) {
       const active = controller.current;
       if (!active) return false;
       latest.current.print(`${prompt() ?? ''} ${value}`);
-      report(active.acceptText(value));
+      const mode = active.getSnapshot().inputMode;
+      const result = active.acceptText(value);
+      report(result);
+      if (mode === 'point' || mode === 'number')
+        tempOverrides.consumeObjectSnapInput(value, !result.error);
       return true;
     },
     cancel: (notify = true) => finish(notify),

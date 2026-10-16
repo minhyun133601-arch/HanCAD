@@ -19,6 +19,17 @@
 | Undo / Redo | 명령 취소 / 명령 복구 |
 | Start tab | 시작 |
 
+## Shortcut menus and status controls (Phase 03)
+| English | 한국어 UI |
+|---|---|
+| Recent input / Repeat / Enter / Cancel | 최근 입력 / 반복 / 입력 / 취소 |
+| Snap overrides / Object snap settings | 스냅 재지정 / 객체 스냅 설정 |
+| Clipboard / Isolate / Deselect all | 클립보드 / 분리 / 모두 선택 해제 |
+| Add selected / Select similar | 선택 항목 추가 / 유사 객체 선택 |
+| Status bar customization | 상태막대 사용자화 |
+| Absolute / Relative / Geographic / Specific coordinates | 절대적 / 상대적 / 지리적 / 특정 |
+| Help / Search commands | 도움말 / 명령 검색 |
+
 ## View navigation (Phase 02)
 | English | 한국어 UI |
 |---|---|

@@ -39,19 +39,24 @@
   margin-left: auto;
   min-width: 0;
   gap: 3px;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 .status-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: 25px;
-  min-width: 35px;
-  max-width: 91px;
+  width: 28px;
+  min-width: 28px;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 0 7px;
+  padding: 2px;
   font-size: 10px;
   color: #a9b5c0;
   border: 1px solid #485562;
   border-radius: 2px;
-  flex-shrink: 1;
+  flex-shrink: 0;
 }
 .status-toggle[aria-pressed='true'] {
   background: #315a78;
@@ -98,8 +103,7 @@
     padding-right: 10px;
   }
   .status-toggle {
-    padding: 0 5px;
-    max-width: 81px;
+    padding: 2px;
   }
   .status-bar {
     gap: 5px;
@@ -107,6 +111,29 @@
   .layout-tab {
     padding: 0 12px;
   }
+}
+.status-customize {
+  height: 27px;
+  min-width: 26px;
+  font-size: 19px;
+  color: #bdcbd8;
+  border-left: 1px solid #53616d;
+}
+.status-customize:hover,
+.status-toggle:hover {
+  background: #445767;
+}
+.status-coordinates {
+  padding: 2px 8px;
+  color: #d5dfe8;
+  font-family: Consolas, monospace;
+  font-size: 11px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 80px;
+  max-width: 320px;
 }
 .status-modemacro {
   flex-shrink: 1;

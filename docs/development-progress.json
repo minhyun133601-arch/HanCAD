@@ -1,7 +1,15 @@
 {
-  "updated": "2026-10-16",
+  "updated": "2026-10-17",
   "currentApp": {
     "features": [
+      {
+        "ko-KR": "명령행·자동완성·PGP 별칭·투명 명령·매크로·IME 안전 입력과 Alt 리본 키팁",
+        "en-US": "Command line, AutoComplete, PGP aliases, transparent commands, macros, IME-safe input and Alt ribbon keytips"
+      },
+      {
+        "ko-KR": "오른쪽 클릭 메뉴·한 점 스냅 재지정·상태막대 설정·좌표 표시·F1 명령 도움말",
+        "en-US": "Right-click menus, one-shot snaps, status settings, coordinate display and F1 command help"
+      },
       {
         "ko-KR": "선·원·사각형·폴리선 그리기와 다중 도면 탭: 도면별 변수·실행 취소 기록 유지",
         "en-US": "Draw lines, circles, rectangles and polylines; independent drawing tabs retain their variables and undo journals"
@@ -49,8 +57,8 @@
     ],
     "limitations": [
       {
-        "ko-KR": "페이즈 2(화면 표시·탐색) 검증을 완료했습니다. 배치 뷰포트의 XP 축척은 페이즈 14에서 연결하며, 페이즈 0 네이티브 검증은 보류 중입니다.",
-        "en-US": "Phase 02 rendering and navigation are verified. XP scaling requires Phase 14 layout viewports; Phase 00 native verification remains deferred."
+        "ko-KR": "페이즈 2(화면 표시·탐색)와 페이즈 3(명령·입력 UI)의 브라우저 검증을 완료했습니다. 실제 Windows IME·페이즈 0 네이티브 검증은 보류 중이며, 동적 입력 필드·고급 스냅은 페이즈 4에서 완성합니다.",
+        "en-US": "Browser validation of Phase 02 rendering/navigation and Phase 03 command/input UI is complete. Actual Windows IME and Phase 00 native checks remain pending; dynamic-input fields and advanced snaps belong to Phase 04."
       },
       {
         "ko-KR": "일부 DWG 객체는 생략·근사되며 DXF 저장은 무손실 원본 보존 방식이 아닙니다.",
@@ -117,10 +125,10 @@
         "ko-KR": "명령·단축키·한글 입력",
         "en-US": "Commands, shortcuts and Korean input"
       },
-      "status": "in-progress",
+      "status": "complete",
       "detail": {
-        "ko-KR": "프롬프트 기준 별칭 216개, 물리 키·한글 역변환·변수 입력 연결. 전체 명령 옵션 확장 예정.",
-        "en-US": "216 specified aliases, physical keys, Hangul key recovery and variable input are connected. Full command options remain planned."
+        "ko-KR": "명령행·별칭·매크로·키보드·오른쪽 클릭·상태막대·F1 구현과 수락 항목 7개의 브라우저 검증 완료. Windows IME 실기·AutoCAD 대조는 미검증입니다.",
+        "en-US": "Command line, aliases, macros, keyboard, right-click, status bar and F1 are implemented; all seven acceptance items have browser coverage. Actual Windows IME and AutoCAD comparisons remain unverified."
       }
     },
     {

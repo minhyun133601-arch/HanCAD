@@ -12,6 +12,12 @@ at selection prompts. In the browser build, keys the browser reserves (Ctrl+N,
 Ctrl+T, Ctrl+W, Ctrl+Tab, Ctrl+Shift+Tab, Ctrl+PageUp/PageDown, Ctrl+F4, F11) can
 be taken by the browser first; the desktop app receives them.
 
+Phase 03 completion adds Alt keytips (MENUBAR=0), contextual drawing menus,
+time-sensitive right-click and one-shot object-snap choices. Alt+F opens the
+application menu. Status controls share the same toggle implementation and expose settings
+and visibility menus. Ctrl+I cycles static/absolute/relative coordinates (0/1/2).
+F1 opens registry-generated Korean help without ending the current command.
+
 ## Phase 03 alias completion (2026-10-16)
 
 The built-in alias table is this Reference B list plus 172 alternative, legacy and
@@ -31,8 +37,8 @@ and navigation undo. Previous consumes up to ten recorded views. Dynamic shows a
 move/resize overview box; Enter applies and Esc restores the original view.
 F7 toggles GRIDMODE; the lineweight status switch controls LWDISPLAY. OP/OPTIONS
 opens background controls. RE/REA regenerate and R/RA redraw. Prompt keyword
-buttons accept the same option as typing its letter. Dynamic-input Down menus
-remain Phase 03 work. XP requires the later floating-layout viewport host.
+buttons accept the same option as typing its letter. Cursor dynamic-input fields
+and Down options menus remain Phase 04 work. XP requires the later floating-layout viewport host.
 
 ## Verified basic-workflow slice (2026-10-15)
 

@@ -148,6 +148,12 @@ export class DraftSession {
   }
 
   private addPoint(point: CadPoint): DraftInputResult {
+    const result = this.applyPoint(point);
+    if (result.status !== 'error') this.options.onAcceptedPoint?.({ ...point });
+    return result;
+  }
+
+  private applyPoint(point: CadPoint): DraftInputResult {
     if (this.status !== 'active') return failure('closedSession');
     if (!validDraftPoint(point)) return failure('point');
     const previous = this.points.at(-1);

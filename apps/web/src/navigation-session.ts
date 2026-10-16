@@ -1,4 +1,4 @@
-import { parseDraftPoint } from '@hancad/draft';
+import { parseDraftPoint, validDraftPoint } from '@hancad/draft';
 import { reverseHangulInput } from '@hancad/input';
 import type { CadPoint } from '@hancad/legacy-bridge';
 import { fitWorldBounds, scaleWorldView, unionViewBounds, windowWorldView } from '@hancad/render';
@@ -56,6 +56,7 @@ export class NavigationSession {
     private readonly print: (ko: string, en: string) => void,
     commandLine = false,
     private readonly transparent = false,
+    private readonly acceptedPoint?: (point: CadPoint) => void,
   ) {
     this.stage = command === 'ZOOM' ? 'zoom' : commandLine ? 'pan-base' : 'realtime-pan';
   }
@@ -77,6 +78,20 @@ export class NavigationSession {
   }
   get selectingObjects(): boolean {
     return this.active && this.stage === 'objects';
+  }
+  get needsPoint(): boolean {
+    return (
+      this.active &&
+      [
+        'zoom',
+        'window-first',
+        'window-second',
+        'center',
+        'pan-base',
+        'pan-second',
+        'dynamic',
+      ].includes(this.stage)
+    );
   }
   cancel(): void {
     if (this.dynamicOriginal) this.host.preview?.(this.dynamicOriginal);
@@ -115,28 +130,29 @@ export class NavigationSession {
     if (all) this.host.regenerate(view.height);
     this.apply(view);
   }
-  acceptText(raw: string): void {
-    if (!this.active) return;
+  /** Returns true only when the text supplied an accepted point. */
+  acceptText(raw: string): boolean {
+    if (!this.active) return false;
     const value = reverseHangulInput(raw.trim()).replace(/^_/, '').toUpperCase();
     if (this.stage === 'realtime-pan' || this.stage === 'realtime-zoom') {
       if (!value) this.finish();
       else this.error();
-      return;
+      return false;
     }
     if (this.stage === 'objects') {
       if (!value) {
         this.fit([...this.ids]);
-        return;
+        return false;
       }
       if (value === 'ALL' || value === 'A') {
         this.select(this.host.allIds(), false);
       } else this.error();
-      return;
+      return false;
     }
     if (this.stage === 'dynamic') {
       if (!value && this.dynamicWindow) this.apply(this.dynamicWindow);
       else this.error();
-      return;
+      return false;
     }
     if (this.stage === 'zoom') {
       if (!value) this.stage = 'realtime-zoom';
@@ -146,17 +162,17 @@ export class NavigationSession {
             '투명 명령에서는 이 옵션을 사용할 수 없습니다.',
             'This option is not available transparently.',
           );
-          return;
+          return false;
         }
         this.fit(undefined, true);
-        return;
+        return false;
       } else if (value === 'E' || value === 'EXTENTS') {
         this.fit();
-        return;
+        return false;
       } else if (value === 'P' || value === 'PREVIOUS') {
         if (!this.host.previous()) this.print('이전 뷰가 없습니다.', 'No previous view.');
         this.finish();
-        return;
+        return false;
       } else if (value === 'C' || value === 'CENTER') this.stage = 'center';
       else if (value === 'S' || value === 'SCALE') this.stage = 'scale';
       else if (value === 'W' || value === 'WINDOW') this.stage = 'window-first';
@@ -165,7 +181,7 @@ export class NavigationSession {
         const selected = this.host.selected();
         if (selected.length) {
           this.fit(selected);
-          return;
+          return false;
         }
         this.stage = 'objects';
       } else if (value === 'D' || value === 'DYNAMIC') {
@@ -181,22 +197,20 @@ export class NavigationSession {
         );
       } else {
         const point = parseDraftPoint(raw);
-        if (point) {
-          this.first = point;
-          this.stage = 'window-second';
-        } else if (this.scale(value)) return;
+        if (point) return this.acceptPoint(point);
+        else if (this.scale(value)) return false;
         else {
           this.error();
-          return;
+          return false;
         }
       }
       this.changed();
       this.host.redraw();
-      return;
+      return false;
     }
     if (this.stage === 'scale') {
       if (!this.scale(value)) this.error();
-      return;
+      return false;
     }
     if (this.stage === 'height') {
       const current = this.host.view();
@@ -213,7 +227,7 @@ export class NavigationSession {
         if (scaled) this.apply({ ...scaled, center: this.first ?? current.center });
         else this.error();
       }
-      return;
+      return false;
     }
     if (this.stage === 'pan-second' && !value && this.first) {
       const view = this.host.view();
@@ -221,11 +235,12 @@ export class NavigationSession {
         { ...view, center: { x: view.center.x - this.first.x, y: view.center.y - this.first.y } },
         'pan',
       );
-      return;
+      return false;
     }
     const point = parseDraftPoint(raw, this.first);
-    if (point) this.acceptPoint(point);
-    else this.error();
+    if (point) return this.acceptPoint(point);
+    this.error();
+    return false;
   }
   private scale(value: string): boolean {
     if (/XP$/i.test(value) && this.host.paperHeight?.() === undefined) {
@@ -245,14 +260,15 @@ export class NavigationSession {
     this.apply(scaled);
     return true;
   }
-  acceptPoint(point: CadPoint, entityId?: string, remove = false): void {
-    if (!this.active) return;
+  acceptPoint(point: CadPoint, entityId?: string, remove = false): boolean {
+    if (!this.active || !validDraftPoint(point)) return false;
     if (this.stage === 'objects') {
       if (entityId) {
         if (remove) this.ids.delete(entityId);
         else this.ids.add(entityId);
         this.changed();
       }
+      return false;
     } else if (this.stage === 'zoom' || this.stage === 'window-first') {
       this.first = { ...point };
       this.stage = 'window-second';
@@ -260,7 +276,10 @@ export class NavigationSession {
     } else if (this.stage === 'window-second' && this.first) {
       const view = windowWorldView(this.first, point, this.host.viewport());
       if (view) this.apply(view);
-      else this.error();
+      else {
+        this.error();
+        return false;
+      }
     } else if (this.stage === 'center') {
       this.first = { ...point };
       this.stage = 'height';
@@ -286,7 +305,9 @@ export class NavigationSession {
       this.dynamicSizing = !this.dynamicSizing;
       this.dynamicAnchor = { ...point };
       this.changed();
-    }
+    } else return false;
+    this.acceptedPoint?.({ ...point });
+    return true;
   }
   select(ids: readonly string[], remove: boolean): void {
     for (const id of ids)

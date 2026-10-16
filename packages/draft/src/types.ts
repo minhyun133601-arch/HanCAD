@@ -23,6 +23,7 @@ export interface DraftSnapshot {
   canClose: boolean;
 }
 export interface DraftSessionOptions {
+  onAcceptedPoint?: (point: CadPoint) => void;
   onCommit: (entities: CadEntity[]) => void;
   onChange?: (snapshot: DraftSnapshot) => void;
 }

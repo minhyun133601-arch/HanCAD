@@ -3,6 +3,14 @@
 These checks track reference behavior and unresolved compatibility. A registered
 command is not an implemented command.
 
+- [ ] Phase 03 drawing menus: compare default/edit/command item order, Korean wording and mnemonic letters; SHORTCUTMENU 0-31 including command keyword bit 8 and time-sensitive bit 16 at the exact SHORTCUTMENUDURATION boundary; confirm menus after selecting entities and Shift/right or MBUTTONPAN=0 middle click.
+- [ ] Phase 03 one-shot snaps: compare next-point-only endpoint/midpoint/center/quadrant/intersection/nearest/None, rejected acquisition and zero-length input, typed coordinates, transparent navigation, held-key precedence and cancellation. Verify the Korean no-snap-found sentence against the installed reference; advanced object-snap choices remain explicit pending commands.
+- [ ] Phase 03 snap-menu access keys: compare Korean mnemonic letters and add letter-based selection; the current placeholder snap menu supports pointer and arrow/Enter navigation.
+- [ ] Phase 03 status bar: compare original icon shapes, item visibility defaults, settings-menu labels/order and profile persistence; COORDS 0/1/2, Ctrl+I cycle, unit/angle formatting and actual constrained accepted points. Full DSETTINGS, geographic coordinates and actual behavior of later drafting aids remain owned by their phases.
+- [ ] Phase 03 F1: compare context-sensitive Korean help, command search, Escape/focus restoration and transparent-command resume. HanCAD generates help from its own registry metadata rather than bundling Autodesk documentation.
+- [ ] Phase 03 keytips: compare tool/file sequences except documented LINE=LI and current quick-access numbers against the installed Korean workspace; tab tips F/H/IN/AN/PA/VI/MA/O/GI/CO/ET follow official documentation. Compare nested Escape, AltGr/text focus and MENUBAR handling.
+- [ ] Phase 03 temporary override focus: verify dialog/text-input priority, simultaneous left/right Shift, releasing a chord key while Shift remains held, prompt transitions and blur against installed AutoCAD.
+
 - [ ] Complete deferred original Phase 00 native Korean shell startup, minimum 1280x720 and size/position restoration; user-directed Phase 01 advancement does not verify those items.
 - [ ] Audit all user-visible diagnostics against typed ko-KR/en-US catalogs; bilingual progress content alone does not complete i18n.
 - [ ] Compare localized importer line/limit errors, warnings after language switch/recovery and current-language cancellation against the installed Korean reference; preserve arbitrary external diagnostics verbatim.
@@ -85,3 +93,4 @@ command is not an implemented command.
 - [ ] Compare TEXT baseline, 1.25-height line advance, text cap-height/font metrics, rotation and readable in-place editing against the Windows reference.
 - [ ] Verify actual Windows Korean IME candidate-window placement and Hanja; synthetic browser composition tests do not certify those native behaviors.
 - [ ] Complete TEXT justification/styles/control codes, existing-text editing, SHX/BigFont and full MTEXT; verify original Phase 10 acceptance independently.
+- [ ] Verify COORDS=3 with and without geographic-location data when that host exists; the current host disables Geographic and shows a localized unavailable-location message for direct COORDS=3 input.

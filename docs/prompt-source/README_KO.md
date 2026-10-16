@@ -18,3 +18,48 @@
    `AGENTS.md, docs/GLOSSARY.md, and docs/SHORTCUTS.md are already in this folder. Use them as they are instead of creating them.`
 3. Phase가 끝날 때마다 앱을 실행해 그 Phase의 Acceptance 항목을 직접 확인하고, 다음 phase 파일을 붙여넣는다. 순서는 건너뛰지 않는다.
 4. 세션이 끊기면 `util-1-continue.md`, 버그가 나오면 `util-2-bug-fix.md`를 쓴다.
+
+## Current repository workflow (2026-10-16)
+
+Status as of 2026-10-17: Phase 03 implementation and browser acceptance are
+complete. Phase 04 is next only after a user request. Actual Windows IME,
+installed-AutoCAD comparison and deferred Phase 00 native acceptance remain
+unverified; see `../PROGRESS.md` for the exact results and boundaries.
+
+The user requested the validation schedule below. Feature requirements and every
+phase's Acceptance scope remain unchanged.
+
+- Work from the actual project root. Read its `AGENTS.md`, `docs/PROGRESS.md` and
+  `docs/ARCHITECTURE.md` first, then the relevant individual phase prompt under
+  `docs/prompt-source/prompts/`. The active progress handoff determines where to
+  resume; historical prompt examples do not establish completion.
+- Implement the remaining milestones of the current phase in sequence. Do not
+  rerun full test suites at phase start, session resume or every milestone. During
+  implementation, run type checking and briefly check the changed feature's core
+  behavior. Record deferred validation and repair failures that block further work.
+- After the current phase's implementation is complete, run all required checks,
+  review every Acceptance item and existing-feature regressions, update the docs
+  and commit. A phase is accepted only when the required checks pass; report
+  anything unverified explicitly.
+- Start the next phase only when the user explicitly requests it. A continuation
+  request completes the current phase, including final validation, then stops.
+
+### Copy-and-paste requests
+
+Continue the current phase:
+
+```text
+Read the project root AGENTS.md, docs/PROGRESS.md and docs/ARCHITECTURE.md, then the active phase prompt under docs/prompt-source/prompts/. Resume at the recorded next step and complete the current phase through accepted completion. Follow the batched validation schedule: type checking and brief changed-feature checks during implementation, then all required checks, Acceptance review, documentation and a commit at phase end. Do not rerun full suites merely because a session or milestone starts. Report the result and any unverified items in Korean, and stop before the next phase.
+```
+
+Start a specified phase (replace `NN` with its phase number):
+
+```text
+Read the project root AGENTS.md, docs/PROGRESS.md and docs/ARCHITECTURE.md. After confirming the preceding phase's acceptance from the recorded evidence, start Phase NN using its individual prompt under docs/prompt-source/prompts/. Complete only Phase NN through accepted completion, following the batched validation schedule and preserving every feature and Acceptance requirement. Update the docs, commit and report in Korean. Do not advance to another phase without my explicit request.
+```
+
+Pause with a plan only:
+
+```text
+Pause implementation. Update docs/PROGRESS.md and docs/prompt-source/NEXT_STEPS.md with the actual current status, deferred validation and the exact next step. Make planning-only documentation changes; do not develop features, run tests or mark unverified work complete. Report in Korean.
+```

@@ -19,6 +19,7 @@ export interface MeasureInputResult {
   error?: 'point' | 'needPoints' | 'closedSession';
 }
 export interface MeasureSessionOptions {
+  onAcceptedPoint?: (point: CadPoint) => void;
   precision: number;
   onComplete: (result: MeasureResult) => void;
   onChange?: (snapshot: MeasureSnapshot) => void;
@@ -84,6 +85,12 @@ export class MeasureSession {
   }
 
   acceptPoint(point: CadPoint): MeasureInputResult {
+    const result = this.applyPoint(point);
+    if (result.status !== 'error') this.options.onAcceptedPoint?.({ ...point });
+    return result;
+  }
+
+  private applyPoint(point: CadPoint): MeasureInputResult {
     if (this.status !== 'active') return { status: 'error', error: 'closedSession' };
     if (!validDraftPoint(point)) return { status: 'error', error: 'point' };
     if (!this.first) {

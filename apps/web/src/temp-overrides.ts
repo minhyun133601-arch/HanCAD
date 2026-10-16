@@ -1,5 +1,6 @@
 import { getSystemVariableDefinition } from '@hancad/sysvars';
 import type { SystemVariables } from '@hancad/sysvars';
+import { parseDraftNumber, parseDraftPoint } from '@hancad/draft';
 
 /**
  * Temporary override keys (TEMPOVERRIDES=1): held at a point prompt they change how
@@ -17,6 +18,19 @@ export type TempOverride =
   | 'trackingToggle'
   | 'polarToggle'
   | 'dynamicUcsToggle';
+
+/** A shortcut-menu choice applies to one accepted point, independent of held keys. */
+export type ObjectSnapOverride =
+  'endpoint' | 'midpoint' | 'center' | 'quadrant' | 'intersection' | 'nearest' | 'none';
+const objectSnapModes: Readonly<Record<ObjectSnapOverride, number>> = {
+  endpoint: 1,
+  midpoint: 2,
+  center: 4,
+  quadrant: 16,
+  intersection: 32,
+  nearest: 512,
+  none: 0,
+};
 
 /** Shift plus either key of each pair, as listed in SHORTCUTS.md. */
 export const tempOverrideKeys: Readonly<Record<string, TempOverride>> = {
@@ -50,6 +64,29 @@ export class TempOverrides {
   private readonly held = new Set<TempOverride>();
   private readonly listeners = new Set<() => void>();
   private version = 0;
+  private objectSnap: ObjectSnapOverride | undefined;
+
+  getObjectSnap(): ObjectSnapOverride | undefined {
+    return this.objectSnap;
+  }
+  setObjectSnap(mode: ObjectSnapOverride): void {
+    if (this.objectSnap === mode) return;
+    this.objectSnap = mode;
+    this.notify();
+  }
+  clearObjectSnap(): void {
+    if (this.objectSnap === undefined) return;
+    this.objectSnap = undefined;
+    this.notify();
+  }
+  consumeObjectSnap(): void {
+    this.clearObjectSnap();
+  }
+  /** Rejected values and prompt keywords do not use up a pending point override. */
+  consumeObjectSnapInput(input: string, accepted: boolean): void {
+    if (accepted && (parseDraftNumber(input) !== undefined || parseDraftPoint(input) !== undefined))
+      this.consumeObjectSnap();
+  }
 
   has(override: TempOverride): boolean {
     return this.held.has(override);
@@ -68,6 +105,8 @@ export class TempOverrides {
   /** The value drafting aids should use for `name` while overrides are held. */
   effective(name: string, value: number): number {
     const held = this.held;
+    if (name === 'OSMODE' && this.objectSnap !== undefined)
+      value = objectSnapModes[this.objectSnap];
     if (!held.size) return value;
     if (name === 'ORTHOMODE' && held.has('ortho')) return value ? 0 : 1;
     if (name === 'OSMODE') {

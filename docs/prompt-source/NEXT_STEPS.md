@@ -1,42 +1,62 @@
 # HanCAD: original-order handoff
 
-## Active next step
+## Active next step (2026-10-17; Phase 03 complete)
 
-The latest explicit user instruction on 2026-10-15 advances to Phase 01 and
-supersedes the earlier wait for Phase 00 native acceptance. That check remains
-deferred and unverified. Read `../PROGRESS.md`'s active-phase section first.
-Preserve delivered later-phase features; do not advance to Phase 02 until the
-whole original Phase 01 build and acceptance list pass.
+Phase 03 implementation and browser acceptance are complete. Read the completion
+section of `../PROGRESS.md` for all verification evidence and native/reference
+limitations. The comprehensive run passed 558 unit, 30 compatibility and renderer
+checks; after correcting three E2E test-flow/timing failures, all 40 affected E2E
+tests passed. Across both runs all 106 enabled E2E tests passed, with one opt-in
+private-DWG test skipped.
 
-Bootstrap milestones 0.6 and 0.7 are implemented and tested: original-order docs,
-complete desktop prerequisite diagnostics, bilingual progress/system-variable
-errors and structured importer errors/progress/warnings. Current-language
-presentation survives live reads, asynchronous export failures and warning-cache
-recovery; renderer startup failures retain the shell and release resources.
-The Phase 01 continuation delivers DXF mappings/opaque graphs, required geometry
-operations, 860 variable definitions, advanced history, independent document tabs
-and native HCD save/open/recovery. All four original acceptance tests have concrete
-test coverage; the full build list remains partial. Continue milestone 1.6 with
-host defaults, deferred range evidence, Auto/navigation/layer UI undo integration,
-exact metric defaults and remaining constrained fit-spline cases.
+Wait for a user request before starting Phase 04. Then read the coordinate-input/
+drafting-aids prompt and plan its milestones: complete LINE, coordinate syntax,
+all snaps/tracking, dynamic-input fields/Down menus and DSETTINGS/-OSNAP.
+Phase 00 native startup/window and actual Windows IME/reference comparisons
+remain explicitly unverified. Preserve existing later-phase subsets and their
+regressions. The older Phase 03 continuation below is historical.
 
-Current verified delivery: WASM/lint/format/typecheck, 307 unit, 30 compatibility
-and 55 production Edge tests pass; one opt-in private-file test is skipped. The
-user asked to stop after the current actionable delivery and leave a concrete
-handoff. First resume with DATE/CDATE clock providers in the existing runtimeValues
-hook; see `../PROGRESS.md` for exact units, provider categories and later checks.
+## Historical next step (2026-10-16; phase-end verification)
 
-MSVC C++ tools and the Windows SDK remain unavailable. Their
-earlier installation was rejected by automatic approval review with
-`blocked by policy`. Actual Tauri startup, minimum size and window-state
-restoration remain pending; do not substitute the browser launch for that proof.
+The user requested a continuation plan and then authorized batching comprehensive
+verification at the end of each phase. This update changes prompt documents only.
+Read `../PROGRESS.md`'s active-phase section first; it is the authoritative status
+and contains the phase-end PowerShell verification commands and remaining work.
 
-Browser checks do not complete native acceptance. When its prerequisites become
-available, exercise Korean Tauri startup, minimum 1280x720 and window restoration
-before marking Phase 00 complete. Phase 01 is active under the newer user request;
-complete its remaining build requirements without starting another phase.
+Current phase: Phase 03 command system, command line, shortcuts and Korean IME.
+Milestones 3.1-3.7 are complete. Milestone 3.8 keyboard bindings and temporary
+overrides is paused at commit `8bee8ab` (`wip(phase3.8)`), pending full verification.
+Earlier unit/lint/type checks and the isolated keyboard E2E passed, but the full
+E2E run was interrupted without a final summary. No application tests were run for
+this documentation update. Keep that final verification pending while implementing
+the remaining phase features.
 
-## Current delivery boundary
+1. Read the root protocol and active handoff, then continue implementation at 3.9.
+   Do not run the full suite merely to resume or before starting 3.9. During
+   implementation, use typechecking, brief checks of changed core behavior and
+   focused tests when needed for bugs or complex changes. Keep the app runnable.
+2. Implement 3.9: configurable right-click/Enter behavior, default/edit/command
+   menus, time-sensitive right-click, Shift+right-click and MBUTTONPAN=0 snap menus.
+   Verify Korean menu wording against the official reference and record any
+   remaining parity checks.
+3. Implement 3.10: status-bar toggle icons and settings menus, COORDS modes,
+   customization and F1 command help. After all Phase 03 implementation is
+   finished, run the complete `pnpm verify` pass against a fresh production build,
+   verify 3.8-3.10 together and check all seven Phase 03 acceptance items and
+   existing-feature regressions. Fix failures and rerun affected checks; finish
+   the maintained docs and commit the verified work without rewriting the WIP
+   commit. Report the completed phase in Korean only after the checks pass.
+4. Start Phase 04 coordinate input and drafting aids (LINE as the reference
+   command) only after Phase 03 acceptance. Phases 04-25 are 22 remaining phases;
+   existing later-phase subsets are not full-phase completion.
+
+Phases 01 and 02 are complete. Phase 00 native acceptance remains deferred and
+unverified by user instruction; browser evidence cannot replace actual Tauri
+startup, minimum-size and window-restoration checks. Preserve delivered features
+and their regressions. Earlier Phase 01 instructions in historical material do
+not override this handoff or the active section of `../PROGRESS.md`.
+
+## Historical delivery boundary
 
 The 2026-10-15 continuation also delivers directional selection, MOVE/COPY and
 selected-object drags, exact endpoint/intersection snapping, DIST, Quick/Standard
@@ -110,13 +130,20 @@ restoration has not been accepted.
 
 1. Read the root `AGENTS.md`, `../PROGRESS.md`, this document and the relevant
    original phase prompt in `prompts/`.
-2. Run the required calculation/I/O tests and UI smoke checks before changing code.
-3. Complete one small milestone within the earliest incomplete phase, keeping the
-   existing app runnable. Do not skip phases.
-4. Test real user-facing behavior and local exports; keep original files untouched
-   and do not upload drawing data. Use ignored `test-artifacts/` for evidence.
-5. Update progress, commands, decisions and in-app status; rebuild the main app and
-   commit the verified feature group.
+2. Review recorded results and pending checks. Do not run full suites solely
+   because a session starts. Follow the user's active phase and deferrals in
+   `../PROGRESS.md`.
+3. Continue through the requested phase's remaining milestones, keeping the app
+   runnable. Use typechecking and brief changed-feature checks during development;
+   add test coverage alongside the features and run focused tests when needed.
+4. At the end of the current phase, review all requirements and Acceptance items,
+   run complete required verification against the current build and exercise
+   user-facing behavior and local exports. Fix failures and rerun affected checks;
+   repeat the full pass only when justified. Keep original files untouched and do
+   not upload drawing data. Use ignored `test-artifacts/` for evidence.
+5. Finish progress, commands, decisions and in-app status; commit the accepted
+   phase work and report in Korean. If stopping early, save a checkpoint and exact
+   next step with pending checks. Start the next phase only on a user request.
 
 The original ZIP is `HanCAD_prompts.zip`; the combined prompt is
 `HanCAD_prompts_full.md`; individual phases and utility prompts are in `prompts/`.

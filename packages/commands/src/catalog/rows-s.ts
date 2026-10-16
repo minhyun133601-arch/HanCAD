@@ -54,6 +54,7 @@ export const rowsS: readonly string[] = [
   'UCSMAN|명명된 UCS|Named UCS|정의된 사용자 좌표계를 관리합니다.|Manages defined user coordinate systems.|21',
   'UNDEFINE|정의 해제|Undefine|응용프로그램 정의 명령이 기본 제공 명령을 대치하도록 합니다.|Allows an application-defined command to override a built-in command.|3',
   'UNDO|명령 취소|Undo|명령의 효과를 되돌립니다.|Reverses the effect of commands.|1',
+  'UNGROUP|그룹 해제|Ungroup|그룹의 객체를 개별 객체로 분리합니다.|Ungroups objects in a group.|5',
   'UNION|합집합|Union|둘 이상의 3D 솔리드, 표면 또는 2D 영역을 하나로 결합합니다.|Unions two or more 3D solids, surfaces or 2D regions into one.|22',
   'UNISOLATEOBJECTS|객체 격리 끝|End Object Isolation|격리되거나 숨겨진 객체를 표시합니다.|Displays objects previously hidden or isolated.|15',
   'UNITS|단위|Units|좌표, 거리 및 각도의 표시 형식과 정밀도를 조정합니다.|Controls coordinate, distance and angle formats and precision.|15',

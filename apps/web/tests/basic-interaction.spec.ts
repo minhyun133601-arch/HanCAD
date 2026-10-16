@@ -235,6 +235,8 @@ test('wheel zoom preserves its cursor anchor and reads wheel/pan system variable
   await page.mouse.down({ button: 'middle' });
   await page.mouse.move(panEnd.x + 70, panEnd.y + 30, { steps: 6 });
   await page.mouse.up({ button: 'middle' });
+  await expect(page.getByRole('menu', { name: '객체 스냅 메뉴', exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
   expect(await probeDistance(page, panEnd)).toBeCloseTo(panStartDistance, 3);
   await variable(page, 'MBUTTONPAN', '1');
   await page.mouse.dblclick(anchor.x, anchor.y, { button: 'middle' });

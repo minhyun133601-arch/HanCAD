@@ -3,6 +3,7 @@
  * Display names follow docs/GLOSSARY.md; unverified wording is tracked in PARITY_CHECKLIST.md.
  */
 export const rowsA: readonly string[] = [
+  'ADDSELECTED|선택 항목 추가|Add Selected|선택한 객체와 같은 유형 및 일반 특성의 새 객체를 작성합니다.|Creates a new object of the same type and general properties as a selected object.|6',
   '3DALIGN|3D 정렬|3D Align|원본과 대상의 기준점을 맞추어 객체를 3D로 정렬합니다.|Aligns objects with other objects in 3D.|22',
   '3DARRAY|3D 배열|3D Array|객체의 3D 직사각형 또는 원형 배열을 작성합니다.|Creates a 3D rectangular or polar array.|22',
   '3DFACE|3D 면|3D Face|3D 공간에 3면 또는 4면 표면을 작성합니다.|Creates a three- or four-sided surface in 3D space.|22',

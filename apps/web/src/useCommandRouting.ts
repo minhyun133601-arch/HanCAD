@@ -6,6 +6,7 @@ import type { useCommandSession } from './useCommandSession';
 import type { useDrawingCommands } from './useDrawingCommands';
 import type { useViewNavigation } from './useViewNavigation';
 import { useTransparentCommands } from './useTransparentCommands';
+import { tempOverrides } from './temp-overrides';
 
 /**
  * Where command-line input goes: the active prompt's owner (a transparent command
@@ -81,6 +82,7 @@ export function useCommandRouting({
   }
   /** Esc cancels a transparent command together with the command it interrupted. */
   function cancel(): void {
+    tempOverrides.clearObjectSnap();
     surface.current?.cancelPointerInteraction();
     transparent.cancel();
     if (!navigation.cancel() && !tools.cancel()) session.cancel();

@@ -10,6 +10,8 @@ import { NavigationSession } from './navigation-session';
 import type { NavigationSnapshot } from './navigation-session';
 import { navigationPrompt } from './navigation-prompts';
 import { ucsIconOption, ucsIconPrompt } from './ucs-icon-options';
+import { tempOverrides } from './temp-overrides';
+import { recordStatusPoint } from './status-point-store';
 
 interface Options {
   session: ReturnType<typeof useCommandSession>;
@@ -43,6 +45,7 @@ export function useViewNavigation(options: Options) {
   backgroundRef.current = background;
   function changed(): void {
     const next = controller.current?.getSnapshot();
+    if (controller.current && !controller.current.needsPoint) tempOverrides.clearObjectSnap();
     setSnapshot(next ?? null);
     if (!next) controller.current = null;
   }
@@ -132,6 +135,7 @@ export function useViewNavigation(options: Options) {
       (ko, en) => latest.current.session.print(latest.current.korean ? ko : en),
       context.prefixes?.commandLine,
       context.prefixes?.transparent,
+      (point) => recordStatusPoint(latest.current.session.sysvars, point),
     );
     changed();
     while (context.input.remaining && controller.current) {
@@ -272,6 +276,7 @@ export function useViewNavigation(options: Options) {
     mode: () => controller.current?.mode,
     window: () => controller.current?.getSnapshot()?.window,
     canSelectArea: () => controller.current?.selectingObjects ?? false,
+    needsPoint: () => controller.current?.needsPoint ?? false,
     submit: (value: string): boolean => {
       if (stressPending.current) {
         if (stressCount(value)) {
@@ -303,7 +308,8 @@ export function useViewNavigation(options: Options) {
       const live = latest.current;
       const current = controller.current.getSnapshot();
       if (current) live.session.print(`${promptLine(current)} ${value}`);
-      controller.current.acceptText(value);
+      const acceptedPoint = controller.current.acceptText(value);
+      tempOverrides.consumeObjectSnapInput(value, acceptedPoint);
       return true;
     },
     pick: (event: CadPointerPick) =>

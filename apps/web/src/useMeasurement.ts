@@ -6,6 +6,8 @@ import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import type { SystemVariables } from '@hancad/sysvars';
 import { getMessages } from '@hancad/ui';
 import type { Messages } from '@hancad/ui';
+import { tempOverrides } from './temp-overrides';
+import { recordStatusPoint } from './status-point-store';
 
 interface MeasurementOptions {
   registry: CommandRegistry;
@@ -59,6 +61,7 @@ export function useMeasurement(options: MeasurementOptions) {
     transparent.current = Boolean(context.prefixes?.transparent);
     if (!transparent.current) live.cancelOthers();
     const active = new MeasureSession(live.getState().settings, {
+      onAcceptedPoint: (point) => recordStatusPoint(latest.current.sysvars, point),
       precision: live.sysvars.getNumber('LUPREC'),
       onChange: changed,
       onComplete: (result) => {
@@ -111,13 +114,16 @@ export function useMeasurement(options: MeasurementOptions) {
     pick: (point: CadPoint) => {
       const result = controller.current?.acceptPoint(point);
       if (result) report(result);
+      return result !== undefined && result.status !== 'error';
     },
     cursor: (point: CadPoint) => controller.current?.moveCursor(point),
     submit: (value: string): boolean => {
       const active = controller.current;
       if (!active) return false;
       latest.current.print(`${promptLine(active.getSnapshot())} ${value}`);
-      report(active.acceptText(value));
+      const result = active.acceptText(value);
+      report(result);
+      tempOverrides.consumeObjectSnapInput(value, result.status !== 'error');
       return true;
     },
     cancel,

@@ -69,6 +69,17 @@ export function useCanvasInteraction(options: Options) {
       }),
     [options.session.database],
   );
+  useEffect(() => {
+    tempOverrides.clearObjectSnap();
+    return () => tempOverrides.clearObjectSnap();
+  }, [options.session.database, options.files.fitRevision]);
+  useEffect(
+    () =>
+      tempOverrides.subscribe(() => {
+        if (lastCursor.current) cursor(lastCursor.current);
+      }),
+    [],
+  );
   function styleTables(): DrawingStyleTables {
     const live = latest.current,
       state = live.files.getState();
@@ -114,16 +125,21 @@ export function useCanvasInteraction(options: Options) {
       (!live.editing.isActive() || live.editing.canSelectArea())
     );
   }
-  function resolve(point: CadPoint, force = false) {
+  function needsPoint(): boolean {
     const live = latest.current;
-    const enabled =
-      force ||
+    if (live.navigation.isActive()) return live.navigation.needsPoint();
+    return (
       live.draft.isDrafting() ||
       live.dimensions.needsPoint() ||
       live.modification.needsPoint() ||
       live.measurement.isActive() ||
       live.editing.needsPoint() ||
-      live.text.needsPoint();
+      live.text.needsPoint()
+    );
+  }
+  function resolve(point: CadPoint, force = false) {
+    const live = latest.current;
+    const enabled = force || needsPoint();
     const result = enabled
       ? snapDraftPoint(
           live.editing.getState(),
@@ -142,40 +158,49 @@ export function useCanvasInteraction(options: Options) {
     );
     return { point: result?.point ?? point, snapped: result !== undefined };
   }
-  function pick(event: CadPointerPick): void {
+  function pick(event: CadPointerPick): CadPoint | undefined {
     if (blocked()) return;
     const live = latest.current;
-    if (live.navigation.isActive()) {
-      live.navigation.pick(event);
+    const pointInput = needsPoint();
+    const target = resolve(event.point);
+    const override = tempOverrides.getObjectSnap();
+    if (pointInput && override !== undefined && override !== 'none' && !target.snapped) {
+      live.session.print(live.messages.snapNotFound(live.messages[snapLabels[override]]));
       return;
     }
-    const target = resolve(event.point);
-    if (live.measurement.isActive()) live.measurement.pick(target.point);
+    let accepted = false;
+    if (live.navigation.isActive())
+      accepted = live.navigation.pick({ ...event, point: target.point }) === true;
+    else if (live.measurement.isActive()) accepted = live.measurement.pick(target.point);
     else if (live.editing.isActive()) {
       const entity = live.editing.entityAt(
         event.point,
         8 / (live.surface.current?.getView().scale ?? 1),
       );
-      live.editing.pick(target.point, entity, event.shiftKey);
-    } else if (live.text.isActive()) live.text.pick(target.point);
+      accepted = live.editing.pick(target.point, entity, event.shiftKey);
+    } else if (live.text.isActive()) accepted = live.text.pick(target.point);
     else if (live.dimensions.isActive()) {
       const entity = event.entityId
         ? live.files.getState().entities.find((item) => item.id === event.entityId)
         : undefined;
-      live.dimensions.pick(target.point, entity);
-    } else if (live.modification.needsPoint()) live.modification.pick(target.point, target.snapped);
-    else live.draft.pick({ ...event, ...target });
+      accepted = live.dimensions.pick(target.point, entity);
+    } else if (live.modification.needsPoint())
+      accepted = live.modification.pick(target.point, target.snapped);
+    else accepted = live.draft.pick({ ...event, ...target });
+    if (pointInput && accepted) {
+      tempOverrides.consumeObjectSnap();
+      return target.point;
+    }
   }
   function cursor(point: CadPoint): void {
     lastCursor.current = point;
     if (blocked() || moving.current) return;
     const live = latest.current;
+    const target = resolve(point);
     if (live.navigation.isActive()) {
-      live.surface.current?.setSnapMarker();
-      live.navigation.cursor(point);
+      live.navigation.cursor(target.point);
       return;
     }
-    const target = resolve(point);
     if (live.measurement.isActive()) live.measurement.cursor(target.point);
     else if (live.editing.isActive()) {
       const entity = live.editing.entityAt(point, 8 / (live.surface.current?.getView().scale ?? 1));

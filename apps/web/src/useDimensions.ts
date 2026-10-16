@@ -18,6 +18,8 @@ import { getMessages } from '@hancad/ui';
 import type { MessageKey, Messages } from '@hancad/ui';
 import type { DimensionStyleValues } from './dimension-style';
 import { creationSettings } from './creation-settings';
+import { tempOverrides } from './temp-overrides';
+import { recordStatusPoint } from './status-point-store';
 
 interface DimensionOptions {
   registry: CommandRegistry;
@@ -123,6 +125,7 @@ export function useDimensions(options: DimensionOptions) {
       return;
     }
     const session = new DimensionSession(tool, settings(), {
+      onAcceptedPoint: (point) => recordStatusPoint(latest.current.sysvars, point),
       onChange: changed,
       onCommit: (entities) => {
         const current = latest.current;
@@ -137,11 +140,12 @@ export function useDimensions(options: DimensionOptions) {
   function report(error?: DimensionError): void {
     if (error) latest.current.print(latest.current.messages[errors[error]]);
   }
-  function pick(point: CadPoint, entity?: CadEntity): void {
+  function pick(point: CadPoint, entity?: CadEntity): boolean {
     const active = controller.current;
-    if (!active) return;
+    if (!active) return false;
     const result = active.acceptPick(point, entity);
     report(result.error);
+    return result.status !== 'error';
   }
   function cursor(point: CadPoint, entity?: CadEntity): void {
     controller.current?.moveCursor(point, entity);
@@ -150,7 +154,11 @@ export function useDimensions(options: DimensionOptions) {
     const active = controller.current;
     if (!active) return false;
     latest.current.print(`${latest.current.messages[promptKey(active.getSnapshot())]} ${value}`);
-    report(active.acceptText(value).error);
+    const pointInput = active.getSnapshot().inputMode;
+    const result = active.acceptText(value);
+    report(result.error);
+    if (pointInput === 'point' || pointInput === 'number')
+      tempOverrides.consumeObjectSnapInput(value, result.status !== 'error');
     return true;
   }
   function applyStyle(values: DimensionStyleValues, applySelected: boolean): void {

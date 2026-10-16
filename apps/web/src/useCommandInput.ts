@@ -139,6 +139,16 @@ export function useCommandInput(options: {
     cancel,
     execute,
     inputReceived: macros.inputReceived,
+    canSnapPoint: () =>
+      !session.isPrompting('nested') &&
+      (navigation.isActive()
+        ? navigation.needsPoint()
+        : tools.draft.isDrafting() ||
+          tools.dimensions.needsPoint() ||
+          tools.modification.needsPoint() ||
+          tools.measurement.isActive() ||
+          tools.editing.needsPoint() ||
+          tools.text.needsPoint()),
     pendingTooltip: shortcutText.pendingTooltip,
   };
 }

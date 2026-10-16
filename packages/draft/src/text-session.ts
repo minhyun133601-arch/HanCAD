@@ -30,6 +30,7 @@ export interface TextSnapshot {
   canClose: false;
 }
 export interface TextSessionOptions {
+  onAcceptedPoint?: (point: CadPoint) => void;
   textSize: number;
   availableEntities?: number;
   onCommit: (entities: CadEntity[]) => void;
@@ -68,6 +69,12 @@ export class TextSession {
   }
 
   acceptPoint(point: CadPoint): TextInputResult {
+    const result = this.applyPoint(point);
+    if (result.status !== 'error') this.options.onAcceptedPoint?.({ ...point });
+    return result;
+  }
+
+  private applyPoint(point: CadPoint): TextInputResult {
     if (this.status !== 'active') return failure('closedSession');
     if (!validDraftPoint(point)) return failure('point');
     this.cursor = undefined;

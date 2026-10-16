@@ -83,6 +83,12 @@ export class DimensionSession {
   }
 
   acceptPoint(point: CadPoint): DimensionInputResult {
+    const result = this.applyPoint(point);
+    if (result.status !== 'error') this.options.onAcceptedPoint?.({ ...point });
+    return result;
+  }
+
+  private applyPoint(point: CadPoint): DimensionInputResult {
     if (this.status !== 'active') return failure('closedSession');
     if (!validDraftPoint(point)) return failure('point');
     if (this.prompt === 'placement') {

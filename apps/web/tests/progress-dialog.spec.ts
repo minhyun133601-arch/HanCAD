@@ -34,7 +34,9 @@ test('progress features, limitations and all 26 phases follow the shell language
   await expect(english.locator('tbody th').first()).toHaveText('Bootstrap');
   await expect(english.locator('tbody tr').first()).toContainText('await MSVC and the Windows SDK');
   await expect(english.locator('tbody tr').first()).toContainText('In progress');
-  await expect(english.locator('.development-dialog-content > ul > li')).toHaveCount(11);
+  await expect(english.locator('.development-dialog-content > ul > li')).toHaveCount(13);
+  await expect(english.locator('tbody tr').nth(3)).toContainText('Complete');
+  await expect(english).toContainText('F1 command help');
   await expect(english).toContainText('TRIM/EXTEND Quick and Standard modes');
   if ((await english.locator('details').getAttribute('open')) === null)
     await english.locator('summary').click();

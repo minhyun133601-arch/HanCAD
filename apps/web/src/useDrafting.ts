@@ -8,6 +8,7 @@ import { getMessages } from '@hancad/ui';
 import type { MessageKey, Messages } from '@hancad/ui';
 import { creationSettings } from './creation-settings';
 import { tempOverrides } from './temp-overrides';
+import { recordStatusPoint } from './status-point-store';
 
 interface DraftingOptions {
   registry: CommandRegistry;
@@ -107,6 +108,7 @@ export function useDrafting(options: DraftingOptions) {
     setSelectMode(false);
     eraseSelection.current = false;
     const session = new DraftSession(tool, settings(), {
+      onAcceptedPoint: (point) => recordStatusPoint(latest.current.sysvars, point),
       onCommit: (entities) => {
         const active = latest.current;
         active.commitState(tool, appendCadEntities(active.getState(), entities));
@@ -140,19 +142,20 @@ export function useDrafting(options: DraftingOptions) {
     eraseSelection.current = false;
     setSelectMode(false);
   }
-  function pick(event: PickInput): void {
+  function pick(event: PickInput): boolean {
     if (activeSession.current) {
       const result = activeSession.current.acceptPoint(event.point, {
         snapped: event.snapped === true,
       });
       if (result.status === 'error') showError(result.error ?? 'point');
-      return;
+      return result.status !== 'error';
     }
     if (!event.entityId) {
       if (!eraseSelection.current) select([]);
-      return;
+      return false;
     }
     selectIds([event.entityId], event.shiftKey);
+    return false;
   }
   function cursor(point: CadPoint, pointOptions: DraftPointOptions = {}): void {
     cursorRef.current = point;
@@ -175,6 +178,7 @@ export function useDrafting(options: DraftingOptions) {
       );
       const result = activeSession.current.acceptText(value);
       if (result.status === 'error') showError(result.error ?? 'point');
+      tempOverrides.consumeObjectSnapInput(value, result.status !== 'error');
       return true;
     }
     if (selectionMode.current) {

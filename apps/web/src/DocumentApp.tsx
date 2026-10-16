@@ -24,6 +24,8 @@ import { useViewNavigation } from './useViewNavigation';
 
 import { useCommandInput } from './useCommandInput';
 import { DisplayOptionsDialog } from './DisplayOptionsDialog';
+import { CommandPanels } from './CommandPanels';
+import { useStatusCoordinates } from './status-coordinates';
 
 export function DocumentApp({
   document: drawingDocument,
@@ -123,6 +125,18 @@ export function DocumentApp({
   });
   const { routing, toggle, submit, cancel, execute } = input;
   const { inputMode, commandActive, commandName, historyContext } = routing;
+  const points =
+    measurement.snapshot?.points ?? dimensions.snapshot?.points ?? draft.snapshot?.points;
+  const basePoint =
+    points?.at(-1) ??
+    modification.snapshot?.basePoint ??
+    (editing.snapshot?.tool === 'OFFSET' ? editing.snapshot.basePoint : undefined) ??
+    text.snapshot?.point;
+  const coordinates = useStatusCoordinates({
+    sysvars: session.sysvars,
+    pointPrompt: inputMode === 'point' || inputMode === 'number',
+    ...(basePoint ? { basePoint } : {}),
+  });
 
   function focusCommand(): void {
     if (!text.editable) inputRef.current?.focus({ preventScroll: true });
@@ -199,7 +213,13 @@ export function DocumentApp({
         execute={execute}
         fileName={displayName}
       />
-      <Ribbon messages={messages} activeTab={ribbon} setActiveTab={setRibbon} execute={execute} />
+      <Ribbon
+        messages={messages}
+        activeTab={ribbon}
+        setActiveTab={setRibbon}
+        execute={execute}
+        keyTipsEnabled={session.sysvars.getNumber('MENUBAR') === 0}
+      />
       <FileTabs
         messages={messages}
         execute={execute}
@@ -231,7 +251,10 @@ export function DocumentApp({
             interaction.pick(event);
             input.inputReceived();
           }}
-          onCoordinates={interaction.cursor}
+          onCoordinates={(point) => {
+            interaction.cursor(point);
+            coordinates.cursor(point);
+          }}
           canSelectArea={interaction.canSelectArea}
           onSelectionDrag={(event) => {
             interaction.selectionDrag(event);
@@ -293,6 +316,15 @@ export function DocumentApp({
           </div>
         )}
         <DrawingNotices files={files} messages={messages} execute={execute} />
+        <CommandPanels
+          session={session}
+          input={input}
+          locale={locale}
+          selected={draft.selectedIds.length > 0}
+          clearSelection={draft.clearSelection}
+          focus={focusCommand}
+          blocked={files.reading || files.restoring || progressOpen}
+        />
       </div>
       <StatusBar
         messages={messages}
@@ -303,6 +335,9 @@ export function DocumentApp({
         pendingNote={input.pendingTooltip}
         mode={platform.mode}
         execute={execute}
+        locale={locale}
+        coordinates={coordinates.display}
+        focusCommand={focusCommand}
       />
       <input
         ref={files.fileInput}

@@ -1,4 +1,4 @@
-import type { CadEntity, LegacyCadState } from '@hancad/legacy-bridge';
+import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 
 export type OffsetPrompt =
   | 'offsetDistance'
@@ -29,6 +29,7 @@ export interface OffsetResult {
   finish?: boolean;
 }
 export interface OffsetSnapshot {
+  basePoint?: CadPoint;
   tool: 'OFFSET';
   prompt: OffsetPrompt;
   status: 'active' | 'finished' | 'cancelled';
@@ -43,6 +44,7 @@ export interface OffsetSnapshot {
   multiple: boolean;
 }
 export interface OffsetSessionOptions {
+  onAcceptedPoint?: (point: CadPoint) => void;
   distance: number;
   gapType: number;
   onDistanceChange?: (distance: number) => void;

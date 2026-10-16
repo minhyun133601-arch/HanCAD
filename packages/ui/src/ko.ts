@@ -308,6 +308,7 @@ export const ko: Messages = {
   snapQuadrant: '사분점',
   snapNearest: '근처점',
   snapIntersection: '교차점',
+  snapNotFound: (snap) => `선택한 위치에서 ${snap} 객체 스냅점을 찾을 수 없습니다.`,
   noSelection: '선택된 객체가 없습니다. 객체를 클릭한 후 Delete 또는 E를 실행하세요.',
   invalidPoint: '점은 X,Y 또는 @DX,DY, @길이<각도로 입력하세요.',
   positiveRadius: '반지름은 0보다 큰 값이어야 합니다.',

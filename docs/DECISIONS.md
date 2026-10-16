@@ -1,5 +1,79 @@
 # Decisions
 
+## 2026-10-17: Phase 03 drawing menus, status controls and help
+
+The drawing-area right-click policy follows Autodesk's SHORTCUTMENU bit codes:
+1 default, 2 edit, 4 active command, 8 active command with keywords. Bit 16
+uses SHORTCUTMENUDURATION: a shorter press is Enter, an equal or longer press
+opens the contextual menu. Shift+right-click and MBUTTONPAN=0 middle click open
+the object-snap menu independently. Menu macros use the same command routing as
+the keyboard. Commands owned by later phases remain explicit pending commands.
+Default/edit/command Korean menu ordering and mnemonic letters are reference
+assumptions pending comparison with an installed Korean release.
+
+Endpoint, midpoint, center, quadrant, intersection, nearest and None are one-shot
+snap choices. They do not write OSMODE or enter undo; a rejected point retains the
+choice, successful typed or picked input consumes it, and cancellation clears it.
+Held temporary overrides take precedence until release. Unsupported snap modes
+print a localized pending message. Exact no-snap-found Korean wording and held-key
+precedence require reference comparison. Non-point prompts receive the normal
+`_ENDP`-style input instead of storing a hidden override.
+
+Status coordinates are hidden initially, as documented by Autodesk. COORDS
+cycles 0 (last accepted point), 1 (live absolute), 2 (relative distance/angle
+during a point prompt); formatting reads drawing unit/angle settings. Session
+callbacks publish the actual constrained accepted point and keep drawings
+isolated, and synchronize the LASTPOINT session variable. Geographic coordinates require the future geolocation host and are
+explicitly unavailable. Right-click settings are focused menus; the full
+DSETTINGS dialog remains Phase 04. Isoplane uses the existing F5 plane cycle.
+Visibility customization is a profile preference. F1/HELP uses command registry
+metadata and keeps an interrupted command active.
+
+Official sources:
+
+- [SHORTCUTMENU](https://help.autodesk.com/view/ACD/2026/ENU/?caas=caas%2Fdocumentation%2FCIV3D%2F2014%2FENU%2FfilesACD%2FGUID-27079CDD-85E0-4883-A961-82C8FC5C7F46-htm.html)
+- [Right-click duration](https://help.autodesk.com/cloudhelp/2022/ENU/AutoCAD-Core/files/GUID-1F0CD64B-A9EC-437A-9EC3-E475D7A83DBA.htm)
+- [Shortcut-menu contexts](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Customization/files/GUID-8AE6163C-BBB0-4862-96F1-EB49923E317D.htm)
+- [Object snaps](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-8F5E5431-9EFB-414E-BC6D-2C65EFB2DAC3.htm)
+- [Coordinate display](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-8E3F0C5A-ED83-4DD4-8AE6-FC1CE54533F6.htm)
+- [Coordinate menu](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-A4EAB53A-AB2B-497D-8530-119552DF6238.htm)
+
+## 2026-10-17: Phase 03 keyboard focus and ribbon keytips
+
+Temporary override keys defer to text editors and modal UI, reset at prompt
+boundaries and blur, and restore the remaining physical-key effect when a chord
+key is released. Exact overlapping-key release behavior remains a reference
+assumption. Alt displays application/ribbon/quick-access keytips with MENUBAR=0;
+text composition and AltGr keep their normal input. The Korean documentation
+confirms F and H/IN/AN/PA/VI/MA/O/GI/CO/ET; the command customization documentation
+confirms LINE=LI. Other tool/file tips and this shell's quick-access numbering
+are original mappings requiring comparison with the installed CUI workspace.
+No Autodesk CUI or icon resources are bundled.
+
+References: [Keytips](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-9404C7E3-7A99-428E-A185-9DBD3CCEE4CF.htm),
+[ribbon command properties](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Customization/files/GUID-5DAC6811-BA2D-422D-9B2E-BC1E6C9A5C90.htm).
+
+## 2026-10-16: Batch implementation and verify at each phase end
+
+The user explicitly changed the development workflow to reduce repeated full
+verification. Implement the requested phase's remaining milestones in batches.
+During implementation, use typechecking and brief checks of changed core
+behavior, with focused tests when needed for a bug or complex change. Add
+meaningful test coverage alongside features, but do not run full suites merely
+to start/resume a session or after each milestone.
+
+Once that phase's implementation is finished, review all Build and Acceptance
+requirements and run the complete required verification against the current
+build. Fix failures and rerun affected checks; repeat full verification only
+when justified by subsequent changes or unresolved concerns. Feature scope,
+parity requirements and the final acceptance standard remain unchanged. Record
+pending checks honestly and start the next phase only when requested.
+
+This supersedes the earlier Phase 03 handoff that required full verification of
+3.8 before starting 3.9. Implement 3.9 and 3.10 first, then include 3.8 in the
+final Phase 03 verification. The root protocol, prompt copies, continuation
+prompt and active handoffs are synchronized with this decision.
+
 ## 2026-10-16: Phase 03 keyboard bindings and temporary overrides (milestone 3.8)
 
 Every function key and Ctrl shortcut of Reference B is one row of
@@ -901,3 +975,12 @@ is unavailable rather than replacing the current drawing.
 Selection follows PICKAUTO/PICKDRAG settings. A press-and-drag uses lasso when
 enabled; otherwise it uses direction-sensitive rectangular selection. Record
 reference-version parity checks before implementing these settings.
+
+## 2026-10-17: Geographic coordinate display without a location host
+
+The coordinate shortcut menu disables Geographic because the current drawing host
+has no geographic-location transform. Setting COORDS=3 through the command line
+shows a localized unavailable-location message, never UCS coordinates presented
+as latitude and longitude. Geographic conversion remains later geographic-data
+work. Autodesk permits the Geographic menu option only for drawings containing
+[geographic location information](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-A4EAB53A-AB2B-497D-8530-119552DF6238.htm).

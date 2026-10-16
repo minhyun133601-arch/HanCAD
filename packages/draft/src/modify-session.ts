@@ -6,6 +6,7 @@ export type ModifyTool = 'MOVE' | 'COPY';
 export type ModifyPrompt =
   'selectObjects' | 'modifyBasePoint' | 'modifySecondPoint' | 'copyNextPoint';
 export interface ModifySnapshot {
+  basePoint?: CadPoint;
   tool: ModifyTool;
   prompt: ModifyPrompt;
   preview: readonly CadEntity[];
@@ -20,7 +21,10 @@ export class ModifySession {
   private cursor: CadPoint | undefined;
   private placed = false;
   private copies: CadPoint[] = [];
-  constructor(readonly tool: ModifyTool) {}
+  constructor(
+    readonly tool: ModifyTool,
+    private readonly onAcceptedPoint?: (point: CadPoint) => void,
+  ) {}
 
   select(state: LegacyCadState, ids: readonly string[]): boolean {
     this.entities = editableSelection(state, ids);
@@ -33,6 +37,7 @@ export class ModifySession {
   getSnapshot(): ModifySnapshot {
     return {
       tool: this.tool,
+      ...(this.base ? { basePoint: { ...this.base } } : {}),
       prompt: !this.entities.length
         ? 'selectObjects'
         : !this.base
@@ -59,10 +64,12 @@ export class ModifySession {
     if (!validDraftPoint(point) || !this.entities.length) return;
     if (!this.base) {
       this.base = { ...point };
+      this.onAcceptedPoint?.({ ...point });
       this.cursor = undefined;
       return;
     }
     const target = this.constrain(point, ortho && !snapped);
+    this.onAcceptedPoint?.({ ...target });
     const delta = { x: target.x - this.base.x, y: target.y - this.base.y };
     this.placed = true;
     if (this.tool === 'COPY') this.copies.push(delta);

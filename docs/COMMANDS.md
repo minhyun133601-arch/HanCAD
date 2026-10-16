@@ -19,6 +19,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | ACTUSERINPUT        | ARU                                                 | 사용자 입력 요청           | Not implemented; explicit message (Phase 20)                                                        |
 | ACTUSERMESSAGE      | -ARM, ARM                                           | 사용자 메시지 삽입         | Not implemented; explicit message (Phase 20)                                                        |
 | ADCENTER            | ADC, ADCENTER, CONTENT, DC, DCENTER                 | 디자인센터                 | Not implemented; explicit message (Phase 20)                                                        |
+| ADDSELECTED         |                                                     | 선택 항목 추가             | Not implemented; explicit message (Phase 06)                                                        |
 | AI_SELALL           |                                                     | 모두 선택                  | Not implemented; explicit message (Phase 05)                                                        |
 | ALIASEDIT           |                                                     | 별칭 편집                  | Aliases, external commands, AutoCorrect and synonym lists; user acad.pgp file                       |
 | ALIGN               | AL                                                  | 정렬                       | Not implemented; explicit message (Phase 07)                                                        |
@@ -159,8 +160,9 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | HATCHEDIT           | HE                                                  | 해치 편집                  | Not implemented; explicit message (Phase 12)                                                        |
 | HATCHTOBACK         | HB                                                  | 해치를 뒤로 보내기         | Not implemented; explicit message (Phase 12)                                                        |
 | HELIX               |                                                     | 나선                       | Not implemented; explicit message (Phase 06)                                                        |
-| HELP                |                                                     | 도움말                     | Not implemented; explicit message (Phase 03)                                                        |
+| HELP                |                                                     | 도움말                     | Implemented: registry-generated contextual help, command search, F1 and transparent resume          |
 | HIDE                | HI                                                  | 숨기기                     | Not implemented; explicit message (Phase 21)                                                        |
+| HIDEOBJECTS         |                                                     | 객체 숨기기                | Not implemented; explicit message (Phase 15)                                                        |
 | HIDEPALETTES        | POFF                                                | 팔레트 숨기기              | Not implemented; explicit message (Phase 20)                                                        |
 | HYPERLINK           |                                                     | 하이퍼링크                 | Not implemented; explicit message (Phase 13)                                                        |
 | ID                  |                                                     | 점 좌표                    | Not implemented; explicit message (Phase 15)                                                        |
@@ -357,6 +359,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | UCSMAN              | DDUCSP, UC                                          | 명명된 UCS                 | Not implemented; explicit message (Phase 21)                                                        |
 | UNDEFINE            |                                                     | 정의 해제                  | Partial / Disable a command; argument form                                                          |
 | UNDO                |                                                     | 명령 취소                  | Partial / All options; Auto groups runner macros; zoom/pan steps combine; Layer UI P08              |
+| UNGROUP             |                                                     | 그룹 해제                  | Not implemented; explicit message (Phase 05)                                                        |
 | UNION               | UNI                                                 | 합집합                     | Not implemented; explicit message (Phase 22)                                                        |
 | UNISOLATEOBJECTS    | UNHIDE, UNISOLATE                                   | 객체 격리 끝               | Not implemented; explicit message (Phase 15)                                                        |
 | UNITS               | DDUNITS, -UN, UN                                    | 단위                       | Not implemented; explicit message (Phase 15)                                                        |
@@ -555,6 +558,17 @@ annotation fit behavior are also pending.
 DIMASSOC is registered but geometry associativity is not implemented. Dimensions
 do not yet update from geometry edits. Leaders, tolerances, arc-length/ordinate/
 jogged/baseline/continued dimensions and advanced Phase 11 commands remain pending.
+
+## Phase 03 input-surface verification
+
+`mouse-menus.spec.ts` checks configured Enter, command options, edit macros,
+time-sensitive clicks and MBUTTONPAN. `snap-menu.spec.ts` checks one-shot modes,
+failed acquisition, typed/cancelled input and transparent ZOOM. `status-help.spec.ts`
+checks every status toggle, settings menus, profile visibility, coordinates and
+context help. `keyboard-routing.spec.ts` and `ribbon-keytips.spec.ts` check focus
+priority, key release and Alt tips. Later-phase menu targets (clipboard, advanced
+selection/properties, calculator and drafting settings) remain explicit pending
+commands in the catalog, and are not claimed as implemented features.
 
 ## Phase 02 display/navigation verification
 

@@ -1,171 +1,18 @@
-import type { Locale, Messages, MessageKey } from '@hancad/ui';
+﻿import type { Locale, Messages } from '@hancad/ui';
 import { useEffect, useRef, useState } from 'react';
-import { Icon, type IconName } from './Icon';
-
-export type RibbonTab =
-  | 'home'
-  | 'insert'
-  | 'annotate'
-  | 'parametric'
-  | 'view'
-  | 'manage'
-  | 'output'
-  | 'addIns'
-  | 'collaborate'
-  | 'expressTools';
-export const ribbonTabs: readonly RibbonTab[] = [
-  'home',
-  'insert',
-  'annotate',
-  'parametric',
-  'view',
-  'manage',
-  'output',
-  'addIns',
-  'collaborate',
-  'expressTools',
-];
-type Execute = (command: string) => void;
-interface Tool {
-  label: MessageKey;
-  command: string;
-  icon: IconName;
-}
-interface Panel {
-  label: MessageKey;
-  tools: readonly Tool[];
-}
-
-const homePanels: readonly Panel[] = [
-  {
-    label: 'draw',
-    tools: [
-      { label: 'select', command: 'SELECT', icon: 'options' },
-      { label: 'line', command: 'LINE', icon: 'line' },
-      { label: 'polyline', command: 'PLINE', icon: 'polyline' },
-      { label: 'circle', command: 'CIRCLE', icon: 'circle' },
-      { label: 'arc', command: 'ARC', icon: 'arc' },
-      { label: 'rectangle', command: 'RECTANG', icon: 'rectangle' },
-    ],
-  },
-  {
-    label: 'modify',
-    tools: [
-      { label: 'move', command: 'MOVE', icon: 'move' },
-      { label: 'copy', command: 'COPY', icon: 'copy' },
-      { label: 'rotate', command: 'ROTATE', icon: 'rotate' },
-      { label: 'trim', command: 'TRIM', icon: 'trim' },
-      { label: 'extend', command: 'EXTEND', icon: 'trim' },
-      { label: 'offset', command: 'OFFSET', icon: 'offset' },
-      { label: 'fillet', command: 'FILLET', icon: 'fillet' },
-      { label: 'erase', command: 'ERASE', icon: 'trim' },
-    ],
-  },
-  {
-    label: 'annotation',
-    tools: [
-      { label: 'dimensionSmart', command: 'DIM', icon: 'dimension' },
-      { label: 'dimension', command: 'DIMLINEAR', icon: 'dimension' },
-      { label: 'dimensionStyle', command: 'DIMSTYLE', icon: 'dimension' },
-      { label: 'singleLineText', command: 'TEXT', icon: 'text' },
-    ],
-  },
-  { label: 'layers', tools: [{ label: 'layerProperties', command: 'LAYER', icon: 'layer' }] },
-  { label: 'properties', tools: [{ label: 'properties', command: 'PROPERTIES', icon: 'options' }] },
-  { label: 'utilities', tools: [{ label: 'measure', command: 'DIST', icon: 'dimension' }] },
-];
-const panels: Record<RibbonTab, readonly Panel[]> = {
-  home: homePanels,
-  insert: [
-    {
-      label: 'insert',
-      tools: [
-        { label: 'insertBlock', command: 'INSERT', icon: 'block' },
-        { label: 'block', command: 'BLOCK', icon: 'block' },
-      ],
-    },
-  ],
-  annotate: [
-    {
-      label: 'annotation',
-      tools: [
-        { label: 'dimensionSmart', command: 'DIM', icon: 'dimension' },
-        { label: 'dimension', command: 'DIMLINEAR', icon: 'dimension' },
-        { label: 'dimensionAligned', command: 'DIMALIGNED', icon: 'dimension' },
-        { label: 'dimensionRadius', command: 'DIMRADIUS', icon: 'dimension' },
-        { label: 'dimensionDiameter', command: 'DIMDIAMETER', icon: 'dimension' },
-        { label: 'dimensionAngular', command: 'DIMANGULAR', icon: 'dimension' },
-        { label: 'dimensionStyle', command: 'DIMSTYLE', icon: 'dimension' },
-      ],
-    },
-    {
-      label: 'text',
-      tools: [
-        { label: 'singleLineText', command: 'TEXT', icon: 'text' },
-        { label: 'text', command: 'MTEXT', icon: 'text' },
-      ],
-    },
-  ],
-  parametric: [
-    {
-      label: 'parametric',
-      tools: [{ label: 'constraints', command: 'GEOMCONSTRAINT', icon: 'dimension' }],
-    },
-  ],
-  view: [
-    {
-      label: 'view',
-      tools: [
-        { label: 'zoom', command: 'ZOOM', icon: 'circle' },
-        { label: 'pan', command: 'PAN', icon: 'move' },
-      ],
-    },
-  ],
-  manage: [{ label: 'manage', tools: [{ label: 'options', command: 'OPTIONS', icon: 'options' }] }],
-  output: [
-    {
-      label: 'output',
-      tools: [
-        { label: 'exportPdf', command: 'EXPORTPDF', icon: 'plot' },
-        { label: 'exportPng', command: 'EXPORTPNG', icon: 'rectangle' },
-        { label: 'exportJpg', command: 'EXPORTJPG', icon: 'rectangle' },
-        { label: 'exportSvg', command: 'EXPORTSVG', icon: 'line' },
-        { label: 'exportDxf', command: 'QSAVE', icon: 'save' },
-        { label: 'plot', command: 'PLOT', icon: 'plot' },
-        { label: 'pageSetup', command: 'PAGESETUP', icon: 'plot' },
-      ],
-    },
-  ],
-  addIns: [{ label: 'addIns', tools: [{ label: 'lisp', command: 'APPLOAD', icon: 'open' }] }],
-  collaborate: [
-    {
-      label: 'collaborate',
-      tools: [{ label: 'drawingCompare', command: 'COMPARE', icon: 'copy' }],
-    },
-  ],
-  expressTools: [
-    { label: 'utilities', tools: [{ label: 'overkill', command: 'OVERKILL', icon: 'trim' }] },
-  ],
-};
-
-const quickTools: readonly Tool[] = [
-  { label: 'newDrawing', command: 'NEW', icon: 'new' },
-  { label: 'open', command: 'OPEN', icon: 'open' },
-  { label: 'exportDxf', command: 'QSAVE', icon: 'save' },
-  { label: 'undo', command: 'U', icon: 'undo' },
-  { label: 'redo', command: 'REDO', icon: 'redo' },
-  { label: 'plot', command: 'PLOT', icon: 'plot' },
-];
-const fileTools: readonly Tool[] = [
-  { label: 'newDrawing', command: 'NEW', icon: 'new' },
-  { label: 'openCad', command: 'OPEN', icon: 'open' },
-  { label: 'exportPdf', command: 'EXPORTPDF', icon: 'plot' },
-  { label: 'exportPng', command: 'EXPORTPNG', icon: 'rectangle' },
-  { label: 'exportJpg', command: 'EXPORTJPG', icon: 'rectangle' },
-  { label: 'exportSvg', command: 'EXPORTSVG', icon: 'line' },
-  { label: 'exportDxf', command: 'QSAVE', icon: 'save' },
-  { label: 'saveNative', command: 'HANSAVE', icon: 'save' },
-];
+import { Icon } from './Icon';
+import {
+  fileTools,
+  panels,
+  quickTools,
+  ribbonTabs,
+  tabKeyTips,
+  toolKeyTips,
+} from './ribbon-definitions';
+import type { Execute, RibbonTab } from './ribbon-definitions';
+import { RibbonKeyTips } from './RibbonKeyTips';
+export type { RibbonTab } from './ribbon-definitions';
+export { ribbonTabs } from './ribbon-definitions';
 
 export function TitleBar({
   messages,
@@ -230,6 +77,9 @@ export function TitleBar({
           aria-haspopup="menu"
           aria-expanded={menuOpen}
           aria-controls="application-file-menu"
+          data-ribbon-keytip="F"
+          data-ribbon-keytip-level="root"
+          data-ribbon-keytip-next="file"
           onClick={() => setMenuOpen((value) => !value)}
         >
           {messages.appMenu}
@@ -246,6 +96,8 @@ export function TitleBar({
               <button
                 key={tool.command}
                 role="menuitem"
+                data-ribbon-keytip={toolKeyTips[tool.command]}
+                data-ribbon-keytip-level="file"
                 onClick={() => {
                   setMenuOpen(false);
                   execute(tool.command);
@@ -259,12 +111,14 @@ export function TitleBar({
         )}
       </div>
       <div className="quick-access" role="toolbar" aria-label={messages.quickAccess}>
-        {quickTools.map((tool) => (
+        {quickTools.map((tool, index) => (
           <button
             key={tool.command}
             className="icon-button"
             aria-label={messages[tool.label]}
             title={`${messages[tool.label]} (${tool.command})`}
+            data-ribbon-keytip={String(index + 1)}
+            data-ribbon-keytip-level="root"
             onClick={() => execute(tool.command)}
           >
             <Icon name={tool.icon} small />
@@ -299,14 +153,17 @@ export function Ribbon({
   activeTab,
   setActiveTab,
   execute,
+  keyTipsEnabled = true,
 }: {
   messages: Messages;
   activeTab: RibbonTab;
   setActiveTab: (tab: RibbonTab) => void;
   execute: Execute;
+  keyTipsEnabled?: boolean;
 }) {
   return (
     <section className="ribbon" aria-label={messages.ribbon}>
+      <RibbonKeyTips enabled={keyTipsEnabled} activeTab={activeTab} />
       <div className="ribbon-tabs" role="tablist" aria-label={messages.ribbon}>
         {ribbonTabs.map((tab) => (
           <button
@@ -314,6 +171,9 @@ export function Ribbon({
             role="tab"
             aria-selected={tab === activeTab}
             className={tab === activeTab ? 'ribbon-tab active' : 'ribbon-tab'}
+            data-ribbon-keytip={tabKeyTips[tab]}
+            data-ribbon-keytip-level="root"
+            data-ribbon-keytip-next="tools"
             onClick={() => setActiveTab(tab)}
           >
             {messages[tab]}
@@ -329,6 +189,8 @@ export function Ribbon({
                   key={tool.command}
                   className="ribbon-tool"
                   title={`${messages[tool.label]} (${tool.command})`}
+                  data-ribbon-keytip={toolKeyTips[tool.command]}
+                  data-ribbon-keytip-level="tools"
                   onClick={() => execute(tool.command)}
                 >
                   <Icon name={tool.icon} />

@@ -284,6 +284,7 @@ export interface Messages {
   snapQuadrant: string;
   snapNearest: string;
   snapIntersection: string;
+  snapNotFound: (snap: string) => string;
   noSelection: string;
   invalidPoint: string;
   positiveRadius: string;

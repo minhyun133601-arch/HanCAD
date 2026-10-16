@@ -308,6 +308,7 @@ export const en: Messages = {
   snapQuadrant: 'Quadrant',
   snapNearest: 'Nearest',
   snapIntersection: 'Intersection',
+  snapNotFound: (snap) => `No ${snap.toLowerCase()} found for specified point.`,
   noSelection: 'No objects are selected. Click an object, then press Delete or run E.',
   invalidPoint: 'Enter a point as X,Y, @DX,DY, or @distance<angle.',
   positiveRadius: 'The radius must be greater than zero.',

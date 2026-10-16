@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ModifySession, transformCadSelection } from '@hancad/draft';
+import { ModifySession, transformCadSelection, validDraftPoint } from '@hancad/draft';
 import type { ModifySnapshot, ModifyTool } from '@hancad/draft';
 import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import type { CommandRegistry } from '@hancad/commands';
@@ -7,6 +7,7 @@ import type { SystemVariables } from '@hancad/sysvars';
 import { getMessages } from '@hancad/ui';
 import type { Messages } from '@hancad/ui';
 import { tempOverrides } from './temp-overrides';
+import { recordStatusPoint } from './status-point-store';
 
 interface Options {
   registry: CommandRegistry;
@@ -53,7 +54,9 @@ export function useModification(options: Options) {
   function begin(tool: ModifyTool): void {
     finish();
     latest.current.cancelOthers();
-    const active = new ModifySession(tool);
+    const active = new ModifySession(tool, (point) =>
+      recordStatusPoint(latest.current.sysvars, point),
+    );
     if (latest.current.sysvars.getNumber('PICKFIRST') === 1)
       active.select(latest.current.getState(), latest.current.getSelectedIds());
     else latest.current.clearSelection();
@@ -70,9 +73,9 @@ export function useModification(options: Options) {
     if (controller.current.tool === 'MOVE') finish();
     else refresh();
   }
-  function pick(point: CadPoint, snapped = false): void {
+  function pick(point: CadPoint, snapped = false): boolean {
     const active = controller.current;
-    if (!active?.getSnapshot().needsPoint) return;
+    if (!active?.getSnapshot().needsPoint || !validDraftPoint(point)) return false;
     accepted(
       active.acceptPoint(
         point,
@@ -80,6 +83,7 @@ export function useModification(options: Options) {
         snapped,
       ),
     );
+    return true;
   }
   function cursor(point: CadPoint, snapped = false): void {
     controller.current?.moveCursor(
@@ -106,6 +110,7 @@ export function useModification(options: Options) {
     if (result.error) live.print(live.messages.invalidPoint);
     else if (result.finish) finish();
     else accepted(result.delta);
+    tempOverrides.consumeObjectSnapInput(value, !result.error);
     refresh();
     return true;
   }

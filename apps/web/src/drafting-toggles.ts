@@ -84,7 +84,12 @@ export const draftingToggles: Readonly<Record<ToggleId, DraftingToggle>> = {
     flip: (sysvars) => sysvars.set('SNAPISOPAIR', (number(sysvars, 'SNAPISOPAIR') + 1) % 3),
   },
   selectionCycling: sign('SELECTIONCYCLING', false, 2),
-  coordinates: onOff('COORDS', false, 1),
+  coordinates: {
+    variable: 'COORDS',
+    implemented: true,
+    enabled: (sysvars) => number(sysvars, 'COORDS') !== 0,
+    flip: (sysvars) => sysvars.set('COORDS', (number(sysvars, 'COORDS') + 1) % 3),
+  },
   groups: bit('PICKSTYLE', 1),
   pickStyle: bit('PICKSTYLE', 1),
   inferConstraints: onOff('CONSTRAINTINFER'),

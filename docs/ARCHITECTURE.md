@@ -206,6 +206,23 @@ temporary overrides for a drawing. `useWorkspaceShortcuts` runs the
 `temp-overrides.ts` holds the effective-value layer that drafting and snapping read
 (`tempOverrides.number`), fed by the capture-phase `useTempOverrideKeys`.
 
+Drawing shortcut menus live in `menus/DrawingShortcutMenus.tsx`. The pure
+`@hancad/input` right-click policy selects Enter or a menu from SHORTCUTMENU,
+the active prompt, selection and press duration. Menu actions use the shared macro
+runner; keywords and Enter answer the current prompt. Object-snap menu choices
+live separately from held keys in `TempOverrides` and expire after one successful
+point input, including navigation. Failed acquisition and rejected input retain
+the choice; cancellation and drawing disposal clear it. Session acceptance
+callbacks publish exact constrained points to a per-document status-point store.
+
+The status strip shares the keyboard drafting toggles, original vector icons,
+profile visibility preferences and `ContextMenu` settings. `status-coordinates.ts`
+formats static, absolute and relative polar coordinates with drawing unit
+variables. `CommandPanels` hosts the menu and registry-generated help panel;
+transparent HELP preserves the interrupted command. `RibbonKeyTips` routes
+Alt and displayed physical-key sequences through existing chrome buttons while
+respecting text/dialog focus and MENUBAR.
+
 The bootstrap geometry crate is compiled to WASM and exercised from TypeScript.
 Native OS integration belongs to Rust behind a Platform interface. The browser
 adapter must explicitly report unavailable OS features. Drawing files must not be

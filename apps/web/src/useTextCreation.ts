@@ -8,6 +8,8 @@ import type { SystemVariables } from '@hancad/sysvars';
 import { getMessages } from '@hancad/ui';
 import type { MessageKey, Messages } from '@hancad/ui';
 import { creationSettings } from './creation-settings';
+import { tempOverrides } from './temp-overrides';
+import { recordStatusPoint } from './status-point-store';
 
 interface Options {
   registry: CommandRegistry;
@@ -88,6 +90,7 @@ export function useTextCreation(options: Options) {
     const session = new TextSession(
       creationSettings(model.settings, (name) => live.sysvars.get(name)),
       {
+        onAcceptedPoint: (point) => recordStatusPoint(latest.current.sysvars, point),
         textSize: live.sysvars.getNumber('TEXTSIZE'),
         availableEntities: CAD_ENTITY_LIMIT - model.entities.length,
         onChange: changed,
@@ -114,9 +117,12 @@ export function useTextCreation(options: Options) {
     if (error) latest.current.print(latest.current.messages[errors[error]]);
   }
 
-  function pick(point: CadPoint): void {
+  function pick(point: CadPoint): boolean {
     const active = controller.current;
-    if (active) report(active.acceptPoint(point).error);
+    if (!active) return false;
+    const result = active.acceptPoint(point);
+    report(result.error);
+    return result.status !== 'error';
   }
 
   function submit(value: string): boolean {
@@ -124,7 +130,11 @@ export function useTextCreation(options: Options) {
     if (!active) return false;
     const live = latest.current;
     live.print(`${promptText(active.getSnapshot(), live.messages)} ${value}`);
-    report(active.acceptText(value).error);
+    const mode = active.getSnapshot().inputMode;
+    const result = active.acceptText(value);
+    report(result.error);
+    if (mode === 'point' || mode === 'number')
+      tempOverrides.consumeObjectSnapInput(value, result.status !== 'error');
     return true;
   }
 

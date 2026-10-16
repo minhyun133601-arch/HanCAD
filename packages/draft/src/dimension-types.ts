@@ -41,6 +41,7 @@ export interface DimensionSnapshot {
   canClose: false;
 }
 export interface DimensionSessionOptions {
+  onAcceptedPoint?: (point: CadPoint) => void;
   onCommit: (entities: CadEntity[]) => void;
   onChange?: (snapshot: DimensionSnapshot) => void;
 }

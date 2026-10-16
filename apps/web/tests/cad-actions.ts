@@ -38,7 +38,13 @@ export async function dimensions(page: Page): Promise<CadDimensionGeometry[]> {
 }
 
 export async function mapping(page: Page, clearOfCommandLine = true) {
-  await page.getByRole('button', { name: '도면 전체 맞춤', exact: true }).click();
+  // Start navigation directly: a ribbon macro can still be between its ZOOM and
+  // Extents steps while the camera reports no transition. Await the real prompt
+  // and completion before measuring the camera for subsequent geometry picks.
+  await enter(page, 'ZOOM');
+  await expect(page.locator('.command-prompt')).toContainText('중심(C)');
+  await enter(page, 'E');
+  await expect(page.locator('.command-prompt')).toHaveText('명령:');
   await settleView(page);
   if (clearOfCommandLine) {
     // Like AutoCAD, the floating command line covers the bottom of the drawing area;

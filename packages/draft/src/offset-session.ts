@@ -45,6 +45,9 @@ export class OffsetSession {
   getSnapshot(): OffsetSnapshot {
     return {
       tool: this.tool,
+      ...(this.prompt === 'offsetSecondPoint' && this.distanceBase
+        ? { basePoint: { ...this.distanceBase } }
+        : {}),
       prompt: this.prompt,
       status: this.status,
       inputMode:
@@ -71,6 +74,13 @@ export class OffsetSession {
   }
 
   acceptPick(point: CadPoint, entity?: CadEntity, _shift = false): OffsetResult {
+    const pointPrompt = this.prompt !== 'offsetSelect';
+    const result = this.applyPick(point, entity);
+    if (pointPrompt && !result.error) this.options.onAcceptedPoint?.({ ...point });
+    return result;
+  }
+
+  private applyPick(point: CadPoint, entity?: CadEntity): OffsetResult {
     if (this.status !== 'active') return failure('closedSession');
     if (!validDraftPoint(point)) return failure('point');
     if (this.prompt === 'offsetDistance') {

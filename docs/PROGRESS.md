@@ -1,6 +1,6 @@
 # HanCAD progress
 
-## Active phase: Phase 03 command system, command line, shortcuts and Korean IME (2026-10-16)
+## Completed phase: Phase 03 command system, command line, shortcuts and Korean IME (2026-10-17)
 
 Source: `docs/prompt-source/prompts/phase-03-command-system-command-line-shortcuts-korean-ime.md`.
 The user requested Phase 03 on 2026-10-16. The baseline passed lint, formatting,
@@ -9,18 +9,124 @@ Reference facts come from the Autodesk 2026 Korean help pages for temporary
 override keys, shortcut keys, macro control characters, DIESEL, the status bar,
 shortcut menus, command aliases/AutoCorrect and the command window.
 
-| Milestone                                 | Status  | Scope                                                                                                                                  |
-| ----------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| 3.1 Command catalog and aliases           | Done    | Canonical/global names, Korean/English names and help, flags, implementation status, completed acad.pgp aliases, generated COMMANDS.md |
-| 3.2 Input parsing and ImeController       | Done    | Prompt input modes, Hangul normalization, Space/Enter rules, PGP grammar incl. external commands, transparent-command rules            |
-| 3.3 Command line window                   | Done    | Floating/docked bar, temporary prompt lines, F2/Ctrl+F2/Ctrl+9, command-name prompt, history recall, right-click menu                  |
-| 3.4 AutoComplete and input search options | Done    | Suggestion list, auto-append, mid-string, sysvars, frequency order, delay, AutoCorrect DB, INPUTSEARCHOPTIONS dialog                   |
-| 3.5 Transparent commands                  | Done    | `>>` prompts for 'ZOOM/'PAN/'SETVAR/sysvars/'DIST/'CAL/'OSNAP/'HELP, resume message and original prompt                                |
-| 3.6 PGP import, ALIASEDIT and REINIT      | Done    | User acad.pgp import/merge (user wins), persistent profile copy, ALIASEDIT dialog, REINIT/RE-INIT reload                               |
-| 3.7 Macros and DIESEL                     | Done    | ^C^C, ;, space, \ pause, \*^C^C repeat, $M=, ^P and other controls; DIESEL evaluator; MODEMACRO; ribbon macros                         |
-| 3.8 Keyboard bindings and overrides       | WIP     | Every SHORTCUTS.md binding with ordered scopes, toggle messages, TEMPOVERRIDES key-down/key-up macros                                  |
-| 3.9 Mouse and shortcut menus              | Planned | SHORTCUTMENU bits, time-sensitive right click, Korean default/edit/command menus, Shift+right-click object snap menu                   |
-| 3.10 Status bar and F1 help               | Planned | All toggles with icons/menus, COORDS display, customization menu, F1 Korean help panel, phase acceptance                               |
+| Milestone                                 | Status | Scope                                                                                                                                  |
+| ----------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 3.1 Command catalog and aliases           | Done   | Canonical/global names, Korean/English names and help, flags, implementation status, completed acad.pgp aliases, generated COMMANDS.md |
+| 3.2 Input parsing and ImeController       | Done   | Prompt input modes, Hangul normalization, Space/Enter rules, PGP grammar incl. external commands, transparent-command rules            |
+| 3.3 Command line window                   | Done   | Floating/docked bar, temporary prompt lines, F2/Ctrl+F2/Ctrl+9, command-name prompt, history recall, right-click menu                  |
+| 3.4 AutoComplete and input search options | Done   | Suggestion list, auto-append, mid-string, sysvars, frequency order, delay, AutoCorrect DB, INPUTSEARCHOPTIONS dialog                   |
+| 3.5 Transparent commands                  | Done   | `>>` prompts for 'ZOOM/'PAN/'SETVAR/sysvars/'DIST; HELP panel; pending CAL/OSNAP report and resume                                     |
+| 3.6 PGP import, ALIASEDIT and REINIT      | Done   | User acad.pgp import/merge (user wins), persistent profile copy, ALIASEDIT dialog, REINIT/RE-INIT reload                               |
+| 3.7 Macros and DIESEL                     | Done   | ^C^C, ;, space, \ pause, \*^C^C repeat, $M=, ^P and other controls; DIESEL evaluator; MODEMACRO; ribbon macros                         |
+| 3.8 Keyboard bindings and overrides       | Done   | Every SHORTCUTS.md binding with ordered scopes, toggle messages, TEMPOVERRIDES key-down/key-up macros                                  |
+| 3.9 Mouse and shortcut menus              | Done   | SHORTCUTMENU bits, time-sensitive right click, Korean default/edit/command menus, Shift+right-click object snap menu                   |
+| 3.10 Status bar and F1 help               | Done   | All toggles with icons/menus, COORDS display, customization menu, F1 Korean help panel, phase acceptance                               |
+
+### Completion and exact next step (2026-10-17)
+
+Phase 03 implementation and browser acceptance are complete. This section
+supersedes the historical resume instructions below. No Phase 04 implementation
+has started. The exact next step, only when requested, is to read the Phase 04
+coordinate-input/drafting-aids prompt and plan its milestones. Original Phase 00
+native acceptance and installed-AutoCAD comparison remain unverified.
+
+Delivered 3.8-3.10: focus-safe temporary key overrides with physical Shift release
+handling; Alt ribbon/application/quick-access keytips; contextual default/edit/
+command menus and timed right-click; Shift/right and MBUTTONPAN=0 snap menus;
+single-use supported snap modes through drafting, edits and transparent navigation;
+16 status toggles with original icons, settings and visibility preferences;
+COORDS 0/1/2 and actual accepted LASTPOINT, plus explicit unavailable geographic
+display; context-sensitive Korean/English registry help via F1/HELP.
+
+Final verification used the fresh production build, not Vite HMR:
+
+- `pnpm verify` ran WASM, lint, formatting, strict TypeScript, 558 unit tests,
+  30 compatibility tests, command-doc drift, web build, renderer goldens and all
+  107 E2E entries. Every non-E2E check passed. Renderer QA passed 28 scenes,
+  37 exact-color contracts, 3 viewport-boundary contracts and 20 high-zoom
+  precision comparisons; translated scenes were identical.
+- Initial E2E result: 103 passed, 3 failed, 1 opt-in skip. The old MBUTTONPAN=0
+  navigation test needed to dismiss the newly required snap menu. Two single-line
+  selection tests exposed a camera-helper race: it sampled the camera between
+  the asynchronous ribbon macro's ZOOM and Extents steps. The helper now waits
+  for typed ZOOM's prompt and completion before reading the camera. Ribbon
+  macro behavior remains covered by the independent macro tests.
+- After these test-only corrections, all 40 E2E tests using that shared helper
+  passed against the same production build (including all three failures).
+  Across the comprehensive run and affected rerun, all 106 enabled E2E tests
+  passed; the user-specified private-DWG opt-in test was not run. The complete
+  `pnpm verify` command was not repeated after these test-only corrections.
+- `pnpm docs:sysvars:check` passed for 860 variables/214 headers. Final lint,
+  formatting and documentation drift checks cover the corrected tests/docs.
+- The final in-app progress data now records Phase 03 completion and its native
+  limitations. After this data-only update, the production web rebuild and the
+  bilingual progress-dialog E2E passed (1 test). No drafting code changed after
+  the comprehensive run.
+- Browser UI inspection verified F1 during LINE and return to its original
+  prompt, Shift/right snap menu, status customization and Alt tips, including
+  1280x720 layout. Screenshots are in `test-artifacts/phase03-manual/`; run logs
+  are `phase03-verify.log` and `phase03-affected.log` in `test-artifacts/`.
+  Existing drawing geometry was preserved during this inspection.
+
+All seven original acceptance items have browser coverage: IME physical-key and
+Hangul reversal in `command-input.spec.ts`; free-text composition in
+`text-creation.spec.ts`; OSMODE completion in `autocomplete.spec.ts`; imported PGP
+and REINIT in `pgp-files.spec.ts`; F/Ctrl toggles in `keyboard.spec.ts`; transparent
+ZOOM in `transparent-commands.spec.ts`; right-click Enter and Shift menu in
+`mouse-menus.spec.ts`. Synthetic composition does not certify actual Windows IME
+candidate placement, Hanja or native WebView2 key routing. These remain explicit
+native/reference checks, not claimed passes.
+
+Remaining scope boundaries: cursor dynamic-input fields/Down menus, complete
+object snaps and DSETTINGS/-OSNAP belong to Phase 04; CAL's functions belong to
+Phase 15. Their transparent invocation currently reports the pending command and
+resumes correctly. Advanced snap-menu entries are explicit pending features;
+letter mnemonics for that placeholder menu and exact Korean wording require
+reference comparison. Later drafting toggles change their variables and identify
+pending behavior. Phase 03 does not claim those later features are implemented.
+
+Manual smoke sequence: type `SHORTCUTMENU`, Enter, `0`, Enter; `L`, Enter,
+`0,0`, Enter, `100,0`, Enter, right-click to finish. Start `L` again and press F1,
+then Esc to return to LINE. Shift+right-click opens the snap menu. Esc cancels;
+Alt, H, L, I starts LINE through ribbon tips. Status buttons toggle with left
+click, expose settings with right click, and the far-right customization menu
+shows coordinates and extra controls. Restore `SHORTCUTMENU` to 11 afterward.
+
+### Historical execution plan (2026-10-17)
+
+Resume Phase 03 at 3.9. Implement the drawing-area shortcut-menu policy and menus,
+one-shot object-snap overrides, then complete 3.10 status controls and registry
+help. Audit 3.8 keyboard behavior in parallel. Add feature-level coverage during
+implementation; keep comprehensive validation pending until the implementation
+is complete. Then run `pnpm verify`, exercise the current application, resolve
+failures, update phase evidence and commit the verified Phase 03 work. Preserve
+the existing user-authorized protocol/document changes. Phase 04 is out of scope.
+
+### Historical resume handoff (2026-10-16; phase-end verification)
+
+The user requested a saved continuation plan and then authorized a protocol
+update: implement the remaining phase work before comprehensive verification.
+Only prompt and handoff documents were changed; no application implementation or
+test run was performed for this update. The application checkpoint is `8bee8ab`
+(`wip(phase3.8): keyboard bindings and temporary overrides, paused at user request`).
+
+- Current phase: original Phase 03, milestone 3.8. Milestones 3.1-3.7 are Done;
+  3.8 is implemented but still needs complete verification. Continue with 3.9
+  implementation; carry 3.8's pending verification into the final phase pass.
+- Remaining in this phase: implement 3.9 mouse/shortcut menus and 3.10 status
+  bar/F1 help, then verify 3.8-3.10 together with all seven original acceptance
+  checks and existing-feature regressions. Seven of ten milestones are accepted;
+  this count is not an effort-based completion percentage.
+- Overall roadmap: Phase 00-25 contains 26 phases. Phases 01 and 02 are complete;
+  Phase 00 native acceptance remains deferred and unverified. After the remaining
+  Phase 03 work, Phases 04-25 (22 phases) still require completion, even where
+  later-phase adapters already provide some functionality. No reliable remaining
+  time estimate follows from the phase count alone.
+- Next phase after Phase 03 acceptance: Phase 04 coordinate input and drafting
+  aids, using LINE as the reference command.
+
+The detailed 3.9/3.10 implementation and final verification plan appears below.
+This active-phase section takes precedence over historical handoffs elsewhere.
 
 ### Milestone 3.3 command window (2026-10-16)
 
@@ -137,14 +243,46 @@ passes in `keyboard.spec.ts`.
 Paused at user request (2026-10-16) before the milestone was accepted. Lint,
 formatting, strict TypeScript, 533 unit tests, compatibility and command-doc checks
 passed; the new `keyboard.spec.ts` (3 tests) passed on its own; the full E2E run
-was interrupted after 48 of 87 tests with no failures. The work is committed as
-`wip(phase3.8)`.
+was interrupted with progress reaching 48 of 87 test entries. The pasted log has
+no final E2E summary, so it does not establish 48 successful tests or a successful
+full run. The work is committed as `8bee8ab` (`wip(phase3.8)`).
 
-Exact next step: run `pnpm build:web` (the launcher's server on port 1420 serves
-`apps/web/dist`, and Playwright reuses it), then the full verification
-(`pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && npx playwright
-test`). If it passes, record the counts here, set 3.8 to Done and replace the WIP
-commit with `feat(phase3.8)`. Then continue with:
+Exact next step for the next implementation session: read the root `AGENTS.md`,
+this active-phase section, `ARCHITECTURE.md`, `SHORTCUTS.md` and the Phase 03
+prompt, then implement 3.9 followed by 3.10. Under the user's updated protocol,
+do not run a full baseline before 3.9 or repeat full checks at each milestone.
+Use typechecking and brief checks of the changed core behavior during
+implementation; use focused tests when needed for a bug or complex change.
+Add meaningful test coverage alongside the features and keep 3.8's final
+verification pending.
+
+After the remaining Phase 03 implementation is finished, run the comprehensive
+verification once, including 3.8, existing-feature regressions and all seven
+Phase 03 acceptance items. In PowerShell:
+
+```powershell
+$env:HANCAD_PRODUCTION = '1'
+$env:HANCAD_RUNNING_APP = '1'
+pnpm verify
+```
+
+`pnpm verify` includes WASM, lint, formatting, strict TypeScript, unit and
+compatibility tests, command-doc checks, a fresh web build, renderer goldens and
+the full E2E suite. The launcher serves `apps/web/dist` on port 1420; the rebuild
+must finish before testing against that server. Reuse an existing server only
+after confirming that it serves this workspace's production build; otherwise
+stop the stale server or remove `HANCAD_RUNNING_APP` and let Playwright start it.
+
+Exercise the keyboard bindings, text/dialog focus priority, temporary override
+press/release, shortcut menus, status bar and F1 help in the running app. Fix
+failures and rerun the failed and affected checks; repeat the full pass only
+when changes or unresolved concerns justify it. When every required check
+passes, record the actual totals, accept 3.8-3.10 and Phase 03, finish the docs
+and commit the verified work, preserving the WIP commit. Do not start Phase 04
+without a user request.
+
+Implement the remaining milestones in this order, batching comprehensive
+verification and final documentation at phase completion:
 
 - 3.9 Mouse and shortcut menus. Right-click on the drawing area (none today; the
   browser menu appears): SHORTCUTMENU bits 1/2/4/8 choose default, edit and command
