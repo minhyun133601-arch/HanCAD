@@ -1,5 +1,52 @@
 # Decisions
 
+## 2026-10-16: Phase 03 AutoComplete and input search options (milestone 3.4)
+
+Suggestions come from one pure function (`suggestCommandInput`) over the command
+registry and the system-variable catalog, so tests run headless. Tiers are exact
+(the typed command, alias, learned correction or variable), prefix, mid-string and
+AutoCorrect; within a tier the order is usage count (default) or alphabetical. An
+alias puts its command first and submits the alias as typed, so prefixes keep
+their meaning. Inside a running command only apostrophe input lists transparent
+commands and system variables. UNDEFINEd commands are not listed.
+
+Autodesk's help says that Enter runs the command at the top of the list. HanCAD
+highlights the top suggestion, and Enter or Space submits it, only when what was
+typed is not already a valid name and the user can see the suggestion: either
+the inline completion is showing or the list has opened (INPUTSEARCHDELAY,
+default 300 ms). Typing faster than the delay therefore runs what was typed. The
+inline completion (the rest of the top prefix match, shown highlighted after the
+caret) follows the -INPUTSEARCHOPTIONS description "automatically filled in on the
+command line"; it starts at the second typed character, as AutoCAD 2014's
+AutoAppend did. Backspace first removes the completion. Up/Down move through an
+open list (otherwise they recall history), Tab and Shift+Tab cycle it, and Tab
+switches to the separate system-variable list when that option is on.
+
+AutoCorrect cannot ship Autodesk's misspelling database. HanCAD suggests catalog
+names within edit distance 1 (names up to four letters) or 2 (five or more
+letters, adjacent swaps counting once). A correction is counted when the user
+accepts an AutoCorrect suggestion, or when an unknown entry is followed by a
+command within that distance. After the threshold (default 3) the pair is
+remembered in AutoCorrectUserDB.pgp form and resolves directly from then on.
+Usage counts, learned corrections and the options are profile data in browser
+storage, shared by all open drawings; only the delay is a system variable.
+
+Defaults: AutoComplete, mid-string search, frequency order, AutoCorrect,
+system-variable search and content search are on; "Separate Commands and System
+Variables" is off; the correction threshold is 3. Content search results need
+layers (Phase 08), text and dimension styles (Phases 10 and 11), hatches (Phase
+12), blocks (Phase 13) and visual styles (Phase 21). Until then the dialog stores
+the setting and says that results arrive with those phases. Synonym lists
+(acadSynonymsGlobalDB.pgp) come with PGP import in milestone 3.6.
+
+-INPUTSEARCHOPTIONS uses the official Korean yes/no prompts for each option. The
+top-level option prompt, its keyword letters and the "[예(Y)/아니오(N)] <예>"
+format are assumptions, and the official Korean delay prompt says seconds
+(`지연 시간(초) 지정`) although the value is in milliseconds. Commands with their
+own prompt sequence now share one mechanism: `CommandDefinition.nextPrompt`
+returns the next prompt for the answers so far. UNDO and MREDO moved onto it, and
+English keyword detection now reads capitals anywhere in a label (`eXit`).
+
 ## 2026-10-16: Phase 03 command window (milestone 3.3)
 
 The default command window floats near the bottom of the drawing area, centered,

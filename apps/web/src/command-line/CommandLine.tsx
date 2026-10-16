@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { ReactNode, RefObject } from 'react';
 import { ImeController } from '@hancad/input';
 import type { PromptInputMode } from '@hancad/input';
@@ -9,6 +9,7 @@ import type { MenuEntry } from '../menus/ContextMenu';
 import { inputBlocked } from '../ui-focus';
 import { HistoryView } from './HistoryView';
 import { PromptKeywords } from './PromptKeywords';
+import type { AutoCompleteView } from './useAutoComplete';
 import type { CommandLineLayout } from './layout';
 import './command-line.css';
 
@@ -39,7 +40,11 @@ export interface CommandLineProps {
   customizeItems: readonly MenuEntry[];
   contextItems: () => readonly MenuEntry[];
   recentItems: () => readonly MenuEntry[];
-  /** Extra content below the prompt row, e.g. the AutoComplete list. */
+  /** AutoComplete state; it may consume navigation keys and replace accepted text. */
+  autoComplete?: AutoCompleteView;
+  /** Suggestion list shown above the input. */
+  suggestionList?: ReactNode;
+  /** Extra content below the prompt row. */
   children?: ReactNode;
 }
 
@@ -54,6 +59,12 @@ export function CommandLine(props: CommandLineProps) {
     null,
   );
   const [drag, setDrag] = useState<{ dx: number; dy: number } | null>(null);
+  const [listLeft, setListLeft] = useState(0);
+  useLayoutEffect(() => {
+    // The suggestion list opens above the typing position, as in AutoCAD.
+    const left = inputRef.current?.offsetLeft ?? 0;
+    if (left !== listLeft) setListLeft(left);
+  });
   const { layout } = props;
   const idle = !props.commandName && !busy && props.mode === 'command';
 
@@ -94,11 +105,17 @@ export function CommandLine(props: CommandLineProps) {
       if (event.defaultPrevented) return;
       const current = latest.current;
       const action = ime.keyAction(event, current.mode);
-      if (!action || action.type === 'tab' || action.type === 'caret' || action.type === 'delete')
+      if (!action) return;
+      if (current.autoComplete?.handleKey(action)) {
+        event.preventDefault();
+        current.inputRef.current?.focus({ preventScroll: true });
         return;
+      }
+      if (action.type === 'tab' || action.type === 'caret' || action.type === 'delete') return;
       event.preventDefault();
       if (action.type === 'cancel') current.cancel();
-      else if (action.type === 'accept') void current.execute(current.input);
+      else if (action.type === 'accept')
+        void current.execute(current.autoComplete?.acceptText(current.input) ?? current.input);
       else if (action.type === 'history') current.recall(action.direction);
       else if (action.type === 'backspace') current.changeInput(current.input.slice(0, -1));
       else current.changeInput(current.input + action.text);
@@ -169,7 +186,11 @@ export function CommandLine(props: CommandLineProps) {
         visibleLines={layout.docked ? layout.dockedLines : props.promptLines}
         label={messages.commandHistory}
       />
-      <div className="command-input-row">
+      <div
+        className="command-input-row"
+        style={{ '--suggestion-left': `${listLeft}px` } as React.CSSProperties}
+      >
+        {props.suggestionList}
         <span
           className="command-grip"
           role="button"
@@ -272,6 +293,11 @@ export function CommandLine(props: CommandLineProps) {
             {input ||
               (idle && <span className="command-placeholder">{messages.commandInput}</span>)}
             <span className="command-caret" aria-hidden="true" />
+            {props.autoComplete?.completion && (
+              <span className="command-completion" aria-hidden="true">
+                {props.autoComplete.completion}
+              </span>
+            )}
           </div>
         )}
         <button

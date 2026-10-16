@@ -8,3 +8,5 @@ export {
 export type { CadImportMessages } from './import-diagnostics';
 export { getCommandLineMessages } from './command-line-messages';
 export type { CommandLineMessages } from './command-line-messages';
+export { getInputSearchMessages } from './input-search-messages';
+export type { InputSearchMessages } from './input-search-messages';

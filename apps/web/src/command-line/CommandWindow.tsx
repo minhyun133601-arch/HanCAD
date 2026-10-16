@@ -1,22 +1,31 @@
 import type { ReactNode, RefObject } from 'react';
 import type { PromptInputMode } from '@hancad/input';
-import type { CommandLineMessages, Messages } from '@hancad/ui';
+import { getInputSearchMessages } from '@hancad/ui';
+import type { CommandLineMessages, Locale, Messages } from '@hancad/ui';
 import type { MenuEntry } from '../menus/ContextMenu';
 import type { useCommandSession } from '../useCommandSession';
 import { CommandLine } from './CommandLine';
 import { CloseCommandLineDialog, TextWindow, TransparencyDialog } from './CommandDialogs';
+import { InputSearchDialog } from './InputSearchDialog';
+import { SuggestionList } from './SuggestionList';
+import { useAutoComplete } from './useAutoComplete';
+import './input-search.css';
+import { useInputSearch } from './useInputSearch';
 import { readClipboardText, selectedHistoryText, writeClipboardText } from './text-clipboard';
 import type { CommandWindowState } from './useCommandWindow';
 
 interface CommandWindowProps {
   window: CommandWindowState;
   messages: Messages;
+  locale: Locale;
   text: CommandLineMessages;
   session: ReturnType<typeof useCommandSession>;
   drawingName: string;
   prompt: string;
   commandName: string | null;
   mode: PromptInputMode;
+  /** A command or command-owned prompt is running (suggestions need ' input). */
+  commandActive: boolean;
   editable: boolean;
   blocked: boolean;
   inputRef: RefObject<HTMLDivElement | HTMLInputElement | null>;
@@ -26,14 +35,28 @@ interface CommandWindowProps {
   runCommand: (command: string) => void;
   recall: (direction: -1 | 1) => void;
   cancel: () => void;
-  /** Extra items (Input Settings) contributed by later milestones. */
-  inputSettings?: readonly MenuEntry[];
   children?: ReactNode;
 }
 
 /** The command line plus its text window, transparency and close dialogs. */
 export function CommandWindow(props: CommandWindowProps) {
   const { window: state, text, session } = props;
+  const searchText = getInputSearchMessages(props.locale);
+  const search = useInputSearch({
+    registry: session.registry,
+    sysvars: session.sysvars,
+    text,
+    runCommand: props.runCommand,
+  });
+  const autoComplete = useAutoComplete({
+    registry: session.registry,
+    store: search.store,
+    options: search.options,
+    input: session.input,
+    mode: props.mode,
+    commandActive: props.commandActive,
+    delay: session.sysvars.getNumber('INPUTSEARCHDELAY'),
+  });
   const focus = (): void => props.inputRef.current?.focus({ preventScroll: true });
   async function copy(value: string): Promise<void> {
     if (!value) return;
@@ -51,11 +74,16 @@ export function CommandWindow(props: CommandWindowProps) {
       return [{ id: 'none', label: text.noRecentCommands, disabled: true, onSelect: () => {} }];
     return names.map((name) => ({ id: name, label: name, onSelect: () => props.runCommand(name) }));
   };
-  const settings: readonly MenuEntry[] = props.inputSettings?.length
-    ? [{ id: 'input-settings', label: text.inputSettings, items: props.inputSettings }]
-    : [];
+  const settings: readonly MenuEntry[] = [
+    { id: 'input-settings', label: text.inputSettings, items: search.settings },
+  ];
   const customize: readonly MenuEntry[] = [
     ...settings,
+    {
+      id: 'input-search-options',
+      label: text.inputSearchOptions,
+      onSelect: () => props.runCommand('INPUTSEARCHOPTIONS'),
+    },
     {
       id: 'prompt-lines',
       label: text.promptHistoryLines,
@@ -116,6 +144,14 @@ export function CommandWindow(props: CommandWindowProps) {
           customizeItems={customize}
           contextItems={context}
           recentItems={recent}
+          autoComplete={autoComplete}
+          suggestionList={
+            <SuggestionList
+              view={autoComplete}
+              text={searchText}
+              onChoose={(index) => void props.submit(autoComplete.choose(index))}
+            />
+          }
         >
           {props.children}
         </CommandLine>
@@ -139,6 +175,17 @@ export function CommandWindow(props: CommandWindowProps) {
         onApply={(transparency) => state.changeLayout({ ...state.layout, transparency })}
         onClose={() => {
           state.closeTransparency();
+          focus();
+        }}
+      />
+      <InputSearchDialog
+        open={search.dialogOpen}
+        text={searchText}
+        options={search.options}
+        delay={session.sysvars.getNumber('INPUTSEARCHDELAY')}
+        onApply={search.apply}
+        onClose={() => {
+          search.closeDialog();
           focus();
         }}
       />

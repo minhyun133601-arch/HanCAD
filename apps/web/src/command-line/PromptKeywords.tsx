@@ -1,6 +1,9 @@
-/** Keyword token of an option label such as "닫기(C)" or "3P". */
+/**
+ * Keyword token of an option label: "닫기(C)" in Korean prompts, or the capital
+ * letters of an English label such as "3P", "Close" or "eXit".
+ */
 export function keywordOf(label: string): string | undefined {
-  return /\(([A-Za-z0-9]+)\)/.exec(label)?.[1] ?? /^([A-Z0-9]+)/.exec(label)?.[1];
+  return /\(([A-Za-z0-9]+)\)/.exec(label)?.[1] ?? /([A-Z0-9]+)/.exec(label)?.[1];
 }
 
 /** Bracketed "[A/B/C]" option labels of a prompt; empty when the prompt has none. */

@@ -168,7 +168,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | IMAGEATTACH         | IAT                                                 | 이미지 부착                | Not implemented; explicit message (Phase 13)                                                        |
 | IMAGECLIP           | ICL                                                 | 이미지 자르기              | Not implemented; explicit message (Phase 13)                                                        |
 | IMPORT              | IMP                                                 | 가져오기                   | Not implemented; explicit message (Phase 09)                                                        |
-| INPUTSEARCHOPTIONS  |                                                     | 검색 입력 옵션             | Not implemented; explicit message (Phase 03)                                                        |
+| INPUTSEARCHOPTIONS  |                                                     | 검색 입력 옵션             | Dialog and -INPUTSEARCHOPTIONS; content search results pending later phases                         |
 | INSERT              | DDINSERT, -I, I, INSERTURL                          | 삽입                       | Not implemented; explicit message (Phase 13)                                                        |
 | INSERTOBJ           | IO                                                  | OLE 객체                   | Not implemented; explicit message (Phase 13)                                                        |
 | INTERFERE           | INF                                                 | 간섭                       | Not implemented; explicit message (Phase 22)                                                        |

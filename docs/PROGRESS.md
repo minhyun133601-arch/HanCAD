@@ -14,7 +14,7 @@ shortcut menus, command aliases/AutoCorrect and the command window.
 | 3.1 Command catalog and aliases           | Done    | Canonical/global names, Korean/English names and help, flags, implementation status, completed acad.pgp aliases, generated COMMANDS.md |
 | 3.2 Input parsing and ImeController       | Done    | Prompt input modes, Hangul normalization, Space/Enter rules, PGP grammar incl. external commands, transparent-command rules            |
 | 3.3 Command line window                   | Done    | Floating/docked bar, temporary prompt lines, F2/Ctrl+F2/Ctrl+9, command-name prompt, history recall, right-click menu                  |
-| 3.4 AutoComplete and input search options | Planned | Suggestion list, auto-append, mid-string, sysvars, frequency order, delay, AutoCorrect DB, INPUTSEARCHOPTIONS dialog                   |
+| 3.4 AutoComplete and input search options | Done    | Suggestion list, auto-append, mid-string, sysvars, frequency order, delay, AutoCorrect DB, INPUTSEARCHOPTIONS dialog                   |
 | 3.5 Transparent commands                  | Planned | `>>` prompts for 'ZOOM/'PAN/'SETVAR/sysvars/'DIST/'CAL/'OSNAP/'HELP, resume message and original prompt                                |
 | 3.6 PGP import, ALIASEDIT and REINIT      | Planned | User acad.pgp import/merge (user wins), persistent profile copy, ALIASEDIT dialog, REINIT/RE-INIT reload                               |
 | 3.7 Macros and DIESEL                     | Planned | ^C^C, ;, space, \ pause, \*^C^C repeat, $M=, ^P and other controls; DIESEL evaluator; MODEMACRO; ribbon macros                         |
@@ -54,11 +54,33 @@ Note: `HanCAD 실행.cmd` leaves `scripts/serve-app.mjs` serving `apps/web/dist`
 port 1420, and Playwright reuses that server. Run `pnpm build:web` before E2E so
 the tests exercise current source.
 
-Exact next step: milestone 3.4 (AutoComplete and input search options): the
-suggestion list under the bar, auto-append, mid-string search, system-variable
-search, frequency order, INPUTSEARCHDELAY, the AutoCorrect database and the
-INPUTSEARCHOPTIONS dialog, wired into `CommandLine`'s `children` slot and the
-customize menu's `inputSettings` entries.
+### Milestone 3.4 AutoComplete and input search options (2026-10-16)
+
+Delivered: the suggestion list above the command input (after INPUTSEARCHDELAY),
+inline completion of the top prefix match, exact/alias-first ranking with prefix,
+mid-string and AutoCorrect tiers in frequency or alphabetical order, system
+variables in the same list or a separate Tab list, transparent-only suggestions
+for apostrophe input inside commands, Up/Down/Tab/Shift+Tab/Backspace/mouse
+handling, AutoCorrect learning after n corrections (AutoCorrectUserDB.pgp form,
+applied to every open drawing), profile storage of options and usage counts, the
+INPUTSEARCHOPTIONS dialog, -INPUTSEARCHOPTIONS prompts, and the Input Settings
+flyout in the customize and right-click menus. Commands with their own prompt
+sequence share `CommandDefinition.nextPrompt` (UNDO, MREDO and
+-INPUTSEARCHOPTIONS). Content search stores its settings, and the dialog states
+that its results arrive with the layer, style, hatch and block phases. The
+`DrawingNotices` component was split out of DocumentApp to keep that file near
+the 400-line limit.
+
+Verification: lint, formatting, strict TypeScript, unit, compatibility and
+command-doc checks, the production build and the full E2E suite (including the
+new `autocomplete.spec.ts`) pass: 505 unit, 30 compatibility and 72 E2E tests
+(one opt-in skip).
+
+Exact next step: milestone 3.5 (transparent commands): `>>` prompts for 'ZOOM,
+'PAN, 'SETVAR, sysvar names, 'DIST, 'CAL, 'OSNAP and 'HELP inside a running
+command, the resume message and the return to the original prompt. Start from
+`interpretCommandInput` (it already classifies transparent input) and the
+`submit` path in DocumentApp, which currently special-cases ZOOM/PAN.
 
 ## Completed phase: Phase 02 rendering engine and view navigation (2026-10-16)
 

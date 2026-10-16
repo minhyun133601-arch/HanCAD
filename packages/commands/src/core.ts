@@ -3,7 +3,7 @@ import type { SysvarValue } from '@hancad/sysvars';
 import type { CommandInput } from '@hancad/editor';
 import { commandMessages } from './messages';
 import { CommandInputError } from './input-errors';
-import { runUndo, runMultipleRedo, runOops } from './history-commands';
+import { historyInputPrompt, runUndo, runMultipleRedo, runOops } from './history-commands';
 import type { CommandContext, CommandDefinition } from './types';
 import type { CommandRegistry } from './registry';
 
@@ -47,6 +47,16 @@ export function registerCoreCommands(registry: CommandRegistry): void {
       execute,
     };
     if (variableCommands.has(name)) definition.systemVariable = name;
+    if (name === 'UNDO' || name === 'MREDO')
+      definition.nextPrompt = (values, state) => {
+        const prompt = historyInputPrompt(
+          name,
+          values,
+          state.locale,
+          state.database.undoMarkCount > 0,
+        );
+        return prompt === undefined ? undefined : { prompt };
+      };
     registry.register(definition);
   }
 }

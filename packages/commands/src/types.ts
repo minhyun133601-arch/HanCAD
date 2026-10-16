@@ -29,7 +29,24 @@ export interface CommandDefinition {
   flags?: CommandFlags;
   /** A command that opens a system-variable value prompt instead of a manager. */
   systemVariable?: string;
+  /**
+   * Interactive command-line prompts: the next prompt for the answers collected so
+   * far, or undefined when the command can run with them (UNDO, -INPUTSEARCHOPTIONS).
+   */
+  nextPrompt?: (values: readonly string[], state: PromptState) => PromptStep | undefined;
   execute?: (context: CommandContext) => void | Promise<void>;
+}
+/** What a command's prompt sequence may read while answers are being collected. */
+export interface PromptState {
+  database: DrawingDatabase;
+  sysvars: SystemVariables;
+  locale: CommandLocale;
+  prefixes: CommandPrefixes;
+}
+export interface PromptStep {
+  prompt: string;
+  /** Printed before the prompt, e.g. after an invalid keyword. */
+  notice?: string;
 }
 export interface CommandPrefixes {
   global: boolean;

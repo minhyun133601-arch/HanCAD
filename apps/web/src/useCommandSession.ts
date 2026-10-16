@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CommandRegistry, HeadlessCommandRunner, historyInputPrompt } from '@hancad/commands';
-import type { CommandResult } from '@hancad/commands';
+import { CommandRegistry, HeadlessCommandRunner } from '@hancad/commands';
+import type { CommandPrefixes, CommandResult, PromptStep } from '@hancad/commands';
 import { DrawingDatabase } from '@hancad/db';
 import { getSystemVariableDefinition, SystemVariables } from '@hancad/sysvars';
 import type { DrawingDocument } from '@hancad/sysvars';
@@ -20,7 +20,15 @@ type PromptSession =
   | { kind: 'idle' }
   | { kind: 'variable-name'; command: 'GETVAR' | 'SETVAR' }
   | { kind: 'variable-value'; command: string; name: string }
-  | { kind: 'history'; command: 'UNDO' | 'MREDO'; values: string[] };
+  /** A command with its own prompt sequence (UNDO, MREDO, -INPUTSEARCHOPTIONS). */
+  | {
+      kind: 'prompted';
+      command: string;
+      /** The typed command token, rerun with the collected answers. */
+      line: string;
+      prefixes: CommandPrefixes;
+      values: string[];
+    };
 
 export function useCommandSession(locale: Locale, document?: DrawingDocument) {
   const messages = getMessages(locale);
@@ -80,14 +88,11 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
   function promptText(session: PromptSession): string {
     if (session.kind === 'idle') return messages.commandPrompt;
     if (session.kind === 'variable-name') return messages.sysvarNamePrompt;
-    if (session.kind === 'history')
+    if (session.kind === 'prompted')
+      // Recomputed on render so a language switch relocalizes the active prompt.
       return (
-        historyInputPrompt(
-          session.command,
-          session.values,
-          locale,
-          runtime.database.undoMarkCount > 0,
-        ) ?? messages.commandPrompt
+        nextStep(session.command, session.prefixes, session.values)?.prompt ??
+        messages.commandPrompt
       );
     try {
       const current = runtime.sysvars.get(session.name);
@@ -136,20 +141,13 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     setInput('');
     inputs.current.resetCursor();
     const active = promptRef.current;
-    if (active.kind === 'history') {
+    if (active.kind === 'prompted') {
       print(`${promptText(active)} ${value}`, 'echo');
       const values = [...active.values, value];
-      const prompt = historyInputPrompt(
-        active.command,
-        values,
-        locale,
-        runtime.database.undoMarkCount > 0,
-      );
-      if (prompt) {
-        transition({ ...active, values });
-        print(prompt);
-      } else {
-        const result = await run(active.command, values);
+      const step = nextStep(active.command, active.prefixes, values);
+      if (step) showStep({ ...active, values }, step);
+      else {
+        const result = await run(active.line, values);
         if (result.status === 'ok') transition({ kind: 'idle' });
       }
       return;
@@ -193,17 +191,13 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
       (resolution?.definition.execute || getSystemVariableDefinition(tokens[0] ?? ''))
     )
       runtime.database.invalidateSingleRedo();
-    if (command === 'UNDO' || command === 'MREDO') {
+    if (resolution && command && resolution.definition.nextPrompt) {
       const values = tokens.slice(1);
-      const prompt = historyInputPrompt(
-        command,
-        values,
-        locale,
-        runtime.database.undoMarkCount > 0,
-      );
-      if (prompt) {
-        transition({ kind: 'history', command, values });
-        print(prompt);
+      const step = nextStep(command, resolution.prefixes, values);
+      if (step) {
+        const line = tokens[0] ?? command;
+        const base = { kind: 'prompted', command, line, prefixes: resolution.prefixes } as const;
+        showStep({ ...base, values }, step);
         return;
       }
     }
@@ -236,6 +230,24 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
       return;
     }
     await run(line);
+  }
+
+  function nextStep(
+    command: string,
+    prefixes: CommandPrefixes,
+    values: readonly string[],
+  ): PromptStep | undefined {
+    return runtime.registry.get(command)?.nextPrompt?.(values, {
+      database: runtime.database,
+      sysvars: runtime.sysvars,
+      locale,
+      prefixes,
+    });
+  }
+  function showStep(next: Extract<PromptSession, { kind: 'prompted' }>, step: PromptStep): void {
+    if (step.notice) print(step.notice);
+    transition(next);
+    print(step.prompt);
   }
 
   async function run(line: string, values: readonly string[] = []): Promise<CommandResult> {
@@ -281,7 +293,12 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     history,
     inputMode: inputMode(promptSession),
     /** Command whose prompt the session itself owns (SETVAR, UNDO, a variable name). */
-    promptCommand: promptSession.kind === 'idle' ? null : promptSession.command,
+    promptCommand:
+      promptSession.kind === 'idle'
+        ? null
+        : promptSession.kind === 'prompted' && promptSession.prefixes.commandLine
+          ? `-${promptSession.command}`
+          : promptSession.command,
     startedCommand,
     remember,
     recentCommands: (): string[] => {

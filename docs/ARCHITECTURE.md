@@ -167,6 +167,17 @@ only changes how many recent lines are visible; `InputHistory` stores Up/Down
 recall per prompt context. `menus/ContextMenu.tsx` is the shared keyboard-aware
 menu for the command line and later shortcut and status-bar menus.
 
+AutoComplete is split the same way. `packages/commands/src/input-search.ts` ranks
+suggestions and computes the inline completion; `autocorrect.ts` learns
+corrections in AutoCorrectUserDB.pgp form; `input-search-command.ts` implements
+INPUTSEARCHOPTIONS and its command-line form through the shared
+`CommandDefinition.nextPrompt` prompt sequence. In the app, `InputSearchStore`
+keeps profile-wide options, usage counts and learned corrections in browser
+storage; `useInputSearch` loads corrections into each drawing's registry and
+builds the Input Settings menu; `useAutoComplete` owns the delay, highlight and
+key handling that `CommandLine` consults before its own Enter/Up/Down/Tab
+handling; `SuggestionList` and `InputSearchDialog` render them.
+
 The bootstrap geometry crate is compiled to WASM and exercised from TypeScript.
 Native OS integration belongs to Rust behind a Platform interface. The browser
 adapter must explicitly report unavailable OS features. Drawing files must not be

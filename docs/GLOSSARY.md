@@ -94,6 +94,24 @@
 | DIST, AREA, LIST, MEASUREGEOM, QUICKCALC | 거리, 면적, 리스트, 측정, 빠른 계산기 |
 | PLOT, PAGESETUP, PURGE | 플롯, 페이지 설정 관리자, 소거 |
 
+## Command window and input search (Phase 03)
+| English | 한국어 UI |
+|---|---|
+| Customize / Recent Commands / Input Settings | 사용자화 / 최근 명령 / 입력 설정 |
+| AutoComplete / AutoCorrect | 자동 완성 / 자동 수정 |
+| Search System Variables / Search Content / Mid-string Search / Delay Time | 시스템 변수 검색 / 컨텐츠 검색 / 중간 문자열 검색 / 지연 시간 |
+| Input Search Options (dialog) | 검색 입력 옵션 |
+| Enable AutoComplete / Enable Mid-string Search | 자동 완성 사용 / 중간 문자열 검색 사용 |
+| According to frequency of usage / Alphabetically | 사용 빈도에 따름 / 알파벳순 |
+| Enable AutoCorrect / Remember Corrections After n Mistypes | 자동 수정 사용 / n번 잘못 입력한 후에 수정 사항 저장 |
+| Separate Commands and System Variables | 명령 및 시스템 변수 분리 |
+| Suggestion List Delay Time / milliseconds | 제안 사항 리스트 지연 시간 / 밀리초 |
+| Search Content at Command Line / Content Type | 명령행에서 컨텐츠 검색 / 컨텐츠 유형 |
+| Block, Layer, Hatch, Visual Style, Text Style, Dim Style | 블록, 도면층, 해치, 비주얼 스타일, 문자 스타일, 치수 스타일 |
+| Suggestion list | 제안 사항 리스트 |
+| Copy History / Paste To CmdLine / Transparency / Lines of Prompt History | 기록 복사 / 명령행에 붙여넣기 / 투명도 / 프롬프트 기록 줄 |
+| Text Window | 문자 윈도우 |
+
 The Phase 03 command catalog (`packages/commands/src/catalog/`, also shown in the
 generated table of docs/COMMANDS.md) holds the Korean display name of every other
 registered command; names not listed above are pending reference review in

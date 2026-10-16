@@ -9,7 +9,7 @@ import { changeToggle, StatusBar, type StatusToggle } from './StatusBar';
 import { createPlatform } from './platform';
 import { useCommandSession } from './useCommandSession';
 import { useDrawingFiles } from './useDrawingFiles';
-import { ImportReport } from './ImportReport';
+import { DrawingNotices } from './DrawingNotices';
 import { ProgressDialog } from './ProgressDialog';
 import type { CanvasSurface } from './canvas-surface';
 import { DimensionStyleDialog } from './DimensionStyleDialog';
@@ -302,6 +302,7 @@ export function DocumentApp({
         <CommandWindow
           window={commandWindow}
           messages={messages}
+          locale={locale}
           text={commandText}
           session={session}
           drawingName={displayName}
@@ -309,6 +310,7 @@ export function DocumentApp({
           commandName={commandName}
           editable={!navigation.active && tools.editable}
           mode={inputMode}
+          commandActive={commandActive}
           blocked={files.reading || files.restoring}
           inputRef={inputRef}
           submit={submit}
@@ -331,25 +333,7 @@ export function DocumentApp({
             {messages.selectedObjects(draft.selectedIds.length)}
           </div>
         )}
-        {files.hiddenAll && (
-          <div className="hidden-layers-notice">
-            <p>{messages.hiddenLayersNote}</p>
-            <button onClick={() => execute('LAYON')}>{messages.showAllLayers}</button>
-          </div>
-        )}
-        <ImportReport report={files.report} messages={messages} />
-        {files.reading && (
-          <div className="drawing-loading" role="status">
-            <p>{files.progress || messages.importing}</p>
-            <button onClick={files.cancelImport}>{messages.cancelImport}</button>
-          </div>
-        )}
-        {files.restoring && !files.reading && (
-          <div className="drawing-loading" role="status">
-            <p>{messages.restoringDrawing}</p>
-            <button onClick={() => files.cancelRestore()}>{messages.cancelImport}</button>
-          </div>
-        )}
+        <DrawingNotices files={files} messages={messages} execute={execute} />
       </div>
       <StatusBar
         messages={messages}

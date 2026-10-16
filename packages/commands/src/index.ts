@@ -8,4 +8,7 @@ export * from './registry';
 export * from './runner';
 export * from './command-input';
 export * from './input-errors';
+export * from './input-search';
+export * from './input-search-command';
+export * from './autocorrect';
 export { undoPrompt, historyInputPrompt, historyErrorMessage } from './history-commands';
