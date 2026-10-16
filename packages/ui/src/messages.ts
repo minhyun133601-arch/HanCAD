@@ -233,6 +233,7 @@ export interface Messages {
   draftingUsage: string;
   firstPoint: string;
   nextPointUndo: string;
+  macroUnsupported: (code: string) => string;
   nextPoint: string;
   oppositeCorner: string;
   center: string;

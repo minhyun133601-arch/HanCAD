@@ -192,6 +192,13 @@ acad.pgp and synonym list per profile with an optional File System Access handle
 (`support-file-handles.ts`); `PgpCommands` loads them into each drawing's registry
 and owns REINIT, RE-INIT and ALIASEDIT.
 
+Macros: `packages/commands/src/macro.ts` parses CUI macro strings into steps and
+`diesel.ts` (with `diesel-format.ts` for rtos/angtos) evaluates DIESEL. In the app,
+`useMacroRunner` replays the steps through `useCommandRouting` (submit, cancel,
+synchronous `isActive`), waiting for each React commit; DocumentApp's `execute`
+runs every menu or button command as a macro, and user input or Esc answers a
+pause or ends a repeat. The status bar evaluates MODEMACRO.
+
 The bootstrap geometry crate is compiled to WASM and exercised from TypeScript.
 Native OS integration belongs to Rust behind a Platform interface. The browser
 adapter must explicitly report unavailable OS features. Drawing files must not be

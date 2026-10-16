@@ -5,7 +5,7 @@ import { useCommandWindow } from './command-line/useCommandWindow';
 import { useCommandWindowCommands } from './command-line/useCommandWindowCommands';
 import { DrawingSurface, type LayoutId } from './DrawingSurface';
 import { FileTabs, Ribbon, TitleBar, type RibbonTab } from './ShellChrome';
-import { changeToggle, StatusBar, type StatusToggle } from './StatusBar';
+import { changeToggle, StatusBar, statusToggles, type StatusToggle } from './StatusBar';
 import { createPlatform } from './platform';
 import { useCommandSession } from './useCommandSession';
 import { useDrawingFiles } from './useDrawingFiles';
@@ -23,6 +23,7 @@ import { layoutFromName, layoutName, useHostVariables } from './host-variables';
 import type { DocumentManager, DrawingDocument } from '@hancad/sysvars';
 import { useViewNavigation } from './useViewNavigation';
 import { useCommandRouting } from './useCommandRouting';
+import { useMacroRunner } from './useMacroRunner';
 import { DisplayOptionsDialog } from './DisplayOptionsDialog';
 
 export function DocumentApp({
@@ -107,20 +108,42 @@ export function DocumentApp({
   useHostVariables(drawingDocument.id, { locale, layout, state: tools.state }, canvasSurface);
   const inputRef = useRef<HTMLDivElement | HTMLInputElement>(null);
   const routing = useCommandRouting({ session, navigation, tools, surface: canvasSurface, locale });
-  const { inputMode, commandActive, commandName, historyContext, submit, cancel } = routing;
+  const { inputMode, commandActive, commandName, historyContext } = routing;
+  const macros = useMacroRunner({
+    registry: session.registry,
+    target: routing,
+    sysvars: session.sysvars,
+    print: session.print,
+    setEcho: session.setEcho,
+    toggle: (key) => {
+      const label = ({ B: 'snap', G: 'grid', O: 'ortho' } as const)[key as 'B' | 'G' | 'O'];
+      const item = statusToggles.find((entry) => entry.label === label);
+      if (item?.implemented === false) session.print(messages.draftingAidsPending);
+      else if (item) toggle(item);
+      else session.print(messages.macroUnsupported(`^${key}`));
+    },
+    unsupported: messages.macroUnsupported,
+  });
+  /** User input: it answers a macro pause, and a new command typed at idle ends a macro. */
+  async function submit(value: string): Promise<void> {
+    if (!routing.isActive() && value.trim()) macros.abort();
+    await routing.submit(value);
+    macros.inputReceived();
+  }
+  function cancel(): void {
+    macros.abort();
+    routing.cancel();
+  }
 
   function focusCommand(): void {
     if (!text.editable) inputRef.current?.focus({ preventScroll: true });
   }
+  /** Menus, ribbon and buttons run AutoCAD macros; a bare command name gets ^C^C_. */
   function execute(command: string): void {
     canvasSurface.current?.cancelPointerInteraction();
-    routing.reset();
     if (files.restoring) files.cancelRestore(false);
-    tools.cancelAll();
-    navigation.cancel(false);
-    canvasSurface.current?.setSnapMarker();
     commandWindow.show();
-    session.startCommand(command);
+    void macros.run(/[\^;\\$*']/.test(command) ? command : `^C^C_${command}`);
     focusCommand();
   }
   function openFile(file: File): void {
@@ -244,10 +267,16 @@ export function DocumentApp({
           selectedIds={navigation.snapshot?.selectedIds ?? tools.selectedIds}
           active={tools.active || navigation.active}
           selectionGesture={interaction.selectionGesture}
-          onPick={interaction.pick}
+          onPick={(event) => {
+            interaction.pick(event);
+            macros.inputReceived();
+          }}
           onCoordinates={interaction.cursor}
           canSelectArea={interaction.canSelectArea}
-          onSelectionDrag={interaction.selectionDrag}
+          onSelectionDrag={(event) => {
+            interaction.selectionDrag(event);
+            if (event.phase === 'end') macros.inputReceived();
+          }}
           suppressSelectionBox={interaction.suppressSelectionBox}
           getNavigationSettings={interaction.getNavigationSettings}
           onNavigate={onNavigate}
@@ -266,7 +295,7 @@ export function DocumentApp({
           <span>
             {messages.visibleObjects} {files.visibleCount}
           </span>
-          <button onClick={() => execute('ZOOM E')}>{messages.fitDrawing}</button>
+          <button onClick={() => execute("'_zoom _e")}>{messages.fitDrawing}</button>
         </div>
         <div className="drafting-usage">{tools.usage}</div>
         <CommandWindow

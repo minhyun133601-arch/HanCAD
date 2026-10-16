@@ -1,5 +1,41 @@
 # Decisions
 
+## 2026-10-16: Phase 03 menu macros, DIESEL and MODEMACRO (milestone 3.7)
+
+Ribbon buttons, menus, the recent-command list and the Delete key run AutoCAD
+command macros. A bare command name becomes `^C^C_NAME`, so the history shows
+`명령: _LINE` as AutoCAD does after a ribbon click; the "도면 전체 맞춤" button runs
+AutoCAD's transparent `'_zoom _e`, so it zooms inside LINE and resumes it. A
+macro is replayed through the same command-line routing as typed input: `^C`
+cancels only when something is active (so a preselection survives `^C^C_ERASE`
+at idle) and prints `*취소*` once; `;` and `^M` are Enter; a space is the
+Spacebar (Enter, except at free-text prompts); `\` waits for one user answer
+(typed entry, click or window selection); a macro ending in text gets AutoCAD's
+automatic trailing space; `^Z` suppresses it; `*^C^C` restarts the macro after
+each command that needed user input, until Esc or a command typed by the user.
+`^B`/`^G`/`^O` toggle snap/grid/ortho through the status-bar toggles; `^P` toggles
+the input echo (MENUECHO bits 1 and 4) and `^Q` hides the macro's history lines.
+`^D`, `^E`, `^T`, `^V`, `^R`, `^]` and `=*` print an explicit "not supported yet"
+message. Each step waits for React to commit the previous one (or 30 ms), so it
+never acts on a stale prompt.
+
+DIESEL follows the Autodesk function reference: arithmetic, comparisons, bitwise
+and/or/xor, eq, if, nth, index, strlen, substr, upper, fix, rtos, angtos, getvar,
+getenv, eval and edtime, at most ten parameters, quoted literals with doubled
+quote marks, and the four error forms `$?`, `$(func,??)`, `$(func)??` and
+`$(++)`. Undocumented details are assumptions listed for comparison: integers print
+without decimals and reals with up to 15 significant digits; leading and trailing
+spaces are ignored in numbers, names and eq; `$(if,0,x)` returns an empty string;
+getenv has no HanCAD environment yet; the output limit is 4096 characters.
+`$M=` output is replayed as macro text. MODEMACRO is evaluated on every status-bar
+update and shown left of the toggles. DEVMACRO (development builds or
+`?devtools=1`) runs a typed macro for tests. A command whose `nextPrompt` step sets
+`text` gets a free-text prompt.
+
+An apostrophe entry at the idle command prompt now runs the command normally,
+without `>>` prompts or the transparent CMDACTIVE bit; the runner derives "a
+command is running" from CMDACTIVE when the caller does not say.
+
 ## 2026-10-16: Phase 03 user PGP files, ALIASEDIT and REINIT (milestone 3.6)
 
 The user's acad.pgp is merged over the built-in aliases (the user's definition

@@ -13,3 +13,5 @@ export * from './input-search-command';
 export * from './autocorrect';
 export { undoPrompt, historyInputPrompt, historyErrorMessage } from './history-commands';
 export * from './pgp-edit';
+export * from './diesel';
+export * from './macro';

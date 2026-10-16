@@ -46,13 +46,20 @@ export function useCommandRouting({
   /** Up/Down recall values given at the same kind of prompt of the same command. */
   const historyContext = inputMode === 'command' ? 'command' : `${commandName ?? ''}:${inputMode}`;
 
+  /** Synchronous state, so macro steps never act on a stale render. */
+  const isActive = (): boolean =>
+    navigation.isActive() ||
+    tools.isActive() ||
+    session.isPrompting('main') ||
+    session.isPrompting('nested') ||
+    transparent.isActive();
   async function submit(value: string): Promise<void> {
     if (historyContext !== 'command') session.remember(historyContext, value);
-    if (commandActive && value.trim().startsWith("'")) {
+    if (isActive() && value.trim().startsWith("'")) {
       await transparent.start(value, outerName ?? '', prompt);
       return;
     }
-    if (nested) {
+    if (session.isPrompting('nested')) {
       await session.execute(value);
       return;
     }
@@ -87,6 +94,7 @@ export function useCommandRouting({
     prompt,
     editable: nested ? session.editable : !navigation.active && tools.editable,
     historyContext,
+    isActive,
     submit,
     cancel,
     /** A new command from a menu or button ends any transparent command silently. */

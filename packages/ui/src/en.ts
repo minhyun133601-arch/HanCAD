@@ -250,6 +250,7 @@ export const en: Messages = {
     'L line · C circle · REC rectangle · DLI dimension · DI distance · F3 object snap · F8 Ortho · Drag select/move · Ctrl+drag copy · Wheel zoom · Middle-drag pan',
   firstPoint: 'Specify first point:',
   nextPointUndo: 'Specify next point or [Undo]:',
+  macroUnsupported: (code) => `The macro control character ${code} is not supported yet.`,
   nextPoint: 'Specify next point or [Close/Undo]:',
   oppositeCorner: 'Specify opposite corner:',
   center: 'Specify center of circle:',

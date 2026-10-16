@@ -84,6 +84,8 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     }),
   );
   const lastCommand = useRef('');
+  /** Menu macros may hide their input echo (^P, MENUECHO) or all output (^Q). */
+  const echo = useRef<'all' | 'no-echo' | 'quiet'>('all');
   /** Canonical name of the command most recently started from the command line. */
   const [startedCommand, setStartedCommand] = useState<string | null>(null);
   const pending = useRef(false);
@@ -132,6 +134,7 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
   }
 
   function print(text: string, kind: HistoryLine['kind'] = 'output'): void {
+    if (echo.current === 'quiet' || (echo.current === 'no-echo' && kind === 'echo')) return;
     const line = { id: serial.current++, text, kind };
     setHistory((previous) => [...previous.slice(-299), line]);
   }
@@ -322,6 +325,8 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
 
   function inputMode(session: PromptSession): PromptInputMode {
     if (session.kind === 'idle') return 'command';
+    if (session.kind === 'prompted')
+      return nextStep(session.command, session.prefixes, session.values)?.text ? 'text' : 'keyword';
     if (session.kind !== 'variable-value') return 'keyword';
     // String values (MODEMACRO, DIMPOST...) are free text; spaces belong to the value.
     return getSystemVariableDefinition(session.name)?.type === 'string' ? 'text' : 'number';
@@ -347,6 +352,9 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     nestedActive,
     isPrompting: (slot: Slot = 'main') => slots.current[slot].kind !== 'idle',
     cancelNested: () => transition('nested', { kind: 'idle' }),
+    setEcho: (mode: 'all' | 'no-echo' | 'quiet') => {
+      echo.current = mode;
+    },
     startedCommand,
     remember,
     recentCommands: (): string[] => {
@@ -361,8 +369,7 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     busy,
     revision,
     prompt: promptText(shown, nestedActive ? 'nested' : 'main'),
-    editable:
-      shown.kind === 'variable-value' && getSystemVariableDefinition(shown.name)?.type === 'string',
+    editable: inputMode(shown) === 'text',
     changeInput,
     recall,
     execute,

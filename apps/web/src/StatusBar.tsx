@@ -1,3 +1,5 @@
+import { evaluateDiesel } from '@hancad/commands';
+import { dieselHost } from './useMacroRunner';
 import { getSystemVariableDefinition } from '@hancad/sysvars';
 import type { SystemVariables } from '@hancad/sysvars';
 import type { MessageKey, Messages } from '@hancad/ui';
@@ -43,6 +45,22 @@ export function changeToggle(sysvars: SystemVariables, toggle: StatusToggle): bo
   return isToggleEnabled(sysvars, toggle);
 }
 
+/** MODEMACRO: user text on the status bar, evaluated as DIESEL on every update. */
+function ModeMacro({ sysvars }: { sysvars: SystemVariables }) {
+  let source = '';
+  try {
+    source = String(sysvars.get('MODEMACRO'));
+  } catch {
+    return null;
+  }
+  if (!source) return null;
+  return (
+    <span className="status-modemacro" data-testid="modemacro">
+      {evaluateDiesel(source, dieselHost(sysvars))}
+    </span>
+  );
+}
+
 export function StatusBar({
   messages,
   layout,
@@ -84,6 +102,7 @@ export function StatusBar({
           +
         </button>
       </div>
+      <ModeMacro sysvars={sysvars} />
       <div className="status-toggles" role="toolbar" aria-label={messages.statusBar}>
         {statusToggles.map((item) => (
           <button

@@ -91,6 +91,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | DDVPOINT            | VP                                                  | 관측점 사전 설정           | Not implemented; explicit message (Phase 21)                                                        |
 | DELAY               |                                                     | 지연                       | Not implemented; explicit message (Phase 19)                                                        |
 | DELCONSTRAINT       | DELCON                                              | 구속조건 삭제              | Not implemented; explicit message (Phase 18)                                                        |
+| DEVMACRO            |                                                     | 매크로 시험                | Dev-only; runs a typed menu macro (development builds or ?devtools=1)                               |
 | DEVSTRESS           |                                                     | 렌더러 부하 시험           | Dev-only nonpersistent renderer dataset, 0-1000000 entities                                         |
 | DIM                 |                                                     | 치수                       | Partial / Smart line, circle and arc dimensions with hover preview                                  |
 | DIMALIGNED          | DAL, DIMALI                                         | 정렬                       | Two points or object, placement, Text and text Angle                                                |

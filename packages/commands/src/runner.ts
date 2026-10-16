@@ -52,10 +52,11 @@ export class HeadlessCommandRunner {
     const messages: string[] = [];
     if (line === '\u001b')
       return { status: 'cancelled', messages: [commandMessages.cancelled(this.locale)] };
-    const transparentActive =
-      situation.transparentActive ?? (this.sysvars.getNumber('CMDACTIVE') & 2) !== 0;
+    // Without an explicit situation, CMDACTIVE tells whether a command is running.
+    const active = this.sysvars.getNumber('CMDACTIVE');
+    const transparentActive = situation.transparentActive ?? (active & 2) !== 0;
     let input = interpretCommandInput(this.registry, line, {
-      commandActive: situation.commandActive ?? false,
+      commandActive: situation.commandActive ?? (active & 3) !== 0,
       transparentActive,
     });
     if (input.kind === 'repeat') {
@@ -104,7 +105,8 @@ export class HeadlessCommandRunner {
       }
       const resolved = input.resolution;
       command = resolved.canonicalName;
-      context.prefixes = resolved.prefixes;
+      // At the command prompt an apostrophe entry runs as an ordinary command.
+      context.prefixes = { ...resolved.prefixes, transparent: input.transparent };
       if (!resolved.definition.execute)
         return {
           status: 'not-implemented',
@@ -114,7 +116,7 @@ export class HeadlessCommandRunner {
       const previousActive = this.sysvars.getNumber('CMDACTIVE');
       if (command !== 'REDO') this.database.invalidateSingleRedo();
       const previousNames = this.sysvars.get('CMDNAMES');
-      const transparent = input.transparent || resolved.prefixes.transparent;
+      const transparent = input.transparent;
       try {
         this.sysvars.setRuntimeSessionValue('CMDACTIVE', previousActive | (transparent ? 2 : 1));
         this.sysvars.setRuntimeSessionValue(

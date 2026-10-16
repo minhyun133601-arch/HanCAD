@@ -47,6 +47,8 @@ export interface PromptStep {
   prompt: string;
   /** Printed before the prompt, e.g. after an invalid keyword. */
   notice?: string;
+  /** Free text: spaces belong to the answer and the IME may compose Korean. */
+  text?: boolean;
 }
 export interface CommandPrefixes {
   global: boolean;

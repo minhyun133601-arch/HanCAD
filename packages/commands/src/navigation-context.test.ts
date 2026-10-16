@@ -15,10 +15,13 @@ describe('navigation command invocation context', () => {
       },
     });
     expect((await runner.run('_-PAN', ['0,0', '20,10'])).status).toBe('ok');
+    expect((await runner.run("'_PAN", [], { commandActive: true })).status).toBe('ok');
+    // At the command prompt an apostrophe entry runs as an ordinary command.
     expect((await runner.run("'_PAN")).status).toBe('ok');
     expect(prefixes).toEqual([
       { global: true, builtin: false, commandLine: true, transparent: false },
       { global: true, builtin: false, commandLine: false, transparent: true },
+      { global: true, builtin: false, commandLine: false, transparent: false },
     ]);
   });
 });

@@ -10,6 +10,7 @@ export const rowsD: readonly string[] = [
   'DDVPOINT|관측점 사전 설정|Viewpoint Presets|3D 관측 방향을 설정합니다.|Sets the 3D viewing direction.|21',
   'DELAY|지연|Delay|스크립트에서 시간 지연을 지정합니다.|Provides a timed pause within a script.|19',
   'DELCONSTRAINT|구속조건 삭제|Delete Constraints|선택한 객체에서 모든 구속조건을 제거합니다.|Removes all constraints from a selection set.|18',
+  'DEVMACRO|매크로 시험|Macro Test|메뉴 매크로 문자열을 실행합니다(개발용).|Runs a menu macro string (development).|3',
   'DEVSTRESS|렌더러 부하 시험|Renderer Stress Test|저장하지 않는 렌더러 시험 데이터를 만듭니다.|Creates a nonpersistent renderer test dataset.|2',
   'DIM|치수|Dimension|하나의 명령에서 여러 치수를 작성합니다.|Creates multiple dimensions in a single command session.|11',
   'DIMALIGNED|정렬|Aligned Dimension|정렬된 선형 치수를 작성합니다.|Creates an aligned linear dimension.|11',

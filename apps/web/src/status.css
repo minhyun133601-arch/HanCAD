@@ -108,3 +108,12 @@
     padding: 0 12px;
   }
 }
+.status-modemacro {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 10px;
+  color: #dbe3ea;
+  white-space: pre;
+  text-overflow: ellipsis;
+}

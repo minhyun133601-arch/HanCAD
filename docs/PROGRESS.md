@@ -17,7 +17,7 @@ shortcut menus, command aliases/AutoCorrect and the command window.
 | 3.4 AutoComplete and input search options | Done    | Suggestion list, auto-append, mid-string, sysvars, frequency order, delay, AutoCorrect DB, INPUTSEARCHOPTIONS dialog                   |
 | 3.5 Transparent commands                  | Done    | `>>` prompts for 'ZOOM/'PAN/'SETVAR/sysvars/'DIST/'CAL/'OSNAP/'HELP, resume message and original prompt                                |
 | 3.6 PGP import, ALIASEDIT and REINIT      | Done    | User acad.pgp import/merge (user wins), persistent profile copy, ALIASEDIT dialog, REINIT/RE-INIT reload                               |
-| 3.7 Macros and DIESEL                     | Planned | ^C^C, ;, space, \ pause, \*^C^C repeat, $M=, ^P and other controls; DIESEL evaluator; MODEMACRO; ribbon macros                         |
+| 3.7 Macros and DIESEL                     | Done    | ^C^C, ;, space, \ pause, \*^C^C repeat, $M=, ^P and other controls; DIESEL evaluator; MODEMACRO; ribbon macros                         |
 | 3.8 Keyboard bindings and overrides       | Planned | Every SHORTCUTS.md binding with ordered scopes, toggle messages, TEMPOVERRIDES key-down/key-up macros                                  |
 | 3.9 Mouse and shortcut menus              | Planned | SHORTCUTMENU bits, time-sensitive right click, Korean default/edit/command menus, Shift+right-click object snap menu                   |
 | 3.10 Status bar and F1 help               | Planned | All toggles with icons/menus, COORDS display, customization menu, F1 Korean help panel, phase acceptance                               |
@@ -109,10 +109,26 @@ Verification: lint, formatting, strict TypeScript, 517 unit, 30 compatibility an
 the command-doc checks, the production build and 79 E2E tests (one opt-in skip)
 pass.
 
-Exact next step: milestone 3.7 (macros and DIESEL): the menu macro language (^C^C,
-`;`, space, `\` pause, `*^C^C` repeat, `$M=`, ^P and the other controls), a DIESEL
-evaluator, MODEMACRO in the status bar, and ribbon buttons running macros such as
-`^C^C_LINE` and transparent `'_zoom _e`.
+### Milestone 3.7 macros, DIESEL and MODEMACRO (2026-10-16)
+
+Delivered: the CUI macro language (^C, ;, Space, \\ pause, automatic trailing
+space, ^Z, *^C^C repeat, $M= DIESEL, ^B/^G/^O toggles, ^P/MENUECHO, ^Q, ^M/^H/^I,
+explicit messages for the remaining controls); ribbon, menu and button commands
+run as `^C^C_NAME` macros and the extents button as the transparent `'_zoom _e`;
+a DIESEL evaluator with the documented functions and error forms; MODEMACRO in the
+status bar; DEVMACRO for tests; free-text prompted command steps. An apostrophe
+entry at the idle prompt now runs as an ordinary command.
+
+Verification: lint, formatting, strict TypeScript, 527 unit, 30 compatibility and
+the command-doc checks, the production build and 83 E2E tests (one opt-in skip)
+pass.
+
+Exact next step: milestone 3.8 (keyboard bindings and overrides): every binding in
+docs/SHORTCUTS.md resolved in the order text editor, dialog, command line, global;
+F-key and Ctrl toggle messages (`<그리드 켜기>` style); TEMPOVERRIDES with key-down
+and key-up macros (Shift for Ortho, Shift+A/S/E/... snap overrides); bindings for
+commands that are not built yet print the Korean not-implemented message. Start
+from `useWorkspaceShortcuts.ts` and `StatusBar.tsx` `statusToggles`.
 
 ## Completed phase: Phase 02 rendering engine and view navigation (2026-10-16)
 

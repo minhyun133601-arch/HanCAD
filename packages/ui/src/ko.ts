@@ -246,6 +246,7 @@ export const ko: Messages = {
     'L 선 · C 원 · REC 사각형 · DLI 치수 · DI 거리 · F3 끝점 스냅 · F8 직교 · 드래그 선택/이동 · Ctrl+드래그 복사 · 휠 확대 · 휠 누른 채 이동',
   firstPoint: '첫 번째 점 지정:',
   nextPointUndo: '다음 점 지정 또는 [명령 취소(U)]:',
+  macroUnsupported: (code) => `매크로 제어 문자 ${code}은(는) 아직 지원되지 않습니다.`,
   nextPoint: '다음 점 지정 또는 [닫기(C)/명령 취소(U)]:',
   oppositeCorner: '반대 구석 지정:',
   center: '원의 중심점 지정:',
