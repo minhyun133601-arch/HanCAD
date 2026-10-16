@@ -93,3 +93,8 @@
 | ZOOM, PAN, 3DORBIT | 줌, 초점이동, 궤도 |
 | DIST, AREA, LIST, MEASUREGEOM, QUICKCALC | 거리, 면적, 리스트, 측정, 빠른 계산기 |
 | PLOT, PAGESETUP, PURGE | 플롯, 페이지 설정 관리자, 소거 |
+
+The Phase 03 command catalog (`packages/commands/src/catalog/`, also shown in the
+generated table of docs/COMMANDS.md) holds the Korean display name of every other
+registered command; names not listed above are pending reference review in
+docs/PARITY_CHECKLIST.md.

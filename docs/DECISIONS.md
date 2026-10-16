@@ -1,5 +1,40 @@
 # Decisions
 
+## 2026-10-16: Phase 03 command catalog and aliases (milestone 3.1)
+
+The command registry is seeded from one catalog (`packages/commands/src/catalog/`)
+of 372 commands. Each row carries the canonical name, Korean and English display
+names, one-sentence Korean/English help text and the original phase that owns the
+complete command. Korean AutoCAD keeps English command names, so the global name
+(the `_` form) equals the canonical name. Catalog names/help stay authoritative
+when an application hook registers the implementation, so ribbon, F1 help and
+AutoComplete share one source. Display names follow GLOSSARY.md; the official
+Korean command-reference index could not be retrieved from the Autodesk help TOC,
+so the remaining Korean names and help sentences are HanCAD wording recorded for
+reference review in PARITY_CHECKLIST.md.
+
+Flags mirror ObjectARX registration: transparent, modal, pickfirst (USEPICKSET)
+and no-undo-marker. Only U/UNDO/REDO/MREDO/HELP/GETVAR and the two HanCAD
+diagnostic commands are no-undo; AutoCAD records other informational commands
+in the undo history. The transparent, modal and pickfirst lists are documented
+assumptions where Autodesk does not publish a table.
+
+Reference B aliases remain the built-in core. 172 further pairs come from the
+alternative/legacy/discontinued sections of an installed acad.pgp and are flagged
+for comparison with the current release; HanCAD writes its own table rather than
+bundling the Autodesk file. Reference B listed `GCON=GEOCONSTRAINT`; the actual
+command is GEOMCONSTRAINT, so the alias and ribbon button use GEOMCONSTRAINT.
+`ED` stays TEXTEDIT (current releases) rather than the older DDEDIT.
+
+PGP state has three layers: built-in aliases, the user's acad.pgp (last definition
+wins, user wins over built-in) and AutoCorrect entries below both. External
+command lines (`name,executable,flags,[*]prompt,`) are parsed and kept. A user
+alias to a command missing from the catalog registers an explicit not-implemented
+placeholder instead of "unknown command", so the user's file never fails silently.
+`docs/COMMANDS.md` is generated from the catalog and alias tables by
+`pnpm docs:commands`; only the status column is hand-written, and
+`pnpm docs:commands:check` (part of `pnpm test`) rejects drift.
+
 ## 2026-10-16: Phase 02 display geometry, GPU backend and reference QA
 
 The renderer-neutral display model uses WCS Y up and double precision. Legacy

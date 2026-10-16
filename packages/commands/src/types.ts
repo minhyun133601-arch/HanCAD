@@ -19,6 +19,10 @@ export interface CommandContext {
 }
 export interface CommandDefinition {
   name: string;
+  /** Global (English) name accepted with the _ prefix in every language. */
+  globalName?: string;
+  /** Original HanCAD phase that owns the complete command. */
+  phase?: number;
   aliases?: readonly string[];
   displayName: Readonly<Record<CommandLocale, string>>;
   description: Readonly<Record<CommandLocale, string>>;

@@ -34,7 +34,7 @@ describe('ZIP-first canonical commands and aliases', () => {
       registry.importPgp(
         '\uFEFF; Personal aliases\nD, *DIMALIGNED\nCO, *CIRCLE ; comment\nbad line\nZZ, *FUTURECOMMAND',
       ),
-    ).toEqual({ imported: 3, invalidLines: [4] });
+    ).toEqual({ imported: 3, invalidLines: [4], externals: 0 });
     expect(registry.resolve('D')?.canonicalName).toBe('DIMALIGNED');
     expect(registry.resolve('CO')?.canonicalName).toBe('CIRCLE');
     expect(registry.resolve('ZZ')?.canonicalName).toBe('FUTURECOMMAND');

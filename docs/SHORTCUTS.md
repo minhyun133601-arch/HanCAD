@@ -1,6 +1,15 @@
 # Reference B — Shortcuts, aliases, mouse behavior, input syntax
 (Save as docs/SHORTCUTS.md. Every binding here must work. Bindings whose command is not built yet must still be registered and print the Korean not-implemented message.)
 
+## Phase 03 alias completion (2026-10-16)
+
+The built-in alias table is this Reference B list plus 172 alternative, legacy and
+discontinued-command aliases from an installed acad.pgp (for example DTEXT=TEXT,
+RECTANGLE=RECTANG, SE=DSETTINGS, -AR=-ARRAY, DIMLIN=DIMLINEAR, PROPS=PROPERTIES).
+`docs/COMMANDS.md` lists every alias beside its command. Reference B's
+`GCON=GEOCONSTRAINT` is corrected to the actual command, `GCON=GEOMCONSTRAINT`.
+Unverified pairs are listed in PARITY_CHECKLIST.md.
+
 ## Verified rendering/navigation slice (2026-10-16)
 
 Z/ZOOM accepts All, Center, Dynamic, Extents, Previous, Scale (bare/X), Window,

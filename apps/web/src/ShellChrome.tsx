@@ -109,7 +109,7 @@ const panels: Record<RibbonTab, readonly Panel[]> = {
   parametric: [
     {
       label: 'parametric',
-      tools: [{ label: 'constraints', command: 'GEOCONSTRAINT', icon: 'dimension' }],
+      tools: [{ label: 'constraints', command: 'GEOMCONSTRAINT', icon: 'dimension' }],
     },
   ],
   view: [

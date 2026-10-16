@@ -22,6 +22,9 @@ command is not an implemented command.
 - [ ] Phase 02 fit margin: measure AutoCAD ZOOM Extents and double-middle viewport padding; HanCAD currently uses a shared 0.95 fill factor, with ZOOM All relative PDSIZE captured from the final view.
 - [ ] Phase 02 aids: compare CURSORSIZE/PICKBOX at high DPI, UCSICON origin/lower-left fallback and GRIDUNIT/GRIDMAJOR/GRIDDISPLAY/GRIDSTYLE adaptive thresholds; dynamic UCS bit 8, selectable/3D UCS icons, UCSICON Properties/All and non-model grid producers remain later work.
 - [ ] Phase 02 background: verify OPTIONS model-background colors and persistence against the Korean reference; the current dialog is a documented subset, not the complete AutoCAD Options dialog.
+- [ ] Phase 03 catalog: compare the Korean display names and one-line help of all 372 catalog commands (`pnpm docs:commands` table) with the Korean help/ribbon tooltips, especially names not in GLOSSARY.md (e.g. 기준점을 사용하여 복사, 일반 DWG로 내보내기, 회전 for both ROTATE and REVOLVE).
+- [ ] Phase 03 flags: verify which commands accept the ' prefix (HanCAD list in `catalog/flags.ts`), which open modal dialogs and which use the PICKFIRST set.
+- [ ] Phase 03 aliases: compare the 172 extended aliases (alternative, legacy and discontinued-command sections of an installed acad.pgp) with the current release's acad.pgp; confirm GCON=GEOMCONSTRAINT and ED=TEXTEDIT.
 - [ ] Choose and document one installed AutoCAD reference release and template.
 - [ ] Verify Korean prompts against the reference release.
 - [ ] Verify the original shortcut table against the reference/user PGP profile.

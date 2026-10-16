@@ -82,7 +82,7 @@ export const defaultAliases: Readonly<Record<string, string>> = Object.freeze({
   FSHOT: 'FLATSHOT',
   G: 'GROUP',
   '-G': '-GROUP',
-  GCON: 'GEOCONSTRAINT',
+  GCON: 'GEOMCONSTRAINT',
   GD: 'GRADIENT',
   H: 'HATCH',
   '-H': '-HATCH',

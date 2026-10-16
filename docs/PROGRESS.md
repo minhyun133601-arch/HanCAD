@@ -1,5 +1,29 @@
 # HanCAD progress
 
+## Active phase: Phase 03 command system, command line, shortcuts and Korean IME (2026-10-16)
+
+Source: `docs/prompt-source/prompts/phase-03-command-system-command-line-shortcuts-korean-ime.md`.
+The user requested Phase 03 on 2026-10-16. The baseline passed lint, formatting,
+strict TypeScript, 402 unit and 30 compatibility tests before work started.
+Reference facts come from the Autodesk 2026 Korean help pages for temporary
+override keys, shortcut keys, macro control characters, DIESEL, the status bar,
+shortcut menus, command aliases/AutoCorrect and the command window.
+
+| Milestone                                 | Status  | Scope                                                                                                                                  |
+| ----------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 3.1 Command catalog and aliases           | Done    | Canonical/global names, Korean/English names and help, flags, implementation status, completed acad.pgp aliases, generated COMMANDS.md |
+| 3.2 Input parsing and ImeController       | Planned | Prompt input modes, Hangul normalization, Space/Enter rules, PGP grammar incl. external commands, transparent-command rules            |
+| 3.3 Command line window                   | Planned | Floating/docked bar, temporary prompt lines, F2/Ctrl+F2/Ctrl+9, command-name prompt, history recall, right-click menu                  |
+| 3.4 AutoComplete and input search options | Planned | Suggestion list, auto-append, mid-string, sysvars, frequency order, delay, AutoCorrect DB, INPUTSEARCHOPTIONS dialog                   |
+| 3.5 Transparent commands                  | Planned | `>>` prompts for 'ZOOM/'PAN/'SETVAR/sysvars/'DIST/'CAL/'OSNAP/'HELP, resume message and original prompt                                |
+| 3.6 PGP import, ALIASEDIT and REINIT      | Planned | User acad.pgp import/merge (user wins), persistent profile copy, ALIASEDIT dialog, REINIT/RE-INIT reload                               |
+| 3.7 Macros and DIESEL                     | Planned | ^C^C, ;, space, \ pause, \*^C^C repeat, $M=, ^P and other controls; DIESEL evaluator; MODEMACRO; ribbon macros                         |
+| 3.8 Keyboard bindings and overrides       | Planned | Every SHORTCUTS.md binding with ordered scopes, toggle messages, TEMPOVERRIDES key-down/key-up macros                                  |
+| 3.9 Mouse and shortcut menus              | Planned | SHORTCUTMENU bits, time-sensitive right click, Korean default/edit/command menus, Shift+right-click object snap menu                   |
+| 3.10 Status bar and F1 help               | Planned | All toggles with icons/menus, COORDS display, customization menu, F1 Korean help panel, phase acceptance                               |
+
+Exact next step: implement milestone 3.2 (input parsing and ImeController).
+
 ## Completed phase: Phase 02 rendering engine and view navigation (2026-10-16)
 
 Source: `docs/prompt-source/prompts/phase-02-rendering-engine-and-view-navigation.md`.
@@ -406,7 +430,7 @@ accepted merely because a subset works.
 | ----- | ------------------------------------- | ----------- |
 | 00    | Bootstrap                             | In progress |
 | 01    | Database, sysvars, undo and documents | Done        |
-| 02    | Rendering/navigation                  | In progress |
+| 02    | Rendering/navigation                  | Done        |
 | 03    | Commands/Korean IME                   | In progress |
 | 04    | Coordinates/drafting aids             | In progress |
 | 05    | Selection/grips/clipboard             | In progress |
