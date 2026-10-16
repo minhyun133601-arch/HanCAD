@@ -110,12 +110,33 @@
       if (Number.isInteger(trueColor) && trueColor >= 0 && trueColor <= 0xffffff) return `#${trueColor.toString(16).padStart(6, "0")}`;
       return parser.aciToHex(Math.abs(aci)) || "#e2e8f0";
     }
-    const layers = [...document.layers.values()].map(l => ({ name: l.name || "0", color: hex(l.color, l.trueColor), visible: !l.isOff && !l.isFrozen, locked: !!l.isLocked }));
+    const layers = [...document.layers.values()].map(l => ({ name: l.name || "0", color: hex(l.color, l.trueColor), aci: Math.abs(l.color ?? 7), trueColor: l.trueColor, linetype: l.lineType || "CONTINUOUS", lineweight: l.lineWeight ?? -3, visible: !l.isOff && !l.isFrozen, locked: !!l.isLocked }));
     function style(e, inherited) {
       const layer = e.layer === "0" && inherited ? inherited.layer : e.layer || "0";
       const table = document.layers.get(layer);
-      const color = e.color === 0 && inherited ? inherited.color : (e.color === 256 || e.color == null) && e.trueColor == null ? hex(table?.color ?? 7, table?.trueColor) : hex(e.color, e.trueColor);
-      return { layer, color, lineWidth: Math.max(0.25, Math.min(100, e.lineWeight > 0 ? e.lineWeight / 100 : table?.lineWeight > 0 ? table.lineWeight / 100 : 1.5)) };
+      const trueColorValue = value => Number.isInteger(value) && value >= 0 && value <= 0xffffff ? value : undefined;
+      let aci = Math.abs(e.color ?? 256), trueColor = trueColorValue(e.trueColor);
+      // Flattening must resolve ByBlock against the INSERT's layer, not the child's layer.
+      // Keep ACI 7 symbolic so its dark/light background inversion remains dynamic.
+      if (trueColor === undefined && aci === 0 && inherited) {
+        aci = inherited.resolvedColor.aci; trueColor = inherited.resolvedColor.trueColor;
+      }
+      const resolvedColor = trueColor !== undefined ? { aci, trueColor }
+        : aci === 256 ? { aci: Math.abs(table?.color ?? 7), trueColor: trueColorValue(table?.trueColor) }
+        : { aci: aci === 0 ? 7 : aci };
+      let linetype = (e.lineType || "BYLAYER").toUpperCase();
+      if (linetype === "BYBLOCK" && inherited) linetype = inherited.resolvedLinetype;
+      const resolvedLinetype = linetype === "BYLAYER" ? (table?.lineType || "CONTINUOUS").toUpperCase()
+        : linetype === "BYBLOCK" ? "CONTINUOUS" : linetype;
+      let lineweight = e.lineWeight ?? -1;
+      if (lineweight === -2 && inherited) lineweight = inherited.resolvedLineweight;
+      const layerWeight = table?.lineWeight ?? -3;
+      const resolvedLineweight = lineweight === -1 ? (layerWeight >= 0 ? layerWeight : -3)
+        : lineweight === -2 ? -3 : lineweight;
+      return { layer, color: hex(resolvedColor.aci, resolvedColor.trueColor), aci, trueColor,
+        linetype, linetypeScale: e.lineTypeScale ?? 1, lineweight,
+        lineWidth: Math.max(0.25, Math.min(100, resolvedLineweight > 0 ? resolvedLineweight / 100 : 1.5)),
+        resolvedColor, resolvedLinetype, resolvedLineweight };
     }
     function add(raw) {
       if (entities.length >= LIMIT) throw failure("entity-limit", `가져올 객체가 ${LIMIT.toLocaleString()}개를 초과합니다. CAD에서 필요한 영역만 분리해 주세요.`, { limit: LIMIT });
@@ -290,7 +311,8 @@
     if (layers.length > 256) throw failure("layer-limit", "레이어가 256개를 초과합니다. 필요한 레이어만 분리해 주세요.", { limit: 256 });
     const unit = ({4:"mm",5:"cm",6:"m"})[document.header?.insUnits] ?? "";
     if (!unit) addWarning("도면 단위가 mm / cm / m로 지정되지 않아 단위 없는 좌표로 가져옵니다.", diagnostic("unit-unspecified"));
-    const state = Tool.core.cadEngine.normalizeState({ version:1,entities,layers,selectedIds:[],settings:{ unit,layer:"0" } });
+    const linetypes = [...document.lineTypes.values()].map((entry) => ({ name: entry.name, description: entry.description || "", pattern: entry.pattern || [] }));
+    const state = Tool.core.cadEngine.normalizeState({ version:1,entities,layers,linetypes,selectedIds:[],settings:{ unit,layer:"0" } });
     if (state.entities.length !== entities.length) throw failure("imported-invalid", "가져온 도면 검증에 실패했습니다.");
     report.imported = state.entities.length;
     report.unsupported = [...missing].map(([type,count])=>({type,count}));

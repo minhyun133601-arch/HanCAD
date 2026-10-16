@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@hancad/db": "workspace:*",
+    "@hancad/geom": "workspace:*",
     "@hancad/legacy-bridge": "workspace:*"
   },
   "exports": {

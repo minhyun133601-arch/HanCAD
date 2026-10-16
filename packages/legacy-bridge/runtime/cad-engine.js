@@ -31,6 +31,19 @@
   const nonnegative = (value, fallback, maximum = 1e6) => finite(value) && value >= 0 ? Math.min(value, maximum) : fallback;
   const DIMENSION_KINDS = new Set(["aligned", "horizontal", "vertical", "radius", "diameter", "angular"]);
   const precision = (value, fallback = 2) => Number.isInteger(value) ? Math.max(0, Math.min(8, value)) : fallback;
+  const LINEWEIGHTS = new Set([-3,-2,-1,0,5,9,13,15,18,20,25,30,35,40,50,53,60,70,80,90,100,106,120,140,158,200,211]);
+
+  function displayStyle(raw = {}) {
+    const style = {};
+    if (Number.isInteger(raw.aci) && raw.aci >= 0 && raw.aci <= 256) style.aci = raw.aci;
+    if (Number.isInteger(raw.trueColor) && raw.trueColor >= 0 && raw.trueColor <= 0xffffff) style.trueColor = raw.trueColor;
+    if (typeof raw.linetype === "string" && raw.linetype.trim()) style.linetype = raw.linetype.trim().slice(0, 255).toUpperCase();
+    if (finite(raw.linetypeScale) && raw.linetypeScale > 0) style.linetypeScale = raw.linetypeScale;
+    if (LINEWEIGHTS.has(raw.lineweight)) style.lineweight = raw.lineweight;
+    if (raw.transparency === "bylayer" || raw.transparency === "byblock" || finite(raw.transparency) && raw.transparency >= 0 && raw.transparency <= 90) style.transparency = raw.transparency;
+    if (typeof raw.plinegen === "boolean") style.plinegen = raw.plinegen;
+    return style;
+  }
 
   function parsePoint(input, base = { x: 0, y: 0 }) {
     if (typeof input !== "string") return null;
@@ -72,7 +85,7 @@
     if (Number.isInteger(raw.dimZeroSuppression)) settings.dimZeroSuppression = raw.dimZeroSuppression & 15;
     if (typeof raw.dimPost === "string") settings.dimPost = raw.dimPost.slice(0, 2000);
     settings.layer = layerName(raw.layer);
-    return settings;
+    return { ...settings, ...displayStyle(raw) };
   }
 
   function normalizeEntity(raw, settings = DEFAULT_SETTINGS) {
@@ -81,6 +94,7 @@
       id: typeof raw.id === "string" && raw.id.length <= 120 ? raw.id : "",
       type: raw.type, layer: layerName(raw.layer || settings.layer),
       color: color(raw.color, settings.color), lineWidth: positive(raw.lineWidth, settings.lineWidth, 100),
+      ...displayStyle(raw),
     };
     if (raw.type === "line") {
       entity.a = point(raw.a); entity.b = point(raw.b);
@@ -160,7 +174,7 @@
     (Array.isArray(raw.layers) ? raw.layers.slice(0, 256) : []).forEach((entry) => {
       if (!entry || typeof entry !== "object") return;
       const name = layerName(entry.name);
-      const layer = { name, color: color(entry.color), visible: entry.visible !== false, locked: entry.locked === true };
+      const layer = { name, color: color(entry.color), visible: entry.visible !== false, locked: entry.locked === true, ...displayStyle(entry) };
       if (name === "0") Object.assign(layers[0], layer);
       else if (!seenLayers.has(name)) { layers.push(layer); seenLayers.add(name); }
     });
@@ -184,7 +198,8 @@
     if (!seenLayers.has(settings.layer)) settings.layer = "0";
     const selectedIds = [...new Set(Array.isArray(raw.selectedIds) ? raw.selectedIds : [])].filter((id) => ids.has(id));
     const name = typeof raw.name === "string" ? raw.name.replace(/[\u0000-\u001f]/g, " ").trim().slice(0, 120) : "";
-    return { version: 1, name: name || "새 도면", entities, layers, selectedIds, settings };
+    const linetypes = Array.isArray(raw.linetypes) ? raw.linetypes.filter((entry) => entry && typeof entry.name === "string" && entry.name.trim() && Array.isArray(entry.pattern) && entry.pattern.length <= 256 && entry.pattern.every(finite)).map((entry) => ({ name: entry.name.trim().slice(0, 255).toUpperCase(), description: typeof entry.description === "string" ? entry.description.slice(0, 2000) : "", pattern: [...entry.pattern] })) : undefined;
+    return { version: 1, name: name || "새 도면", entities, layers, selectedIds, settings, ...(linetypes ? { linetypes } : {}) };
   }
 
   function arcContains(entity, angle) {

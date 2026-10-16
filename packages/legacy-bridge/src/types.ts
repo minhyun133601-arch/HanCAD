@@ -10,7 +10,18 @@ export interface CadBounds {
   maxX: number;
   maxY: number;
 }
-export interface CadEntityBase {
+/** Optional native display properties retained across the transitional model. */
+export interface CadDisplayStyle {
+  aci?: number;
+  trueColor?: number;
+  linetype?: string;
+  linetypeScale?: number;
+  /** Hundredths of a millimeter; -1 ByLayer, -2 ByBlock, -3 Default. */
+  lineweight?: number;
+  transparency?: 'bylayer' | 'byblock' | number;
+  plinegen?: boolean;
+}
+export interface CadEntityBase extends CadDisplayStyle {
   id: string;
   layer: string;
   color: string;
@@ -72,13 +83,13 @@ export interface CadDimension extends CadEntityBase {
   textRotation?: number;
 }
 export type CadEntity = CadLine | CadPolyline | CadCircle | CadArc | CadText | CadDimension;
-export interface CadLayer {
+export interface CadLayer extends CadDisplayStyle {
   name: string;
   color: string;
   visible: boolean;
   locked: boolean;
 }
-export interface CadSettings {
+export interface CadSettings extends CadDisplayStyle {
   unit: '' | 'mm' | 'cm' | 'm';
   grid: boolean;
   gridSnap: boolean;
@@ -109,6 +120,12 @@ export interface LegacyCadState {
   layers: CadLayer[];
   selectedIds: string[];
   settings: CadSettings;
+  linetypes?: CadLinetype[];
+}
+export interface CadLinetype {
+  name: string;
+  description: string;
+  pattern: number[];
 }
 export interface CadImportReport {
   format: string;

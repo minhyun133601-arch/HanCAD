@@ -11,7 +11,24 @@ export function draftEntityBase(
   settings: CadSettings,
   id = `draft-${crypto.randomUUID()}`,
 ): CadEntityBase {
-  return { id, layer: settings.layer, color: settings.color, lineWidth: settings.lineWidth };
+  const result: CadEntityBase = {
+    id,
+    layer: settings.layer,
+    color: settings.color,
+    lineWidth: settings.lineWidth,
+  };
+  const names = [
+    'aci',
+    'trueColor',
+    'linetype',
+    'linetypeScale',
+    'lineweight',
+    'transparency',
+    'plinegen',
+  ] as const;
+  for (const name of names)
+    if (settings[name] !== undefined) Object.assign(result, { [name]: settings[name] });
+  return result;
 }
 export function draftLine(settings: CadSettings, a: CadPoint, b: CadPoint, id?: string): CadEntity {
   return { ...draftEntityBase(settings, id), type: 'line', a: { ...a }, b: { ...b } };

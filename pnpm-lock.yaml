@@ -308,6 +308,12 @@ importers:
 
   packages/render:
     dependencies:
+      '@hancad/db':
+        specifier: workspace:*
+        version: link:../db
+      '@hancad/geom':
+        specifier: workspace:*
+        version: link:../geom
       '@hancad/legacy-bridge':
         specifier: workspace:*
         version: link:../legacy-bridge
