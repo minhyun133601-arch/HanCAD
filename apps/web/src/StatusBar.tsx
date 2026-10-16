@@ -13,14 +13,14 @@ export interface StatusToggle {
   onValue?: number;
 }
 export const statusToggles: readonly StatusToggle[] = [
-  { label: 'grid', variable: 'GRIDMODE', key: 'F7', implemented: false },
+  { label: 'grid', variable: 'GRIDMODE', key: 'F7' },
   { label: 'snap', variable: 'SNAPMODE', key: 'F9', implemented: false },
   { label: 'ortho', variable: 'ORTHOMODE', key: 'F8' },
   { label: 'polar', variable: 'AUTOSNAP', key: 'F10', mask: 8, implemented: false },
   { label: 'objectSnap', variable: 'OSMODE', key: 'F3', mask: 16384 },
   { label: 'objectSnapTracking', variable: 'AUTOSNAP', key: 'F11', mask: 16, implemented: false },
   { label: 'dynamicInput', variable: 'DYNMODE', key: 'F12', onValue: 3, implemented: false },
-  { label: 'lineweight', variable: 'LWDISPLAY', implemented: false },
+  { label: 'lineweight', variable: 'LWDISPLAY' },
 ];
 
 export function isToggleEnabled(sysvars: SystemVariables, toggle: StatusToggle): boolean {

@@ -22,6 +22,7 @@
   pointer-events: none;
 }
 .draft-selection-count {
+  pointer-events: none;
   position: absolute;
   top: 10px;
   left: 40%;
@@ -53,6 +54,7 @@
   max-width: calc(100% - 360px);
 }
 .drawing-tools {
+  pointer-events: none;
   position: absolute;
   top: 10px;
   right: 14px;
@@ -63,6 +65,7 @@
   color: #c2ccd5;
 }
 .drawing-tools button {
+  pointer-events: auto;
   padding: 5px 8px;
   border: 1px solid #586b7c;
   border-radius: 3px;

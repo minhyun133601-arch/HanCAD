@@ -91,7 +91,7 @@ test('ribbon tools report pending commands and bilingual tabs and status switche
   await expect(history).toContainText('FILLET');
   await expect(history).toContainText(/구현|미구현|알 수 없는/);
   const grid = page.getByRole('button', { name: '그리드', exact: true });
-  await expect(grid).toBeDisabled();
+  await expect(grid).toBeEnabled();
   const ortho = page.getByRole('button', { name: '직교 모드', exact: true });
   const before = await ortho.getAttribute('aria-pressed');
   await ortho.click();

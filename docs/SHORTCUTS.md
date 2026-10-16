@@ -1,6 +1,19 @@
 # Reference B — Shortcuts, aliases, mouse behavior, input syntax
 (Save as docs/SHORTCUTS.md. Every binding here must work. Bindings whose command is not built yet must still be registered and print the Korean not-implemented message.)
 
+## Verified rendering/navigation slice (2026-10-16)
+
+Z/ZOOM accepts All, Center, Dynamic, Extents, Previous, Scale (bare/X), Window,
+Object and Realtime. Enter at the main ZOOM prompt enters realtime left-drag zoom.
+P/PAN uses left-drag pan; -P/-PAN uses two points or a displacement. Esc exits.
+Wheel and middle-button navigation remain available and contribute to Previous
+and navigation undo. Previous consumes up to ten recorded views. Dynamic shows a
+move/resize overview box; Enter applies and Esc restores the original view.
+F7 toggles GRIDMODE; the lineweight status switch controls LWDISPLAY. OP/OPTIONS
+opens background controls. RE/REA regenerate and R/RA redraw. Prompt keyword
+buttons accept the same option as typing its letter. Dynamic-input Down menus
+remain Phase 03 work. XP requires the later floating-layout viewport host.
+
 ## Verified basic-workflow slice (2026-10-15)
 
 The next verified editing slice adds TR/TRIM and EX/EXTEND: click a LINE or drag

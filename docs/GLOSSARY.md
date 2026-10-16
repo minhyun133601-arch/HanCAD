@@ -19,6 +19,18 @@
 | Undo / Redo | 명령 취소 / 명령 복구 |
 | Start tab | 시작 |
 
+## View navigation (Phase 02)
+| English | 한국어 UI |
+|---|---|
+| Zoom / Pan | 줌 / 초점이동 |
+| All / Center / Dynamic / Extents / Previous | 전체 / 중심 / 동적 / 범위 / 이전 |
+| Scale / Window / Object / Realtime | 축척 / 윈도우 / 객체 / 실시간 |
+| Specify center point: | 중심점 지정: |
+| Specify height of view: | 뷰의 높이 지정: |
+| Crosshair / Pickbox / UCS icon | 십자선 / 선택상자 / UCS 아이콘 |
+| Regenerate / Redraw | 재생성 / 다시 그리기 |
+| Model background color | 모형 배경색 |
+
 ## Properties
 | English | 한국어 UI |
 |---|---|
