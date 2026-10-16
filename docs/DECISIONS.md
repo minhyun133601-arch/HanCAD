@@ -1,5 +1,25 @@
 # Decisions
 
+## 2026-10-16: Phase 03 input modes and command-line interpretation (milestone 3.2)
+
+Every active prompt reports one input type: command, keyword, number, point,
+osnap, selection, name, text or file. The first six use physical keys and treat
+Space as Enter, so a Korean IME never reaches command syntax; Hangul that still
+arrives through paste or composition is reversed to Dubeolsik keys. Names (layer
+or block names, getstring without spaces) compose Korean in an editable element
+but Space accepts, as in AutoCAD. Free text, file names and string system-variable
+values (for example MODEMACRO) insert spaces and accept only on Enter.
+
+`interpretCommandInput` is the single classifier shared by the headless runner and
+the UI. At the command prompt it resolves command/alias, then PGP external command,
+then system variable, otherwise unknown; an empty entry repeats the previous
+non-transparent command. Inside a command only apostrophe input is a command. A
+non-transparent command or a second transparent command while one is running prints
+`** 해당 명령은 투명하게 호출할 수 없습니다 **`; the official Korean wording was not
+found and is listed for review. An UNDEFINEd command stays unknown even when a
+system variable has the same name. Browser mode cannot launch PGP external
+commands and reports that they run only in the desktop app.
+
 ## 2026-10-16: Phase 03 command catalog and aliases (milestone 3.1)
 
 The command registry is seeded from one catalog (`packages/commands/src/catalog/`)

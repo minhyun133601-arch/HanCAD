@@ -1,8 +1,9 @@
 import { DrawingDatabase } from '@hancad/db';
 import { InputCancelled, InputQueue } from '@hancad/editor';
 import type { CommandInput } from '@hancad/editor';
-import { reverseHangulInput } from '@hancad/input';
-import { getSystemVariableDefinition, SystemVariables } from '@hancad/sysvars';
+import { SystemVariables } from '@hancad/sysvars';
+import { interpretCommandInput } from './command-input';
+import type { CommandInputContext } from './command-input';
 import { registerCoreCommands, setVariableFromInput } from './core';
 import { commandMessages } from './messages';
 import { commandErrorMessage } from './diagnostics';
@@ -38,43 +39,72 @@ export class HeadlessCommandRunner {
     registerCoreCommands(this.registry);
   }
 
-  async run(line: string, inputs: readonly CommandInput[] = []): Promise<CommandResult> {
+  /** The previous command repeated by an empty Enter/Space at the command prompt. */
+  get previousCommand(): string {
+    return this.lastCommand;
+  }
+
+  async run(
+    line: string,
+    inputs: readonly CommandInput[] = [],
+    situation: Partial<CommandInputContext> = {},
+  ): Promise<CommandResult> {
     const messages: string[] = [];
     if (line === '\u001b')
       return { status: 'cancelled', messages: [commandMessages.cancelled(this.locale)] };
-    const tokens = tokenize(line);
-    let command = reverseHangulInput(tokens.shift() ?? '');
-    if (!command) command = this.lastCommand;
-    if (!command) return { status: 'ok', messages };
+    const transparentActive =
+      situation.transparentActive ?? (this.sysvars.getNumber('CMDACTIVE') & 2) !== 0;
+    let input = interpretCommandInput(this.registry, line, {
+      commandActive: situation.commandActive ?? false,
+      transparentActive,
+    });
+    if (input.kind === 'repeat') {
+      if (!this.lastCommand) return { status: 'ok', messages };
+      input = interpretCommandInput(this.registry, this.lastCommand);
+    }
     const context: CommandContext = {
       database: this.database,
       sysvars: this.sysvars,
       locale: this.locale,
-      input: new InputQueue([...tokens, ...inputs]),
+      input: new InputQueue('arguments' in input ? [...input.arguments, ...inputs] : [...inputs]),
       print: (message) => messages.push(message),
     };
+    let command = '';
     try {
-      const resolved = this.registry.resolve(command);
-      if (!resolved && !this.registry.get(command) && getSystemVariableDefinition(command)) {
-        this.database.invalidateSingleRedo();
-        setVariableFromInput(command, context);
-        this.lastCommand = command;
-        return { status: 'ok', command, messages };
+      switch (input.kind) {
+        case 'prompt':
+        case 'repeat':
+          return { status: 'ok', messages };
+        case 'unknown':
+          return {
+            status: 'unknown',
+            command: input.name,
+            messages: [commandMessages.unknown(input.name, this.locale)],
+          };
+        case 'not-transparent':
+          return {
+            status: 'error',
+            command: input.name,
+            messages: [commandMessages.transparent(input.name, this.locale)],
+          };
+        case 'external':
+          this.lastCommand = input.command.name;
+          return {
+            status: 'not-implemented',
+            command: input.command.name,
+            messages: [commandMessages.externalUnavailable(input.command.name, this.locale)],
+          };
+        case 'sysvar':
+          this.database.invalidateSingleRedo();
+          setVariableFromInput(input.name, context);
+          this.lastCommand = input.name;
+          return { status: 'ok', command: input.name, messages };
+        case 'command':
+          break;
       }
-      if (!resolved)
-        return {
-          status: 'unknown',
-          command,
-          messages: [commandMessages.unknown(command, this.locale)],
-        };
+      const resolved = input.resolution;
       command = resolved.canonicalName;
       context.prefixes = resolved.prefixes;
-      if (resolved.prefixes.transparent && !resolved.definition.flags?.transparent)
-        return {
-          status: 'error',
-          command,
-          messages: [commandMessages.transparent(command, this.locale)],
-        };
       if (!resolved.definition.execute)
         return {
           status: 'not-implemented',
@@ -84,23 +114,19 @@ export class HeadlessCommandRunner {
       const previousActive = this.sysvars.getNumber('CMDACTIVE');
       if (command !== 'REDO') this.database.invalidateSingleRedo();
       const previousNames = this.sysvars.get('CMDNAMES');
+      const transparent = input.transparent || resolved.prefixes.transparent;
       try {
-        this.sysvars.setRuntimeSessionValue(
-          'CMDACTIVE',
-          previousActive | (resolved.prefixes.transparent ? 2 : 1),
-        );
+        this.sysvars.setRuntimeSessionValue('CMDACTIVE', previousActive | (transparent ? 2 : 1));
         this.sysvars.setRuntimeSessionValue(
           'CMDNAMES',
-          resolved.prefixes.transparent && previousNames !== ''
-            ? `${previousNames}'${command}`
-            : command,
+          transparent && previousNames !== '' ? `${previousNames}'${command}` : command,
         );
         await resolved.definition.execute(context);
       } finally {
         this.sysvars.setRuntimeSessionValue('CMDNAMES', previousNames);
         this.sysvars.setRuntimeSessionValue('CMDACTIVE', previousActive);
       }
-      this.lastCommand = command;
+      if (!input.transparent) this.lastCommand = command;
       return { status: 'ok', command, messages };
     } catch (error) {
       if (error instanceof InputCancelled)
@@ -140,11 +166,4 @@ export class HeadlessCommandRunner {
     for (const line of lines) results.push(await this.run(line.command, line.inputs));
     return results;
   }
-}
-
-function tokenize(line: string): string[] {
-  const tokens: string[] = [];
-  const pattern = /"([^"]*)"|(\S+)/g;
-  for (const match of line.matchAll(pattern)) tokens.push(match[1] ?? match[2] ?? '');
-  return tokens;
 }

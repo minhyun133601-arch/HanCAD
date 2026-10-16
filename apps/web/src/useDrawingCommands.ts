@@ -8,6 +8,7 @@ import { useEditingTools } from './useEditingTools';
 import { useTextCreation } from './useTextCreation';
 import type { useDrawingFiles } from './useDrawingFiles';
 import type { useCommandSession } from './useCommandSession';
+import { toolInputMode } from './input-mode';
 
 interface Controller {
   isActive: () => boolean;
@@ -98,6 +99,16 @@ export function useDrawingCommands({
           ? messages.dimensionUsage
           : messages.draftingUsage,
     editable: dimensions.active ? dimensions.editable : !active && session.editable,
+    /** Prompt input type for the ImeController; undefined when no drawing tool is active. */
+    inputMode: toolInputMode({
+      editing: editing.snapshot,
+      text: text.snapshot,
+      dimensions: dimensions.snapshot,
+      modification: modification.snapshot,
+      measuring: measurement.active,
+      drafting: draft.snapshot !== null,
+      selecting: draft.active,
+    }),
     isActive: () => Object.values(controllers.current).some((item) => item.isActive()),
     cancelAll: cancelOthers,
     cancel: (): boolean => {

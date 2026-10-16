@@ -12,7 +12,7 @@ shortcut menus, command aliases/AutoCorrect and the command window.
 | Milestone                                 | Status  | Scope                                                                                                                                  |
 | ----------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | 3.1 Command catalog and aliases           | Done    | Canonical/global names, Korean/English names and help, flags, implementation status, completed acad.pgp aliases, generated COMMANDS.md |
-| 3.2 Input parsing and ImeController       | Planned | Prompt input modes, Hangul normalization, Space/Enter rules, PGP grammar incl. external commands, transparent-command rules            |
+| 3.2 Input parsing and ImeController       | Done    | Prompt input modes, Hangul normalization, Space/Enter rules, PGP grammar incl. external commands, transparent-command rules            |
 | 3.3 Command line window                   | Planned | Floating/docked bar, temporary prompt lines, F2/Ctrl+F2/Ctrl+9, command-name prompt, history recall, right-click menu                  |
 | 3.4 AutoComplete and input search options | Planned | Suggestion list, auto-append, mid-string, sysvars, frequency order, delay, AutoCorrect DB, INPUTSEARCHOPTIONS dialog                   |
 | 3.5 Transparent commands                  | Planned | `>>` prompts for 'ZOOM/'PAN/'SETVAR/sysvars/'DIST/'CAL/'OSNAP/'HELP, resume message and original prompt                                |
@@ -22,7 +22,7 @@ shortcut menus, command aliases/AutoCorrect and the command window.
 | 3.9 Mouse and shortcut menus              | Planned | SHORTCUTMENU bits, time-sensitive right click, Korean default/edit/command menus, Shift+right-click object snap menu                   |
 | 3.10 Status bar and F1 help               | Planned | All toggles with icons/menus, COORDS display, customization menu, F1 Korean help panel, phase acceptance                               |
 
-Exact next step: implement milestone 3.2 (input parsing and ImeController).
+Exact next step: implement milestone 3.3 (command line window).
 
 ## Completed phase: Phase 02 rendering engine and view navigation (2026-10-16)
 

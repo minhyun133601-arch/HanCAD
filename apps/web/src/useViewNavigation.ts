@@ -248,6 +248,18 @@ export function useViewNavigation(options: Options) {
               options.surface.current?.getWorldView().height ?? 0,
             )
           : null,
+    /** Prompt input type: counts and scale factors are numbers, option lists keywords. */
+    inputMode: stressAwaiting
+      ? ('number' as const)
+      : ucsAwaiting
+        ? ('keyword' as const)
+        : snapshot
+          ? snapshot.stage === 'objects'
+            ? ('selection' as const)
+            : snapshot.stage === 'height' || snapshot.stage === 'scale'
+              ? ('number' as const)
+              : ('point' as const)
+          : undefined,
     isActive: () => controller.current !== null || ucsPending.current || stressPending.current,
     mode: () => controller.current?.mode,
     window: () => controller.current?.getSnapshot()?.window,

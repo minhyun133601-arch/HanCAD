@@ -32,9 +32,13 @@ export function mapKeyboardCode(code: string, shiftKey = false): string | undefi
   return pair ? pair[shiftKey ? 1 : 0] : numpad[code];
 }
 
+/**
+ * Prompt input types: command syntax (command, keyword, number, point, osnap, selection)
+ * uses physical keys; names, free text and file names use an editable element.
+ */
 export type PromptInputMode =
-  'command' | 'keyword' | 'number' | 'point' | 'osnap' | 'text' | 'file';
+  'command' | 'keyword' | 'number' | 'point' | 'osnap' | 'selection' | 'name' | 'text' | 'file';
 
 export function usesEditableInput(mode: PromptInputMode): boolean {
-  return mode === 'text' || mode === 'file';
+  return mode === 'name' || mode === 'text' || mode === 'file';
 }

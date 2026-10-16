@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
-import { mapKeyboardCode, reverseHangulInput } from '@hancad/input';
+import { ImeController } from '@hancad/input';
+import type { PromptInputMode } from '@hancad/input';
 import type { Messages } from '@hancad/ui';
 import type { HistoryLine } from './useCommandSession';
 import { PromptKeywords } from './PromptKeywords';
@@ -12,6 +13,8 @@ interface CommandLineProps {
   busy: boolean;
   prompt: string;
   editable: boolean;
+  /** Active prompt type; decides physical-key versus IME text handling. */
+  mode: PromptInputMode;
   blocked?: boolean;
   expanded: boolean;
   inputRef: RefObject<HTMLDivElement | HTMLInputElement | null>;
@@ -36,6 +39,8 @@ export function CommandLine(props: CommandLineProps) {
     onExpanded,
   } = props;
   const historyRef = useRef<HTMLDivElement>(null);
+  const [ime] = useState(() => new ImeController());
+  ime.setMode(props.mode);
   const latest = useRef(props);
   latest.current = props;
 
@@ -59,26 +64,17 @@ export function CommandLine(props: CommandLineProps) {
         ['Enter', 'NumpadEnter', 'Space', 'ArrowUp', 'ArrowDown'].includes(event.code)
       )
         return;
-      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.defaultPrevented) return;
       const current = latest.current;
-      if (event.code === 'Escape') {
-        event.preventDefault();
-        current.cancel();
-      } else if (event.code === 'Enter' || event.code === 'NumpadEnter' || event.code === 'Space') {
-        event.preventDefault();
-        void current.execute(current.input);
-      } else if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
-        event.preventDefault();
-        current.recall(event.code === 'ArrowUp' ? -1 : 1);
-      } else if (event.code === 'Backspace') {
-        event.preventDefault();
-        current.changeInput(current.input.slice(0, -1));
-      } else {
-        const key = mapKeyboardCode(event.code, event.shiftKey);
-        if (key === undefined) return;
-        event.preventDefault();
-        current.changeInput(current.input + key);
-      }
+      const action = ime.keyAction(event, current.mode);
+      if (!action || action.type === 'tab' || action.type === 'caret' || action.type === 'delete')
+        return;
+      event.preventDefault();
+      if (action.type === 'cancel') current.cancel();
+      else if (action.type === 'accept') void current.execute(current.input);
+      else if (action.type === 'history') current.recall(action.direction);
+      else if (action.type === 'backspace') current.changeInput(current.input.slice(0, -1));
+      else current.changeInput(current.input + action.text);
       current.inputRef.current?.focus({ preventScroll: true });
     }
     document.addEventListener('keydown', handleKey);
@@ -139,8 +135,12 @@ export function CommandLine(props: CommandLineProps) {
             spellCheck={false}
             onChange={(event) => changeInput(event.target.value)}
             onKeyDown={(event) => {
-              if (event.nativeEvent.isComposing) return;
-              if (event.code === 'Enter' || event.code === 'NumpadEnter') {
+              if (event.nativeEvent.isComposing || event.keyCode === 229) return;
+              const accepts =
+                event.code === 'Enter' ||
+                event.code === 'NumpadEnter' ||
+                (event.code === 'Space' && ime.policy.spaceAccepts);
+              if (accepts) {
                 event.preventDefault();
                 void props.execute(input);
               } else if (event.code === 'Escape') {
@@ -163,10 +163,10 @@ export function CommandLine(props: CommandLineProps) {
             contentEditable={false}
             onPaste={(event) => {
               event.preventDefault();
-              changeInput(input + reverseHangulInput(event.clipboardData.getData('text/plain')));
+              changeInput(input + ime.normalize(event.clipboardData.getData('text/plain')));
             }}
             onCompositionEnd={(event) => {
-              if (event.data) changeInput(input + reverseHangulInput(event.data));
+              if (event.data) changeInput(input + ime.normalize(event.data));
             }}
           >
             {input || <span className="command-placeholder">{messages.commandInput}</span>}

@@ -6,5 +6,6 @@ export * from './messages';
 export * from './pgp';
 export * from './registry';
 export * from './runner';
+export * from './command-input';
 export * from './input-errors';
 export { undoPrompt, historyInputPrompt, historyErrorMessage } from './history-commands';

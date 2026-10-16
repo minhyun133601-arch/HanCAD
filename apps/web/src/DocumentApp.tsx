@@ -328,6 +328,7 @@ export function DocumentApp({
             input={session.input}
             prompt={navigation.prompt ?? tools.prompt}
             editable={!navigation.active && tools.editable}
+            mode={navigation.inputMode ?? tools.inputMode ?? session.inputMode}
             busy={session.busy}
             blocked={files.reading || files.restoring}
             expanded={expanded}

@@ -5,6 +5,7 @@ import { DrawingDatabase } from '@hancad/db';
 import { getSystemVariableDefinition, SystemVariables } from '@hancad/sysvars';
 import type { DrawingDocument } from '@hancad/sysvars';
 import { getMessages, type Locale } from '@hancad/ui';
+import type { PromptInputMode } from '@hancad/input';
 import { restoreProfileVariables, subscribeProfileVariables } from './profile-storage';
 import { errorMessage } from './error-presenter';
 
@@ -253,9 +254,17 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     setRevision((value) => value + 1);
   }
 
+  function inputMode(session: PromptSession): PromptInputMode {
+    if (session.kind === 'idle') return 'command';
+    if (session.kind !== 'variable-value') return 'keyword';
+    // String values (MODEMACRO, DIMPOST...) are free text; spaces belong to the value.
+    return getSystemVariableDefinition(session.name)?.type === 'string' ? 'text' : 'number';
+  }
+
   return {
     ...runtime,
     history,
+    inputMode: inputMode(promptSession),
     input,
     busy,
     revision,

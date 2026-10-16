@@ -14,10 +14,16 @@ export const commandMessages = {
     locale === 'ko-KR'
       ? `${name}에 대한 새 값 입력 <${value}>:`
       : `Enter new value for ${name} <${value}>:`,
-  transparent: (name: string, locale: CommandLocale): string =>
+  transparent: (_name: string, locale: CommandLocale): string =>
     locale === 'ko-KR'
-      ? `${name} 명령은 투명하게 실행할 수 없습니다.`
-      : `${name} cannot run transparently.`,
+      ? '** 해당 명령은 투명하게 호출할 수 없습니다 **'
+      : '** That command may not be invoked transparently **',
+  resuming: (name: string, locale: CommandLocale): string =>
+    locale === 'ko-KR' ? `${name} 명령 재개 중.` : `Resuming ${name} command.`,
+  externalUnavailable: (name: string, locale: CommandLocale): string =>
+    locale === 'ko-KR'
+      ? `외부 명령 "${name}"은(는) 데스크톱 앱에서만 실행할 수 있습니다.`
+      : `External command "${name}" runs only in the desktop app.`,
   nothingToUndo: (locale: CommandLocale): string =>
     locale === 'ko-KR' ? '실행 취소할 항목이 없습니다.' : 'There is nothing to undo.',
   nothingToRedo: (locale: CommandLocale): string =>
