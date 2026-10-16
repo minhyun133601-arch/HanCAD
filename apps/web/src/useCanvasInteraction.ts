@@ -18,6 +18,9 @@ import type { useDrawingFiles } from './useDrawingFiles';
 import type { useCommandSession } from './useCommandSession';
 import type { useEditingTools } from './useEditingTools';
 import type { useTextCreation } from './useTextCreation';
+import type { useViewNavigation } from './useViewNavigation';
+import { drawingStyleTables } from '@hancad/render';
+import type { DrawingStyleTables } from '@hancad/render';
 
 interface Options {
   files: ReturnType<typeof useDrawingFiles>;
@@ -31,6 +34,7 @@ interface Options {
   progressOpen: boolean;
   messages: Messages;
   surface: { current: CanvasSurface | null };
+  navigation: ReturnType<typeof useViewNavigation>;
 }
 const snapLabels = {
   endpoint: 'snapEndpoint',
@@ -53,6 +57,27 @@ export function useCanvasInteraction(options: Options) {
   const [dragPreview, setDragPreview] = useState<readonly CadEntity[] | null>(null);
   const shift = useRef(false);
   const lastCursor = useRef<CadPoint | null>(null);
+  const styleCache = useRef<{
+    state: ReturnType<Options['files']['getState']>;
+    tables: DrawingStyleTables;
+  } | null>(null);
+  useEffect(
+    () =>
+      options.session.database.events.subscribe(() => {
+        styleCache.current = null;
+      }),
+    [options.session.database],
+  );
+  function styleTables(): DrawingStyleTables {
+    const live = latest.current,
+      state = live.files.getState();
+    if (styleCache.current?.state !== state)
+      styleCache.current = {
+        state,
+        tables: drawingStyleTables(live.session.database.all(), state),
+      };
+    return styleCache.current.tables;
+  }
   useEffect(() => {
     const changed = (event: KeyboardEvent): void => {
       if (event.code !== 'ShiftLeft' && event.code !== 'ShiftRight') return;
@@ -77,6 +102,7 @@ export function useCanvasInteraction(options: Options) {
   }
   function canSelectArea(): boolean {
     const live = latest.current;
+    if (live.navigation.isActive()) return !blocked() && live.navigation.canSelectArea();
     return (
       !blocked() &&
       !live.draft.isDrafting() &&
@@ -118,6 +144,10 @@ export function useCanvasInteraction(options: Options) {
   function pick(event: CadPointerPick): void {
     if (blocked()) return;
     const live = latest.current;
+    if (live.navigation.isActive()) {
+      live.navigation.pick(event);
+      return;
+    }
     const target = resolve(event.point);
     if (live.editing.isActive()) {
       const entity = live.editing.entityAt(
@@ -138,8 +168,13 @@ export function useCanvasInteraction(options: Options) {
   function cursor(point: CadPoint): void {
     lastCursor.current = point;
     if (blocked() || moving.current) return;
-    const live = latest.current,
-      target = resolve(point);
+    const live = latest.current;
+    if (live.navigation.isActive()) {
+      live.surface.current?.setSnapMarker();
+      live.navigation.cursor(point);
+      return;
+    }
+    const target = resolve(point);
     if (live.editing.isActive()) {
       const entity = live.editing.entityAt(point, 8 / (live.surface.current?.getView().scale ?? 1));
       live.editing.cursor(target.point, entity, shift.current);
@@ -165,6 +200,10 @@ export function useCanvasInteraction(options: Options) {
   }
   function selectionDrag(event: CadSelectionDrag): void {
     const live = latest.current;
+    if (live.navigation.isActive()) {
+      live.navigation.selectionDrag(event);
+      return;
+    }
     if (event.phase === 'cancel' || blocked()) {
       if (event.reason === 'escape') live.session.print(live.messages.cancel);
       moving.current = null;
@@ -235,6 +274,40 @@ export function useCanvasInteraction(options: Options) {
         zoomFactor: vars.getNumber('ZOOMFACTOR'),
         zoomWheel: vars.getNumber('ZOOMWHEEL'),
         middleButtonPan: vars.getNumber('MBUTTONPAN'),
+        transitionEnabled: vars.getNumber('VTENABLE'),
+        transitionDuration: vars.getNumber('VTDURATION'),
+        transitionFps: vars.getNumber('VTFPS'),
+      };
+    },
+    getNavigationMode: () => latest.current.navigation.mode(),
+    getNavigationWindow: () => latest.current.navigation.window(),
+    getSystemVariable: (name: string): unknown => latest.current.session.sysvars.get(name),
+    getLinetypes: () => styleTables().linetypes,
+    getLayerStyles: () => styleTables().layers,
+    getAidSettings: () => {
+      const live = latest.current,
+        vars = live.session.sysvars;
+      const pair = (name: string) => {
+        const value = vars.get(name);
+        return {
+          x: Array.isArray(value) && typeof value[0] === 'number' ? value[0] : 0,
+          y: Array.isArray(value) && typeof value[1] === 'number' ? value[1] : 0,
+        };
+      };
+      const min = pair('LIMMIN'),
+        max = pair('LIMMAX');
+      return {
+        cursorSize: vars.getNumber('CURSORSIZE'),
+        pickbox: vars.getNumber('PICKBOX'),
+        ucsIcon: vars.getNumber('UCSICON'),
+        gridMode: vars.getNumber('GRIDMODE'),
+        gridUnit: pair('GRIDUNIT'),
+        snapUnit: pair('SNAPUNIT'),
+        gridMajor: vars.getNumber('GRIDMAJOR'),
+        gridDisplay: vars.getNumber('GRIDDISPLAY'),
+        gridStyle: vars.getNumber('GRIDSTYLE'),
+        limits: { minX: min.x, minY: -max.y, maxX: max.x, maxY: -min.y },
+        background: live.navigation.backgroundColor(),
       };
     },
     selectionGesture: (): 'area' | 'fence' =>

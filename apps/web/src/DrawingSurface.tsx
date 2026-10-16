@@ -27,6 +27,12 @@ export function DrawingSurface({
   getNavigationSettings,
   selectionGesture,
   onNavigate,
+  getNavigationMode,
+  getNavigationWindow,
+  getAidSettings,
+  getSystemVariable,
+  getLinetypes,
+  getLayerStyles,
 }: {
   messages: Messages;
   layout: LayoutId;
@@ -47,6 +53,12 @@ export function DrawingSurface({
   getNavigationSettings: NonNullable<CadCanvasOptions['getNavigationSettings']>;
   selectionGesture: NonNullable<CadCanvasOptions['selectionGesture']>;
   onNavigate: NonNullable<CadCanvasOptions['onNavigate']>;
+  getNavigationMode: NonNullable<CadCanvasOptions['getNavigationMode']>;
+  getNavigationWindow: NonNullable<CadCanvasOptions['getNavigationWindow']>;
+  getAidSettings: NonNullable<CadCanvasOptions['getAidSettings']>;
+  getSystemVariable: NonNullable<CadCanvasOptions['getSystemVariable']>;
+  getLinetypes: NonNullable<CadCanvasOptions['getLinetypes']>;
+  getLayerStyles: NonNullable<CadCanvasOptions['getLayerStyles']>;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const surface = useRef<CanvasSurface | null>(null);
@@ -65,6 +77,12 @@ export function DrawingSurface({
         getNavigationSettings,
         selectionGesture,
         onNavigate,
+        getNavigationMode,
+        getNavigationWindow,
+        getAidSettings,
+        getSystemVariable,
+        getLinetypes,
+        getLayerStyles,
       });
       canvas.setDrawing(drawing);
       surface.current = canvas;

@@ -68,6 +68,7 @@ export class HeadlessCommandRunner {
           messages: [commandMessages.unknown(command, this.locale)],
         };
       command = resolved.canonicalName;
+      context.prefixes = resolved.prefixes;
       if (resolved.prefixes.transparent && !resolved.definition.flags?.transparent)
         return {
           status: 'error',

@@ -3,6 +3,7 @@ import type { RefObject } from 'react';
 import { mapKeyboardCode, reverseHangulInput } from '@hancad/input';
 import type { Messages } from '@hancad/ui';
 import type { HistoryLine } from './useCommandSession';
+import { PromptKeywords } from './PromptKeywords';
 
 interface CommandLineProps {
   messages: Messages;
@@ -116,7 +117,15 @@ export function CommandLine(props: CommandLineProps) {
         ))}
       </div>
       <div className="command-input-row">
-        <span className="command-prompt">{prompt}</span>
+        <span className="command-prompt">
+          <PromptKeywords
+            prompt={prompt}
+            execute={(keyword) => {
+              void props.execute(keyword);
+              inputRef.current?.focus({ preventScroll: true });
+            }}
+          />
+        </span>
         {editable ? (
           <input
             ref={(element) => {

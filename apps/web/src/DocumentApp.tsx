@@ -19,6 +19,8 @@ import { errorMessage } from './error-presenter';
 import { useViewHistory } from './view-history';
 import { layoutFromName, layoutName, useHostVariables } from './host-variables';
 import type { DocumentManager, DrawingDocument } from '@hancad/sysvars';
+import { useViewNavigation } from './useViewNavigation';
+import { DisplayOptionsDialog } from './DisplayOptionsDialog';
 
 export function DocumentApp({
   document: drawingDocument,
@@ -62,6 +64,14 @@ export function DocumentApp({
   const tools = useDrawingCommands({ session, files, messages });
   const { draft, dimensions, modification, measurement, editing, text } = tools;
   const canvasSurface = useRef<CanvasSurface | null>(null);
+  const navigation = useViewNavigation({
+    session,
+    files,
+    surface: canvasSurface,
+    selected: draft.getSelectedIds,
+    cancelOthers: tools.cancelAll,
+    korean: locale === 'ko-KR',
+  });
   const interaction = useCanvasInteraction({
     files,
     draft,
@@ -74,6 +84,7 @@ export function DocumentApp({
     progressOpen,
     messages,
     surface: canvasSurface,
+    navigation,
   });
   const onNavigate = useViewHistory(session.database, canvasSurface);
   useEffect(() => {
@@ -100,12 +111,24 @@ export function DocumentApp({
     canvasSurface.current?.cancelPointerInteraction();
     if (files.restoring) files.cancelRestore(false);
     tools.cancelAll();
+    navigation.cancel(false);
     canvasSurface.current?.setSnapMarker();
     setCommandVisible(true);
     session.startCommand(command);
     focusCommand();
   }
   async function submit(value: string): Promise<void> {
+    if (navigation.submit(value)) {
+      session.changeInput('');
+      return;
+    }
+    if (
+      /^\s*['_.-]*(?:ZOOM|Z|PAN|P)\b/i.test(value) &&
+      (!tools.isActive() || value.trim().split(/\s/)[0]?.includes("'"))
+    ) {
+      await session.execute(value);
+      return;
+    }
     if (tools.submit(value)) {
       session.changeInput('');
       if (!tools.isActive()) canvasSurface.current?.setSnapMarker();
@@ -116,11 +139,12 @@ export function DocumentApp({
   }
   function cancel(): void {
     canvasSurface.current?.cancelPointerInteraction();
-    if (!tools.cancel()) session.cancel();
+    if (!navigation.cancel() && !tools.cancel()) session.cancel();
     session.changeInput('');
     canvasSurface.current?.setSnapMarker();
   }
   function openFile(file: File): void {
+    navigation.cancel(false);
     tools.cancelAll();
     void files.openFile(file);
   }
@@ -153,23 +177,13 @@ export function DocumentApp({
       description: { 'ko-KR': korean.progressNote, 'en-US': english.progressNote },
       execute: () => setProgressOpen(true),
     });
-    session.registry.register({
-      name: 'ZOOM',
-      displayName: { 'ko-KR': korean.zoom, 'en-US': english.zoom },
-      description: { 'ko-KR': korean.fitDrawing, 'en-US': english.fitDrawing },
-      execute: (context) => {
-        const option = context.input.take();
-        if (typeof option === 'string' && /^_?E$/i.test(option))
-          canvasSurface.current?.zoomExtents();
-        else context.print(messages.zoomExtentsOnly);
-      },
-    });
   }, [session.registry, messages]);
   useEffect(() => {
     focusCommand();
   }, [commandVisible, session.editable, dimensions.editable, text.editable]);
   useEffect(() => {
     tools.cancelAll();
+    navigation.cancel(false);
   }, [files.fitRevision]);
   useEffect(() => {
     if (!tools.active) canvasSurface.current?.setSnapMarker();
@@ -186,7 +200,7 @@ export function DocumentApp({
     dimensions,
     modification,
     measurement,
-    additional: [editing, text],
+    additional: [navigation, editing, text],
     messages,
     print: session.print,
     execute,
@@ -245,8 +259,8 @@ export function DocumentApp({
           fitRevision={files.fitRevision}
           preview={interaction.dragPreview ?? tools.preview}
           previewHiddenIds={tools.previewHiddenIds}
-          selectedIds={tools.selectedIds}
-          active={tools.active}
+          selectedIds={navigation.snapshot?.selectedIds ?? tools.selectedIds}
+          active={tools.active || navigation.active}
           selectionGesture={interaction.selectionGesture}
           onPick={interaction.pick}
           onCoordinates={interaction.cursor}
@@ -255,6 +269,12 @@ export function DocumentApp({
           suppressSelectionBox={interaction.suppressSelectionBox}
           getNavigationSettings={interaction.getNavigationSettings}
           onNavigate={onNavigate}
+          getNavigationMode={interaction.getNavigationMode}
+          getNavigationWindow={interaction.getNavigationWindow}
+          getAidSettings={interaction.getAidSettings}
+          getSystemVariable={interaction.getSystemVariable}
+          getLinetypes={interaction.getLinetypes}
+          getLayerStyles={interaction.getLayerStyles}
         />
         <div className="drawing-tools">
           <span>
@@ -306,8 +326,8 @@ export function DocumentApp({
             messages={messages}
             history={session.history}
             input={session.input}
-            prompt={tools.prompt}
-            editable={tools.editable}
+            prompt={navigation.prompt ?? tools.prompt}
+            editable={!navigation.active && tools.editable}
             busy={session.busy}
             blocked={files.reading || files.restoring}
             expanded={expanded}
@@ -369,6 +389,16 @@ export function DocumentApp({
         }}
         onClose={() => {
           dimensions.closeStyle();
+          focusCommand();
+        }}
+      />
+      <DisplayOptionsDialog
+        open={navigation.optionsOpen}
+        korean={locale === 'ko-KR'}
+        background={navigation.background}
+        apply={navigation.setBackground}
+        close={() => {
+          navigation.setOptionsOpen(false);
           focusCommand();
         }}
       />

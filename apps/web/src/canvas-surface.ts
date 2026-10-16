@@ -1,5 +1,10 @@
 import { CadCanvasSurface } from '@hancad/render';
-import type { CadCanvasOptions, CadSnapKind, CadWorldView } from '@hancad/render';
+import type {
+  CadCanvasOptions,
+  CadSnapKind,
+  CadWorldView,
+  CadNavigationKind,
+} from '@hancad/render';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 
 /** Owns the DOM canvas; React only provides the host element. */
@@ -57,6 +62,24 @@ export class CanvasSurface {
   }
   zoomExtents(): void {
     this.renderer.zoomExtents();
+  }
+  navigate(view: CadWorldView, kind: CadNavigationKind = 'zoom', smooth = true): void {
+    this.renderer.navigate(view, kind, smooth);
+  }
+  zoomPrevious(): boolean {
+    return this.renderer.zoomPrevious();
+  }
+  regenerate(height?: number): void {
+    this.renderer.regenerate(height);
+  }
+  redraw(): void {
+    this.renderer.redraw();
+  }
+  getDrawingBounds(ids?: readonly string[]) {
+    return this.renderer.getDrawingBounds(ids);
+  }
+  setStressDataset(count: number): void {
+    this.renderer.setStressDataset(count);
   }
   getWorldView(): CadWorldView {
     return this.renderer.getWorldView();

@@ -14,6 +14,7 @@ export interface CommandContext {
   sysvars: SystemVariables;
   input: InputQueue;
   locale: CommandLocale;
+  prefixes?: CommandPrefixes;
   print(message: string): void;
 }
 export interface CommandDefinition {
