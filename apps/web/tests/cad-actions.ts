@@ -37,9 +37,16 @@ export async function dimensions(page: Page): Promise<CadDimensionGeometry[]> {
   });
 }
 
-export async function mapping(page: Page) {
+export async function mapping(page: Page, clearOfCommandLine = true) {
   await page.getByRole('button', { name: '도면 전체 맞춤', exact: true }).click();
   await settleView(page);
+  if (clearOfCommandLine) {
+    // Like AutoCAD, the floating command line covers the bottom of the drawing area;
+    // shrink the extents so picks near their edges never land on the bar.
+    await enter(page, 'ZOOM');
+    await enter(page, '0.8X');
+    await settleView(page);
+  }
   await enter(page, 'GETVAR');
   await enter(page, 'VIEWCTR');
   const output = page.getByRole('log', { name: '명령 기록' }).locator('.history-line').last();

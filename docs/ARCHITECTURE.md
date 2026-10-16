@@ -150,6 +150,23 @@ geometry, Editor APIs, I/O, fonts, automation and 3D have independent packages.
 Unimplemented packages are documented as pending rather than exposed as working
 features.
 
+Phase 03 command input has three layers. `packages/commands/src/catalog/` is the
+single source of command names, Korean/English help, flags and owning phase; the
+registry, ribbon, F1 help and AutoComplete read it. `packages/input` owns
+`interpretCommandInput` (command, alias, PGP external command, system variable,
+repeat, transparent rules) and `ImeController`, which maps physical keys for
+command/keyword/number/point/osnap/selection prompts and leaves names, free text
+and file names to an editable element. `apps/web/src/command-line/` is the
+command window: `CommandWindow` composes the floating or docked `CommandLine`,
+the text window (F2 when docked, Ctrl+F2, TEXTSCR), the transparency and close
+dialogs. Placement is a profile preference (`layout.ts`); a docked window sets
+`--command-dock-height` on the workspace so the drawing area shrinks, while a
+floating bar overlays the drawing like AutoCAD's and only its input row and an
+expanded history take pointer input. `HistoryView` keeps one accessible log and
+only changes how many recent lines are visible; `InputHistory` stores Up/Down
+recall per prompt context. `menus/ContextMenu.tsx` is the shared keyboard-aware
+menu for the command line and later shortcut and status-bar menus.
+
 The bootstrap geometry crate is compiled to WASM and exercised from TypeScript.
 Native OS integration belongs to Rust behind a Platform interface. The browser
 adapter must explicitly report unavailable OS features. Drawing files must not be

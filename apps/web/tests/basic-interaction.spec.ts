@@ -202,7 +202,8 @@ test('wheel zoom preserves its cursor anchor and reads wheel/pan system variable
   await variable(page, 'OSMODE', '0');
   await line(page, '0,0', '200,100');
   const before = await drawing(page);
-  const view = await mapping(page);
+  // The final double-middle click returns to the exact extents view.
+  const view = await mapping(page, false);
   const anchor = screen(view, 130, 70);
   const baselineDistance = await probeDistance(page, anchor);
   const initialZoom = await zoom(page);

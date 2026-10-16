@@ -13,7 +13,7 @@ shortcut menus, command aliases/AutoCorrect and the command window.
 | ----------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | 3.1 Command catalog and aliases           | Done    | Canonical/global names, Korean/English names and help, flags, implementation status, completed acad.pgp aliases, generated COMMANDS.md |
 | 3.2 Input parsing and ImeController       | Done    | Prompt input modes, Hangul normalization, Space/Enter rules, PGP grammar incl. external commands, transparent-command rules            |
-| 3.3 Command line window                   | WIP     | Floating/docked bar, temporary prompt lines, F2/Ctrl+F2/Ctrl+9, command-name prompt, history recall, right-click menu                  |
+| 3.3 Command line window                   | Done    | Floating/docked bar, temporary prompt lines, F2/Ctrl+F2/Ctrl+9, command-name prompt, history recall, right-click menu                  |
 | 3.4 AutoComplete and input search options | Planned | Suggestion list, auto-append, mid-string, sysvars, frequency order, delay, AutoCorrect DB, INPUTSEARCHOPTIONS dialog                   |
 | 3.5 Transparent commands                  | Planned | `>>` prompts for 'ZOOM/'PAN/'SETVAR/sysvars/'DIST/'CAL/'OSNAP/'HELP, resume message and original prompt                                |
 | 3.6 PGP import, ALIASEDIT and REINIT      | Planned | User acad.pgp import/merge (user wins), persistent profile copy, ALIASEDIT dialog, REINIT/RE-INIT reload                               |
@@ -22,47 +22,43 @@ shortcut menus, command aliases/AutoCorrect and the command window.
 | 3.9 Mouse and shortcut menus              | Planned | SHORTCUTMENU bits, time-sensitive right click, Korean default/edit/command menus, Shift+right-click object snap menu                   |
 | 3.10 Status bar and F1 help               | Planned | All toggles with icons/menus, COORDS display, customization menu, F1 Korean help panel, phase acceptance                               |
 
-### Paused state (2026-10-16, user request)
+### Milestone 3.3 command window (2026-10-16)
 
-The user asked to record progress and pause during milestone 3.3. Milestones 3.1
-(`7164190`) and 3.2 (`eb2f618`) are complete and verified: lint, formatting,
-strict TypeScript, 479 unit, 30 compatibility tests, the command-doc drift check
-and 64 Edge E2E tests (one opt-in skip) passed at 3.2.
+The user paused 3.3 as work in progress and asked to continue the same day.
+Delivered in `apps/web/src/command-line/`: the AutoCAD-style translucent floating
+bar (grip, × with close confirmation, wrench customize menu, recent-commands menu,
+command name before the prompt, keyword buttons with hidden slashes), temporary
+prompt lines (CLIPROMPTLINES, fade after 5 s), F2 expanded history (floating) or
+text window (docked), Ctrl+F2 and TEXTSCR/GRAPHSCR text window, Ctrl+9 and
+COMMANDLINE/COMMANDLINEHIDE, drag-to-dock with the drawing area shrinking, the
+transparency dialog and the right-click menu (recent commands, copy, copy history,
+paste, paste to command line, options). `menus/ContextMenu.tsx` is shared by later
+menus; Up/Down recall uses `InputHistory` per prompt context.
 
-Milestone 3.3 is committed as work in progress (`wip(phase3.3)`), not accepted.
-Delivered in the working code:
+The four E2E failures at the pause were not a pick bug: the floating bar covers the
+bottom of the drawing area exactly as AutoCAD's does, and those tests clicked
+objects on the bottom edge of a ZOOM Extents view. The shared `mapping` helper now
+zooms 0.8X after Extents. A real bug surfaced while testing docking: equal CSS
+specificity let `workspace.css` override the docked inset, so a docked window
+covered the drawing instead of shrinking it; the rule is now scoped under
+`.workspace`.
 
-- `apps/web/src/command-line/`: AutoCAD-style translucent floating bar (grip, ×
-  with close confirmation, wrench customize menu, recent-commands menu, command
-  name before the prompt, keyword buttons with hidden slashes), temporary prompt
-  lines (CLIPROMPTLINES, fade after 5 s), F2 expanded history (floating) / text
-  window (docked), Ctrl+F2 and TEXTSCR/GRAPHSCR text window, Ctrl+9 and
-  COMMANDLINE/COMMANDLINEHIDE, drag-to-dock with the drawing area shrinking
-  (`--command-dock-height`), transparency dialog, right-click menu (recent
-  commands, copy, copy history, paste, paste to command line, options).
-- `menus/ContextMenu.tsx`: shared keyboard/mnemonic/submenu context menu for
-  later shortcut and status-bar menus; `ui-focus.ts` blocks typing while menus
-  or dialogs are open.
-- Session: Up/Down recall uses `InputHistory` per prompt context
-  (INPUTHISTORYMODE bit 1, CMDINPUTHISTORYMAX); idle prompt "명령:" stays in the
-  DOM but is visually hidden behind the "명령 입력" placeholder.
-- `packages/ui/src/command-line-messages.ts` holds the new Korean/English strings.
+Verification: lint, formatting, strict TypeScript, 486 unit, 30 compatibility,
+the command-doc drift check and the production build pass; E2E runs against the
+rebuilt production app with 67 passed and one opt-in skip (new
+`command-window.spec.ts` covers COMMANDLINEHIDE, TEXTSCR, Ctrl+F2, the close
+confirmation, docking with drawing-area resize and persistence, and the right-click
+menu).
 
-Known failing E2E at the pause (4): `drafting.spec.ts:32`, `dimensions.spec.ts:281`,
-`editing-tools.spec.ts:138`, `text-creation.spec.ts:96`. Each clicks a drawing point
-low on the canvas and expects `data-selection-count`/`data-preview-count` 1, but
-gets 0. The floating command-line section already uses `pointer-events: none`
-except for its bar; the remaining suspect is the input bar (or another overlay)
-covering those points. Two `drawing-cache.spec.ts` failures in the first run were
-server `ERR_HTTP_RESPONSE_CODE_FAILURE` and passed on rerun.
+Note: `HanCAD 실행.cmd` leaves `scripts/serve-app.mjs` serving `apps/web/dist` on
+port 1420, and Playwright reuses that server. Run `pnpm build:web` before E2E so
+the tests exercise current source.
 
-Exact next step: in one failing spec, log `document.elementFromPoint` at the
-clicked screen point to find the intercepting element; fix it (keep the canvas
-pickable outside the bar), rerun the full verification, update ARCHITECTURE.md,
-COMMANDS.md (COMMANDLINE/COMMANDLINEHIDE/TEXTSCR/GRAPHSCR statuses), DECISIONS.md
-(5 s fade, close confirmation, docked text window) and PARITY_CHECKLIST.md, then
-replace this WIP commit's status with a `feat(phase3.3)` commit and continue with
-milestone 3.4 (AutoComplete and input search options).
+Exact next step: milestone 3.4 (AutoComplete and input search options): the
+suggestion list under the bar, auto-append, mid-string search, system-variable
+search, frequency order, INPUTSEARCHDELAY, the AutoCorrect database and the
+INPUTSEARCHOPTIONS dialog, wired into `CommandLine`'s `children` slot and the
+customize menu's `inputSettings` entries.
 
 ## Completed phase: Phase 02 rendering engine and view navigation (2026-10-16)
 

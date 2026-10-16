@@ -25,6 +25,7 @@ command is not an implemented command.
 - [ ] Phase 03 catalog: compare the Korean display names and one-line help of all 372 catalog commands (`pnpm docs:commands` table) with the Korean help/ribbon tooltips, especially names not in GLOSSARY.md (e.g. 기준점을 사용하여 복사, 일반 DWG로 내보내기, 회전 for both ROTATE and REVOLVE).
 - [ ] Phase 03 messages: compare the transparent-command error (`** 해당 명령은 투명하게 호출할 수 없습니다 **`), the resume line (`LINE 명령 재개 중.`) and the external-command behavior with the Korean reference; check whether Space accepts at layer/block name prompts and inserts a space in string SETVAR values.
 - [ ] Phase 03 flags: verify which commands accept the ' prefix (HanCAD list in `catalog/flags.ts`), which open modal dialogs and which use the PICKFIRST set.
+- [ ] Phase 03 command window: measure the floating bar's default width/position/transparency and how long temporary prompt lines stay before fading (HanCAD: 930 px, 25%, 5 s); compare the close-confirmation wording, the customize (wrench) and recent-command menus, the right-click menu items and their order, F2 floating/docked behavior, Ctrl+F2, TEXTSCR/GRAPHSCR and the docked drawing-area resize.
 - [ ] Phase 03 aliases: compare the 172 extended aliases (alternative, legacy and discontinued-command sections of an installed acad.pgp) with the current release's acad.pgp; confirm GCON=GEOMCONSTRAINT and ED=TEXTEDIT.
 - [ ] Choose and document one installed AutoCAD reference release and template.
 - [ ] Verify Korean prompts against the reference release.

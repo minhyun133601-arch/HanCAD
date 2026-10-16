@@ -1,4 +1,5 @@
-.drawing-region {
+/* Stronger than workspace.css so a docked window shrinks the drawing area. */
+.workspace > .drawing-region {
   inset: 0 0 var(--command-dock-height, 0px) 0;
   height: auto;
 }

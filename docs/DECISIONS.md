@@ -1,5 +1,26 @@
 # Decisions
 
+## 2026-10-16: Phase 03 command window (milestone 3.3)
+
+The default command window floats near the bottom of the drawing area, centered,
+930 px wide with 25% transparency, as in AutoCAD 2013 and later. Its recent prompt
+lines (CLIPROMPTLINES, default 3) stay visible after each entry and fade 5 seconds
+later; Autodesk does not publish the delay, so 5 s is an assumption to measure.
+The floating bar covers the drawing area the same way AutoCAD's does, so picks
+under the bar hit the bar. Dragging the grip past the bottom edge docks the window;
+a docked window shrinks the drawing area instead of covering it, shows a fixed
+number of history lines and opens the text window on F2. When floating, F2
+expands the history above the bar. Ctrl+F2 and TEXTSCR always open the text window,
+GRAPHSCR closes it. The close button asks for confirmation; Ctrl+9 and
+COMMANDLINEHIDE hide without asking, and Ctrl+9 or COMMANDLINE show the window
+again. Placement and transparency are profile preferences, not drawing data.
+The idle "명령:" prompt stays in the accessible text but is visually replaced by the
+"명령 입력" placeholder, matching AutoCAD's empty floating bar.
+
+E2E helpers that map model points to screen points shrink the extents view by
+0.8X before picking, because the floating bar can cover objects at the bottom edge
+of a ZOOM Extents view.
+
 ## 2026-10-16: Phase 03 input modes and command-line interpretation (milestone 3.2)
 
 Every active prompt reports one input type: command, keyword, number, point,

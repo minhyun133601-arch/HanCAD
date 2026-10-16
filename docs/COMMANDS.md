@@ -64,8 +64,8 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | CLOSE               |                                                     | 닫기                       | Not implemented; explicit message (Phase 09)                                                        |
 | CLOSEALL            |                                                     | 모두 닫기                  | Not implemented; explicit message (Phase 09)                                                        |
 | COLOR               | COL, COLOUR, DDCOLOR                                | 색상                       | Not implemented; explicit message (Phase 08)                                                        |
-| COMMANDLINE         | CLI                                                 | 명령행                     | Not implemented; explicit message (Phase 03)                                                        |
-| COMMANDLINEHIDE     |                                                     | 명령행 숨기기              | Not implemented; explicit message (Phase 03)                                                        |
+| COMMANDLINE         | CLI                                                 | 명령행                     | Shows the hidden command window (also Ctrl+9)                                                       |
+| COMMANDLINEHIDE     |                                                     | 명령행 숨기기              | Hides the command window without confirmation (also Ctrl+9)                                         |
 | CONSTRAINTBAR       | CBAR                                                | 구속조건 막대              | Not implemented; explicit message (Phase 18)                                                        |
 | CONSTRAINTSETTINGS  | CSETTINGS                                           | 구속조건 설정              | Not implemented; explicit message (Phase 18)                                                        |
 | COPY                | CO, CP                                              | 복사                       | Selection, base/second point, repeated copies, Exit/Enter/Esc; one undo group                       |
@@ -149,7 +149,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | GEOMCONSTRAINT      | GCON                                                | 기하학적 구속조건          | Not implemented; explicit message (Phase 18)                                                        |
 | GETVAR              |                                                     | 시스템 변수 값 표시        | Partial / 860 typed definitions; unresolved host defaults report unavailable                        |
 | GRADIENT            | GD                                                  | 그라데이션                 | Not implemented; explicit message (Phase 12)                                                        |
-| GRAPHSCR            |                                                     | 그래픽 화면                | Not implemented; explicit message (Phase 03)                                                        |
+| GRAPHSCR            |                                                     | 그래픽 화면                | Closes the text window                                                                              |
 | GRID                |                                                     | 그리드                     | Not implemented; explicit message (Phase 04)                                                        |
 | GROUP               | -G, G                                               | 그룹                       | Not implemented; explicit message (Phase 05)                                                        |
 | HANPROGRESS         |                                                     | 개발 진행 상황             | Current features, limitations and all 26 phase statuses                                             |
@@ -341,7 +341,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | TABLET              | TA                                                  | 타블렛                     | Not implemented; explicit message (Phase 20)                                                        |
 | TEXT                | DT, DTEXT                                           | 단일 행 문자               | Left-baseline point/height/rotation, inline Korean text and repeated independent lines              |
 | TEXTEDIT            | ED, TEDIT                                           | 문자 편집                  | Not implemented; explicit message (Phase 10)                                                        |
-| TEXTSCR             |                                                     | 문자 윈도우                | Not implemented; explicit message (Phase 03)                                                        |
+| TEXTSCR             |                                                     | 문자 윈도우                | Opens the text window with the drawing's command history (also Ctrl+F2)                             |
 | THICKNESS           | TH                                                  | 두께                       | Partial / System variable alias                                                                     |
 | TILEMODE            | TI, TM                                              | 타일 모드                  | Partial / System variable alias                                                                     |
 | TIME                |                                                     | 시간                       | Not implemented; explicit message (Phase 15)                                                        |
