@@ -18,7 +18,7 @@ shortcut menus, command aliases/AutoCorrect and the command window.
 | 3.5 Transparent commands                  | Done    | `>>` prompts for 'ZOOM/'PAN/'SETVAR/sysvars/'DIST/'CAL/'OSNAP/'HELP, resume message and original prompt                                |
 | 3.6 PGP import, ALIASEDIT and REINIT      | Done    | User acad.pgp import/merge (user wins), persistent profile copy, ALIASEDIT dialog, REINIT/RE-INIT reload                               |
 | 3.7 Macros and DIESEL                     | Done    | ^C^C, ;, space, \ pause, \*^C^C repeat, $M=, ^P and other controls; DIESEL evaluator; MODEMACRO; ribbon macros                         |
-| 3.8 Keyboard bindings and overrides       | Planned | Every SHORTCUTS.md binding with ordered scopes, toggle messages, TEMPOVERRIDES key-down/key-up macros                                  |
+| 3.8 Keyboard bindings and overrides       | WIP     | Every SHORTCUTS.md binding with ordered scopes, toggle messages, TEMPOVERRIDES key-down/key-up macros                                  |
 | 3.9 Mouse and shortcut menus              | Planned | SHORTCUTMENU bits, time-sensitive right click, Korean default/edit/command menus, Shift+right-click object snap menu                   |
 | 3.10 Status bar and F1 help               | Planned | All toggles with icons/menus, COORDS display, customization menu, F1 Korean help panel, phase acceptance                               |
 
@@ -123,12 +123,54 @@ Verification: lint, formatting, strict TypeScript, 527 unit, 30 compatibility an
 the command-doc checks, the production build and 83 E2E tests (one opt-in skip)
 pass.
 
-Exact next step: milestone 3.8 (keyboard bindings and overrides): every binding in
-docs/SHORTCUTS.md resolved in the order text editor, dialog, command line, global;
-F-key and Ctrl toggle messages (`<그리드 켜기>` style); TEMPOVERRIDES with key-down
-and key-up macros (Shift for Ortho, Shift+A/S/E/... snap overrides); bindings for
-commands that are not built yet print the Korean not-implemented message. Start
-from `useWorkspaceShortcuts.ts` and `StatusBar.tsx` `statusToggles`.
+### Milestone 3.8 keyboard bindings and temporary overrides (2026-10-16)
+
+Delivered: every Reference B function key, Ctrl shortcut and Delete as a binding
+table (macros, toggles, shell actions) resolved after text editors, dialogs and the
+command line; shared drafting toggles with `<… 켜기/끄기>` echoes, ortho/polar
+exclusion and live status-bar buttons; Ctrl+J/M repeat, drawing and layout
+switching; TEMPOVERRIDES keys at point prompts as an effective-value layer; the
+input wiring moved from DocumentApp into `useCommandInput`. Acceptance item "F3,
+F7-F12 and Ctrl+B/E/F/G/L/U/W flip the right sysvars and status-bar buttons"
+passes in `keyboard.spec.ts`.
+
+Paused at user request (2026-10-16) before the milestone was accepted. Lint,
+formatting, strict TypeScript, 533 unit tests, compatibility and command-doc checks
+passed; the new `keyboard.spec.ts` (3 tests) passed on its own; the full E2E run
+was interrupted after 48 of 87 tests with no failures. The work is committed as
+`wip(phase3.8)`.
+
+Exact next step: run `pnpm build:web` (the launcher's server on port 1420 serves
+`apps/web/dist`, and Playwright reuses it), then the full verification
+(`pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && npx playwright
+test`). If it passes, record the counts here, set 3.8 to Done and replace the WIP
+commit with `feat(phase3.8)`. Then continue with:
+
+- 3.9 Mouse and shortcut menus. Right-click on the drawing area (none today; the
+  browser menu appears): SHORTCUTMENU bits 1/2/4/8 choose default, edit and command
+  menus, otherwise right-click is Enter; bit 16 with SHORTCUTMENUDURATION makes a
+  quick click Enter and a long press the menu. Korean menus: default (반복 <명령>,
+  최근 입력, 클립보드 ▸, 분리 ▸, 명령 취소, 명령 복구, 초점이동, 줌, 빠른 선택...,
+  빠른 계산기, 찾기..., 옵션...), edit (adds 지우기, 이동, 선택 복사, 축척, 회전,
+  그리기 순서 ▸, 그룹 ▸, 선택 항목 추가, 유사 객체 선택, 모두 선택 해제, 특성,
+  빠른 특성), command (입력, 취소, 최근 입력, current prompt keywords, 스냅 재지정 ▸,
+  초점이동, 줌, 빠른 계산기). Shift+right-click and MBUTTONPAN=0 middle click open
+  the object snap menu; endpoint, midpoint, center, quadrant, intersection,
+  nearest and 없음 set a one-shot override for the next pick (extend
+  `temp-overrides.ts`, clear it after the pick), other entries print the
+  not-implemented message, and at a non-point prompt an entry submits `_ENDP`
+  etc. as AutoCAD does. Reuse `menus/ContextMenu.tsx`; menu commands go through
+  `useCommandInput().execute` (macros). The official Korean menu wording was not
+  verified yet; list it in PARITY_CHECKLIST.md.
+- 3.10 Status bar and F1 help: every toggle with icons and right-click settings
+  menus, COORDS display modes, the customization menu to show or hide items, and
+  F1 (now `'_HELP`, not implemented) opening a Korean help panel for the active
+  command from catalog metadata. Then check all seven Phase 03 acceptance items and
+  write the Korean phase report.
+
+Phase 03 acceptance status: IME command entry, free-text composition, OSM
+AutoComplete, acad.pgp + REINIT, F-key/Ctrl toggles and transparent 'Z pass in
+E2E; right-click as Enter and the Shift+right-click menu remain for 3.9.
 
 ## Completed phase: Phase 02 rendering engine and view navigation (2026-10-16)
 

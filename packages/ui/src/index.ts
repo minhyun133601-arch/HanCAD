@@ -12,3 +12,5 @@ export { getInputSearchMessages } from './input-search-messages';
 export type { InputSearchMessages } from './input-search-messages';
 export { getAliasEditMessages } from './alias-edit-messages';
 export type { AliasEditMessages } from './alias-edit-messages';
+export { getShortcutMessages } from './shortcut-messages';
+export type { ShortcutMessages } from './shortcut-messages';

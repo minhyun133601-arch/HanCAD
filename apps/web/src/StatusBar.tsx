@@ -1,49 +1,27 @@
 import { evaluateDiesel } from '@hancad/commands';
 import { dieselHost } from './useMacroRunner';
-import { getSystemVariableDefinition } from '@hancad/sysvars';
+import type { ToggleId } from '@hancad/input';
+import { draftingToggles } from './drafting-toggles';
 import type { SystemVariables } from '@hancad/sysvars';
 import type { MessageKey, Messages } from '@hancad/ui';
 import type { LayoutId } from './DrawingSurface';
 import type { PlatformMode } from './platform';
 
 export interface StatusToggle {
-  implemented?: boolean;
   label: MessageKey;
-  variable: string;
+  toggle: ToggleId;
   key?: string;
-  mask?: number;
-  onValue?: number;
 }
 export const statusToggles: readonly StatusToggle[] = [
-  { label: 'grid', variable: 'GRIDMODE', key: 'F7' },
-  { label: 'snap', variable: 'SNAPMODE', key: 'F9', implemented: false },
-  { label: 'ortho', variable: 'ORTHOMODE', key: 'F8' },
-  { label: 'polar', variable: 'AUTOSNAP', key: 'F10', mask: 8, implemented: false },
-  { label: 'objectSnap', variable: 'OSMODE', key: 'F3', mask: 16384 },
-  { label: 'objectSnapTracking', variable: 'AUTOSNAP', key: 'F11', mask: 16, implemented: false },
-  { label: 'dynamicInput', variable: 'DYNMODE', key: 'F12', onValue: 3, implemented: false },
-  { label: 'lineweight', variable: 'LWDISPLAY' },
+  { label: 'grid', toggle: 'grid', key: 'F7' },
+  { label: 'snap', toggle: 'snap', key: 'F9' },
+  { label: 'ortho', toggle: 'ortho', key: 'F8' },
+  { label: 'polar', toggle: 'polar', key: 'F10' },
+  { label: 'objectSnap', toggle: 'objectSnap', key: 'F3' },
+  { label: 'objectSnapTracking', toggle: 'objectSnapTracking', key: 'F11' },
+  { label: 'dynamicInput', toggle: 'dynamicInput', key: 'F12' },
+  { label: 'lineweight', toggle: 'lineweight' },
 ];
-
-export function isToggleEnabled(sysvars: SystemVariables, toggle: StatusToggle): boolean {
-  const value = sysvars.getNumber(toggle.variable);
-  if (toggle.variable === 'OSMODE') return value > 0 && (value & 16384) === 0;
-  return toggle.mask === undefined ? value > 0 : (value & toggle.mask) !== 0;
-}
-
-export function changeToggle(sysvars: SystemVariables, toggle: StatusToggle): boolean {
-  const current = sysvars.getNumber(toggle.variable);
-  const enabled = isToggleEnabled(sysvars, toggle);
-  if (toggle.variable === 'OSMODE')
-    sysvars.set(
-      toggle.variable,
-      current === 0 ? (getSystemVariableDefinition('OSMODE')?.default ?? 0) : current ^ 16384,
-    );
-  else if (toggle.variable === 'DYNMODE') sysvars.toggle(toggle.variable);
-  else if (toggle.mask !== undefined) sysvars.set(toggle.variable, current ^ toggle.mask);
-  else sysvars.set(toggle.variable, enabled ? 0 : (toggle.onValue ?? 1));
-  return isToggleEnabled(sysvars, toggle);
-}
 
 /** MODEMACRO: user text on the status bar, evaluated as DIESEL on every update. */
 function ModeMacro({ sysvars }: { sysvars: SystemVariables }) {
@@ -67,6 +45,7 @@ export function StatusBar({
   onLayout,
   sysvars,
   toggle,
+  pendingNote,
   mode,
   execute,
 }: {
@@ -74,7 +53,9 @@ export function StatusBar({
   layout: LayoutId;
   onLayout: (layout: LayoutId) => void;
   sysvars: SystemVariables;
-  toggle: (toggle: StatusToggle) => void;
+  toggle: (toggle: ToggleId) => void;
+  /** Tooltip suffix for toggles whose behavior is not implemented yet. */
+  pendingNote: string;
   mode: PlatformMode;
   execute: (command: string) => void;
 }) {
@@ -108,15 +89,12 @@ export function StatusBar({
           <button
             key={item.label}
             className="status-toggle"
-            aria-pressed={item.implemented === false ? false : isToggleEnabled(sysvars, item)}
-            disabled={item.implemented === false}
+            aria-pressed={draftingToggles[item.toggle].enabled(sysvars)}
             aria-label={messages[item.label]}
-            title={
-              item.implemented === false
-                ? `${messages[item.label]} · ${messages.draftingAidsPending}`
-                : `${messages[item.label]}${item.key ? ` (${item.key})` : ''}`
-            }
-            onClick={() => toggle(item)}
+            title={`${messages[item.label]}${item.key ? ` (${item.key})` : ''}${
+              draftingToggles[item.toggle].implemented ? '' : ` · ${pendingNote}`
+            }`}
+            onClick={() => toggle(item.toggle)}
           >
             {messages[item.label]}
           </button>

@@ -21,6 +21,7 @@ import type { useTextCreation } from './useTextCreation';
 import type { useViewNavigation } from './useViewNavigation';
 import { drawingStyleTables } from '@hancad/render';
 import type { DrawingStyleTables } from '@hancad/render';
+import { tempOverrides } from './temp-overrides';
 
 interface Options {
   files: ReturnType<typeof useDrawingFiles>;
@@ -128,11 +129,11 @@ export function useCanvasInteraction(options: Options) {
           live.editing.getState(),
           point,
           live.session.sysvars.getNumber('APERTURE') / (live.surface.current?.getView().scale ?? 1),
-          live.session.sysvars.getNumber('OSMODE'),
+          tempOverrides.number(live.session.sysvars, 'OSMODE'),
           live.draft.getSnapEntities(),
         )
       : undefined;
-    const autosnap = live.session.sysvars.getNumber('AUTOSNAP');
+    const autosnap = tempOverrides.number(live.session.sysvars, 'AUTOSNAP');
     live.surface.current?.setSnapMarker(
       result?.point,
       result?.kind,
@@ -234,7 +235,7 @@ export function useCanvasInteraction(options: Options) {
     if (move) {
       const target = resolve(event.end, true);
       const delta = { x: target.point.x - move.start.x, y: target.point.y - move.start.y };
-      if (!target.snapped && live.session.sysvars.getNumber('ORTHOMODE') === 1) {
+      if (!target.snapped && tempOverrides.number(live.session.sysvars, 'ORTHOMODE') === 1) {
         if (Math.abs(delta.x) >= Math.abs(delta.y)) delta.y = 0;
         else delta.x = 0;
       }

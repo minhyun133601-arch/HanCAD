@@ -1,40 +1,82 @@
-import { useEffect } from 'react';
-import { statusToggles } from './StatusBar';
-import type { StatusToggle } from './StatusBar';
-import type { Messages } from '@hancad/ui';
+import { useEffect, useRef } from 'react';
+import { findShortcut } from '@hancad/input';
+import type { ToggleId, UiAction } from '@hancad/input';
 import type { useDrawingFiles } from './useDrawingFiles';
 import type { useDrafting } from './useDrafting';
-import type { useDimensions } from './useDimensions';
-import type { useModification } from './useModification';
-import type { useMeasurement } from './useMeasurement';
 
 interface Options {
   files: Pick<
     ReturnType<typeof useDrawingFiles>,
     'restoring' | 'reading' | 'cancelRestore' | 'cancelImport'
   >;
-  draft: Pick<ReturnType<typeof useDrafting>, 'isActive' | 'cancel' | 'selectAll'>;
-  dimensions: Pick<ReturnType<typeof useDimensions>, 'isActive' | 'cancel'>;
-  modification: Pick<ReturnType<typeof useModification>, 'isActive' | 'cancel'>;
-  measurement: Pick<ReturnType<typeof useMeasurement>, 'isActive' | 'cancel'>;
-  additional?: readonly { isActive: () => boolean; cancel: (notify?: boolean) => boolean }[];
-  messages: Pick<Messages, 'draftingAidsPending'>;
-  print: (message: string) => void;
-  execute: (command: string) => void;
+  draft: Pick<ReturnType<typeof useDrafting>, 'selectAll'>;
+  /** A command, navigation or prompt is running (Delete only erases at idle). */
+  isActive: () => boolean;
+  /** Ends every running tool silently (Ctrl+A). */
+  cancelTools: () => void;
+  execute: (macro: string) => void;
+  toggle: (id: ToggleId) => void;
+  /** Enter at the current prompt; at an empty command prompt it repeats. */
+  enter: () => void;
   focusCommand: () => void;
   cancelPointer: () => void;
-  showCommand: () => void;
   toggleCommand: () => void;
   toggleExpanded: () => void;
   openTextWindow: () => void;
-  toggle: (item: StatusToggle) => void;
+  switchDrawing: (offset: 1 | -1) => void;
+  switchLayout: (offset: 1 | -1) => void;
+  pending: (action: 'cycleViewports' | 'cycleOverlap') => void;
 }
 
-/** Document shortcuts always use the current render's controller callbacks. */
+/**
+ * Global bindings from docs/SHORTCUTS.md. Text editors and dialogs keep their own
+ * keys, and the command line handles typing, Enter/Space, Esc, Ctrl+[ and history
+ * first; only what remains reaches this table.
+ */
 export function useWorkspaceShortcuts(options: Options): void {
+  const latest = useRef(options);
+  latest.current = options;
   useEffect(() => {
-    const { files, draft, dimensions, modification, measurement } = options;
+    function run(action: UiAction, live: Options): void {
+      switch (action) {
+        case 'help':
+          return live.execute("'_HELP");
+        case 'history':
+          return live.toggleExpanded();
+        case 'textWindow':
+          return live.openTextWindow();
+        case 'commandLine':
+          return live.toggleCommand();
+        case 'selectAll':
+          live.cancelPointer();
+          live.cancelTools();
+          live.draft.selectAll();
+          return live.focusCommand();
+        case 'erase':
+          return live.execute('ERASE');
+        case 'repeat':
+          return live.enter();
+        case 'nextDrawing':
+        case 'previousDrawing':
+          return live.switchDrawing(action === 'nextDrawing' ? 1 : -1);
+        case 'nextLayout':
+        case 'previousLayout':
+          return live.switchLayout(action === 'nextLayout' ? 1 : -1);
+        case 'cleanScreen':
+          return live.execute('^C^C_CLEANSCREENON');
+        case 'palettes':
+          return live.execute('^C^C_HIDEPALETTES');
+        case 'cycleViewports':
+        case 'cycleOverlap':
+          return live.pending(action);
+        case 'cancel':
+          // The command line already cancels Ctrl+[ and Ctrl+\.
+          return;
+      }
+    }
     function handleShortcut(event: KeyboardEvent): void {
+      const live = latest.current;
+      const { files } = live;
       if (document.querySelector('dialog[open], [data-file-menu-open]')) return;
       if (files.restoring && event.code === 'Escape') {
         event.preventDefault();
@@ -54,54 +96,18 @@ export function useWorkspaceShortcuts(options: Options): void {
         (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
       )
         return;
-      if (event.ctrlKey && event.code === 'KeyO') {
-        event.preventDefault();
-        options.execute('OPEN');
-      } else if (event.ctrlKey && event.code === 'KeyS') {
-        event.preventDefault();
-        options.execute('QSAVE');
-      } else if (event.ctrlKey && (event.code === 'KeyZ' || event.code === 'KeyY')) {
-        event.preventDefault();
-        options.execute(event.code === 'KeyY' || event.shiftKey ? 'REDO' : 'U');
-      } else if (event.ctrlKey && event.code === 'KeyA') {
-        event.preventDefault();
-        options.cancelPointer();
-        if (draft.isActive()) draft.cancel(false);
-        if (dimensions.isActive()) dimensions.cancel(false);
-        modification.cancel(false);
-        measurement.cancel(false);
-        for (const item of options.additional ?? []) if (item.isActive()) item.cancel(false);
-        draft.selectAll();
-        options.focusCommand();
-      } else if (
-        event.code === 'Delete' &&
-        !draft.isActive() &&
-        !dimensions.isActive() &&
-        !modification.isActive() &&
-        !measurement.isActive() &&
-        !(options.additional ?? []).some((item) => item.isActive())
-      ) {
-        event.preventDefault();
-        options.execute('ERASE');
-      } else if (event.code === 'F2' && event.ctrlKey) {
-        event.preventDefault();
-        options.openTextWindow();
-      } else if (event.code === 'F2') {
-        event.preventDefault();
-        options.toggleExpanded();
-      } else if (event.ctrlKey && event.code === 'Digit9') {
-        event.preventDefault();
-        options.toggleCommand();
-      } else {
-        const item = statusToggles.find((item) => item.key === event.code);
-        if (item) {
-          event.preventDefault();
-          if (item.implemented === false) options.print(options.messages.draftingAidsPending);
-          else options.toggle(item);
-        }
-      }
+      const shortcut = findShortcut(event);
+      if (!shortcut || event.defaultPrevented) return;
+      // Delete erases a selection only while no command is running.
+      if (shortcut.action.kind === 'ui' && shortcut.action.action === 'erase' && live.isActive())
+        return;
+      if (shortcut.action.kind === 'ui' && shortcut.action.action === 'cancel') return;
+      event.preventDefault();
+      if (shortcut.action.kind === 'macro') live.execute(shortcut.action.macro);
+      else if (shortcut.action.kind === 'toggle') live.toggle(shortcut.action.toggle);
+      else run(shortcut.action.action, live);
     }
     document.addEventListener('keydown', handleShortcut);
     return () => document.removeEventListener('keydown', handleShortcut);
-  });
+  }, []);
 }

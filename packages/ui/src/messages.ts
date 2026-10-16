@@ -291,7 +291,6 @@ export interface Messages {
   zeroLength: string;
   closedSession: string;
   currentLayerHidden: string;
-  draftingAidsPending: string;
   committedObjects: (count: number) => string;
   erasedObjects: (count: number) => string;
   selectedObjects: (count: number) => string;
@@ -299,7 +298,6 @@ export interface Messages {
   disabled: string;
   commandEcho: (value: string) => string;
   commandFailure: (value: string) => string;
-  statusChanged: (name: string, enabled: boolean) => string;
   sysvarValuePrompt: (name: string, value: string) => string;
   sysvarUnknown: (name: string) => string;
   sysvarUnavailable: (name: string) => string;

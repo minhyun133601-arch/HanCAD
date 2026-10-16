@@ -1,5 +1,42 @@
 # Decisions
 
+## 2026-10-16: Phase 03 keyboard bindings and temporary overrides (milestone 3.8)
+
+Every function key and Ctrl shortcut of Reference B is one row of
+`packages/input/src/shortcuts.ts`: a CUI-style macro (Ctrl+S `^C^C_QSAVE`,
+Ctrl+1 `^C^C_PROPERTIES`, Ctrl+Z `^C^C_U`), a drafting toggle, or a shell action.
+Keys resolve in AutoCAD's order: a focused text editor or input keeps its keys, an
+open dialog blocks the rest, the command line handles typing, Enter/Space, Esc,
+Ctrl+[ and history, and only then the global table runs. Macros for commands that
+are not built yet print the registry's Korean not-implemented message; Ctrl+R
+(viewport cycling) and Shift+Space at a selection prompt (cycling overlapping
+objects) print an explicit pending message. Ctrl+J/Ctrl+M act as Enter, so they
+repeat the last command at an empty prompt. Ctrl+Tab/Ctrl+Shift+Tab switch
+drawings and Ctrl+PageUp/PageDown layout tabs. In the browser, keys the browser
+reserves (Ctrl+N, Ctrl+T, Ctrl+W, Ctrl+Tab, Ctrl+Shift+Tab, Ctrl+PageUp/PageDown,
+Ctrl+F4, F11) may be taken by the browser before HanCAD sees them; the desktop app
+receives them.
+
+Toggles share one implementation for F-keys, Ctrl keys, `^B ^D ^E ^G ^O ^T` in
+macros and the status-bar buttons, and echo `<그리드 켜기>`-style lines (the Korean
+wording is an assumption listed for comparison). They flip the variable the way
+AutoCAD stores it: OSMODE and 3DOSMODE through their suppress bits (restoring the
+default modes from 0), AUTOSNAP bits 8 and 16, DYNMODE, QPMODE and
+SELECTIONCYCLING by sign, SNAPISOPAIR cycling left/top/right, PICKSTYLE bit 1.
+Turning Ortho on turns polar tracking off and vice versa. All seven status-bar
+buttons are now live; for aids whose behavior comes later (snap, polar, tracking,
+dynamic input, dynamic UCS, isoplanes and others) only the variable changes, the
+button tooltip says so and the first use in a session prints a note.
+
+Temporary override keys (TEMPOVERRIDES=1) work at point prompts while nothing has
+been typed, so Shift+2 still types "@" and Shift+, still types "<" inside a
+coordinate. Shift alone toggles Ortho; Shift+A/' toggles and Shift+S/; enforces
+running snaps; Shift+E/P, V/M and C/, force endpoint, midpoint and center; Shift+D/L
+disable snaps and tracking; Shift+Q/], X/. and Z// toggle tracking, polar and
+dynamic UCS. AutoCAD implements these as CUI key-down/key-up macros; HanCAD applies
+the same effect as an effective-value layer read by drafting and snapping, so a
+held key never writes drawing variables, enters undo or disturbs the active prompt.
+
 ## 2026-10-16: Phase 03 menu macros, DIESEL and MODEMACRO (milestone 3.7)
 
 Ribbon buttons, menus, the recent-command list and the Delete key run AutoCAD

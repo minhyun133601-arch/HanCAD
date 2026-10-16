@@ -316,7 +316,6 @@ export const ko: Messages = {
   closedSession: '진행 중인 작성 명령이 없습니다.',
   currentLayerHidden:
     '현재 도면층이 꺼져 있거나 잠겨 있습니다. LAYON으로 도면층을 켜거나 새 도면에서 작성하세요.',
-  draftingAidsPending: '그리드·격자 스냅·추적·동적 입력·선가중치 토글은 아직 연결되지 않았습니다.',
   committedObjects: (count) => `${count}개 객체를 작성했습니다.`,
   erasedObjects: (count) => `${count}개 객체를 지웠습니다.`,
   selectedObjects: (count) => `${count}개 객체 선택`,
@@ -324,7 +323,6 @@ export const ko: Messages = {
   disabled: '끄기',
   commandEcho: (value) => `명령: ${value}`,
   commandFailure: (value) => `명령 실행 오류: ${value}`,
-  statusChanged: (name, enabled) => `${name} ${enabled ? '켜기' : '끄기'}`,
   sysvarValuePrompt: (name, value) => `${name}에 대한 새 값 입력 <${value}>:`,
   sysvarUnknown: (name) => `알 수 없는 시스템 변수 "${name}".`,
   sysvarUnavailable: (name) => `${name}의 초기값은 현재 환경에서 아직 확인할 수 없습니다.`,

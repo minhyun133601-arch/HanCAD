@@ -5,7 +5,7 @@ import { useCommandWindow } from './command-line/useCommandWindow';
 import { useCommandWindowCommands } from './command-line/useCommandWindowCommands';
 import { DrawingSurface, type LayoutId } from './DrawingSurface';
 import { FileTabs, Ribbon, TitleBar, type RibbonTab } from './ShellChrome';
-import { changeToggle, StatusBar, statusToggles, type StatusToggle } from './StatusBar';
+import { StatusBar } from './StatusBar';
 import { createPlatform } from './platform';
 import { useCommandSession } from './useCommandSession';
 import { useDrawingFiles } from './useDrawingFiles';
@@ -14,7 +14,6 @@ import { ProgressDialog } from './ProgressDialog';
 import type { CanvasSurface } from './canvas-surface';
 import { DimensionStyleDialog } from './DimensionStyleDialog';
 import { useCanvasInteraction } from './useCanvasInteraction';
-import { useWorkspaceShortcuts } from './useWorkspaceShortcuts';
 import { useDrawingCommands } from './useDrawingCommands';
 import { InlineTextEditor } from './InlineTextEditor';
 import { errorMessage } from './error-presenter';
@@ -22,8 +21,8 @@ import { useViewHistory } from './view-history';
 import { layoutFromName, layoutName, useHostVariables } from './host-variables';
 import type { DocumentManager, DrawingDocument } from '@hancad/sysvars';
 import { useViewNavigation } from './useViewNavigation';
-import { useCommandRouting } from './useCommandRouting';
-import { useMacroRunner } from './useMacroRunner';
+
+import { useCommandInput } from './useCommandInput';
 import { DisplayOptionsDialog } from './DisplayOptionsDialog';
 
 export function DocumentApp({
@@ -107,59 +106,38 @@ export function DocumentApp({
   );
   useHostVariables(drawingDocument.id, { locale, layout, state: tools.state }, canvasSurface);
   const inputRef = useRef<HTMLDivElement | HTMLInputElement>(null);
-  const routing = useCommandRouting({ session, navigation, tools, surface: canvasSurface, locale });
-  const { inputMode, commandActive, commandName, historyContext } = routing;
-  const macros = useMacroRunner({
-    registry: session.registry,
-    target: routing,
-    sysvars: session.sysvars,
-    print: session.print,
-    setEcho: session.setEcho,
-    toggle: (key) => {
-      const label = ({ B: 'snap', G: 'grid', O: 'ortho' } as const)[key as 'B' | 'G' | 'O'];
-      const item = statusToggles.find((entry) => entry.label === label);
-      if (item?.implemented === false) session.print(messages.draftingAidsPending);
-      else if (item) toggle(item);
-      else session.print(messages.macroUnsupported(`^${key}`));
-    },
-    unsupported: messages.macroUnsupported,
+  const input = useCommandInput({
+    session,
+    navigation,
+    tools,
+    files,
+    surface: canvasSurface,
+    commandWindow,
+    manager,
+    drawing: drawingDocument,
+    layout,
+    changeLayout,
+    focusCommand,
+    locale,
+    messages,
   });
-  /** User input: it answers a macro pause, and a new command typed at idle ends a macro. */
-  async function submit(value: string): Promise<void> {
-    if (!routing.isActive() && value.trim()) macros.abort();
-    await routing.submit(value);
-    macros.inputReceived();
-  }
-  function cancel(): void {
-    macros.abort();
-    routing.cancel();
-  }
+  const { routing, toggle, submit, cancel, execute } = input;
+  const { inputMode, commandActive, commandName, historyContext } = routing;
 
   function focusCommand(): void {
     if (!text.editable) inputRef.current?.focus({ preventScroll: true });
-  }
-  /** Menus, ribbon and buttons run AutoCAD macros; a bare command name gets ^C^C_. */
-  function execute(command: string): void {
-    canvasSurface.current?.cancelPointerInteraction();
-    if (files.restoring) files.cancelRestore(false);
-    commandWindow.show();
-    void macros.run(/[\^;\\$*']/.test(command) ? command : `^C^C_${command}`);
-    focusCommand();
   }
   function openFile(file: File): void {
     navigation.cancel(false);
     tools.cancelAll();
     void files.openFile(file);
   }
-  function toggle(item: StatusToggle): void {
-    try {
-      const enabled = changeToggle(session.sysvars, item);
-      session.print(messages.statusChanged(messages[item.label], enabled));
-      session.refresh();
-    } catch (error) {
-      session.print(messages.commandFailure(errorMessage(error, messages)));
-    }
-    focusCommand();
+  function changeLayout(next: LayoutId): void {
+    // Switching tabs is not a drawing edit; SETVAR CLAYOUT remains undoable.
+    const record = session.database.find('LAYOUT', layoutName(next));
+    if (record)
+      session.database.writeUntrackedVariable('CLAYOUT', `${layoutName(next)}*${record.handle}`);
+    setLayout(next);
   }
 
   useEffect(() => {
@@ -198,24 +176,6 @@ export function DocumentApp({
   }, [platform]);
 
   useCommandWindowCommands(session.registry, commandWindow);
-  useWorkspaceShortcuts({
-    files,
-    draft,
-    dimensions,
-    modification,
-    measurement,
-    additional: [navigation, editing, text],
-    messages,
-    print: session.print,
-    execute,
-    focusCommand,
-    toggle,
-    cancelPointer: () => canvasSurface.current?.cancelPointerInteraction(),
-    showCommand: commandWindow.show,
-    toggleCommand: commandWindow.toggle,
-    toggleExpanded: commandWindow.pressF2,
-    openTextWindow: commandWindow.openTextWindow,
-  });
 
   return (
     <main
@@ -269,13 +229,13 @@ export function DocumentApp({
           selectionGesture={interaction.selectionGesture}
           onPick={(event) => {
             interaction.pick(event);
-            macros.inputReceived();
+            input.inputReceived();
           }}
           onCoordinates={interaction.cursor}
           canSelectArea={interaction.canSelectArea}
           onSelectionDrag={(event) => {
             interaction.selectionDrag(event);
-            if (event.phase === 'end') macros.inputReceived();
+            if (event.phase === 'end') input.inputReceived();
           }}
           suppressSelectionBox={interaction.suppressSelectionBox}
           getNavigationSettings={interaction.getNavigationSettings}
@@ -337,18 +297,10 @@ export function DocumentApp({
       <StatusBar
         messages={messages}
         layout={layout}
-        onLayout={(next) => {
-          // Switching tabs is not a drawing edit; SETVAR CLAYOUT remains undoable.
-          const layout = session.database.find('LAYOUT', layoutName(next));
-          if (layout)
-            session.database.writeUntrackedVariable(
-              'CLAYOUT',
-              `${layoutName(next)}*${layout.handle}`,
-            );
-          setLayout(next);
-        }}
+        onLayout={changeLayout}
         sysvars={session.sysvars}
         toggle={toggle}
+        pendingNote={input.pendingTooltip}
         mode={platform.mode}
         execute={execute}
       />

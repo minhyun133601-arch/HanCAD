@@ -316,8 +316,6 @@ export const en: Messages = {
   closedSession: 'There is no active drawing command.',
   currentLayerHidden:
     'The current layer is hidden or locked. Use LAYON to show layers or start a new drawing.',
-  draftingAidsPending:
-    'Grid, grid snap, tracking, dynamic input, and lineweight toggles are not yet connected.',
   committedObjects: (count) => `Created ${count} objects.`,
   erasedObjects: (count) => `Erased ${count} objects.`,
   selectedObjects: (count) => `${count} objects selected`,
@@ -325,7 +323,6 @@ export const en: Messages = {
   disabled: 'Off',
   commandEcho: (value) => `Command: ${value}`,
   commandFailure: (value) => `Command error: ${value}`,
-  statusChanged: (name, enabled) => `${name} ${enabled ? 'On' : 'Off'}`,
   sysvarValuePrompt: (name, value) => `Enter new value for ${name} <${value}>:`,
   sysvarUnknown: (name) => `Unknown system variable "${name}".`,
   sysvarUnavailable: (name) => `The initial value of ${name} is not available in this environment.`,

@@ -6,6 +6,7 @@ import type { CommandRegistry } from '@hancad/commands';
 import type { SystemVariables } from '@hancad/sysvars';
 import { getMessages } from '@hancad/ui';
 import type { Messages } from '@hancad/ui';
+import { tempOverrides } from './temp-overrides';
 
 interface Options {
   registry: CommandRegistry;
@@ -73,13 +74,17 @@ export function useModification(options: Options) {
     const active = controller.current;
     if (!active?.getSnapshot().needsPoint) return;
     accepted(
-      active.acceptPoint(point, latest.current.sysvars.getNumber('ORTHOMODE') === 1, snapped),
+      active.acceptPoint(
+        point,
+        tempOverrides.number(latest.current.sysvars, 'ORTHOMODE') === 1,
+        snapped,
+      ),
     );
   }
   function cursor(point: CadPoint, snapped = false): void {
     controller.current?.moveCursor(
       point,
-      latest.current.sysvars.getNumber('ORTHOMODE') === 1,
+      tempOverrides.number(latest.current.sysvars, 'ORTHOMODE') === 1,
       snapped,
     );
     refresh();

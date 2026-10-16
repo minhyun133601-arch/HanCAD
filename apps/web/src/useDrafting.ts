@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { DraftSession, appendCadEntities, deleteCadEntities } from '@hancad/draft';
 import type { DraftPointOptions, DraftSnapshot, DraftTool } from '@hancad/draft';
 import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
@@ -7,6 +7,7 @@ import type { SystemVariables } from '@hancad/sysvars';
 import { getMessages } from '@hancad/ui';
 import type { MessageKey, Messages } from '@hancad/ui';
 import { creationSettings } from './creation-settings';
+import { tempOverrides } from './temp-overrides';
 
 interface DraftingOptions {
   registry: CommandRegistry;
@@ -50,14 +51,16 @@ export function useDrafting(options: DraftingOptions) {
   const selectionMode = useRef(false);
   const cursorRef = useRef<CadPoint | null>(null);
   const cursorOptions = useRef<DraftPointOptions>({});
-  const ortho = options.sysvars.getNumber('ORTHOMODE') === 1;
+  // Re-render when a temporary override (Shift for Ortho) is pressed or released.
+  useSyncExternalStore(tempOverrides.subscribe, tempOverrides.snapshot);
+  const ortho = tempOverrides.number(options.sysvars, 'ORTHOMODE') === 1;
 
   function settings() {
     return {
       ...creationSettings(latest.current.getState().settings, (name) =>
         latest.current.sysvars.get(name),
       ),
-      ortho: latest.current.sysvars.getNumber('ORTHOMODE') === 1,
+      ortho: tempOverrides.number(latest.current.sysvars, 'ORTHOMODE') === 1,
     };
   }
   function setSelectMode(value: boolean): void {

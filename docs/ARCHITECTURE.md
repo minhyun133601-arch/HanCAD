@@ -199,6 +199,13 @@ synchronous `isActive`), waiting for each React commit; DocumentApp's `execute`
 runs every menu or button command as a macro, and user input or Esc answers a
 pause or ends a repeat. The status bar evaluates MODEMACRO.
 
+Keyboard: `useCommandInput` gathers routing, macros, toggles, global shortcuts and
+temporary overrides for a drawing. `useWorkspaceShortcuts` runs the
+`@hancad/input` binding table after the command line's own handler;
+`drafting-toggles.ts` flips variables for keys, macros and status buttons;
+`temp-overrides.ts` holds the effective-value layer that drafting and snapping read
+(`tempOverrides.number`), fed by the capture-phase `useTempOverrideKeys`.
+
 The bootstrap geometry crate is compiled to WASM and exercised from TypeScript.
 Native OS integration belongs to Rust behind a Platform interface. The browser
 adapter must explicitly report unavailable OS features. Drawing files must not be

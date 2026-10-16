@@ -1,6 +1,17 @@
 # Reference B — Shortcuts, aliases, mouse behavior, input syntax
 (Save as docs/SHORTCUTS.md. Every binding here must work. Bindings whose command is not built yet must still be registered and print the Korean not-implemented message.)
 
+## Phase 03 keyboard bindings (2026-10-16)
+
+Every function key, Ctrl shortcut and Delete below is implemented in
+`packages/input/src/shortcuts.ts`; commands that are not built yet print the
+Korean not-implemented message, and toggles for aids that come in later phases
+flip their variable and say that the feature itself is pending. Temporary
+override keys work at point prompts before anything is typed. Shift+Space works
+at selection prompts. In the browser build, keys the browser reserves (Ctrl+N,
+Ctrl+T, Ctrl+W, Ctrl+Tab, Ctrl+Shift+Tab, Ctrl+PageUp/PageDown, Ctrl+F4, F11) can
+be taken by the browser first; the desktop app receives them.
+
 ## Phase 03 alias completion (2026-10-16)
 
 The built-in alias table is this Reference B list plus 172 alternative, legacy and
