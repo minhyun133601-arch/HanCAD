@@ -156,6 +156,23 @@ describe('command line suggestions', () => {
   });
 });
 
+describe('synonym suggestions', () => {
+  it('lists the command of a synonym first without making the word an alias', () => {
+    const registry = new CommandRegistry();
+    const source = ['; synonyms', 'SYMBOL, *BLOCK', 'NOPE, *NOTACOMMAND', ''].join('\r\n');
+    expect(registry.loadSynonyms(source)).toBe(1);
+    const result = suggestCommandInput(registry, { input: 'symbol', options: options() });
+    expect(result.exact).toBe(false);
+    expect(result.items[0]).toEqual({
+      kind: 'command',
+      name: 'BLOCK',
+      text: 'BLOCK',
+      match: 'synonym',
+    });
+    expect(registry.resolve('SYMBOL')).toBeUndefined();
+  });
+});
+
 describe('edit distance', () => {
   it('counts insertions, deletions, substitutions and adjacent transpositions', () => {
     expect(editDistance('LINE', 'LINE')).toBe(0);

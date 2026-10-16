@@ -111,6 +111,9 @@
 | Suggestion list | 제안 사항 리스트 |
 | Copy History / Paste To CmdLine / Transparency / Lines of Prompt History | 기록 복사 / 명령행에 붙여넣기 / 투명도 / 프롬프트 기록 줄 |
 | Text Window | 문자 윈도우 |
+| Re-initialization / I/O Port Initialization / Device and File Initialization | 재초기화 / 입출력 포트 초기화 / 장치 및 파일 초기화 |
+| Digitizer / PGP File | 디지타이저 / PGP 파일 |
+| Edit Aliases: Command Aliases / External Commands / AutoCorrect List / Synonym List | 별칭 편집: 명령 별칭 / 외부 명령 / 자동 수정 리스트 / 동의어 리스트 |
 
 The Phase 03 command catalog (`packages/commands/src/catalog/`, also shown in the
 generated table of docs/COMMANDS.md) holds the Korean display name of every other

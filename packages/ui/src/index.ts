@@ -10,3 +10,5 @@ export { getCommandLineMessages } from './command-line-messages';
 export type { CommandLineMessages } from './command-line-messages';
 export { getInputSearchMessages } from './input-search-messages';
 export type { InputSearchMessages } from './input-search-messages';
+export { getAliasEditMessages } from './alias-edit-messages';
+export type { AliasEditMessages } from './alias-edit-messages';

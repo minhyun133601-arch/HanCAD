@@ -80,7 +80,7 @@ export function normalizeInputSearchOptions(value: unknown): InputSearchOptions 
   };
 }
 
-export type SuggestionMatch = 'exact' | 'prefix' | 'mid' | 'correction';
+export type SuggestionMatch = 'exact' | 'synonym' | 'prefix' | 'mid' | 'correction';
 export interface Suggestion {
   kind: 'command' | 'sysvar';
   name: string;
@@ -111,9 +111,10 @@ export interface SuggestionRequest {
 const empty = (query = ''): SuggestionResult => ({ query, items: [], variables: [], exact: false });
 const tiers: Readonly<Record<SuggestionMatch, number>> = {
   exact: 0,
-  prefix: 1,
-  mid: 2,
-  correction: 3,
+  synonym: 1,
+  prefix: 2,
+  mid: 3,
+  correction: 4,
 };
 
 /** Command-line suggestion list for one keystroke state (AutoComplete/AutoCorrect/sysvars). */
@@ -147,6 +148,8 @@ export function suggestCommandInput(
   if (resolved && (!request.commandActive || resolved.definition.flags?.transparent))
     add('command', resolved.canonicalName, 'exact');
   if (exactVariable) add('sysvar', exactVariable.name, 'exact');
+  const synonym = registry.synonym(query);
+  if (synonym && usable(synonym)) add('command', synonym, 'synonym');
   const classify = (name: string): { match: SuggestionMatch; distance: number } | undefined => {
     if (options.autoComplete && name.startsWith(query)) return { match: 'prefix', distance: 0 };
     if (options.autoComplete && options.midString && name.includes(query))

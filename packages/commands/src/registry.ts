@@ -23,6 +23,7 @@ export class CommandRegistry {
   private readonly builtinAliases = new Map<string, string>();
   private readonly userAliases = new Map<string, string>();
   private readonly correctionAliases = new Map<string, string>();
+  private readonly synonyms = new Map<string, string>();
   private readonly removedAliases = new Set<string>();
   private readonly externals = new Map<string, PgpExternalCommand>();
   private readonly undefinedCommands = new Set<string>();
@@ -151,6 +152,18 @@ export class CommandRegistry {
       if (this.definitions.has(parsePrefixes(entry.command).name))
         this.correctionAliases.set(entry.alias, entry.command);
     return this.correctionAliases.size;
+  }
+
+  /** Synonym list (acadSynonymsGlobalDB.pgp form): suggestions only, never aliases. */
+  loadSynonyms(source: string): number {
+    this.synonyms.clear();
+    for (const entry of parsePgp(source).aliases)
+      if (this.definitions.has(parsePrefixes(entry.command).name))
+        this.synonyms.set(entry.alias, parsePrefixes(entry.command).name);
+    return this.synonyms.size;
+  }
+  synonym(word: string): string | undefined {
+    return this.synonyms.get(reverseHangulInput(word.trim()).toUpperCase());
   }
 
   external(name: string): PgpExternalCommand | undefined {

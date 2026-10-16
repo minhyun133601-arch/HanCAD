@@ -7,6 +7,7 @@ import type { useCommandSession } from '../useCommandSession';
 import { CommandLine } from './CommandLine';
 import { CloseCommandLineDialog, TextWindow, TransparencyDialog } from './CommandDialogs';
 import { InputSearchDialog } from './InputSearchDialog';
+import { PgpCommands } from './PgpCommands';
 import { SuggestionList } from './SuggestionList';
 import { useAutoComplete } from './useAutoComplete';
 import './input-search.css';
@@ -188,6 +189,12 @@ export function CommandWindow(props: CommandWindowProps) {
           search.closeDialog();
           focus();
         }}
+      />
+      <PgpCommands
+        session={session}
+        locale={props.locale}
+        searchStore={search.store}
+        onClosed={focus}
       />
       <CloseCommandLineDialog
         open={state.closeConfirm}

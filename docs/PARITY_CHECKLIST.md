@@ -31,6 +31,7 @@ command is not an implemented command.
 - [ ] Phase 03 INPUTSEARCHOPTIONS: compare the dialog layout, the sort-order caption, the defaults (including "명령 및 시스템 변수 분리" off), the delay range, and the -INPUTSEARCHOPTIONS top-level prompt, keyword letters and yes/no prompt format.
 - [ ] Phase 03 transparent commands: compare the echo of an apostrophe entry, the >> prompt prefix, the name shown before the prompt while 'ZOOM runs, the resume line `LINE 명령 재개 중.`, whether Esc during 'ZOOM also cancels LINE, the message for a nested or non-transparent entry, and 'DIST/'SETVAR/'variable behavior inside LINE, MOVE and an UNDO prompt.
 - [ ] Phase 03 LINE prompts: confirm `[명령 취소(U)]` after the first and second points and `[닫기(C)/명령 취소(U)]` from the third, and the message when C is typed too early.
+- [ ] Phase 03 PGP: compare REINIT dialog wording and defaults, whether REINIT reports PGP errors, RE-INIT reset behavior, whether AutoCAD reads a UTF-8 acad.pgp with Korean comments written by HanCAD, and the ALIASEDIT (Express Tools) dialog layout and Korean wording.
 - [ ] Phase 03 aliases: compare the 172 extended aliases (alternative, legacy and discontinued-command sections of an installed acad.pgp) with the current release's acad.pgp; confirm GCON=GEOMCONSTRAINT and ED=TEXTEDIT.
 - [ ] Choose and document one installed AutoCAD reference release and template.
 - [ ] Verify Korean prompts against the reference release.

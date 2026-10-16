@@ -16,7 +16,7 @@ shortcut menus, command aliases/AutoCorrect and the command window.
 | 3.3 Command line window                   | Done    | Floating/docked bar, temporary prompt lines, F2/Ctrl+F2/Ctrl+9, command-name prompt, history recall, right-click menu                  |
 | 3.4 AutoComplete and input search options | Done    | Suggestion list, auto-append, mid-string, sysvars, frequency order, delay, AutoCorrect DB, INPUTSEARCHOPTIONS dialog                   |
 | 3.5 Transparent commands                  | Done    | `>>` prompts for 'ZOOM/'PAN/'SETVAR/sysvars/'DIST/'CAL/'OSNAP/'HELP, resume message and original prompt                                |
-| 3.6 PGP import, ALIASEDIT and REINIT      | Planned | User acad.pgp import/merge (user wins), persistent profile copy, ALIASEDIT dialog, REINIT/RE-INIT reload                               |
+| 3.6 PGP import, ALIASEDIT and REINIT      | Done    | User acad.pgp import/merge (user wins), persistent profile copy, ALIASEDIT dialog, REINIT/RE-INIT reload                               |
 | 3.7 Macros and DIESEL                     | Planned | ^C^C, ;, space, \ pause, \*^C^C repeat, $M=, ^P and other controls; DIESEL evaluator; MODEMACRO; ribbon macros                         |
 | 3.8 Keyboard bindings and overrides       | Planned | Every SHORTCUTS.md binding with ordered scopes, toggle messages, TEMPOVERRIDES key-down/key-up macros                                  |
 | 3.9 Mouse and shortcut menus              | Planned | SHORTCUTMENU bits, time-sensitive right click, Korean default/edit/command menus, Shift+right-click object snap menu                   |
@@ -94,12 +94,25 @@ new `transparent-commands.spec.ts`) pass: 506 unit, 30 compatibility and 76 E2E
 tests (one opt-in skip). One full run hit a timing flake in the VTFPS=1 animation
 test (`view-navigation.spec.ts:77`); it passed 5 isolated and 3 parallel reruns.
 
-Exact next step: milestone 3.6 (PGP import, ALIASEDIT and REINIT): import and
-merge the user's acad.pgp (user wins) through the Platform file dialog, keep a
-persistent profile copy, the ALIASEDIT dialog (aliases, external commands,
-AutoCorrect list), REINIT/RE-INIT reload, and acadSynonymsGlobalDB.pgp-style
-synonyms for the suggestion list. `CommandRegistry.importPgp`, `reloadPgp` and
-`loadCorrections` already exist.
+### Milestone 3.6 PGP import, ALIASEDIT and REINIT (2026-10-16)
+
+Delivered: the user's acad.pgp chosen in ALIASEDIT (File System Access handle when
+available, file input and stored copy otherwise), merged over the built-in aliases
+with removable built-ins; REINIT (PGP file option) and RE-INIT 16 re-read the file
+on disk and report unreadable lines; ALIASEDIT tabs for command aliases, external
+commands, the AutoCorrect list and a synonym list, with line-preserving edits written
+back to a linked file; UTF-8/CP949 detection for support files; synonyms in the
+suggestion list. Acceptance item "My own acad.pgp imports and its aliases work
+right after REINIT" passes in `pgp-files.spec.ts` with a mocked file on disk.
+
+Verification: lint, formatting, strict TypeScript, 517 unit, 30 compatibility and
+the command-doc checks, the production build and 79 E2E tests (one opt-in skip)
+pass.
+
+Exact next step: milestone 3.7 (macros and DIESEL): the menu macro language (^C^C,
+`;`, space, `\` pause, `*^C^C` repeat, `$M=`, ^P and the other controls), a DIESEL
+evaluator, MODEMACRO in the status bar, and ribbon buttons running macros such as
+`^C^C_LINE` and transparent `'_zoom _e`.
 
 ## Completed phase: Phase 02 rendering engine and view navigation (2026-10-16)
 

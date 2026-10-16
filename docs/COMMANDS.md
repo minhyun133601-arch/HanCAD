@@ -20,7 +20,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | ACTUSERMESSAGE      | -ARM, ARM                                           | 사용자 메시지 삽입         | Not implemented; explicit message (Phase 20)                                                        |
 | ADCENTER            | ADC, ADCENTER, CONTENT, DC, DCENTER                 | 디자인센터                 | Not implemented; explicit message (Phase 20)                                                        |
 | AI_SELALL           |                                                     | 모두 선택                  | Not implemented; explicit message (Phase 05)                                                        |
-| ALIASEDIT           |                                                     | 별칭 편집                  | Not implemented; explicit message (Phase 03)                                                        |
+| ALIASEDIT           |                                                     | 별칭 편집                  | Aliases, external commands, AutoCorrect and synonym lists; user acad.pgp file                       |
 | ALIGN               | AL                                                  | 정렬                       | Not implemented; explicit message (Phase 07)                                                        |
 | ALLPLAY             | APLAY                                               | 모두 재생                  | Not implemented; explicit message (Phase 23)                                                        |
 | ANALYSISCURVATURE   | CURVATUREANALYSIS                                   | 곡률 해석                  | Not implemented; explicit message (Phase 22)                                                        |
@@ -290,7 +290,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | REGEN               | RE                                                  | 재생성                     | Regenerate LOD, point symbols, fills and pick bounds                                                |
 | REGENALL            | REA                                                 | 모두 재생성                | Regenerate the sole active viewport                                                                 |
 | REGION              | REG                                                 | 영역                       | Not implemented; explicit message (Phase 12)                                                        |
-| REINIT              |                                                     | 재초기화                   | Not implemented; explicit message (Phase 03)                                                        |
+| REINIT              |                                                     | 재초기화                   | PGP file reload (also RE-INIT 16); digitizer options shown disabled                                 |
 | RENAME              | -REN, REN                                           | 이름 바꾸기                | Not implemented; explicit message (Phase 15)                                                        |
 | RENDER              | RR                                                  | 렌더                       | Not implemented; explicit message (Phase 23)                                                        |
 | RENDERCROP          | RC                                                  | 자르기 렌더                | Not implemented; explicit message (Phase 23)                                                        |

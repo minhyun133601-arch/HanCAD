@@ -1,5 +1,30 @@
 # Decisions
 
+## 2026-10-16: Phase 03 user PGP files, ALIASEDIT and REINIT (milestone 3.6)
+
+The user's acad.pgp is merged over the built-in aliases (the user's definition
+wins; the last definition in the file wins), and built-in aliases the user removes
+are kept as a separate profile list, because PGP syntax cannot express a removal.
+The file is chosen in ALIASEDIT. Where the browser provides the File System Access
+API, HanCAD keeps a handle in IndexedDB: REINIT (PGP file option) and RE-INIT 16
+re-read the file on disk, and ALIASEDIT writes edits back to it. Otherwise HanCAD
+keeps a copy and REINIT reapplies that copy. Files are read as UTF-8 (with or
+without BOM) or CP949, detected automatically, and written as UTF-8 per AGENTS.md;
+whether the user's AutoCAD reads a rewritten UTF-8 acad.pgp with Korean comments is
+listed for verification. ALIASEDIT edits change only the affected lines, so
+comments and order survive. RE-INIT is reset to 0 after it triggers a reload, so
+the next 16 reloads again.
+
+REINIT prints nothing on success, as AutoCAD does; it reports unreadable lines,
+denied file access and read failures. The dialog shows AutoCAD's digitizer options
+disabled. ALIASEDIT (an Express Tools command in AutoCAD) is HanCAD's own dialog
+with four tabs: command aliases (with built-in/user source), external commands
+(one PGP line each), the AutoCorrect list (AutoCorrectUserDB.pgp entries) and the
+synonym list (acadSynonymsGlobalDB.pgp form). Synonyms only add their command to
+the suggestion list; they never become aliases. Autodesk's own synonym and
+misspelling databases are not bundled. The Korean dialog wording is HanCAD's and is
+listed for comparison.
+
 ## 2026-10-16: Phase 03 transparent commands (milestone 3.5)
 
 An apostrophe entry at any prompt of a running command (a drawing tool, ZOOM/PAN

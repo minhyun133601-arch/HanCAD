@@ -186,6 +186,12 @@ line when the owner (navigation, measurement or the session's nested prompt
 slot) finishes. The session keeps two prompt slots, `main` for a command's own
 prompts and `nested` for transparent SETVAR/GETVAR/variable prompts.
 
+User support files: `@hancad/input` decodes support text (UTF-8 or CP949);
+`pgp-edit.ts` in commands edits PGP text line by line; `PgpStore` keeps the user's
+acad.pgp and synonym list per profile with an optional File System Access handle
+(`support-file-handles.ts`); `PgpCommands` loads them into each drawing's registry
+and owns REINIT, RE-INIT and ALIASEDIT.
+
 The bootstrap geometry crate is compiled to WASM and exercised from TypeScript.
 Native OS integration belongs to Rust behind a Platform interface. The browser
 adapter must explicitly report unavailable OS features. Drawing files must not be

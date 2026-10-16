@@ -72,6 +72,13 @@ export class InputSearchStore {
     return learned;
   }
 
+  /** ALIASEDIT's AutoCorrect list: replaces the remembered corrections. */
+  replaceCorrections(pgp: string): void {
+    this.autoCorrect.load(pgp);
+    write(this.storage, keys.autoCorrect, this.autoCorrect.toJSON());
+    this.notify();
+  }
+
   subscribe(listener: () => void): () => void {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);

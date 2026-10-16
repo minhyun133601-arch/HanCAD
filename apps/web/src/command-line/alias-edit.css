@@ -1,0 +1,105 @@
+.reinit-dialog fieldset,
+.alias-edit-dialog fieldset {
+  margin: 0;
+  padding: 6px 10px 8px;
+  display: grid;
+  gap: 4px;
+  border: 1px solid #56636f;
+}
+.reinit-dialog label,
+.alias-edit-dialog label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.reinit-dialog label.disabled {
+  opacity: 0.5;
+}
+.alias-edit-dialog {
+  width: min(620px, 94vw);
+}
+.dialog-tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid #56636f;
+}
+.dialog-tabs button {
+  padding: 4px 12px;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  color: #c9d3dd;
+}
+.dialog-tabs button[aria-selected='true'] {
+  color: #ffffff;
+  background: #3e4a57;
+  border-color: #56636f;
+}
+.pgp-file-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.pgp-file-bar span {
+  flex: 1 1 200px;
+  color: #c2ccd6;
+}
+.pgp-file-bar button,
+.pair-form button {
+  padding: 2px 10px;
+  border: 1px solid #788796;
+  background: #3e4a57;
+}
+.pgp-file-bar button:disabled,
+.pair-form button:disabled {
+  opacity: 0.5;
+}
+.pair-table {
+  display: grid;
+  gap: 8px;
+}
+.pair-rows {
+  height: 240px;
+  overflow: auto;
+  background: #1e242b;
+  border: 1px solid #4b5864;
+}
+.pair-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 70px;
+  gap: 8px;
+  padding: 1px 8px;
+  white-space: nowrap;
+  cursor: default;
+}
+.pair-row span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pair-row[aria-selected='true'] {
+  background: #3d6ea5;
+}
+.pair-head {
+  position: sticky;
+  top: 0;
+  background: #2b323b;
+  color: #a9b4bf;
+}
+.pair-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.pair-form input {
+  width: 140px;
+  padding: 1px 4px;
+  color: inherit;
+  background: #1e242b;
+  border: 1px solid #6d7c8c;
+  font: inherit;
+}
+.dialog-error {
+  margin: 0;
+  color: #f0a3a3;
+}
