@@ -8,6 +8,7 @@ import { getMessages, type Locale } from '@hancad/ui';
 import type { PromptInputMode } from '@hancad/input';
 import { restoreProfileVariables, subscribeProfileVariables } from './profile-storage';
 import { errorMessage } from './error-presenter';
+import { InputHistory } from './command-line/input-history';
 
 export interface HistoryLine {
   id: number;
@@ -57,8 +58,18 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
   const [promptSession, setPromptSession] = useState<PromptSession>({ kind: 'idle' });
   const promptRef = useRef<PromptSession>({ kind: 'idle' });
   const serial = useRef(1);
-  const recalled = useRef(-1);
-  const commands = useRef<string[]>([]);
+  const inputs = useRef(
+    new InputHistory(() => {
+      try {
+        return runtime.sysvars.getNumber('CMDINPUTHISTORYMAX');
+      } catch {
+        return 20;
+      }
+    }),
+  );
+  const lastCommand = useRef('');
+  /** Canonical name of the command most recently started from the command line. */
+  const [startedCommand, setStartedCommand] = useState<string | null>(null);
   const pending = useRef(false);
 
   function transition(next: PromptSession): void {
@@ -107,21 +118,23 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
 
   function changeInput(value: string): void {
     setInput(value);
-    recalled.current = -1;
+    inputs.current.resetCursor();
   }
 
-  function recall(direction: -1 | 1): void {
-    if (!commands.current.length) return;
-    const current = recalled.current === -1 ? commands.current.length : recalled.current;
-    const index = Math.min(commands.current.length, Math.max(0, current + direction));
-    recalled.current = index;
-    setInput(commands.current[index] ?? '');
+  /** INPUTHISTORYMODE bit 1 enables Up/Down recall by prompt context. */
+  function recall(direction: -1 | 1, context = 'command'): void {
+    if ((runtime.sysvars.getNumber('INPUTHISTORYMODE') & 1) === 0) return;
+    const value = inputs.current.recall(context, direction);
+    if (value !== undefined) setInput(value);
+  }
+  function remember(context: string, value: string): void {
+    inputs.current.add(context, value);
   }
 
   async function execute(value: string): Promise<void> {
     if (pending.current) return;
     setInput('');
-    recalled.current = -1;
+    inputs.current.resetCursor();
     const active = promptRef.current;
     if (active.kind === 'history') {
       print(`${promptText(active)} ${value}`, 'echo');
@@ -167,9 +180,10 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
       if (result.status === 'ok') transition({ kind: 'idle' });
       return;
     }
-    const line = value.trim() || commands.current.at(-1);
+    const line = value.trim() || lastCommand.current;
     if (!line) return;
-    commands.current.push(line);
+    lastCommand.current = line;
+    inputs.current.add('command', line);
     print(messages.commandEcho(line), 'echo');
     const tokens = line.split(/\s+/);
     const resolution = runtime.registry.resolve(tokens[0] ?? '');
@@ -224,12 +238,13 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     await run(line);
   }
 
-  async function run(line: string, inputs: readonly string[] = []): Promise<CommandResult> {
+  async function run(line: string, values: readonly string[] = []): Promise<CommandResult> {
     pending.current = true;
     setBusy(true);
     try {
-      const result = await runner.run(line, inputs);
+      const result = await runner.run(line, values);
       for (const output of result.messages) print(output);
+      if (result.status === 'ok' && result.command) setStartedCommand(result.command);
       return result;
     } catch (error) {
       print(messages.commandFailure(errorMessage(error, messages)));
@@ -265,6 +280,18 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
     ...runtime,
     history,
     inputMode: inputMode(promptSession),
+    /** Command whose prompt the session itself owns (SETVAR, UNDO, a variable name). */
+    promptCommand: promptSession.kind === 'idle' ? null : promptSession.command,
+    startedCommand,
+    remember,
+    recentCommands: (): string[] => {
+      const names: string[] = [];
+      for (const line of [...inputs.current.list('command')].reverse()) {
+        const name = runtime.registry.resolve(line)?.canonicalName ?? line.toUpperCase();
+        if (!names.includes(name)) names.push(name);
+      }
+      return names;
+    },
     input,
     busy,
     revision,

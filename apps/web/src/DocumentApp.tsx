@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { getMessages, type Locale } from '@hancad/ui';
-import { CommandLine } from './CommandLine';
+import { getCommandLineMessages, getMessages, type Locale } from '@hancad/ui';
+import { CommandWindow } from './command-line/CommandWindow';
+import { useCommandWindow } from './command-line/useCommandWindow';
+import { useCommandWindowCommands } from './command-line/useCommandWindowCommands';
 import { DrawingSurface, type LayoutId } from './DrawingSurface';
 import { FileTabs, Ribbon, TitleBar, type RibbonTab } from './ShellChrome';
 import { changeToggle, StatusBar, type StatusToggle } from './StatusBar';
@@ -39,11 +41,11 @@ export function DocumentApp({
 }) {
   const [ribbon, setRibbon] = useState<RibbonTab>('home');
   const [layout, setLayout] = useState<LayoutId>('model');
-  const [expanded, setExpanded] = useState(false);
-  const [commandVisible, setCommandVisible] = useState(true);
+  const commandWindow = useCommandWindow();
   const [progressOpen, setProgressOpen] = useState(false);
   const [platform] = useState(createPlatform);
   const messages = getMessages(locale);
+  const commandText = getCommandLineMessages(locale);
   const displayName = drawingDocument.name;
   const session = useCommandSession(locale, drawingDocument);
   const files = useDrawingFiles({
@@ -113,11 +115,19 @@ export function DocumentApp({
     tools.cancelAll();
     navigation.cancel(false);
     canvasSurface.current?.setSnapMarker();
-    setCommandVisible(true);
+    commandWindow.show();
     session.startCommand(command);
     focusCommand();
   }
+  const inputMode = navigation.inputMode ?? tools.inputMode ?? session.inputMode;
+  const commandActive = navigation.active || tools.active || session.promptCommand !== null;
+  const commandName = commandActive
+    ? (session.promptCommand ?? session.startedCommand ?? null)
+    : null;
+  /** Up/Down recall values given at the same kind of prompt of the same command. */
+  const historyContext = inputMode === 'command' ? 'command' : `${commandName ?? ''}:${inputMode}`;
   async function submit(value: string): Promise<void> {
+    if (historyContext !== 'command') session.remember(historyContext, value);
     if (navigation.submit(value)) {
       session.changeInput('');
       return;
@@ -180,7 +190,7 @@ export function DocumentApp({
   }, [session.registry, messages]);
   useEffect(() => {
     focusCommand();
-  }, [commandVisible, session.editable, dimensions.editable, text.editable]);
+  }, [commandWindow.visible, session.editable, dimensions.editable, text.editable]);
   useEffect(() => {
     tools.cancelAll();
     navigation.cancel(false);
@@ -194,6 +204,7 @@ export function DocumentApp({
     });
   }, [platform]);
 
+  useCommandWindowCommands(session.registry, commandWindow);
   useWorkspaceShortcuts({
     files,
     draft,
@@ -207,9 +218,10 @@ export function DocumentApp({
     focusCommand,
     toggle,
     cancelPointer: () => canvasSurface.current?.cancelPointerInteraction(),
-    showCommand: () => setCommandVisible(true),
-    toggleCommand: () => setCommandVisible((value) => !value),
-    toggleExpanded: () => setExpanded((value) => !value),
+    showCommand: commandWindow.show,
+    toggleCommand: commandWindow.toggle,
+    toggleExpanded: commandWindow.pressF2,
+    openTextWindow: commandWindow.openTextWindow,
   });
 
   return (
@@ -287,6 +299,23 @@ export function DocumentApp({
           <button onClick={() => execute('ZOOM E')}>{messages.fitDrawing}</button>
         </div>
         <div className="drafting-usage">{tools.usage}</div>
+        <CommandWindow
+          window={commandWindow}
+          messages={messages}
+          text={commandText}
+          session={session}
+          drawingName={displayName}
+          prompt={navigation.prompt ?? tools.prompt}
+          commandName={commandName}
+          editable={!navigation.active && tools.editable}
+          mode={inputMode}
+          blocked={files.reading || files.restoring}
+          inputRef={inputRef}
+          submit={submit}
+          runCommand={execute}
+          recall={(direction) => session.recall(direction, historyContext)}
+          cancel={cancel}
+        />
         <InlineTextEditor
           messages={messages}
           entry={text.textEntry}
@@ -320,25 +349,6 @@ export function DocumentApp({
             <p>{messages.restoringDrawing}</p>
             <button onClick={() => files.cancelRestore()}>{messages.cancelImport}</button>
           </div>
-        )}
-        {commandVisible && (
-          <CommandLine
-            messages={messages}
-            history={session.history}
-            input={session.input}
-            prompt={navigation.prompt ?? tools.prompt}
-            editable={!navigation.active && tools.editable}
-            mode={navigation.inputMode ?? tools.inputMode ?? session.inputMode}
-            busy={session.busy}
-            blocked={files.reading || files.restoring}
-            expanded={expanded}
-            inputRef={inputRef}
-            changeInput={session.changeInput}
-            execute={submit}
-            recall={session.recall}
-            cancel={cancel}
-            onExpanded={() => setExpanded((value) => !value)}
-          />
         )}
       </div>
       <StatusBar

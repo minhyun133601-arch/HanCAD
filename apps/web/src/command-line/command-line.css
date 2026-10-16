@@ -1,0 +1,255 @@
+.drawing-region {
+  inset: 0 0 var(--command-dock-height, 0px) 0;
+  height: auto;
+}
+.command-line {
+  --command-line-alpha: 1;
+  position: absolute;
+  z-index: 8;
+  color: #eef2f6;
+  font:
+    12px/1.65 'Malgun Gothic',
+    'Consolas',
+    monospace;
+  cursor: default;
+}
+.command-line.floating {
+  left: 50%;
+  transform: translateX(-50%);
+  /* Only the bar and an expanded history take pointer input; the drawing stays pickable. */
+  pointer-events: none;
+}
+.command-line.floating .command-input-row,
+.command-line.floating .command-history.expanded,
+.command-line.floating > :not(.command-history) {
+  pointer-events: auto;
+}
+.command-line.floating[style*='left'] {
+  transform: none;
+}
+.command-line.docked {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #2b323b;
+  border-top: 1px solid #4f5b67;
+}
+.command-line.dragging {
+  opacity: 0.85;
+  transition: none;
+}
+.command-history {
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 0 10px;
+}
+.command-history.temporary {
+  overflow: hidden;
+  padding: 0;
+  pointer-events: none;
+}
+.command-history.temporary .history-line {
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 1px;
+  padding: 0 10px;
+  background: rgb(36 43 52 / calc(var(--command-line-alpha) * 0.82));
+  transition: opacity 1s ease;
+}
+.command-history.temporary .history-line.scrolled {
+  display: none;
+}
+.command-history.temporary .history-line.faded {
+  opacity: 0;
+}
+.command-history.expanded {
+  padding: 4px 10px;
+  background: rgb(36 43 52 / calc(var(--command-line-alpha) * 0.92));
+  border: 1px solid #56636f;
+  border-bottom: 0;
+}
+.command-history.docked {
+  padding: 3px 10px;
+}
+.history-line.echo {
+  color: #c2ccd6;
+}
+.command-input-row {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 2px;
+  background: rgb(59 68 83 / var(--command-line-alpha));
+  border: 1px solid #6c7a88;
+  box-shadow: 0 3px 12px #0c141e66;
+}
+.docked .command-input-row {
+  border-width: 1px 0 0;
+  box-shadow: none;
+}
+.command-grip {
+  width: 10px;
+  align-self: stretch;
+  margin-right: 2px;
+  cursor: move;
+  background: radial-gradient(circle, #9aa7b4 1px, transparent 1.4px) 2px 3px / 4px 4px repeat-y;
+  touch-action: none;
+}
+.command-tool,
+.history-toggle {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  color: #d5dde5;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 2px;
+}
+.command-tool.recent {
+  width: 28px;
+  font:
+    700 11px 'Consolas',
+    monospace;
+}
+.command-tool:hover,
+.history-toggle:hover {
+  background: #50606f;
+}
+.command-name {
+  flex-shrink: 0;
+  padding: 0 6px 0 4px;
+  color: #ffffff;
+  font-weight: 700;
+}
+.command-prompt {
+  color: #e7edf3;
+  padding-right: 6px;
+  flex-shrink: 0;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.command-prompt.idle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  padding: 0;
+}
+.command-keyword {
+  margin: 0 1px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 2px;
+  background: #56708c;
+  color: #ffffff;
+  font: inherit;
+  cursor: pointer;
+}
+.command-keyword:hover {
+  background: #6e8eb0;
+}
+.keyword-separator {
+  display: inline-block;
+  width: 3px;
+  font-size: 0;
+}
+.command-input {
+  min-height: 28px;
+  padding: 0 8px 0 0;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 80px;
+  outline: 0;
+  cursor: text;
+  overflow: hidden;
+  white-space: pre;
+}
+.command-placeholder {
+  color: #a9b4bf;
+}
+.free-text-input {
+  border: 0;
+  flex: 1;
+  min-width: 80px;
+  min-height: 28px;
+  padding: 0 8px 0 0;
+  font: inherit;
+  color: #ffffff;
+  background: transparent;
+  outline: 0;
+}
+.command-caret {
+  display: none;
+  width: 1px;
+  height: 15px;
+  background: #ffffff;
+  margin-left: 1px;
+  flex-shrink: 0;
+}
+.command-input:focus .command-caret {
+  display: inline-block;
+  animation: caret 1s step-end infinite;
+}
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+.command-dialog {
+  min-width: 360px;
+  padding: 0;
+  color: #e7edf3;
+  background: #303a46;
+  border: 1px solid #6d7c8c;
+  box-shadow: 2px 6px 18px #000a;
+  font:
+    12px 'Malgun Gothic',
+    sans-serif;
+}
+.command-dialog header {
+  padding: 8px 12px;
+  background: #252b32;
+  font-weight: 600;
+}
+.command-dialog .dialog-body {
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+}
+.command-dialog footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 16px 14px;
+}
+.command-dialog footer button {
+  min-width: 76px;
+  padding: 4px 10px;
+  border: 1px solid #788796;
+  background: #3e4a57;
+}
+.text-window {
+  width: min(760px, 90vw);
+}
+.text-window pre {
+  height: 360px;
+  margin: 0;
+  padding: 8px 10px;
+  overflow: auto;
+  background: #1e242b;
+  border: 1px solid #4b5864;
+  font:
+    12px/1.6 'Malgun Gothic',
+    'Consolas',
+    monospace;
+  white-space: pre-wrap;
+  user-select: text;
+}

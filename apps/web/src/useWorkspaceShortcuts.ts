@@ -26,6 +26,7 @@ interface Options {
   showCommand: () => void;
   toggleCommand: () => void;
   toggleExpanded: () => void;
+  openTextWindow: () => void;
   toggle: (item: StatusToggle) => void;
 }
 
@@ -82,9 +83,11 @@ export function useWorkspaceShortcuts(options: Options): void {
       ) {
         event.preventDefault();
         options.execute('ERASE');
+      } else if (event.code === 'F2' && event.ctrlKey) {
+        event.preventDefault();
+        options.openTextWindow();
       } else if (event.code === 'F2') {
         event.preventDefault();
-        options.showCommand();
         options.toggleExpanded();
       } else if (event.ctrlKey && event.code === 'Digit9') {
         event.preventDefault();
