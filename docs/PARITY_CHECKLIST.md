@@ -3,6 +3,8 @@
 These checks track reference behavior and unresolved compatibility. A registered
 command is not an implemented command.
 
+- [ ] Phase 04 WIP is paused and unaccepted: verify optional-Z inheritance/preservation, typed OSNAPCOORD/script priority, all curve snap fixtures and deferred previews, 400 ms acquisition timing, isometric spacing, polar sensitivity, modifier wording, dynamic/command-line focus distinctions and the full drafting-settings behavior. See the paused section of PROGRESS.md before resuming; no current full-tree pass is recorded.
+
 - [ ] Phase 03 drawing menus: compare default/edit/command item order, Korean wording and mnemonic letters; SHORTCUTMENU 0-31 including command keyword bit 8 and time-sensitive bit 16 at the exact SHORTCUTMENUDURATION boundary; confirm menus after selecting entities and Shift/right or MBUTTONPAN=0 middle click.
 - [ ] Phase 03 one-shot snaps: compare next-point-only endpoint/midpoint/center/quadrant/intersection/nearest/None, rejected acquisition and zero-length input, typed coordinates, transparent navigation, held-key precedence and cancellation. Verify the Korean no-snap-found sentence against the installed reference; advanced object-snap choices remain explicit pending commands.
 - [ ] Phase 03 snap-menu access keys: compare Korean mnemonic letters and add letter-based selection; the current placeholder snap menu supports pointer and arrow/Enter navigation.

@@ -55,14 +55,14 @@ describe('status strip drafting controls', () => {
     if (!mode || mode.kind === 'separator') throw new Error('Missing snap menu item');
     mode.onSelect?.();
     expect(macros.pop()).toBe(`'_SETVAR OSMODE ${16384 | 1 | 32 | 2}`);
-    vars.set('POLARMODE', 14);
+    vars.set('POLARMODE', 13);
     const tracking = statusSettings(
       'objectSnapTracking',
       vars,
       'ko-KR',
       () => {},
       (macro) => macros.push(macro),
-    ).find((item) => item.id === 'tracking-1');
+    ).find((item) => item.id === 'tracking-2');
     if (!tracking || tracking.kind === 'separator') throw new Error('Missing tracking menu item');
     tracking.onSelect?.();
     expect(macros.pop()).toBe("'_SETVAR POLARMODE 15");

@@ -1,13 +1,17 @@
 import { getSystemVariableDefinition } from '@hancad/sysvars';
-import type { SysvarValue } from '@hancad/sysvars';
+import type { SysvarValue, SystemVariables } from '@hancad/sysvars';
+import { parseDraftNumber } from '@hancad/draft';
+import { angularInputVariables, formatSysvarInput, parseAngleSysvarInput } from './sysvar-format';
 import type { CommandInput } from '@hancad/editor';
 import { commandMessages } from './messages';
 import { CommandInputError } from './input-errors';
 import { historyInputPrompt, runUndo, runMultipleRedo, runOops } from './history-commands';
 import type { CommandContext, CommandDefinition } from './types';
 import type { CommandRegistry } from './registry';
+import { osnapCommand } from './osnap-command';
 
 export function registerCoreCommands(registry: CommandRegistry): void {
+  registry.register(osnapCommand());
   const handlers: Record<string, (context: CommandContext) => void> = {
     GETVAR: (context) => {
       const name = context.input.requireString().toUpperCase();
@@ -63,28 +67,44 @@ export function registerCoreCommands(registry: CommandRegistry): void {
 
 export function setVariableFromInput(name: string, context: CommandContext): void {
   const current = context.sysvars.get(name);
-  context.print(commandMessages.variablePrompt(name, formatSysvar(current), context.locale));
+  context.print(
+    commandMessages.variablePrompt(
+      name,
+      formatSysvarInput(name, current, context.sysvars),
+      context.locale,
+    ),
+  );
   const input = context.input.take();
   if (input === undefined || input === '') return;
-  context.sysvars.set(name, parseSysvarInput(name, input));
+  context.sysvars.set(name, parseSysvarInput(name, input, context.sysvars));
 }
 
 export function formatSysvar(value: SysvarValue): string {
   return Array.isArray(value) ? value.join(',') : String(value);
 }
 
-function parseSysvarInput(name: string, input: CommandInput): SysvarValue {
+function parseSysvarInput(
+  name: string,
+  input: CommandInput,
+  sysvars: SystemVariables,
+): SysvarValue {
   const definition = getSystemVariableDefinition(name);
   if (!definition) throw new Error(`Unknown system variable: ${name}`);
   if (definition.type === 'integer' || definition.type === 'real') {
     if (typeof input === 'number') return input;
-    if (typeof input === 'string' && input.trim() !== '') return Number(input);
+    if (typeof input === 'string' && input.trim() !== '')
+      return angularInputVariables.has(name)
+        ? parseAngleSysvarInput(input, sysvars)
+        : Number(input);
     return Number.NaN;
   }
   if (definition.type === 'boolean')
     return input === true || input === 1 || input === '1' || input === 'true';
   if (definition.type === 'point2' || definition.type === 'point3') {
-    const values = typeof input === 'string' ? input.split(',').map(Number) : input;
+    const values =
+      typeof input === 'string'
+        ? input.split(',').map((value) => parseDraftNumber(value) ?? NaN)
+        : input;
     if (Array.isArray(values) && values.length === 2) return [Number(values[0]), Number(values[1])];
     if (Array.isArray(values) && values.length === 3)
       return [Number(values[0]), Number(values[1]), Number(values[2])];

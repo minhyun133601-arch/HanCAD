@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@hancad/draft": "workspace:*",
     "@hancad/db": "workspace:*",
     "@hancad/editor": "workspace:*",
     "@hancad/input": "workspace:*",

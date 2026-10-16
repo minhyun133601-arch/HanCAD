@@ -1,0 +1,82 @@
+.dynamic-input-overlay {
+  position: absolute;
+  z-index: 28;
+  max-width: min(480px, calc(100% - 20px));
+  color: #192530;
+  pointer-events: auto;
+  white-space: nowrap;
+  font-family: 'Malgun Gothic', sans-serif;
+  filter: drop-shadow(1px 2px 3px #0008);
+}
+.dynamic-prompt {
+  display: flex;
+  align-items: center;
+  background: #e6edf3;
+  border: 1px solid #839bb1;
+  padding: 4px 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 420px;
+}
+.dynamic-prompt button {
+  margin-left: 8px;
+  color: #2d5270;
+}
+.dynamic-fields {
+  display: flex;
+  gap: 6px;
+  margin-top: 5px;
+}
+.dynamic-field {
+  display: flex;
+  align-items: center;
+  min-width: 70px;
+  background: #eef5fb;
+  border: 1px solid #6987a3;
+}
+.dynamic-field.active {
+  border-color: #2d6ba3;
+  outline: 1px solid #79b1e2;
+  background: #fff;
+}
+.dynamic-field > button:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 70px;
+  padding: 3px 5px;
+  gap: 10px;
+  color: inherit;
+}
+.dynamic-field-name {
+  color: #556a7d;
+  font-size: 10px;
+}
+.dynamic-field.active > button:first-child > span:last-child {
+  background: #245b8b;
+  color: #fff;
+  padding: 0 2px;
+}
+.dynamic-unlock {
+  color: #8b6b20;
+  padding-right: 4px;
+}
+.dynamic-options {
+  display: flex;
+  flex-direction: column;
+  padding: 3px;
+  background: #eef4f9;
+  border: 1px solid #6d8398;
+  margin-top: 4px;
+  min-width: 150px;
+}
+.dynamic-options button {
+  color: #1c3042;
+  text-align: left;
+  padding: 4px 8px;
+}
+.dynamic-options button:hover,
+.dynamic-options .highlighted {
+  color: #fff;
+  background: #35648e;
+}

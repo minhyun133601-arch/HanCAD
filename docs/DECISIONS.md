@@ -1,5 +1,32 @@
 # Decisions
 
+## 2026-10-17: Phase 04 WIP checkpoint and pause
+
+The user explicitly paused Phase 04 before integration and acceptance. The new
+code is a checkpoint, not a verified release. Exact partial checks and failures
+are recorded in PROGRESS.md; the accepted production build remains Phase 03.
+
+The coordinate layer keeps ANGBASE/SNAPANG in radians and POLARANG/POLARADDANG
+in degrees, formats command input through AUNITS, and preserves optional Z only
+when semantically supplied. An unwanted absolute-2D base-Z inheritance case is
+still failing. Z preservation through the transitional normalizer remains open.
+Snap source geometry uses WCS Y up and converts only at the public model-Y-down
+query boundary. The dynamic RTree moved to geom to avoid a draft-to-render
+dependency. Dynamic fields share raw command input and the same unit parser;
+their UI and canvas integration are pending.
+
+Unverified assumptions to resolve on resume: 400 ms hover acquisition dwell,
+isometric lattice spacing and polar sensitivity, localized modifier prompts,
+deferred preview and typed-versus-snap priority. The current POLARANG catalog
+restriction also needs reconciliation with the drafting-settings documentation
+that permits an entered increment; it has not been changed at this checkpoint.
+
+Reference material read during WIP: [LINE](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-E8C1190C-A26C-484C-ADDD-DDF81666F69F.htm),
+[coordinates](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-0A0135DB-3216-482B-81DD-74E6DB8CA3E3.htm),
+[POLARMODE](https://help.autodesk.com/cloudhelp/2023/ENU/AutoCAD-Core/files/GUID-D91628CC-9975-4DBF-8D02-10B23A6F3ED5.htm),
+[TRACKPATH](https://help.autodesk.com/cloudhelp/2025/ENU/AutoCAD-Core/files/GUID-6BF0703C-28B2-4591-8337-34B8C20443F2.htm),
+[object tracking](https://help.autodesk.com/view/ACD/2026/ENU/?caas=caas%2Fdocumentation%2FACDLT%2F2014%2FENU%2Ffiles%2FGUID-665DC37F-8C3E-414A-9369-72A13C0BE07A-htm.html).
+
 ## 2026-10-17: Phase 03 drawing menus, status controls and help
 
 The drawing-area right-click policy follows Autodesk's SHORTCUTMENU bit codes:

@@ -7,3 +7,7 @@ export * from './curve-operations';
 export * from './curve-transform';
 export * from './nurbs';
 export * from './fit-spline';
+export * from './spatial-index';
+export * from './drafting-grid';
+export { polylineSegments } from './polyline3';
+export { conicComponents } from './analytic-curves';

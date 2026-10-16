@@ -22,7 +22,9 @@
 ## Current repository workflow (2026-10-16)
 
 Status as of 2026-10-17: Phase 03 implementation and browser acceptance are
-complete. Phase 04 is next only after a user request. Actual Windows IME,
+complete. Phase 04 was started and explicitly paused; its partially integrated
+source has known failed checks and is not accepted. Resume only on request using
+the detailed paused section of `../PROGRESS.md`. Actual Windows IME,
 installed-AutoCAD comparison and deferred Phase 00 native acceptance remain
 unverified; see `../PROGRESS.md` for the exact results and boundaries.
 

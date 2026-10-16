@@ -15,3 +15,4 @@ export * from './sources/style-tables';
 export * from './sources/database-source';
 export * from './view-navigation';
 export * from './drafting-aids';
+export * from './tracking-overlay';

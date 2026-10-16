@@ -17,10 +17,11 @@ Required test coverage and feature scope remain unchanged. The working root
 
 1. Preserve the user's deferral of Phase 00 native startup/window acceptance.
    Browser verification alone is insufficient to complete that acceptance.
-2. Phases 01-03 implementation and browser acceptance are complete. Phase 04 is
-   next, only when requested. Complete each requested phase's implementation,
-   final verification and Acceptance checks before moving on. Native/reference
-   limitations remain explicit in `../PROGRESS.md`.
+2. Phases 01-03 implementation and browser acceptance are complete. Phase 04 was
+   started and explicitly paused by the user on 2026-10-17. Resume only on request
+   using `../PROGRESS.md`; implementation/type integration and final validation
+   remain pending. Do not begin Phase 05. Native/reference limitations remain
+   explicit in the progress record.
 3. Preserve previously delivered later-phase features and their regression tests.
    Those working subsets do not complete the containing original phases.
 

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "DYNDIGRIP",
+    "type": "integer",
+    "default": 31,
+    "scope": "profile",
+    "description": "그립 신축 편집 중 표시되는 동적 치수를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-1EB33CCE-EF2C-4334-A90D-F8D5DAC9B0FA.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "31"
+    },
+    "bits": {
+      "1": "Resulting dimension",
+      "2": "Length change",
+      "4": "Absolute angle",
+      "8": "Angle change",
+      "16": "Arc radius"
+    },
+    "min": 0,
+    "max": 31,
+    "bitmask": 31
+  },
+  {
+    "name": "DYNTOOLTIPS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "툴팁 모양 설정이 적용되는 제도 툴팁을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-LT/files/GUID-74EA9BC1-D199-4A82-92FC-65213F3E2179.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1,
+    "validationNote": "The 2026 tooltip-appearance topic links this variable; 0/1 meanings and registry default also match the earlier dedicated DYNTOOLTIPS reference."
+  }
+]

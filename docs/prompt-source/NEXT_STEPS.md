@@ -1,6 +1,24 @@
 # HanCAD: original-order handoff
 
-## Active next step (2026-10-17; Phase 03 complete)
+## Active next step (2026-10-17; Phase 04 paused)
+
+The user started Phase 04, then explicitly requested pausing and saving the current
+state. Phase 04 is WIP, not accepted. Resume only when the user asks; read the
+paused Phase 04 section of `../PROGRESS.md` for exact files, APIs, known failures,
+test evidence and eight ordered continuation steps. Do not run a complete baseline
+merely to resume. Current source integration/typechecking is incomplete, and the
+last accepted production build remains Phase 03.
+
+Focused evidence so far: root tracking 7 passed; coordinate batch 42/43 passed
+(one optional-Z inheritance failure); settings/dynamic/-OSNAP/status 13 passed.
+These are partial snapshots and do not certify the current combined source.
+No Phase 04 build, E2E, manual acceptance or complete verification has run.
+
+Start with the optional-Z test contract and snap-kind/type errors, then integrate
+the new curve index, acquisition/constraints and dynamic-input UI. Do not begin
+Phase 05. Preserve the pre-existing protocol edits and the Phase 03 checkpoint.
+
+## Historical next step (2026-10-17; Phase 03 complete)
 
 Phase 03 implementation and browser acceptance are complete. Read the completion
 section of `../PROGRESS.md` for all verification evidence and native/reference

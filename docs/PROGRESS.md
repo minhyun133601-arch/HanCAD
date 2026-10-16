@@ -1,5 +1,170 @@
 # HanCAD progress
 
+## Paused phase: Phase 04 coordinate input and drafting aids (2026-10-17)
+
+Source: `docs/prompt-source/prompts/phase-04-coordinate-input-and-drafting-aids-line-as-the-reference-com.md`.
+The user requested Phase 04 after Phase 03 completion. Do not rerun the complete
+baseline; recorded Phase 03 evidence remains below. Preserve the pre-existing
+protocol edits in AGENTS.md and the prompt copies.
+
+| Milestone                               | Status  | Scope                                                                                                         |
+| --------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------- |
+| 4.1 Coordinate input and LINE           | WIP     | Unit/angle formats, 3D syntax, filters/FROM/M2P/TT/TK, typed overrides, continuation, U/C and previews        |
+| 4.2 Object snaps                        | WIP     | All required modes/curves, deferred modes, candidate cycling, OSOPTIONS and markers                           |
+| 4.3 Drafting constraints and tracking   | WIP     | Grid/polar/isometric snaps, Ortho, acquired points, extension/parallel paths, live sysvars                    |
+| 4.4 Dynamic input and drafting settings | WIP     | Cursor pointer/dimension fields, locks/Tab/Down menu, DSETTINGS seven tabs, OSNAP/-OSNAP                      |
+| 4.5 Acceptance and integration          | Planned | All five acceptance items, comprehensive verification, current-build UI checks, performance and documentation |
+
+Implementation is split across independent geometry, coordinate/LINE, UI/settings
+and integration/tracking work. Keep core geometry pure and share point input
+between the command line, dynamic fields and queued tests. Add feature-level
+coverage during implementation; use focused tests for complex geometry and
+typechecking to resolve interface integration. Run the comprehensive `pnpm verify`
+and additional phase-specific checks once implementation is complete, then rerun
+failed/affected checks. Document actual reference assumptions and remaining gaps.
+The user explicitly paused implementation and requested a saved continuation
+record. No new implementation or checks were started after that request; only
+the handoff and WIP checkpoint were prepared. Phase 04 is NOT accepted. The
+working source is partially integrated and has known failed checks. The last
+accepted production build remains Phase 03; no Phase 04 build was produced.
+
+### Pause checkpoint: actual evidence
+
+- Root focused tracking/constraint tests: 7 passed before subsequent parallel
+  integration edits. This is not evidence that the present full tree passes.
+- Coordinate/LINE focused batch: 43 tests, 42 passed and 1 failed. The new nested
+  filter/FROM case expects `{x:110,y:-110}` but receives an extra `z:0`.
+- Settings/dynamic-state/-OSNAP/status focused batch: 13 passed (settings 3,
+  dynamic state 2, OSNAP 2, existing status 6).
+- The latest attempted typecheck failed. Reported errors concern the expanded
+  snap-kind labels/CadSnapKind in the existing canvas and four union-narrowing
+  errors in `snap-legacy-sources.ts`. A settings-test property was corrected from
+  undoLength to undoCount afterward, but typechecking was not rerun. Do not
+  describe the current source as typechecked or runnable without verification.
+- The new complete curve-snap engine has no Phase 04 fixture, typecheck, lint,
+  formatting or performance pass yet. No Phase 04 build, E2E, full verification,
+  manual acceptance or final documentation generation has run.
+- Dependencies/package manifests and pnpm-lock.yaml have WIP workspace changes.
+  No external package/version upgrade was intentionally selected. Check manifest/
+  lock consistency on resume. Preserve the earlier unrelated protocol edits.
+
+### Implemented code, pending integration and acceptance
+
+4.1 coordinate/LINE work is in `packages/draft/src/coordinates.ts`,
+`coordinate-units.ts`, `coordinate-format.ts`, `point-input.ts`,
+`line-continuation.ts`, `session.ts`, `types.ts`, and `apps/web/src/useDrafting.ts`.
+Parsing/formatting supports the requested unit families and optional Z input.
+PointInputController carries filters, FROM, M2P/MTP, TT/TK, angle locking and typed
+snap state. LINE continuation/U/C and deferred acceptance are drafted. Command
+system changes in `sysvar-format.ts`, `core.ts` and `useCommandSession.ts` handle
+angle sysvar input. These are WIP, not completed acceptance claims.
+
+Shared contracts already written:
+
+- `DraftSession.getAidContext()` / `useDrafting.getAidContext()` expose basePoint,
+  previousPoint, pointInput and temporary trackingPoints; `getPointInput()` exposes
+  the modifier state. Stages are point/filter-source/filter-rest/from-base/
+  from-offset/mid-first/mid-second/tracking-first/tracking-next/temporary-tracking.
+- `DraftPointOptions` adds constrained, trackingBase and deferred. Pass
+  `constrained:true` after editor aids resolve a point to prevent duplicate
+  grid/Ortho correction. `sourcePoint:true` in modifier state means the filter/
+  FROM/M2P/TT sample should bypass ordinary LINE base constraints. TrackingBase
+  lets direct distance measure from an acquired tracking point.
+- Typed snap callbacks set `tempOverrides.setObjectSnap`; the override union and
+  menu modes now include all required kinds. Actual new mode behavior is not
+  connected to the canvas yet.
+- ANGBASE/SNAPANG storage is radians, command input is formatted/parsed through
+  AUNITS with base/direction disabled while setting those variables; POLARANG and
+  POLARADDANG remain degrees. Other sessions still use old default parser settings.
+
+4.2 curve-snap WIP is in `snap-types`, `snap-curves`, `snap-intersections`,
+`snap-curve-points`, `snap-index`, `snap-query`, `snap-deferred` and
+`snap-legacy-sources` under packages/draft. Geometry remains WCS Y up; public pick
+points are model Y down. SnapIndex uses the shared dynamic RTree extracted to
+`packages/geom/src/spatial-index.ts` (render reexports it). `querySnapCandidates`
+returns the complete sorted candidate list for future Tab cycling. Deferred
+perpendicular/tangent solvers and extension/parallel options are drafted. The old
+`snapDraftPoint` wrapper remains, with its type renamed LegacyDraftSnap.
+
+`apps/web/src/native-snap-sources.ts` provides nativeSnapSources(objects,legacy?),
+drawingSnapSources(database,state,additional?) and
+createDrawingSnapIndex(database,state,additional?). It attempts native model-owner/
+layer filtering, curve geometry, INSERT transforms/insertion points and dimension
+children. None of this adapter has passed the required new fixture checks yet.
+
+4.3 pure grid/Ortho/polar/point-acquisition calculations are in
+`packages/geom/src/drafting-grid.ts`, `packages/draft/src/drafting-constraints.ts`
+and `tracking.ts`. A shared grid basis drives rotated/isometric grid snapping.
+ObjectTracking supports dwell/re-hover, seven acquired points and path crossings.
+`apps/web/src/drafting-aid-settings.ts` reads sysvars and applies raw dynamic locks.
+Renderer WIP adds transformed-grid/tracking-overlay and a setTrackingOverlay
+surface API, plus rotated/isometric crosshairs and APBOX fields. These helpers
+are NOT connected to useCanvasInteraction/DocumentApp. The 400 ms acquisition
+dwell, precise isometric spacing and polar sensitivity need reference comparison.
+
+4.4 dynamic-input UI exists in `useDynamicInput.ts`, `DynamicInputOverlay.tsx`,
+`dynamic-input-state.ts` and CSS. The hook accepts sysvars/mode/input/changeInput/
+prompt/commandActive/cursor:{point,screen}/base?/locale/submit/focusCommand. Render
+`<DynamicInputOverlay view={dynamic}>`; `dynamic.getConstraints()` returns raw
+distance/angle/x/y/z strings and relative flag. It shares the command buffer and
+captures Tab/comma/angle/Down/lock acceptance, but is NOT connected in DocumentApp.
+Keep canvas-origin entry distinct from explicit command-line absolute input.
+
+DSETTINGS has seven Korean tabs (schema/state/dialog/styles and command hook),
+with DSETTINGS/OSNAP dialog registration in CommandPanels. `-OSNAP` is registered
+in packages/commands and has focused coverage. Official DYNDIGRIP=31 and
+DYNTOOLTIPS=1 definitions were added in catalog/variables-47.json. The status
+tracking menu's POLARMODE bit was corrected from 1 to 2. Generated COMMANDS/SYSVARS
+docs and full parity/decision records remain pending.
+
+### Exact resume order
+
+1. Read this paused section, root AGENTS.md, ARCHITECTURE, SHORTCUTS and the Phase
+   04 prompt. Resume only after the user requests it. Do not run a full baseline.
+2. Resolve the coordinate test's unwanted Z inheritance: in coordinates.ts the
+   condition propagating base.z to absolute 2D points should be reviewed; inherit
+   it for relative input (or explicit elevation), without silently changing the
+   expected optional-Z contract. Complete optional-Z preservation through legacy
+   runtime normalization, database/session cache and DXF round trips; the current
+   normalizer may discard it. No preservation fix was made before pausing.
+3. Finish interface integration and focused typechecking: expand renderer snap
+   kinds/labels (snap-overlay.ts still only has six marker shapes), fix legacy
+   snap-source narrowing, then connect a cached SnapIndex and candidate list to
+   a new editor-aid controller/useCanvasInteraction. Native and legacy source IDs
+   must not duplicate. Cache/index changes, never rebuild the whole drawing on
+   every pointer move. Wire acquisition timers, re-hover, temporary TT points,
+   extensions/parallel source acquisition, two-pick extended intersections,
+   deferred metadata, exact snapped points, Tab candidate cycling and TRACKPATH.
+4. Wire root grid/polar/Ortho constraints and tracking into cursor/pick paths,
+   supply getAidContext base/previous/source-point state, and pass constrained/
+   trackingBase/deferred to LINE. Clear state at command cancellation, accepted
+   picks and drawing switches. Connect setTrackingOverlay, APBOX and AUTOSNAP
+   marker/tooltip/magnet behavior. Mark drafting toggles implemented only afterward.
+5. Connect useDynamicInput after command routing, with a mutable getter ref
+   available to earlier canvas interaction. Supply cursor model coordinates and
+   workspace-relative screen coordinates; preserve noneditable canvas focus at
+   point prompts so canvas entry and command-line focus are distinguishable.
+   Apply locked raw values through the shared unit parser. Add real Tab/lock/
+   Down/IME-origin/mouse-pick E2E, without changing absolute command-line semantics.
+6. Finish DSETTINGS angle parse/format (SNAPANG currently displays raw radians),
+   remembering the selected tab, status settings-tab navigation, signed-option
+   matching and tooltip edge clamping/DYNTOOLTIPS prompt separation. Complete
+   OSNAPCOORD typed/running/script priority, deferred preview, settings injection
+   in other point-consuming sessions, `<angle` versus Shift+Comma temporary-CEN
+   conflict, and inline M2P keyword parsing (digit absent from current regex).
+7. Complete curve correctness before acceptance: extended ARC/ELLIPSE queries
+   currently clamp parameters and need full-conic normalization; native HATCH
+   snap sources and native DIMENSION extension classification are incomplete.
+   Validate nearest/normal roots, INSERT OCS/nesting/visibility and every required
+   mode/pair (lines, arcs, circles, ellipses, splines and polylines), OSOPTIONS,
+   large coordinates and deferred cases. The sampled spline intersection method
+   needs aperture broad-phase pruning and the under-4-ms performance check.
+8. Add all five original acceptance fixtures/E2E, complete docs/source formatting,
+   generate command/sysvar docs, then run one comprehensive `pnpm verify` against
+   a fresh Phase 04 production build plus manual acceptance/performance/round-trip
+   checks. Fix failures and rerun affected checks, commit accepted features and
+   report in Korean. No Phase 05 work is authorized.
+
 ## Completed phase: Phase 03 command system, command line, shortcuts and Korean IME (2026-10-17)
 
 Source: `docs/prompt-source/prompts/phase-03-command-system-command-line-shortcuts-korean-ime.md`.
@@ -25,10 +190,10 @@ shortcut menus, command aliases/AutoCorrect and the command window.
 ### Completion and exact next step (2026-10-17)
 
 Phase 03 implementation and browser acceptance are complete. This section
-supersedes the historical resume instructions below. No Phase 04 implementation
-has started. The exact next step, only when requested, is to read the Phase 04
-coordinate-input/drafting-aids prompt and plan its milestones. Original Phase 00
-native acceptance and installed-AutoCAD comparison remain unverified.
+supersedes the older Phase 03 resume instructions below. Phase 04 subsequently
+started and is now paused; its current handoff and exact next step are at the top
+of this document. Original Phase 00 native acceptance and installed-AutoCAD
+comparison remain unverified.
 
 Delivered 3.8-3.10: focus-safe temporary key overrides with physical Shift release
 handling; Alt ribbon/application/quick-access keytips; contextual default/edit/

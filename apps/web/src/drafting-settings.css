@@ -1,0 +1,97 @@
+.drafting-settings-dialog {
+  width: min(780px, calc(100vw - 40px));
+  padding: 18px;
+  border: 1px solid #758391;
+  color: #e0e6ec;
+  background: #303b46;
+}
+.drafting-settings-dialog h2 {
+  margin: 0 0 14px;
+  font-size: 17px;
+}
+.draft-settings-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #72818e;
+  gap: 2px;
+}
+.draft-settings-tabs button {
+  padding: 7px 8px;
+  font-size: 11px;
+  border: 1px solid #657481;
+}
+.draft-settings-tabs [aria-selected='true'] {
+  background: #526a7f;
+  color: #fff;
+}
+.draft-settings-content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-height: 60vh;
+  min-height: 300px;
+  overflow: auto;
+  padding: 16px 0;
+}
+.draft-settings-content fieldset {
+  min-width: 0;
+  border: 1px solid #607180;
+  padding: 10px;
+  align-self: start;
+}
+.draft-settings-content legend {
+  padding: 0 6px;
+  font-size: 12px;
+}
+.draft-setting-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  margin: 7px 0;
+}
+.draft-setting-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  margin: 7px 0;
+}
+.draft-setting-field input,
+.draft-setting-field select {
+  width: 110px;
+  min-width: 75px;
+  padding: 4px;
+  color: #e8edf2;
+  background: #1f2933;
+  border: 1px solid #748391;
+}
+.draft-setting-actions {
+  display: flex;
+  gap: 8px;
+  align-items: start;
+}
+.draft-settings-dialog footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid #687885;
+  padding-top: 12px;
+}
+.draft-settings-dialog footer button,
+.draft-setting-actions button {
+  min-width: 72px;
+  padding: 6px 12px;
+  border: 1px solid #7b8d9b;
+  background: #3d5367;
+}
+.draft-settings-error {
+  color: #ffc183;
+  font-size: 12px;
+}
+@media (max-width: 650px) {
+  .draft-settings-content {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,48 +1,60 @@
-import type { CadPoint } from '@hancad/legacy-bridge';
+﻿import type { CadPoint } from '@hancad/legacy-bridge';
+import { parseDraftAngle, parseDraftNumber } from './coordinate-units';
+import type { CoordinateSettings } from './coordinate-units';
+export * from './coordinate-units';
+export * from './coordinate-format';
+export type DraftPoint = CadPoint & { z?: number };
 
-const numberPattern = '[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?';
-const cartesian = new RegExp(`^(@|#)?\\s*(${numberPattern})\\s*,\\s*(${numberPattern})$`, 'i');
-const polar = new RegExp(`^(@)?\\s*(${numberPattern})\\s*<\\s*(${numberPattern})$`, 'i');
-const scalar = new RegExp(`^${numberPattern}$`, 'i');
-
-export function validDraftPoint(point: CadPoint): boolean {
-  return (
-    Number.isFinite(point.x) &&
-    Number.isFinite(point.y) &&
-    Math.abs(point.x) <= 1e12 &&
-    Math.abs(point.y) <= 1e12
+export function validDraftPoint(point: DraftPoint): boolean {
+  return [point.x, point.y, point.z ?? 0].every(
+    (value) => Number.isFinite(value) && Math.abs(value) <= 1e12,
   );
 }
 
-/** User Y up is converted exactly once into the transitional renderer's Y-down model. */
+/** Command-line coordinates are absolute by default; dynamic fields pass relativeDefault. */
 export function parseDraftPoint(
   input: string,
-  base: CadPoint = { x: 0, y: 0 },
-): CadPoint | undefined {
-  const value = input.trim();
-  const xy = cartesian.exec(value);
-  if (xy) {
-    const origin = xy[1] === '@' ? base : { x: 0, y: 0 };
-    const point = { x: origin.x + Number(xy[2]), y: origin.y - Number(xy[3]) };
-    return validDraftPoint(point) ? point : undefined;
+  base: DraftPoint = { x: 0, y: 0 },
+  settings: Partial<CoordinateSettings> = {},
+  relativeDefault = false,
+): DraftPoint | undefined {
+  const raw = input.trim(),
+    prefix = /^[@#]/.test(raw) ? raw[0] : '';
+  const value = prefix ? raw.slice(1) : raw;
+  const relative = prefix === '@' || (!prefix && relativeDefault);
+  const origin = relative ? base : { x: 0, y: 0 };
+  const coordinate = value.split(',');
+  const angles = (coordinate[0] ?? '').split('<');
+  let result: DraftPoint;
+  if (angles.length === 2 || angles.length === 3) {
+    if (coordinate.length > 2 || (angles.length === 3 && coordinate.length > 1)) return undefined;
+    const length = parseDraftNumber(angles[0] ?? '', settings);
+    const heading = parseDraftAngle(angles[1] ?? '', settings);
+    const elevation =
+      angles.length === 3
+        ? parseDraftAngle(angles[2] ?? '', { ...settings, angbase: 0, angdir: 0 })
+        : 0;
+    if (length === undefined || length < 0 || heading === undefined || elevation === undefined)
+      return undefined;
+    const radius = length * Math.cos(elevation);
+    result = { x: origin.x + radius * Math.cos(heading), y: origin.y - radius * Math.sin(heading) };
+    if (angles.length === 3 || coordinate.length === 2) {
+      const z =
+        angles.length === 3
+          ? length * Math.sin(elevation)
+          : parseDraftNumber(coordinate[1] ?? '', settings);
+      if (z === undefined) return undefined;
+      result.z = (relative ? (base.z ?? 0) : 0) + z;
+    } else if (base.z !== undefined || settings.elevation)
+      result.z = relative ? (base.z ?? 0) : (settings.elevation ?? 0);
+  } else {
+    if (angles.length !== 1 || coordinate.length < 2 || coordinate.length > 3) return undefined;
+    const values = coordinate.map((part) => parseDraftNumber(part, settings));
+    if (values.some((part) => part === undefined)) return undefined;
+    result = { x: origin.x + values[0]!, y: origin.y - values[1]! };
+    if (coordinate.length === 3) result.z = (relative ? (base.z ?? 0) : 0) + values[2]!;
+    else if (base.z !== undefined || settings.elevation)
+      result.z = relative ? (base.z ?? 0) : (settings.elevation ?? 0);
   }
-  const ra = polar.exec(value);
-  if (ra) {
-    const radius = Number(ra[2]);
-    const angle = (Number(ra[3]) * Math.PI) / 180;
-    if (!Number.isFinite(radius) || radius < 0 || !Number.isFinite(angle)) return undefined;
-    const origin = ra[1] ? base : { x: 0, y: 0 };
-    const point = {
-      x: origin.x + radius * Math.cos(angle),
-      y: origin.y - radius * Math.sin(angle),
-    };
-    return validDraftPoint(point) ? point : undefined;
-  }
-  return undefined;
-}
-
-export function parseDraftNumber(input: string): number | undefined {
-  if (!scalar.test(input.trim())) return undefined;
-  const value = Number(input);
-  return Number.isFinite(value) && Math.abs(value) <= 1e12 ? value : undefined;
+  return validDraftPoint(result) ? result : undefined;
 }

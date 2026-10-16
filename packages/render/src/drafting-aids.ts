@@ -1,6 +1,8 @@
 import type { CadPoint } from '@hancad/legacy-bridge';
 import type { CadWorldView } from './pointer-controller';
 import type { ViewBounds, ViewportSize } from './view-navigation';
+import { isoplaneAngles } from '@hancad/geom';
+import { drawTransformedGrid } from './transformed-grid';
 
 export interface CadAidSettings {
   cursorSize: number;
@@ -14,6 +16,12 @@ export interface CadAidSettings {
   gridStyle: number;
   limits: ViewBounds;
   background: string;
+  snapAngle?: number;
+  snapBase?: CadPoint;
+  snapStyle?: number;
+  isoplane?: number;
+  aperture?: number;
+  apertureBox?: boolean;
 }
 export const defaultAidSettings: CadAidSettings = {
   cursorSize: 5,
@@ -70,6 +78,10 @@ export function drawGrid(
     settings.gridDisplay,
   );
   if (xStep === undefined || yStep === undefined) return;
+  if (settings.snapAngle || settings.snapBase?.x || settings.snapBase?.y || settings.snapStyle === 1) {
+    drawTransformedGrid(context, viewport, view, worldToScreen, settings, xStep, yStep);
+    return;
+  }
   const halfWidth = (view.height * viewport.width) / viewport.height / 2;
   const visible = {
     minX: view.center.x - halfWidth,
@@ -204,16 +216,19 @@ export function drawDraftingAids(
       y = Math.round(cursor.y) + 0.5;
     context.strokeStyle = foreground;
     context.beginPath();
-    context.moveTo(x - halfX, y);
-    context.lineTo(x - gap, y);
-    context.moveTo(x + gap, y);
-    context.lineTo(x + halfX, y);
-    context.moveTo(x, y - halfY);
-    context.lineTo(x, y - gap);
-    context.moveTo(x, y + gap);
-    context.lineTo(x, y + halfY);
+    const axes = settings.snapStyle === 1 ? isoplaneAngles(settings.isoplane ?? 0) : [0, Math.PI / 2];
+    for (let i = 0; i < axes.length; i++) {
+      const angle = (axes[i] ?? 0) + (settings.snapAngle ?? 0), length = i === 0 ? halfX : halfY;
+      const dx = Math.cos(angle), dy = -Math.sin(angle);
+      context.moveTo(x - dx * length, y - dy * length); context.lineTo(x - dx * gap, y - dy * gap);
+      context.moveTo(x + dx * gap, y + dy * gap); context.lineTo(x + dx * length, y + dy * length);
+    }
     context.stroke();
     if (gap > 0) context.strokeRect(x - gap, y - gap, gap * 2, gap * 2);
+    if (settings.apertureBox) {
+      const aperture = settings.aperture ?? 10;
+      context.strokeRect(x - aperture / 2, y - aperture / 2, aperture, aperture);
+    }
   }
   context.restore();
 }

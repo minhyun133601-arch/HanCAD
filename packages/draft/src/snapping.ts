@@ -1,4 +1,5 @@
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
+import type { DraftSnapKind } from './snap-types';
 import {
   arcContains,
   arcSweep,
@@ -10,9 +11,7 @@ import {
   type SnapPrimitive,
 } from './snap-geometry';
 
-export type DraftSnapKind =
-  'endpoint' | 'midpoint' | 'center' | 'quadrant' | 'intersection' | 'nearest';
-export interface DraftSnap {
+export interface LegacyDraftSnap {
   point: CadPoint;
   kind: DraftSnapKind;
   entityId: string;
@@ -25,7 +24,7 @@ export function snapDraftPoint(
   tolerance: number,
   osmode: number,
   additionalEntities: readonly CadEntity[] = [],
-): DraftSnap | undefined {
+): LegacyDraftSnap | undefined {
   if (
     !Number.isFinite(tolerance) ||
     tolerance < 0 ||
@@ -41,7 +40,7 @@ export function snapDraftPoint(
   const collect = (primitive: SnapPrimitive): void => {
     if (primitiveNear(primitive, point, tolerance)) primitives.push(primitive);
   };
-  let best: DraftSnap | undefined;
+  let best: LegacyDraftSnap | undefined;
   let nearestDistance = tolerance;
   const offer = (candidate: CadPoint, kind: DraftSnapKind, entityId: string): void => {
     const distance = Math.hypot(candidate.x - point.x, candidate.y - point.y);

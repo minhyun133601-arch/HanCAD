@@ -8,6 +8,7 @@ import type { CadSnapMarker } from './snap-overlay';
 import { drawSelectionOverlay } from './selection-overlay';
 import { drawDraftingAids } from './drafting-aids';
 import type { CadAidSettings } from './drafting-aids';
+import { drawTrackingOverlay, type CadTrackingOverlay } from './tracking-overlay';
 
 interface OverlayState {
   width: number;
@@ -23,6 +24,7 @@ interface OverlayState {
   cursor: CadPoint | undefined;
   window: CadWorldView | undefined;
   worldToScreen: (p: CadPoint) => CadPoint;
+  tracking?: CadTrackingOverlay;
 }
 export function drawSurfaceOverlay(canvas: HTMLCanvasElement, state: OverlayState): string {
   const context = canvas.getContext('2d');
@@ -49,12 +51,13 @@ export function drawSurfaceOverlay(canvas: HTMLCanvasElement, state: OverlayStat
   if (state.snap) drawSnapOverlay(context, state.snap, origin, view.scale);
   if (area) drawSelectionOverlay(context, area, origin, view.scale);
   context.restore();
+  if (state.tracking) drawTrackingOverlay(context, { width: state.width, height: state.height }, state.worldToScreen, state.tracking);
   drawDraftingAids(
     context,
     { width: state.width, height: state.height },
     state.worldToScreen,
     state.aids,
-    state.cursor,
+    state.tracking?.magnet ? state.worldToScreen(state.tracking.magnet) : state.cursor,
     state.window,
   );
   return area

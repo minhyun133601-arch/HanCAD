@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CommandRegistry, HeadlessCommandRunner } from '@hancad/commands';
+import { CommandRegistry, HeadlessCommandRunner, formatSysvarInput } from '@hancad/commands';
 import type { CommandPrefixes, CommandResult, PromptStep } from '@hancad/commands';
 import { DrawingDatabase } from '@hancad/db';
 import { getSystemVariableDefinition, SystemVariables } from '@hancad/sysvars';
@@ -112,7 +112,7 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
       const current = runtime.sysvars.get(session.name);
       return messages.sysvarValuePrompt(
         session.name,
-        Array.isArray(current) ? current.join(',') : String(current),
+        formatSysvarInput(session.name, current, runtime.sysvars),
       );
     } catch (error) {
       return messages.commandFailure(errorMessage(error, messages));

@@ -13,6 +13,7 @@ import { defaultAidSettings } from './drafting-aids';
 import { drawSurfaceOverlay } from './surface-overlay';
 import { fitWorldBounds, PreviousViews, sameWorldView, ViewTransition } from './view-navigation';
 import type { ViewBounds } from './view-navigation';
+import type { CadTrackingOverlay } from './tracking-overlay';
 export type { CadSnapKind } from './snap-overlay';
 export type {
   CadCanvasOptions,
@@ -42,6 +43,7 @@ export class CadCanvasSurface {
   private selected = new Set<string>();
   private previewHiddenIds = new Set<string>();
   private snapMarker: CadSnapMarker | undefined;
+  private trackingOverlay: CadTrackingOverlay | undefined;
   private baseDirty = true;
   private animationFrame: number | undefined;
   private pendingCoordinates: CadPoint | undefined;
@@ -172,6 +174,10 @@ export class CadCanvasSurface {
     this.snapMarker = point
       ? { point: { ...point }, kind, showMarker, ...(label === undefined ? {} : { label }) }
       : undefined;
+    this.requestRender();
+  }
+  setTrackingOverlay(overlay?: CadTrackingOverlay): void {
+    this.trackingOverlay = overlay;
     this.requestRender();
   }
   pick(point: CadPoint): string | undefined {
@@ -341,6 +347,7 @@ export class CadCanvasSurface {
       cursor: this.cursorLocal,
       window: this.options.getNavigationWindow?.(),
       worldToScreen: (p) => this.worldToScreen(p),
+      ...(this.trackingOverlay ? { tracking: this.trackingOverlay } : {}),
     });
     Object.assign(this.canvas.dataset, {
       previewCount: String(this.preview.length),

@@ -12,6 +12,7 @@
     "@hancad/commands": "workspace:*",
     "@hancad/db": "workspace:*",
     "@hancad/draft": "workspace:*",
+    "@hancad/geom": "workspace:*",
     "@hancad/input": "workspace:*",
     "@hancad/legacy-bridge": "workspace:*",
     "@hancad/render": "workspace:*",

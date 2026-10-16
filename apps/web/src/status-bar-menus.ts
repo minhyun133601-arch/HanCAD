@@ -121,14 +121,14 @@ export function statusSettings(
     case 'objectSnapTracking':
       for (const [bit, korean, english] of [
         [0, '직교로만 추적', 'Track orthogonally only'],
-        [1, '모든 극좌표 각도 설정을 사용하여 추적', 'Track using all polar angle settings'],
+        [2, '모든 극좌표 각도 설정을 사용하여 추적', 'Track using all polar angle settings'],
       ] as const) {
         items.push({
           id: `tracking-${bit}`,
           label: ko ? korean : english,
-          checked: (sysvars.getNumber('POLARMODE') & 1) === bit,
+          checked: (sysvars.getNumber('POLARMODE') & 2) === bit,
           onSelect: () =>
-            execute(`'_SETVAR POLARMODE ${(sysvars.getNumber('POLARMODE') & ~1) | bit}`),
+            execute(`'_SETVAR POLARMODE ${(sysvars.getNumber('POLARMODE') & ~2) | bit}`),
         });
       }
       break;

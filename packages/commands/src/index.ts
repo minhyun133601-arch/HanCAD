@@ -15,3 +15,5 @@ export { undoPrompt, historyInputPrompt, historyErrorMessage } from './history-c
 export * from './pgp-edit';
 export * from './diesel';
 export * from './macro';
+export * from './osnap-command';
+export * from './sysvar-format';

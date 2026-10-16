@@ -231,6 +231,9 @@ importers:
       '@hancad/draft':
         specifier: workspace:*
         version: link:../../packages/draft
+      '@hancad/geom':
+        specifier: workspace:*
+        version: link:../../packages/geom
       '@hancad/input':
         specifier: workspace:*
         version: link:../../packages/input
@@ -264,6 +267,9 @@ importers:
       '@hancad/db':
         specifier: workspace:*
         version: link:../db
+      '@hancad/draft':
+        specifier: workspace:*
+        version: link:../draft
       '@hancad/editor':
         specifier: workspace:*
         version: link:../editor
@@ -278,6 +284,9 @@ importers:
 
   packages/draft:
     dependencies:
+      '@hancad/geom':
+        specifier: workspace:*
+        version: link:../geom
       '@hancad/legacy-bridge':
         specifier: workspace:*
         version: link:../legacy-bridge

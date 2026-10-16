@@ -4,6 +4,7 @@ import type {
   CadSnapKind,
   CadWorldView,
   CadNavigationKind,
+  CadTrackingOverlay,
 } from '@hancad/render';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 
@@ -47,6 +48,9 @@ export class CanvasSurface {
   }
   setSnapMarker(point?: CadPoint, kind?: CadSnapKind, label?: string, showMarker = true): void {
     this.renderer.setSnapMarker(point, kind, label, showMarker);
+  }
+  setTrackingOverlay(overlay?: CadTrackingOverlay): void {
+    this.renderer.setTrackingOverlay(overlay);
   }
   cancelPointerInteraction(): void {
     this.renderer.cancelPointerInteraction();

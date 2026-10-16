@@ -1,6 +1,7 @@
 import { getSystemVariableDefinition } from '@hancad/sysvars';
 import type { SystemVariables } from '@hancad/sysvars';
 import { parseDraftNumber, parseDraftPoint } from '@hancad/draft';
+import { snapModeBits, type PointSnapOverride } from '@hancad/draft';
 
 /**
  * Temporary override keys (TEMPOVERRIDES=1): held at a point prompt they change how
@@ -20,15 +21,9 @@ export type TempOverride =
   | 'dynamicUcsToggle';
 
 /** A shortcut-menu choice applies to one accepted point, independent of held keys. */
-export type ObjectSnapOverride =
-  'endpoint' | 'midpoint' | 'center' | 'quadrant' | 'intersection' | 'nearest' | 'none';
+export type ObjectSnapOverride = PointSnapOverride;
 const objectSnapModes: Readonly<Record<ObjectSnapOverride, number>> = {
-  endpoint: 1,
-  midpoint: 2,
-  center: 4,
-  quadrant: 16,
-  intersection: 32,
-  nearest: 512,
+  ...snapModeBits,
   none: 0,
 };
 

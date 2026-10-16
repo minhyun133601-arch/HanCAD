@@ -1,5 +1,10 @@
 import type { CadEntity, CadPoint, CadSettings } from '@hancad/legacy-bridge';
-import { parseDraftNumber, parseDraftPoint, validDraftPoint } from './coordinates';
+import { parseDraftNumber, validDraftPoint } from './coordinates';
+import type { DraftPoint } from './coordinates';
+import { PointInputController } from './point-input';
+import type { PointInputResult } from './point-input';
+import { resolveDeferredPair, resolveDeferredSnap } from './snap-deferred';
+import type { DraftSnapDeferred } from './snap-types';
 import { draftCircle, draftLine, draftPolyline, rectanglePoints } from './entities';
 import type {
   DraftError,
@@ -13,8 +18,11 @@ import type {
 const epsilon = 1e-8;
 
 export class DraftSession {
-  private readonly points: CadPoint[] = [];
-  private cursor: CadPoint | undefined;
+  private readonly points: DraftPoint[] = [];
+  private cursor: DraftPoint | undefined;
+  private cursorOptions: DraftPointOptions = {};
+  private readonly pointInput: PointInputController;
+  private deferred: DraftSnapDeferred | undefined;
   private status: DraftSnapshot['status'] = 'active';
   private settings: CadSettings;
 
@@ -24,6 +32,7 @@ export class DraftSession {
     private readonly options: DraftSessionOptions,
   ) {
     this.settings = structuredClone(settings);
+    this.pointInput = new PointInputController(options);
     this.notify();
   }
 
@@ -33,47 +42,56 @@ export class DraftSession {
   }
 
   acceptPoint(point: CadPoint, options: DraftPointOptions = {}): DraftInputResult {
-    return this.addPoint(options.snapped ? point : this.constrain(point));
+    const source = this.pointInput.getState().sourcePoint;
+    const resolved =
+      options.snapped || options.constrained || source ? point : this.constrain(point);
+    const result = this.pointInput.acceptPoint(
+      this.pointInput.project(resolved, this.inputContext()),
+      this.inputContext(),
+    );
+    return this.acceptResolved(result, options);
   }
 
   acceptText(input: string): DraftInputResult {
     if (this.status !== 'active') return failure('closedSession');
     const value = input.trim();
-    if (!value) return this.finish();
+    if (!value) {
+      if (this.pointInput.getState().stage === 'tracking-next')
+        return this.acceptResolved(this.pointInput.acceptText('', this.inputContext()));
+      if (this.tool === 'LINE' && !this.points.length && this.options.continuation) {
+        const { point, tangent } = this.options.continuation;
+        if (tangent) this.pointInput.setAngle(Math.atan2(-tangent.y, tangent.x));
+        return this.addPoint(point);
+      }
+      return this.finish();
+    }
     if (value === '\u001b') return this.cancel();
     if (/^(C|CLOSE)$/i.test(value) && (this.tool === 'LINE' || this.tool === 'PLINE'))
       return this.canClose() ? this.finish(true) : failure('point');
     if (/^(U|UNDO)$/i.test(value) && (this.tool === 'LINE' || this.tool === 'PLINE')) {
       if (this.points.length > 1) this.points.pop();
+      this.pointInput.reset();
       this.notify();
       return { status: 'continue' };
     }
     if (this.tool === 'CIRCLE' && this.points.length === 1) {
-      const radius = parseDraftNumber(value);
+      const radius = parseDraftNumber(value, this.options.coordinates?.());
       if (radius !== undefined)
         return radius > epsilon
           ? this.commit([draftCircle(this.settings, this.points[0] ?? { x: 0, y: 0 }, radius)])
           : failure('positiveRadius');
     }
-    const distanceInput = parseDraftNumber(value);
-    const base = this.points.at(-1);
-    if (distanceInput !== undefined && base && this.cursor && Math.abs(distanceInput) > epsilon) {
-      const directionLength = distance(base, this.cursor);
-      if (directionLength > epsilon)
-        return this.addPoint({
-          x: base.x + ((this.cursor.x - base.x) * distanceInput) / directionLength,
-          y: base.y + ((this.cursor.y - base.y) * distanceInput) / directionLength,
-        });
-    }
-    const point = parseDraftPoint(value, this.points.at(-1));
-    return point
-      ? this.addPoint(point)
-      : failure(this.tool === 'CIRCLE' && this.points.length === 1 ? 'positiveRadius' : 'point');
+    return this.acceptResolved(this.pointInput.acceptText(value, this.inputContext()));
   }
 
   moveCursor(point: CadPoint, options: DraftPointOptions = {}): void {
     if (this.status !== 'active' || !validDraftPoint(point)) return;
-    this.cursor = options.snapped ? { ...point } : this.constrain(point);
+    this.cursorOptions = options;
+    const source = this.pointInput.getState().sourcePoint;
+    this.cursor = this.pointInput.project(
+      options.snapped || options.constrained || source ? { ...point } : this.constrain(point),
+      this.inputContext(),
+    );
     this.notify();
   }
 
@@ -129,6 +147,7 @@ export class DraftSession {
       points: structuredClone(this.points),
       preview: this.preview(),
       canClose: this.canClose(),
+      pointInput: this.pointInput.getState(),
     };
   }
 
@@ -136,6 +155,64 @@ export class DraftSession {
   private canClose(): boolean {
     if (this.tool === 'LINE') return this.points.length >= 3;
     return this.tool === 'PLINE' && this.points.length >= 2;
+  }
+
+  getPointInput() {
+    return this.pointInput.getState();
+  }
+  getAidContext() {
+    const pointInput = this.pointInput.getState();
+    const basePoint = pointInput.temporaryBase ?? this.points.at(-1);
+    const previousPoint = this.points.at(-2);
+    return {
+      pointInput,
+      ...(basePoint ? { basePoint } : {}),
+      ...(previousPoint ? { previousPoint } : {}),
+      trackingPoints: pointInput.trackingPoints,
+    };
+  }
+  private inputContext() {
+    const base = this.points.at(-1);
+    const angle = this.pointInput.getState().lockedAngle;
+    const cursor =
+      this.cursor ??
+      (base && angle !== undefined
+        ? { x: base.x + Math.cos(angle), y: base.y - Math.sin(angle) }
+        : undefined);
+    return {
+      ...(base ? { base } : {}),
+      ...(cursor ? { cursor } : {}),
+      ...(this.cursorOptions.trackingBase ? { trackingBase: this.cursorOptions.trackingBase } : {}),
+      ...(this.options.coordinates ? { settings: this.options.coordinates() } : {}),
+    };
+  }
+  private acceptResolved(
+    result: PointInputResult,
+    options: DraftPointOptions = {},
+  ): DraftInputResult {
+    if (result.kind === 'invalid')
+      return failure(
+        this.tool === 'CIRCLE' && this.points.length === 1 ? 'positiveRadius' : 'point',
+      );
+    if (result.kind === 'continue') {
+      this.notify();
+      return { status: 'continue' };
+    }
+    let point = result.point;
+    if (this.tool === 'LINE' && this.points.length === 1 && this.deferred) {
+      const pair = options.deferred
+        ? resolveDeferredPair(this.deferred, options.deferred)
+        : undefined;
+      const first = pair?.first ?? resolveDeferredSnap(this.deferred, point);
+      if (!first || (options.deferred && !pair)) return failure('point');
+      this.points[0] = { ...first };
+      if (pair) point = pair.second;
+      this.deferred = undefined;
+    }
+    const accepted = this.addPoint(point);
+    if (accepted.status !== 'error' && this.tool === 'LINE' && this.points.length === 1)
+      this.deferred = options.deferred;
+    return accepted;
   }
 
   /** Accepted segments remain snap targets before this command enters the journal. */

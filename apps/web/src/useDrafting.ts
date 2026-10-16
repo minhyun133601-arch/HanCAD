@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { DraftSession, appendCadEntities, deleteCadEntities } from '@hancad/draft';
+import {
+  DraftSession,
+  appendCadEntities,
+  deleteCadEntities,
+  coordinateSettings,
+  lineContinuation,
+  pointInputPrompt,
+} from '@hancad/draft';
 import type { DraftPointOptions, DraftSnapshot, DraftTool } from '@hancad/draft';
 import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import type { CommandRegistry } from '@hancad/commands';
@@ -19,11 +26,10 @@ interface DraftingOptions {
   commitState: (label: string, state: LegacyCadState) => void;
   print: (message: string) => void;
 }
-interface PickInput {
+interface PickInput extends DraftPointOptions {
   point: CadPoint;
   entityId?: string;
   shiftKey: boolean;
-  snapped?: boolean;
 }
 const tools: readonly [DraftTool, MessageKey][] = [
   ['LINE', 'line'],
@@ -108,6 +114,11 @@ export function useDrafting(options: DraftingOptions) {
     setSelectMode(false);
     eraseSelection.current = false;
     const session = new DraftSession(tool, settings(), {
+      coordinates: () => coordinateSettings((name) => latest.current.sysvars.get(name)),
+      ...(tool === 'LINE' && lineContinuation(model.entities)
+        ? { continuation: lineContinuation(model.entities)! }
+        : {}),
+      onSnapOverride: (mode) => tempOverrides.setObjectSnap(mode),
       onAcceptedPoint: (point) => recordStatusPoint(latest.current.sysvars, point),
       onCommit: (entities) => {
         const active = latest.current;
@@ -145,7 +156,7 @@ export function useDrafting(options: DraftingOptions) {
   function pick(event: PickInput): boolean {
     if (activeSession.current) {
       const result = activeSession.current.acceptPoint(event.point, {
-        snapped: event.snapped === true,
+        ...event,
       });
       if (result.status === 'error') showError(result.error ?? 'point');
       return result.status !== 'error';
@@ -173,9 +184,7 @@ export function useDrafting(options: DraftingOptions) {
   }
   function submit(value: string): boolean {
     if (activeSession.current) {
-      latest.current.print(
-        `${latest.current.messages[activeSession.current.getSnapshot().prompt]} ${value}`,
-      );
+      latest.current.print(`${currentPrompt(activeSession.current.getSnapshot())} ${value}`);
       const result = activeSession.current.acceptText(value);
       if (result.status === 'error') showError(result.error ?? 'point');
       tempOverrides.consumeObjectSnapInput(value, result.status !== 'error');
@@ -237,7 +246,17 @@ export function useDrafting(options: DraftingOptions) {
     });
   }, [registry, messages]);
 
-  const prompt = snapshot ? messages[snapshot.prompt] : selecting ? messages.selectObjects : null;
+  function currentPrompt(current: DraftSnapshot): string {
+    return (
+      pointInputPrompt(
+        current.pointInput,
+        latest.current.messages.commandPrompt === getMessages('ko-KR').commandPrompt
+          ? 'ko-KR'
+          : 'en-US',
+      ) ?? latest.current.messages[current.prompt]
+    );
+  }
+  const prompt = snapshot ? currentPrompt(snapshot) : selecting ? messages.selectObjects : null;
   return {
     snapshot,
     selectedIds,
@@ -254,6 +273,12 @@ export function useDrafting(options: DraftingOptions) {
     clearSelection: () => select([]),
     getSelectedIds: () => selectionRef.current,
     getSnapEntities: () => activeSession.current?.getSnapEntities() ?? [],
+    getPointInput: () => activeSession.current?.getPointInput(),
+    getAidContext: (): ReturnType<DraftSession['getAidContext']> =>
+      activeSession.current?.getAidContext() ?? {
+        pointInput: { stage: 'point' as const, trackingPoints: [], sourcePoint: false },
+        trackingPoints: [],
+      },
     isActive: () => activeSession.current !== null || selectionMode.current,
     isDrafting: () => activeSession.current !== null,
   };
