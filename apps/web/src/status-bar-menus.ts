@@ -3,6 +3,7 @@ import type { SystemVariables } from '@hancad/sysvars';
 import type { Locale } from '@hancad/ui';
 import type { MenuEntry } from './menus/ContextMenu';
 import { draftingToggles } from './drafting-toggles';
+import type { DraftingTab } from './drafting-settings-fields';
 
 export function coordinateMenu(
   sysvars: SystemVariables,
@@ -31,6 +32,7 @@ export function statusSettings(
   locale: Locale,
   toggle: () => void,
   execute: (macro: string) => void,
+  openSettings?: (tab: DraftingTab) => void,
 ): MenuEntry[] {
   const ko = locale === 'ko-KR';
   const setting = draftingToggles[id];
@@ -59,7 +61,10 @@ export function statusSettings(
       items.push({
         id: `${variable}-${value}`,
         label: ko ? korean : english,
-        checked: sysvars.getNumber(variable) === value,
+        checked:
+          (variable === 'DYNMODE'
+            ? Math.abs(sysvars.getNumber(variable))
+            : sysvars.getNumber(variable)) === value,
         onSelect: () => execute(`'_SETVAR ${variable} ${value}`),
       });
   }
@@ -94,6 +99,7 @@ export function statusSettings(
         [1, '끝점', 'Endpoint'],
         [2, '중간점', 'Midpoint'],
         [4, '중심', 'Center'],
+        [1024, '기하학적 중심', 'Geometric Center'],
         [8, '노드', 'Node'],
         [16, '사분점', 'Quadrant'],
         [32, '교차점', 'Intersection'],
@@ -141,15 +147,20 @@ export function statusSettings(
       prompt('DYNPROMPT', '동적 프롬프트...', 'Dynamic prompts...');
       break;
     case 'isoplane':
-      return [0, 1, 2].map((value) => ({
-        id: `plane-${value}`,
-        label:
-          (ko
-            ? ['등각평면 좌측', '등각평면 위쪽', '등각평면 우측']
-            : ['Isoplane left', 'Isoplane top', 'Isoplane right'])[value] ?? '',
-        checked: sysvars.getNumber('SNAPISOPAIR') === value,
-        onSelect: () => execute(`'_SETVAR SNAPISOPAIR ${value}`),
-      }));
+      items.splice(
+        0,
+        items.length,
+        ...[0, 1, 2].map((value) => ({
+          id: `plane-${value}`,
+          label:
+            (ko
+              ? ['등각평면 좌측', '등각평면 위쪽', '등각평면 우측']
+              : ['Isoplane left', 'Isoplane top', 'Isoplane right'])[value] ?? '',
+          checked: sysvars.getNumber('SNAPISOPAIR') === value,
+          onSelect: () => execute(`'_SETVAR SNAPISOPAIR ${value}`),
+        })),
+      );
+      break;
     case 'lineweight':
       prompt('LWDEFAULT', '기본 선가중치...', 'Default lineweight...');
       break;
@@ -174,5 +185,30 @@ export function statusSettings(
     default:
       break;
   }
+  const tabs: Partial<Record<ToggleId, DraftingTab>> = {
+    grid: 'snap',
+    snap: 'snap',
+    isoplane: 'snap',
+    polar: 'polar',
+    objectSnap: 'osnap',
+    object3dSnap: '3dosnap',
+    objectSnapTracking: 'polar',
+    dynamicInput: 'dynamic',
+    quickProperties: 'quick',
+    selectionCycling: 'cycling',
+  };
+  const tab = tabs[id];
+  if (tab)
+    items.push(
+      { kind: 'separator', id: 'before-settings' },
+      {
+        id: 'settings',
+        label: ko ? '설정...' : 'Settings...',
+        onSelect: () => {
+          if (openSettings) openSettings(tab);
+          else execute("'_DSETTINGS");
+        },
+      },
+    );
   return items;
 }

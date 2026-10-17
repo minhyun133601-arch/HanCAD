@@ -4,6 +4,7 @@ import {
   appendCadEntities,
   applyDimensionStyle,
   dimensionSettingsFromVariables,
+  coordinateSettings,
 } from '@hancad/draft';
 import type {
   DimensionError,
@@ -125,6 +126,7 @@ export function useDimensions(options: DimensionOptions) {
       return;
     }
     const session = new DimensionSession(tool, settings(), {
+      coordinates: () => coordinateSettings((name) => latest.current.sysvars.get(name)),
       onAcceptedPoint: (point) => recordStatusPoint(latest.current.sysvars, point),
       onChange: changed,
       onCommit: (entities) => {

@@ -119,7 +119,8 @@ export function CommandLine(props: CommandLineProps) {
       else if (action.type === 'history') current.recall(action.direction);
       else if (action.type === 'backspace') current.changeInput(current.input.slice(0, -1));
       else current.changeInput(current.input + action.text);
-      current.inputRef.current?.focus({ preventScroll: true });
+      if (!(target instanceof HTMLElement && target.dataset.testid === 'drawing-canvas'))
+        current.inputRef.current?.focus({ preventScroll: true });
     }
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);

@@ -3,7 +3,7 @@ type Labels = readonly [string, string];
 export interface SettingField {
   variable: string;
   label: Labels;
-  kind: 'check' | 'number' | 'text' | 'point' | 'select';
+  kind: 'check' | 'number' | 'text' | 'point' | 'select' | 'angle';
   bit?: number;
   inverse?: boolean;
   signed?: boolean;
@@ -55,7 +55,7 @@ export const draftingSettings: Readonly<Record<DraftingTab, readonly SettingsGro
         check('SNAPMODE', '스냅 켜기(F9)', 'Snap On(F9)'),
         point('SNAPUNIT', 0, '스냅 X 간격두기', 'Snap X spacing'),
         point('SNAPUNIT', 1, '스냅 Y 간격두기', 'Snap Y spacing'),
-        number('SNAPANG', '스냅 각도', 'Snap angle'),
+        { variable: 'SNAPANG', label: ['스냅 각도', 'Snap angle'], kind: 'angle' },
         point('SNAPBASE', 0, '스냅 기준 X', 'Snap base X'),
         point('SNAPBASE', 1, '스냅 기준 Y', 'Snap base Y'),
       ],
@@ -136,6 +136,25 @@ export const draftingSettings: Readonly<Record<DraftingTab, readonly SettingsGro
           'Measure angles relative to last segment',
           1,
         ),
+        check('AUTOSNAP', 'Shift 키를 눌러 정렬점 획득', 'Shift to acquire alignment points', 32),
+        {
+          ...check(
+            'TRACKPATH',
+            '객체 스냅 추적 경로 전체 표시',
+            'Display full object snap tracking path',
+            1,
+          ),
+          inverse: true,
+        },
+        {
+          ...check(
+            'TRACKPATH',
+            '극좌표 추적 경로 전체 표시',
+            'Display full polar tracking path',
+            2,
+          ),
+          inverse: true,
+        },
       ],
     },
   ],
@@ -220,8 +239,8 @@ export const draftingSettings: Readonly<Record<DraftingTab, readonly SettingsGro
           [1, '절대 좌표', 'Absolute coordinates'],
         ]),
         select('DYNPIVIS', '포인터 입력 표시', 'Pointer input visibility', [
-          [0, '점을 지정하는 경우', 'When specifying a point'],
-          [1, '명령이 활성화된 경우', 'When a command is active'],
+          [0, '점을 지정할 때 입력하는 경우', 'When typing to specify a point'],
+          [1, '점 프롬프트에서 자동으로', 'Automatically at a point prompt'],
           [2, '항상', 'Always'],
         ]),
       ],
@@ -291,16 +310,19 @@ export const draftingSettings: Readonly<Record<DraftingTab, readonly SettingsGro
       title: ['선택 순환', 'Selection Cycling'],
       fields: [
         { ...check('SELECTIONCYCLING', '선택 순환 허용', 'Allow Selection Cycling'), signed: true },
-        select(
-          'SELECTIONCYCLING',
-          '선택 순환 리스트 상자 표시',
-          'Display Selection Cycling list box',
-          [
-            [0, '끄기', 'Off'],
-            [1, '배지만', 'Badge only'],
-            [2, '배지 및 리스트 상자', 'Badge and list box'],
-          ],
-        ),
+        {
+          ...select(
+            'SELECTIONCYCLING',
+            '선택 순환 리스트 상자 표시',
+            'Display Selection Cycling list box',
+            [
+              [0, '끄기', 'Off'],
+              [1, '배지만', 'Badge only'],
+              [2, '배지 및 리스트 상자', 'Badge and list box'],
+            ],
+          ),
+          signed: true,
+        },
       ],
     },
   ],

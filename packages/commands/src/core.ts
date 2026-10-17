@@ -9,9 +9,11 @@ import { historyInputPrompt, runUndo, runMultipleRedo, runOops } from './history
 import type { CommandContext, CommandDefinition } from './types';
 import type { CommandRegistry } from './registry';
 import { osnapCommand } from './osnap-command';
+import { draftingCommands } from './drafting-commands';
 
 export function registerCoreCommands(registry: CommandRegistry): void {
   registry.register(osnapCommand());
+  for (const command of draftingCommands()) registry.register(command);
   const handlers: Record<string, (context: CommandContext) => void> = {
     GETVAR: (context) => {
       const name = context.input.requireString().toUpperCase();

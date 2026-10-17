@@ -1,5 +1,6 @@
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import { parseDraftNumber, parseDraftPoint, validDraftPoint } from './coordinates';
+import type { CoordinateProvider } from './coordinates';
 import { editableSelection, translateCadEntities } from './selection';
 
 export type ModifyTool = 'MOVE' | 'COPY';
@@ -24,6 +25,7 @@ export class ModifySession {
   constructor(
     readonly tool: ModifyTool,
     private readonly onAcceptedPoint?: (point: CadPoint) => void,
+    private readonly coordinates?: CoordinateProvider,
   ) {}
 
   select(state: LegacyCadState, ids: readonly string[]): boolean {
@@ -52,6 +54,9 @@ export class ModifySession {
           ? translateCadEntities(this.entities, {
               x: this.cursor.x - this.base.x,
               y: this.cursor.y - this.base.y,
+              ...(this.cursor.z === undefined && this.base.z === undefined
+                ? {}
+                : { z: (this.cursor.z ?? 0) - (this.base.z ?? 0) }),
             })
           : []),
       ],
@@ -70,7 +75,13 @@ export class ModifySession {
     }
     const target = this.constrain(point, ortho && !snapped);
     this.onAcceptedPoint?.({ ...target });
-    const delta = { x: target.x - this.base.x, y: target.y - this.base.y };
+    const delta = {
+      x: target.x - this.base.x,
+      y: target.y - this.base.y,
+      ...(target.z === undefined && this.base.z === undefined
+        ? {}
+        : { z: (target.z ?? 0) - (this.base.z ?? 0) }),
+    };
     this.placed = true;
     if (this.tool === 'COPY') this.copies.push(delta);
     this.cursor = undefined;
@@ -80,11 +91,15 @@ export class ModifySession {
     if (this.placed && /^(E|EXIT)$/i.test(value.trim())) return { finish: true };
     if (!value.trim() && this.base) {
       if (this.placed) return { finish: true };
-      const delta = this.acceptPoint({ x: this.base.x * 2, y: this.base.y * 2 });
+      const delta = this.acceptPoint({
+        x: this.base.x * 2,
+        y: this.base.y * 2,
+        ...(this.base.z === undefined ? {} : { z: this.base.z * 2 }),
+      });
       return delta ? { delta } : { error: true };
     }
-    let point = parseDraftPoint(value, this.base);
-    const distance = parseDraftNumber(value);
+    let point = parseDraftPoint(value, this.base, this.coordinates?.());
+    const distance = parseDraftNumber(value, this.coordinates?.());
     if (!point && distance !== undefined && distance >= 0 && this.base && this.cursor) {
       const dx = this.cursor.x - this.base.x,
         dy = this.cursor.y - this.base.y;
@@ -93,6 +108,7 @@ export class ModifySession {
         point = {
           x: this.base.x + (dx / length) * distance,
           y: this.base.y + (dy / length) * distance,
+          ...(this.base.z === undefined ? {} : { z: this.base.z }),
         };
     }
     if (!point) return { error: true };
@@ -103,7 +119,7 @@ export class ModifySession {
   private constrain(point: CadPoint, ortho: boolean): CadPoint {
     if (!this.base || !ortho) return { ...point };
     return Math.abs(point.x - this.base.x) >= Math.abs(point.y - this.base.y)
-      ? { x: point.x, y: this.base.y }
-      : { x: this.base.x, y: point.y };
+      ? { ...point, y: this.base.y }
+      : { ...point, x: this.base.x };
   }
 }

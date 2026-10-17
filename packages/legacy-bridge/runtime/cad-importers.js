@@ -6,7 +6,7 @@
   const IDENTITY = [1, 0, 0, 1, 0, 0];
   const finite = n => typeof n === "number" && Number.isFinite(n) && Math.abs(n) <= 1e12;
   const mod = n => ((n % TAU) + TAU) % TAU;
-  const validPoint = p => p && finite(p.x) && finite(p.y);
+  const validPoint = p => p && finite(p.x) && finite(p.y) && (p.z === undefined || finite(p.z));
   const diagnostic = (code, details = {}) => ({ namespace: "cad-import", code, ...details });
   const failure = (code, message, details = {}) => Object.assign(new Error(message), { name: code === "cancelled" ? "AbortError" : "CadImportError", diagnostic: diagnostic(code, details) });
   const invalid = (reason, message) => failure("invalid-geometry", message, { reason });
@@ -18,7 +18,7 @@
   }
   function transform(p, m) {
     if (!validPoint(p)) throw invalid("point", "올바르지 않은 좌표");
-    const result = { x: m[0]*p.x+m[2]*p.y+m[4], y: -(m[1]*p.x+m[3]*p.y+m[5]) };
+    const result = { x: m[0]*p.x+m[2]*p.y+m[4], y: -(m[1]*p.x+m[3]*p.y+m[5]), ...(p.z ? { z: p.z } : {}) };
     if (!validPoint(result)) throw invalid("coordinate-range", "좌표 범위 초과");
     return result;
   }
@@ -64,7 +64,9 @@
     const lines = text.replace(/\r\n?/g,"\n").split("\n");
     document.dimStyles = new Map();
     const overrides = new Map(), anonymous = new Map();
-    const recordTypes = new Set(["DIMSTYLE", "DIMENSION", "BLOCK", "ENDBLK"]);
+    const recordTypes = new Set(["DIMSTYLE", "DIMENSION", "BLOCK", "ENDBLK", "POLYLINE", "VERTEX", "SEQEND"]);
+    const polylineZ = new Map(), anonymousPolylineZ = new Map();
+    let activePolyline = null;
     let activeBlock = null;
     for (let i=0;i<lines.length-1;i+=2) {
       if (lines[i].trim() !== "0" || !recordTypes.has(lines[i+1].trim())) continue;
@@ -78,6 +80,15 @@
       i-=2;
       if (recordType === "BLOCK") { activeBlock = tags.get(2); continue; }
       if (recordType === "ENDBLK") { activeBlock = null; continue; }
+      // The offline vendor parser omits VERTEX group 30; retain it in this adapter.
+      if (recordType === "POLYLINE") {
+        activePolyline = { elevation: Number(tags.get(30)) || 0, vertices: [] };
+        if (tags.has(5)) polylineZ.set(tags.get(5), activePolyline);
+        else { const queue = anonymousPolylineZ.get(activeBlock) || []; queue.push(activePolyline); anonymousPolylineZ.set(activeBlock, queue); }
+        continue;
+      }
+      if (recordType === "VERTEX") { if (activePolyline) activePolyline.vertices.push(tags.has(30) ? Number(tags.get(30)) : activePolyline.elevation); continue; }
+      if (recordType === "SEQEND") { activePolyline = null; continue; }
       if (recordType === "DIMENSION") {
         const value = {};
         if (tags.has(53)) value.explicitTextRotation = Number(tags.get(53));
@@ -91,9 +102,13 @@
     }
     const applyOverrides = (entities, blockName = null) => {
       const queue = anonymous.get(blockName) || []; let index = 0;
+      const polylines = anonymousPolylineZ.get(blockName) || []; let polylineIndex = 0;
       for (const entity of entities) if (entity.type === "DIMENSION") {
         const value = entity.handle ? overrides.get(entity.handle) : queue[index++];
         if (value) Object.assign(entity, value);
+      } else if (entity.type === "POLYLINE") {
+        const value = entity.handle ? polylineZ.get(entity.handle) : polylines[polylineIndex++];
+        if (value) entity.vertices.forEach((vertex, i) => { if (value.vertices[i] !== undefined) vertex.z = value.vertices[i]; });
       }
     };
     applyOverrides(document.entities);
@@ -253,9 +268,9 @@
         }
         if (e.type === "LINE") add({ ...s, type: "line", a: transform(e.start,m), b: transform(e.end,m) });
         else if (["LWPOLYLINE","POLYLINE"].includes(e.type)) {
-          poly(bulgePoints(e.vertices,e.closed),e.closed,m,s);
+          poly(bulgePoints(e.vertices.map(v => e.elevation ? {...v,z:e.elevation} : v),e.closed),e.closed,m,s);
           if (e.vertices.some(v => Math.abs(v.bulge || 0) > 1e-10)) { report.approximated++; addWarning("곡선 폴리선 / 타원 / 비균일 축척의 원은 편집 가능한 폴리선으로 근사합니다.", diagnostic("curve-approximated")); }
-          if (e.is3d) addWarning("3D 폴리선은 XY 평면으로 투영합니다.", diagnostic("polyline-projected"));
+          if (e.is3d) addWarning("3D 폴리선의 Z 좌표를 보존하며 화면에는 XY 평면으로 투영합니다.", diagnostic("polyline-projected"));
         } else if (["CIRCLE","ARC"].includes(e.type)) {
           if (!validPoint(e.center) || !finite(e.radius) || e.radius <= 1e-8) throw invalid("circle-radius", "원 반지름이 올바르지 않습니다.");
           const sx = Math.hypot(m[0],m[1]), sy = Math.hypot(m[2],m[3]), orthogonal = Math.abs(m[0]*m[2]+m[1]*m[3]) < 1e-8*Math.max(1,sx*sy);

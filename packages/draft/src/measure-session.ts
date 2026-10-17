@@ -1,5 +1,12 @@
 import type { CadEntity, CadPoint, CadSettings } from '@hancad/legacy-bridge';
-import { parseDraftNumber, parseDraftPoint, validDraftPoint } from './coordinates';
+import {
+  formatDraftAngle,
+  formatDraftNumber,
+  parseDraftNumber,
+  parseDraftPoint,
+  validDraftPoint,
+} from './coordinates';
+import type { CoordinateProvider, CoordinateSettings } from './coordinates';
 import { draftLine } from './entities';
 
 export interface MeasureResult {
@@ -19,12 +26,14 @@ export interface MeasureInputResult {
   error?: 'point' | 'needPoints' | 'closedSession';
 }
 export interface MeasureSessionOptions {
+  coordinates?: CoordinateProvider;
   onAcceptedPoint?: (point: CadPoint) => void;
   precision: number;
   onComplete: (result: MeasureResult) => void;
   onChange?: (snapshot: MeasureSnapshot) => void;
 }
 export interface MeasureDisplayOptions {
+  coordinates?: Partial<CoordinateSettings>;
   linearPrecision: number;
   angularPrecision: number;
   angleBase: number;
@@ -51,6 +60,15 @@ export function measureBetween(first: CadPoint, second: CadPoint): MeasureResult
 }
 
 export function formatMeasurement(result: MeasureResult, options: MeasureDisplayOptions) {
+  if (options.coordinates) {
+    const linear = (value: number) => formatDraftNumber(value, options.coordinates);
+    return {
+      distance: linear(result.distance),
+      deltaX: linear(result.deltaX),
+      deltaY: linear(result.deltaY),
+      angle: formatDraftAngle((result.angle * Math.PI) / 180, options.coordinates),
+    };
+  }
   const angle = normalizeAngle((result.angle - options.angleBase) * (options.clockwise ? -1 : 1));
   return {
     distance: fixed(result.distance, options.linearPrecision),
@@ -111,7 +129,7 @@ export class MeasureSession {
     if (this.status !== 'active') return { status: 'error', error: 'closedSession' };
     if (input.trim() === '\u001b') return this.cancel();
     if (!input.trim()) return { status: 'error', error: 'needPoints' };
-    const distance = parseDraftNumber(input);
+    const distance = parseDraftNumber(input, this.options.coordinates?.());
     if (distance !== undefined && this.first && this.cursor) {
       const length = Math.hypot(this.cursor.x - this.first.x, this.cursor.y - this.first.y);
       if (length > 1e-8)
@@ -120,7 +138,7 @@ export class MeasureSession {
           y: this.first.y + ((this.cursor.y - this.first.y) * distance) / length,
         });
     }
-    const point = parseDraftPoint(input, this.first);
+    const point = parseDraftPoint(input, this.first, this.options.coordinates?.());
     return point ? this.acceptPoint(point) : { status: 'error', error: 'point' };
   }
 
@@ -150,7 +168,12 @@ export class MeasureSession {
         color: this.settings.color,
         lineWidth: this.settings.lineWidth,
         point: { x: this.cursor.x, y: this.cursor.y - textSize * 1.5 },
-        text: fixed(measureBetween(this.first, this.cursor).distance, this.digits),
+        text: this.options.coordinates
+          ? formatDraftNumber(measureBetween(this.first, this.cursor).distance, {
+              ...this.options.coordinates(),
+              luprec: this.digits,
+            })
+          : fixed(measureBetween(this.first, this.cursor).distance, this.digits),
         textSize,
         rotation: 0,
       });

@@ -38,5 +38,37 @@
     "min": 0,
     "max": 1,
     "validationNote": "The 2026 tooltip-appearance topic links this variable; 0/1 meanings and registry default also match the earlier dedicated DYNTOOLTIPS reference."
+  },
+  {
+    "name": "SNAPGRIDLEGACY",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "스냅 그리드를 점 입력 중에만 적용할지 항상 적용할지를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-4ED2C55C-B432-4AEF-A8E8-FBD3F6A7A689.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "TRACKPATH",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "극좌표 및 객체 스냅 추적 정렬 경로의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6BF0703C-28B2-4591-8337-34B8C20443F2.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "min": 0,
+    "max": 3,
+    "enum": [0, 1, 2, 3]
   }
 ]

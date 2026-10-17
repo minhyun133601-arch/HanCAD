@@ -22,6 +22,8 @@ export interface CadAidSettings {
   isoplane?: number;
   aperture?: number;
   apertureBox?: boolean;
+  tooltipSize?: number;
+  tooltipOpacity?: number;
 }
 export const defaultAidSettings: CadAidSettings = {
   cursorSize: 5,
@@ -78,7 +80,12 @@ export function drawGrid(
     settings.gridDisplay,
   );
   if (xStep === undefined || yStep === undefined) return;
-  if (settings.snapAngle || settings.snapBase?.x || settings.snapBase?.y || settings.snapStyle === 1) {
+  if (
+    settings.snapAngle ||
+    settings.snapBase?.x ||
+    settings.snapBase?.y ||
+    settings.snapStyle === 1
+  ) {
     drawTransformedGrid(context, viewport, view, worldToScreen, settings, xStep, yStep);
     return;
   }
@@ -216,12 +223,17 @@ export function drawDraftingAids(
       y = Math.round(cursor.y) + 0.5;
     context.strokeStyle = foreground;
     context.beginPath();
-    const axes = settings.snapStyle === 1 ? isoplaneAngles(settings.isoplane ?? 0) : [0, Math.PI / 2];
+    const axes =
+      settings.snapStyle === 1 ? isoplaneAngles(settings.isoplane ?? 0) : [0, Math.PI / 2];
     for (let i = 0; i < axes.length; i++) {
-      const angle = (axes[i] ?? 0) + (settings.snapAngle ?? 0), length = i === 0 ? halfX : halfY;
-      const dx = Math.cos(angle), dy = -Math.sin(angle);
-      context.moveTo(x - dx * length, y - dy * length); context.lineTo(x - dx * gap, y - dy * gap);
-      context.moveTo(x + dx * gap, y + dy * gap); context.lineTo(x + dx * length, y + dy * length);
+      const angle = (axes[i] ?? 0) + (settings.snapAngle ?? 0),
+        length = i === 0 ? halfX : halfY;
+      const dx = Math.cos(angle),
+        dy = -Math.sin(angle);
+      context.moveTo(x - dx * length, y - dy * length);
+      context.lineTo(x - dx * gap, y - dy * gap);
+      context.moveTo(x + dx * gap, y + dy * gap);
+      context.lineTo(x + dx * length, y + dy * length);
     }
     context.stroke();
     if (gap > 0) context.strokeRect(x - gap, y - gap, gap * 2, gap * 2);

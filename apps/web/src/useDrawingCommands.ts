@@ -19,10 +19,12 @@ export function useDrawingCommands({
   session,
   files,
   messages,
+  resolveTypedPoint,
 }: {
   session: ReturnType<typeof useCommandSession>;
   files: ReturnType<typeof useDrawingFiles>;
   messages: Messages;
+  resolveTypedPoint?: Parameters<typeof useDrafting>[0]['resolveTypedPoint'];
 }) {
   const controllers = useRef<Record<string, Controller>>({});
   function cancelOthers(except = ''): void {
@@ -37,7 +39,11 @@ export function useDrawingCommands({
     commitState: files.commitState,
     print: session.print,
   };
-  const draft = useDrafting({ ...common, state: files.state });
+  const draft = useDrafting({
+    ...common,
+    state: files.state,
+    ...(resolveTypedPoint ? { resolveTypedPoint } : {}),
+  });
   const dimensions = useDimensions({
     ...common,
     selectedIds: draft.selectedIds,

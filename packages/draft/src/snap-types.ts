@@ -2,16 +2,27 @@ import type { CurveGeometry, Vec3 } from '@hancad/geom';
 import type { CadPoint } from '@hancad/legacy-bridge';
 
 export type DraftSnapKind =
-  | 'endpoint' | 'midpoint' | 'center' | 'geometricCenter' | 'node' | 'quadrant'
-  | 'intersection' | 'extension' | 'insertion' | 'perpendicular' | 'tangent'
-  | 'nearest' | 'apparentIntersection' | 'parallel';
+  | 'endpoint'
+  | 'midpoint'
+  | 'center'
+  | 'geometricCenter'
+  | 'node'
+  | 'quadrant'
+  | 'intersection'
+  | 'extension'
+  | 'insertion'
+  | 'perpendicular'
+  | 'tangent'
+  | 'nearest'
+  | 'apparentIntersection'
+  | 'parallel';
 
 /** Source geometry remains in WCS; the public picking API returns model Y-down points. */
 export interface SnapSource {
   id: string;
   entityId?: string;
   geometry: CurveGeometry;
-  points?: readonly {point:Vec3;kind:DraftSnapKind}[];
+  points?: readonly { point: Vec3; kind: DraftSnapKind }[];
   insertion?: Vec3;
   hatch?: boolean;
   dimensionExtension?: boolean;
@@ -46,9 +57,24 @@ export interface SnapQueryOptions {
   parallels?: readonly SnapSource[];
 }
 export const snapModeBits: Readonly<Record<DraftSnapKind, number>> = {
-  endpoint: 1, midpoint: 2, center: 4, node: 8, quadrant: 16, intersection: 32,
-  insertion: 64, perpendicular: 128, tangent: 256, nearest: 512,
-  apparentIntersection: 2048, extension: 4096, parallel: 8192, geometricCenter: 1024,
+  endpoint: 1,
+  midpoint: 2,
+  center: 4,
+  node: 8,
+  quadrant: 16,
+  intersection: 32,
+  insertion: 64,
+  perpendicular: 128,
+  tangent: 256,
+  nearest: 512,
+  apparentIntersection: 2048,
+  extension: 4096,
+  parallel: 8192,
+  geometricCenter: 1024,
 };
-export const snapWcs = (point: CadPoint): Vec3 => ({ x: point.x, y: -point.y, z: 0 });
-export const snapModel = (point: Pick<Vec3, 'x' | 'y'>): CadPoint => ({ x: point.x, y: -point.y });
+export const snapWcs = (point: CadPoint): Vec3 => ({ x: point.x, y: -point.y, z: point.z ?? 0 });
+export const snapModel = (point: Pick<Vec3, 'x' | 'y'> & { z?: number }): CadPoint => ({
+  x: point.x,
+  y: -point.y,
+  ...(point.z ? { z: point.z } : {}),
+});

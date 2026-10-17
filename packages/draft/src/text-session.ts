@@ -1,6 +1,7 @@
 import type { CadEntity, CadPoint, CadSettings, CadText } from '@hancad/legacy-bridge';
 import { CAD_ENTITY_LIMIT } from '@hancad/legacy-bridge';
-import { parseDraftNumber, parseDraftPoint, validDraftPoint } from './coordinates';
+import { parseDraftAngle, parseDraftNumber, parseDraftPoint, validDraftPoint } from './coordinates';
+import type { CoordinateProvider } from './coordinates';
 import { draftEntityBase, draftLine } from './entities';
 
 export type TextPrompt = 'textStart' | 'textHeight' | 'textRotation' | 'textContent';
@@ -30,6 +31,7 @@ export interface TextSnapshot {
   canClose: false;
 }
 export interface TextSessionOptions {
+  coordinates?: CoordinateProvider;
   onAcceptedPoint?: (point: CadPoint) => void;
   textSize: number;
   availableEntities?: number;
@@ -107,23 +109,23 @@ export class TextSession {
     const input = value.trim();
     if (this.prompt === 'textStart' && unsupported.test(input)) return failure('unsupportedOption');
     if (this.prompt === 'textHeight') {
-      const height = input ? parseDraftNumber(input) : this.textSize;
+      const height = input ? parseDraftNumber(input, this.options.coordinates?.()) : this.textSize;
       if (height !== undefined) return this.acceptHeight(height);
-      const point = parseDraftPoint(input, this.point);
+      const point = parseDraftPoint(input, this.point, this.options.coordinates?.());
       return point ? this.acceptPoint(point) : failure('positiveHeight');
     }
     if (this.prompt === 'textRotation') {
-      const degrees = input ? parseDraftNumber(input) : 0;
-      if (degrees !== undefined) {
-        this.rotation = -((degrees % 360) * Math.PI) / 180;
+      const angle = input ? parseDraftAngle(input, this.options.coordinates?.()) : 0;
+      if (angle !== undefined) {
+        this.rotation = -(angle % (Math.PI * 2));
         this.prompt = 'textContent';
         this.notify();
         return { status: 'continue' };
       }
-      const point = parseDraftPoint(input, this.point);
+      const point = parseDraftPoint(input, this.point, this.options.coordinates?.());
       return point ? this.acceptPoint(point) : failure('invalidAngle');
     }
-    const point = parseDraftPoint(input);
+    const point = parseDraftPoint(input, undefined, this.options.coordinates?.());
     return point ? this.acceptPoint(point) : failure(input ? 'point' : 'needPoints');
   }
 
@@ -184,6 +186,7 @@ export class TextSession {
     if (this.accepted.length >= this.availableEntities) return failure('entityLimit');
     if (value.length > 2000 || /[\r\n]/.test(value)) return failure('textContent');
     const nextPoint = {
+      ...this.point,
       x: this.point.x - Math.sin(this.rotation) * this.textSize * 1.25,
       y: this.point.y + Math.cos(this.rotation) * this.textSize * 1.25,
     };

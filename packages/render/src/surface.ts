@@ -178,6 +178,9 @@ export class CadCanvasSurface {
   }
   setTrackingOverlay(overlay?: CadTrackingOverlay): void {
     this.trackingOverlay = overlay;
+    this.canvas.dataset.trackingPoints = String(overlay?.points.length ?? 0);
+    this.canvas.dataset.trackingPaths = String(overlay?.paths.length ?? 0);
+    this.canvas.dataset.trackingTooltip = overlay?.tooltip ?? '';
     this.requestRender();
   }
   pick(point: CadPoint): string | undefined {
@@ -198,6 +201,9 @@ export class CadCanvasSurface {
   }
   getViewportSize() {
     return { width: this.width, height: this.height };
+  }
+  getCursorPosition(): CadPoint | undefined {
+    return this.cursorLocal ? { ...this.cursorLocal } : undefined;
   }
   setWorldView(view: CadWorldView): void {
     if (this.transitionTarget && sameWorldView(view, this.transitionTarget)) return;

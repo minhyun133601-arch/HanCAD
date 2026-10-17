@@ -42,6 +42,7 @@ export interface PointInputContext {
   cursor?: DraftPoint;
   trackingBase?: DraftPoint;
   settings?: Partial<CoordinateSettings>;
+  resolveTypedPoint?: (point: DraftPoint, override?: PointSnapOverride) => DraftPoint | null;
 }
 export type PointInputResult =
   { kind: 'point'; point: DraftPoint } | { kind: 'continue' } | { kind: 'invalid' };
@@ -93,6 +94,8 @@ export class PointInputController {
   private trackingPoints: DraftPoint[] = [];
   private angle: number | undefined;
   private override: PointSnapOverride | undefined;
+  private sampleCount = 0;
+  private rejectSample: (() => void) | undefined;
 
   constructor(
     private readonly options: {
@@ -140,10 +143,17 @@ export class PointInputController {
   setAngle(angle: number): void {
     this.angle = angle;
   }
+  getAcceptedSampleCount(): number {
+    return this.sampleCount;
+  }
+  rejectLastSample(): void {
+    this.rejectSample?.();
+    this.rejectSample = undefined;
+  }
   acceptText(input: string, context: PointInputContext = {}): PointInputResult {
     const value = input.trim(),
       upper = value.replace(/^_+/, '').toUpperCase();
-    const inline = /^(_?[A-Z]+)\s+(.+)$/i.exec(value);
+    const inline = /^(_?[A-Z][A-Z0-9]*|\.(?:XY|XZ|YZ|X|Y|Z))\s+(.+)$/i.exec(value);
     const keyword = inline?.[1]?.replace(/^_+/, '').toUpperCase() ?? upper;
     const override = overrides[keyword];
     if (override) {
@@ -151,10 +161,10 @@ export class PointInputController {
       this.options.onSnapOverride?.(override);
       return inline?.[2] ? this.acceptText(inline[2], context) : { kind: 'continue' };
     }
-    if (/^\.(X|Y|Z|XY|XZ|YZ)$/.test(upper)) {
-      this.selectedAxes = upper.slice(1).toLowerCase().split('') as Axis[];
+    if (/^\.(X|Y|Z|XY|XZ|YZ)$/.test(keyword)) {
+      this.selectedAxes = keyword.slice(1).toLowerCase().split('') as Axis[];
       this.stage = 'filter-source';
-      return { kind: 'continue' };
+      return inline?.[2] ? this.acceptText(inline[2], context) : { kind: 'continue' };
     }
     if (keyword === 'FROM' || keyword === 'FRO') this.stage = 'from-base';
     else if (keyword === 'M2P' || keyword === 'MTP') this.stage = 'mid-first';
@@ -203,13 +213,31 @@ export class PointInputController {
             ...(origin.z === undefined ? {} : { z: origin.z }),
           };
       }
-      return point ? this.acceptPoint(point, context) : { kind: 'invalid' };
+      if (!point) return { kind: 'invalid' };
+      const resolved = context.resolveTypedPoint?.(point, this.override);
+      return resolved === null ? { kind: 'invalid' } : this.acceptPoint(resolved ?? point, context);
     }
     return inline?.[2] ? this.acceptText(inline[2], context) : { kind: 'continue' };
   }
 
   acceptPoint(point: DraftPoint, context: PointInputContext = {}): PointInputResult {
     if (!validDraftPoint(point)) return { kind: 'invalid' };
+    const checkpoint = {
+      stage: this.stage,
+      selectedAxes: [...this.selectedAxes],
+      collected: { ...this.collected },
+      temporaryBase: this.temporaryBase,
+      midpoint: this.midpoint,
+      trackingPoints: [...this.trackingPoints],
+      angle: this.angle,
+      override: this.override,
+      sampleCount: this.sampleCount,
+    };
+    this.rejectSample = () => {
+      Object.assign(this, checkpoint);
+    };
+    this.sampleCount++;
+    this.override = undefined;
     if (this.stage === 'filter-source' || this.stage === 'filter-rest') {
       const selected =
         this.stage === 'filter-source'

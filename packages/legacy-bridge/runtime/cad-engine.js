@@ -16,8 +16,8 @@
   const POLAR = new RegExp(`^@\\s*(${NUMBER})\\s*<\\s*(${NUMBER})$`, "i");
   const clone = (value) => JSON.parse(JSON.stringify(value));
   const finite = (value) => typeof value === "number" && Number.isFinite(value) && Math.abs(value) <= 1e12;
-  const point = (value) => value && finite(value.x) && finite(value.y) ? { x: value.x, y: value.y } : null;
-  const addPoint = (a, b) => ({ x: a.x + b.x, y: a.y + b.y });
+  const point = (value) => value && finite(value.x) && finite(value.y) && (value.z === undefined || finite(value.z)) ? { x: value.x, y: value.y, ...(value.z === undefined ? {} : { z: value.z }) } : null;
+  const addPoint = (a, b) => ({ x: a.x + b.x, y: a.y + b.y, ...(a.z === undefined && b.z === undefined ? {} : { z: (a.z || 0) + (b.z || 0) }) });
   const subtract = (a, b) => ({ x: a.x - b.x, y: a.y - b.y });
   const multiply = (a, value) => ({ x: a.x * value, y: a.y * value });
   const dot = (a, b) => a.x * b.x + a.y * b.y;
@@ -98,7 +98,7 @@
     };
     if (raw.type === "line") {
       entity.a = point(raw.a); entity.b = point(raw.b);
-      if (!entity.a || !entity.b || distance(entity.a, entity.b) < EPSILON) return null;
+      if (!entity.a || !entity.b || Math.hypot(entity.a.x - entity.b.x, entity.a.y - entity.b.y, (entity.a.z || 0) - (entity.b.z || 0)) < EPSILON) return null;
     } else if (raw.type === "dimension") {
       entity.kind = DIMENSION_KINDS.has(raw.kind) ? raw.kind : "aligned";
       entity.precision = precision(raw.precision, settings.dimPrecision ?? 2);

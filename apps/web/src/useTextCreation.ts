@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { TextSession, appendCadEntities } from '@hancad/draft';
+import { TextSession, appendCadEntities, coordinateSettings } from '@hancad/draft';
 import type { TextError, TextSnapshot } from '@hancad/draft';
 import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import { CAD_ENTITY_LIMIT } from '@hancad/legacy-bridge';
@@ -90,6 +90,7 @@ export function useTextCreation(options: Options) {
     const session = new TextSession(
       creationSettings(model.settings, (name) => live.sysvars.get(name)),
       {
+        coordinates: () => coordinateSettings((name) => latest.current.sysvars.get(name)),
         onAcceptedPoint: (point) => recordStatusPoint(latest.current.sysvars, point),
         textSize: live.sysvars.getNumber('TEXTSIZE'),
         availableEntities: CAD_ENTITY_LIMIT - model.entities.length,

@@ -201,10 +201,10 @@ describe('Autodesk-sourced declarative catalog', () => {
     ] as const)
       expect(() => variables.set(name, value)).toThrow(SystemVariableError);
     expect(variables.database.undoCount).toBe(0);
-    expect(systemVariableDefinitions).toHaveLength(860);
+    expect(systemVariableDefinitions).toHaveLength(864);
     expect(
       systemVariableDefinitions.filter((definition) => definition.default !== undefined),
-    ).toHaveLength(798);
+    ).toHaveLength(802);
     expect(
       systemVariableDefinitions.filter((definition) => definition.default === undefined),
     ).toHaveLength(62);

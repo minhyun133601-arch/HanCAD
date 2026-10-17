@@ -86,4 +86,35 @@ describe('status strip drafting controls', () => {
     expect(readStatusItems({ getItem: () => null })).not.toContain('coordinates');
     expect(readStatusItems({ getItem: () => '[]' })).toEqual([]);
   });
+
+  it('opens each status settings entry on its corresponding drafting tab', () => {
+    const sysvars = new SystemVariables();
+    for (const [id, tab] of [
+      ['grid', 'snap'],
+      ['snap', 'snap'],
+      ['isoplane', 'snap'],
+      ['polar', 'polar'],
+      ['objectSnap', 'osnap'],
+      ['object3dSnap', '3dosnap'],
+      ['objectSnapTracking', 'polar'],
+      ['dynamicInput', 'dynamic'],
+      ['quickProperties', 'quick'],
+      ['selectionCycling', 'cycling'],
+    ] as const) {
+      let selected = '';
+      const item = statusSettings(
+        id,
+        sysvars,
+        'ko-KR',
+        () => {},
+        () => {},
+        (value) => {
+          selected = value;
+        },
+      ).find((entry) => entry.id === 'settings');
+      if (!item || item.kind === 'separator') throw new Error(`Missing ${id} settings entry`);
+      item.onSelect?.();
+      expect(selected).toBe(tab);
+    }
+  });
 });

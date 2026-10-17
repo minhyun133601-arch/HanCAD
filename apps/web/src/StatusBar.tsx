@@ -13,6 +13,7 @@ import { statusToggles, statusLabel } from './status-bar-items';
 import { useStatusItems } from './status-bar-preferences';
 import { coordinateMenu, statusSettings } from './status-bar-menus';
 import { coordinateText, type StatusCoordinates } from './status-coordinates';
+import type { DraftingTab } from './drafting-settings-fields';
 
 /** MODEMACRO: user text on the status bar, evaluated as DIESEL on every update. */
 function ModeMacro({ sysvars }: { sysvars: SystemVariables }) {
@@ -42,6 +43,7 @@ export function StatusBar({
   locale = 'ko-KR',
   coordinates,
   focusCommand,
+  openDraftingSettings,
 }: {
   messages: Messages;
   layout: LayoutId;
@@ -55,6 +57,7 @@ export function StatusBar({
   locale?: Locale;
   coordinates?: StatusCoordinates;
   focusCommand?: () => void;
+  openDraftingSettings?: (tab: DraftingTab) => void;
 }) {
   const profile = useStatusItems();
   const [menu, setMenu] = useState<{
@@ -165,7 +168,14 @@ export function StatusBar({
                 openMenu(
                   event,
                   statusLabel(item.toggle, messages, locale),
-                  statusSettings(item.toggle, sysvars, locale, () => toggle(item.toggle), execute),
+                  statusSettings(
+                    item.toggle,
+                    sysvars,
+                    locale,
+                    () => toggle(item.toggle),
+                    execute,
+                    openDraftingSettings,
+                  ),
                 )
               }
             >

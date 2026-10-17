@@ -4,6 +4,7 @@ import type { CoordinateSettings } from './coordinate-units';
 export * from './coordinate-units';
 export * from './coordinate-format';
 export type DraftPoint = CadPoint & { z?: number };
+export type CoordinateProvider = () => Partial<CoordinateSettings>;
 
 export function validDraftPoint(point: DraftPoint): boolean {
   return [point.x, point.y, point.z ?? 0].every(
@@ -45,7 +46,7 @@ export function parseDraftPoint(
           : parseDraftNumber(coordinate[1] ?? '', settings);
       if (z === undefined) return undefined;
       result.z = (relative ? (base.z ?? 0) : 0) + z;
-    } else if (base.z !== undefined || settings.elevation)
+    } else if ((relative && base.z !== undefined) || settings.elevation)
       result.z = relative ? (base.z ?? 0) : (settings.elevation ?? 0);
   } else {
     if (angles.length !== 1 || coordinate.length < 2 || coordinate.length > 3) return undefined;
@@ -53,7 +54,7 @@ export function parseDraftPoint(
     if (values.some((part) => part === undefined)) return undefined;
     result = { x: origin.x + values[0]!, y: origin.y - values[1]! };
     if (coordinate.length === 3) result.z = (relative ? (base.z ?? 0) : 0) + values[2]!;
-    else if (base.z !== undefined || settings.elevation)
+    else if ((relative && base.z !== undefined) || settings.elevation)
       result.z = relative ? (base.z ?? 0) : (settings.elevation ?? 0);
   }
   return validDraftPoint(result) ? result : undefined;

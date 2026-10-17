@@ -7,6 +7,7 @@ export interface CoordinateSettings {
   angbase: number;
   angdir: number;
   elevation: number;
+  osnapcoord: number;
 }
 export const defaultCoordinateSettings: Readonly<CoordinateSettings> = {
   lunits: 2,
@@ -16,6 +17,7 @@ export const defaultCoordinateSettings: Readonly<CoordinateSettings> = {
   angbase: 0,
   angdir: 0,
   elevation: 0,
+  osnapcoord: 2,
 };
 export function coordinateSettings(get: (name: string) => unknown): CoordinateSettings {
   const result = { ...defaultCoordinateSettings };

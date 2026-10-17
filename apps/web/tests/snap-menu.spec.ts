@@ -108,6 +108,8 @@ test('accepted typed coordinates and Escape clear a pending menu override', asyn
   await enter(page, 'LINE');
   await snapMenu(page, view, '중간점');
   await enter(page, '25,25');
+  await expect(page.getByRole('log', { name: '명령 기록' })).toContainText('점은 X,Y');
+  await enter(page, '50,0');
   await point(page, view, 50 + 3 / view.zoom, 3 / view.zoom, false);
   await expect(page.getByTestId('drawing-canvas')).toHaveAttribute('data-snap-kind', '');
   await snapMenu(page, view, '중간점');

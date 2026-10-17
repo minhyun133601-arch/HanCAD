@@ -1,4 +1,9 @@
-export interface SpatialBounds { minX: number; minY: number; maxX: number; maxY: number; }
+export interface SpatialBounds {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+}
 function boundsIntersect(a: SpatialBounds, b: SpatialBounds): boolean {
   return a.minX <= b.maxX && b.minX <= a.maxX && a.minY <= b.maxY && b.minY <= a.maxY;
 }

@@ -3,7 +3,7 @@
 
   const TAU = Math.PI * 2;
   const number = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
-  const point = (value) => ({ x: number(value && value.x), y: number(value && value.y) });
+  const point = (value) => ({ x: number(value && value.x), y: number(value && value.y), ...(value?.z === undefined ? {} : { z: number(value.z) }) });
   const cleanNumber = (value) => String(Math.round(number(value) * 1000000) / 1000000);
   const escapeXml = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[character]);
   const normalAngle = (angle) => ((number(angle) % TAU) + TAU) % TAU;
@@ -205,6 +205,8 @@
   }
 
   function toDxf(snapshot = {}) {
+    // Keep stored doubles intact; screen/export preview rounding must not change coordinates.
+    const cleanNumber = (value) => String(number(value));
     const output = [], push = (code, value) => output.push(String(code), String(value));
     const safeString = (value) => String(value == null ? "" : value).replace(/[\r\n\u0000-\u001f]/g, " ");
     let handleCounter = 16;
@@ -261,11 +263,19 @@
     push(0, "ENDTAB"); table("BLOCK_RECORD", blockRecords.length);
     blockRecords.forEach((block) => { record("BLOCK_RECORD", tableHandles.BLOCK_RECORD, "AcDbBlockTableRecord", block.handle); push(2, block.name); push(70, 0); push(280, 1); push(281, 0); });
     push(0, "ENDTAB"); push(0, "ENDSEC");
-    const position = (at, code = 10) => { push(code, cleanNumber(at.x)); push(code + 10, cleanNumber(-at.y)); push(code + 20, 0); };
-    const start = (type, entity, owner) => { push(0, type); push(5, handle()); push(330, owner); push(100, "AcDbEntity"); push(8, dxfLayer(layerName(entity))); if (entity.color) { push(62, 7); push(420, parseInt(color(entity.color).slice(1), 16)); } };
+    const position = (at, code = 10) => { push(code, cleanNumber(at.x)); push(code + 10, cleanNumber(-at.y)); push(code + 20, cleanNumber(at.z || 0)); };
+    const start = (type, entity, owner) => { const id = handle(); push(0, type); push(5, id); push(330, owner); push(100, "AcDbEntity"); push(8, dxfLayer(layerName(entity))); if (entity.color) { push(62, 7); push(420, parseInt(color(entity.color).slice(1), 16)); } return id; };
     const line = (entity, a, b, owner) => { start("LINE", entity, owner); push(100, "AcDbLine"); position(a); position(b, 11); };
     const polyline = (entity, points, closed, owner) => {
+      const elevation = points[0]?.z || 0;
+      if (points.some(at => (at.z || 0) !== elevation)) {
+        const polyOwner = start("POLYLINE", entity, owner); push(100, "AcDb3dPolyline"); push(66, 1); position({x:0,y:0}); push(70, 8 | (closed ? 1 : 0));
+        points.forEach(at => { start("VERTEX", entity, polyOwner); push(100, "AcDbVertex"); push(100, "AcDb3dPolylineVertex"); position(at); push(70, 32); });
+        start("SEQEND", entity, polyOwner);
+        return;
+      }
       start("LWPOLYLINE", entity, owner); push(100, "AcDbPolyline"); push(90, points.length); push(70, closed ? 1 : 0);
+      if (elevation) push(38, cleanNumber(elevation));
       points.forEach((at) => { push(10, cleanNumber(at.x)); push(20, cleanNumber(-at.y)); });
     };
     const text = (entity, value, at, size, rotation, owner, centered = false) => {

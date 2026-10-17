@@ -48,10 +48,27 @@ export function drawSurfaceOverlay(canvas: HTMLCanvasElement, state: OverlayStat
       unit: state.unit,
       color: '#fbbf24',
     });
-  if (state.snap) drawSnapOverlay(context, state.snap, origin, view.scale);
+  if (state.snap)
+    drawSnapOverlay(context, state.snap, origin, view.scale, {
+      size: state.aids.tooltipSize ?? 0,
+      opacity: state.aids.tooltipOpacity ?? 1,
+      bounds: {
+        minX: (-state.width / 2 - view.tx) / view.scale,
+        minY: (-state.height / 2 - view.ty) / view.scale,
+        maxX: (state.width / 2 - view.tx) / view.scale,
+        maxY: (state.height / 2 - view.ty) / view.scale,
+      },
+    });
   if (area) drawSelectionOverlay(context, area, origin, view.scale);
   context.restore();
-  if (state.tracking) drawTrackingOverlay(context, { width: state.width, height: state.height }, state.worldToScreen, state.tracking);
+  if (state.tracking)
+    drawTrackingOverlay(
+      context,
+      { width: state.width, height: state.height },
+      state.worldToScreen,
+      state.tracking,
+      { size: state.aids.tooltipSize ?? 0, opacity: state.aids.tooltipOpacity ?? 1 },
+    );
   drawDraftingAids(
     context,
     { width: state.width, height: state.height },

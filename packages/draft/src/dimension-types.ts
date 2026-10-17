@@ -1,4 +1,5 @@
 import type { CadEntity, CadPoint } from '@hancad/legacy-bridge';
+import type { CoordinateProvider } from './coordinates';
 
 export type DimensionTool =
   'DIMLINEAR' | 'DIMALIGNED' | 'DIMRADIUS' | 'DIMDIAMETER' | 'DIMANGULAR' | 'DIM';
@@ -41,6 +42,7 @@ export interface DimensionSnapshot {
   canClose: false;
 }
 export interface DimensionSessionOptions {
+  coordinates?: CoordinateProvider;
   onAcceptedPoint?: (point: CadPoint) => void;
   onCommit: (entities: CadEntity[]) => void;
   onChange?: (snapshot: DimensionSnapshot) => void;

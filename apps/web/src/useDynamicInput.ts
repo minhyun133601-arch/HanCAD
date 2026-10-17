@@ -7,6 +7,7 @@ import type { Locale } from '@hancad/ui';
 import { keywordOf, promptOptions } from './command-line/PromptKeywords';
 import { constraintsFor, dynamicFields, dynamicToken } from './dynamic-input-state';
 import type { DynamicConstraints, DynamicEdit, DynamicField } from './dynamic-input-state';
+import { inputBlocked, isTextEditingTarget } from './ui-focus';
 
 export interface DynamicInputOptions {
   sysvars: SystemVariables;
@@ -28,11 +29,14 @@ export function useDynamicInput(options: DynamicInputOptions) {
   latest.current = options;
   const vars = options.sysvars;
   const mode = vars.getNumber('DYNMODE');
-  const dimensional = Boolean(options.base && mode & 2);
+  const dimensional = Boolean(options.base && mode & 2 && options.mode === 'point');
   const polar = Boolean(options.base && vars.getNumber('DYNPIFORMAT') === 0);
-  const active = mode > 0 && (options.mode === 'point' || options.mode === 'number');
-  const defaultFields = dynamicFields(dimensional, polar);
-  const relative = Boolean(options.base && vars.getNumber('DYNPICOORDS') === 0);
+  const active =
+    mode > 0 &&
+    (options.mode === 'number' || (options.mode === 'point' && (dimensional || mode & 1)));
+  const defaultFields =
+    options.mode === 'number' ? (['distance'] as const) : dynamicFields(dimensional, polar);
+  const relative = dimensional || Boolean(options.base && vars.getNumber('DYNPICOORDS') === 0);
   const initial: DynamicEdit = {
     field: defaultFields[0] ?? 'x',
     locked: {},
@@ -44,7 +48,7 @@ export function useDynamicInput(options: DynamicInputOptions) {
   const fields = state.cartesian ? dynamicFields(false, false) : defaultFields;
   const [menu, setMenu] = useState(false);
   const [highlight, setHighlight] = useState(0);
-  const context = `${options.commandActive}:${options.prompt}:${options.base?.x}:${options.base?.y}:${dimensional}:${polar}`;
+  const context = `${options.commandActive}:${options.prompt}:${options.base?.x}:${options.base?.y}:${dimensional}:${polar}:${relative}:${mode}`;
   useEffect(() => {
     edit.current = initial;
     setState(initial);
@@ -58,7 +62,7 @@ export function useDynamicInput(options: DynamicInputOptions) {
     const live = latest.current;
     const settings = coordinateSettings((name) => live.sysvars.get(name));
     const cursor = live.cursor?.point ?? { x: 0, y: 0 };
-    const base = live.base ?? { x: 0, y: 0 };
+    const base = edit.current.relative ? (live.base ?? { x: 0, y: 0 }) : { x: 0, y: 0 };
     const dx = cursor.x - base.x,
       dy = base.y - cursor.y;
     return {
@@ -77,7 +81,10 @@ export function useDynamicInput(options: DynamicInputOptions) {
       : value.startsWith('@')
         ? true
         : edit.current.relative;
-    const locked = { ...edit.current.locked, ...(value ? { [edit.current.field]: value.replace(/^[#@]/, '') } : {}) };
+    const locked = {
+      ...edit.current.locked,
+      ...(value ? { [edit.current.field]: value.replace(/^[#@]/, '') } : {}),
+    };
     change({
       ...edit.current,
       field,
@@ -91,21 +98,18 @@ export function useDynamicInput(options: DynamicInputOptions) {
   useEffect(() => {
     function key(event: KeyboardEvent): void {
       const live = latest.current;
-      if (
-        event.defaultPrevented ||
-        document.querySelector('dialog[open], [data-context-menu-open]')
-      )
-        return;
+      if (event.defaultPrevented || inputBlocked() || isTextEditingTarget(event.target)) return;
       const target = event.target;
-      if (
-        target instanceof HTMLElement &&
-        (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
-      )
-        return;
+      const options = promptOptions(live.prompt);
       const enabled =
-        live.sysvars.getNumber('DYNMODE') > 0 && (live.mode === 'point' || live.mode === 'number');
+        active ||
+        (live.sysvars.getNumber('DYNMODE') > 0 &&
+          live.sysvars.getNumber('DYNPROMPT') > 0 &&
+          live.commandActive &&
+          options.length > 0);
       if (!enabled) return;
       if (
+        active &&
         target instanceof HTMLElement &&
         target.dataset.testid === 'drawing-canvas' &&
         !event.ctrlKey &&
@@ -113,7 +117,6 @@ export function useDynamicInput(options: DynamicInputOptions) {
         !event.metaKey
       )
         change({ ...edit.current, engaged: true });
-      const options = promptOptions(live.prompt);
       if (menu) {
         if (event.code === 'Escape') {
           event.preventDefault();
@@ -146,13 +149,28 @@ export function useDynamicInput(options: DynamicInputOptions) {
         setHighlight(0);
         return;
       }
-      if (event.ctrlKey || event.altKey || event.metaKey) return;
-      if (edit.current.locked[edit.current.field] && !live.input && /^(Digit|Numpad|Key|Minus|Period|Backspace)/.test(event.code)) {
-        const locked = { ...edit.current.locked }; delete locked[edit.current.field];
+      if (!active || event.ctrlKey || event.altKey || event.metaKey) return;
+      if (
+        edit.current.locked[edit.current.field] &&
+        !live.input &&
+        /^(Digit|Numpad|Key|Minus|Period|Backspace)/.test(event.code)
+      ) {
+        const locked = { ...edit.current.locked };
+        delete locked[edit.current.field];
         change({ ...edit.current, locked });
       }
-      if (edit.current.engaged && event.shiftKey && (event.code === 'Digit2' || event.code === 'Digit3')) {
-        change({ field: 'x', locked: {}, engaged: true, relative: event.code === 'Digit2', cartesian: true });
+      if (
+        edit.current.engaged &&
+        event.shiftKey &&
+        (event.code === 'Digit2' || event.code === 'Digit3')
+      ) {
+        change({
+          field: 'x',
+          locked: {},
+          engaged: true,
+          relative: event.code === 'Digit2',
+          cartesian: true,
+        });
         return;
       }
       if (event.code === 'Tab') {
@@ -166,7 +184,12 @@ export function useDynamicInput(options: DynamicInputOptions) {
         if (next) advance(next);
         return;
       }
-      if (event.code === 'Comma' && event.shiftKey) {
+      if (
+        event.code === 'Comma' &&
+        event.shiftKey &&
+        fields.includes('angle') &&
+        (edit.current.engaged || live.input)
+      ) {
         event.preventDefault();
         event.stopPropagation();
         advance('angle');
@@ -197,7 +220,9 @@ export function useDynamicInput(options: DynamicInputOptions) {
         return;
       }
       if ((event.code === 'Enter' || event.code === 'NumpadEnter') && edit.current.engaged) {
-        const value = dynamicToken(edit.current, live.input, fallback());
+        const token = live.input.trim().replace(/^_/, '').toUpperCase();
+        const keyword = options.some((label) => keywordOf(label)?.toUpperCase() === token);
+        const value = keyword ? live.input : dynamicToken(edit.current, live.input, fallback());
         if (value !== undefined) {
           event.preventDefault();
           event.stopPropagation();
@@ -207,21 +232,32 @@ export function useDynamicInput(options: DynamicInputOptions) {
       }
     }
     document.addEventListener('keydown', key, true);
-    function pointer(event: PointerEvent): void {
+    function commandEntry(event: Event): void {
       if (event.target instanceof Element && event.target.closest('.command-input'))
         change(initial);
     }
-    document.addEventListener('pointerdown', pointer, true);
+    document.addEventListener('pointerdown', commandEntry, true);
+    document.addEventListener('focusin', commandEntry, true);
     return () => {
       document.removeEventListener('keydown', key, true);
-      document.removeEventListener('pointerdown', pointer, true);
+      document.removeEventListener('pointerdown', commandEntry, true);
+      document.removeEventListener('focusin', commandEntry, true);
     };
   }, [active, fields.join(','), menu, highlight, context]);
   const displayed = fallback();
   const values = constraintsFor(state, options.input);
   const visibility = vars.getNumber('DYNPIVIS');
+  const showFields =
+    (active &&
+      options.commandActive &&
+      (dimensional || visibility !== 0 || Boolean(options.input) || state.engaged)) ||
+    (mode > 0 && Boolean(mode & 1) && visibility === 2 && options.mode === 'command');
+  const showPrompt =
+    vars.getNumber('DYNPROMPT') > 0 && (options.commandActive || Boolean(options.input));
   return {
-    visible: Boolean(options.cursor && mode > 0 && ((active && options.commandActive && (visibility !== 0 || options.input || state.engaged)) || (visibility === 2 && options.mode === 'command'))),
+    visible: Boolean(options.cursor && mode > 0 && (showFields || showPrompt)),
+    showFields,
+    inputText: !active ? options.input : '',
     screen: options.cursor?.screen ?? { x: 0, y: 0 },
     fields,
     state,
@@ -252,7 +288,10 @@ export function useDynamicInput(options: DynamicInputOptions) {
       change({ ...edit.current, locked });
     },
     getConstraints: (): DynamicConstraints =>
-      active ? constraintsFor(edit.current, latest.current.input) : { relative },
+      active && edit.current.engaged
+        ? constraintsFor(edit.current, latest.current.input)
+        : { relative },
+    isEditing: (): boolean => edit.current.engaged || Object.keys(edit.current.locked).length > 0,
     reset: () => {
       change(initial);
       setMenu(false);

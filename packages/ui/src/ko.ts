@@ -313,6 +313,7 @@ export const ko: Messages = {
   invalidPoint: '점은 X,Y 또는 @DX,DY, @길이<각도로 입력하세요.',
   positiveRadius: '반지름은 0보다 큰 값이어야 합니다.',
   needPoints: '도형을 완성할 점을 더 지정하세요.',
+  noContinuation: '연속할 선이나 호가 없습니다.',
   zeroLength: '서로 다른 점을 지정하세요.',
   closedSession: '진행 중인 작성 명령이 없습니다.',
   currentLayerHidden:

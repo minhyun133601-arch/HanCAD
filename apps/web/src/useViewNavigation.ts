@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CommandContext } from '@hancad/commands';
 import type { CadPoint } from '@hancad/legacy-bridge';
-import { selectCadArea } from '@hancad/draft';
+import { selectCadArea, coordinateSettings } from '@hancad/draft';
 import type { CadPointerPick, CadSelectionDrag } from '@hancad/render';
 import type { CanvasSurface } from './canvas-surface';
 import type { useCommandSession } from './useCommandSession';
@@ -107,6 +107,7 @@ export function useViewNavigation(options: Options) {
     controller.current = new NavigationSession(
       command,
       {
+        coordinates: () => coordinateSettings((name) => latest.current.session.sysvars.get(name)),
         view: () => surface.getWorldView(),
         viewport: () => surface.getViewportSize(),
         limits: () => {

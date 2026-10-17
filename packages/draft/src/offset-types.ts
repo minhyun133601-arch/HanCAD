@@ -1,4 +1,5 @@
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
+import type { CoordinateProvider } from './coordinates';
 
 export type OffsetPrompt =
   | 'offsetDistance'
@@ -44,6 +45,7 @@ export interface OffsetSnapshot {
   multiple: boolean;
 }
 export interface OffsetSessionOptions {
+  coordinates?: CoordinateProvider;
   onAcceptedPoint?: (point: CadPoint) => void;
   distance: number;
   gapType: number;

@@ -5,6 +5,34 @@ deferred and unverified. Subsequent work stays in original phase order.
 Previously delivered later-phase adapters remain supported, but their presence
 does not imply acceptance of the preceding phases.
 
+Phase 04 uses one unit-aware coordinate service for command-line, dynamic-field
+and queued point input. PointInputController holds filters, FROM, M2P, temporary
+tracking and typed snap modifiers; DraftSession owns accepted LINE points and
+deferred tangent/perpendicular constraints. Optional elevation survives supported
+legacy normalization, recovery and DXF export/import. Display remains an XY
+projection. OSNAPCOORD source metadata distinguishes keyboard input from queued
+script input without implementing the later SCRIPT command.
+
+The canvas editor prepares a SnapIndex from visible native and transitional
+geometry, updating it when drawing geometry changes. Accepted provisional LINE
+segments are upserted separately. Cursor queries reuse double-precision curve
+preparations and the shared R-tree; they do not traverse the complete database.
+EditorDraftingAids owns candidate cycling, acquired points, extension/parallel
+sources and explicit two-object extended intersections. Exact snaps precede
+grid, Ortho and polar constraints. ObjectTracking owns dwell/re-hover and the
+seven-point limit; temporary tracking points use the same alignment solver.
+Acquisition and overlays do not write the drawing or its undo journal.
+
+useEditorAids reads live system variables and temporary key overrides, drives
+stationary-pointer acquisition timers, applies dynamic locks, and publishes snap,
+tracking, magnet and tooltip overlays. The drawing canvas remains a focusable,
+noneditable physical-key target. Explicit command-line focus retains absolute
+coordinate semantics; canvas-origin dynamic fields retain their relative setting.
+The dynamic input hook shares the command buffer and unit parser, while React
+renders only its tooltip chrome. DSETTINGS and OSNAP share a remembered seven-tab
+dialog; status menus execute its registered command. Settings for later 3D/grip/
+quick-property/selection features are stored without claiming those editors exist.
+
 Phase 01 foundations use a native DrawingDatabase graph independently of the
 transitional canvas model. Persistent hex handles, ownership, reactors, extension
 dictionaries and ordered XDATA live in that graph. Nine symbol tables and the
@@ -40,9 +68,9 @@ Arbitrary constrained periodic fitting, natural end conditions without tangents
 and exact interpolation despite a stored nonzero fit tolerance remain reference
 assumptions.
 
-The system-variable registry contains 860 distinct definitions with source links,
+The system-variable registry contains 864 distinct definitions with source links,
 scope, type, description, read-only status and available validation metadata.
-798 have fixed or selected metric defaults; 62 environment/document-dependent
+802 have fixed or selected metric defaults; 62 environment/document-dependent
 defaults remain explicitly unavailable until a runtime provider supplies them.
 214 DXF header mappings are separate from SETVAR definitions. GETVAR, SETVAR and
 direct variable names share validation and bilingual diagnostics. Profile state
@@ -262,14 +290,12 @@ database events update the canvas and local recovery cache. OPEN/NEW establish a
 fresh history baseline. Selection remains ephemeral; hidden/locked geometry cannot
 be erased. Drawing edits preserve the current view; imports/new documents fit it.
 
-Running object snaps respect the supported OSMODE bits and its suppression bit.
-The implementation supports endpoints, midpoints, centers, quadrants, nearest
-points and true intersections. Snap input carries an exact-point flag through the
-drafting session, taking precedence over grid and Ortho. Intersection candidates
-are limited to aperture-near primitives and pruned by overlapping bounds; the full
-dynamic spatial index remains pending. APERTURE is screen-relative, and AUTOSNAP
-controls marker/tooltip visibility. Advanced modes, tracking and grid/display toggles remain explicit
-future work. Shared adapter entity-capacity guards reject oversized inputs instead
+Running object snaps respect all fourteen OSMODE modes and its suppression bit.
+The Phase 04 prepared-curve/R-tree pipeline supersedes the original six-mode
+aperture scan. Snap input carries an exact-point flag through the drafting
+session, taking precedence over grid and Ortho. APERTURE is screen-relative;
+AUTOSNAP controls marker, tooltip, magnet, polar and object tracking. Shared
+adapter entity-capacity guards reject oversized inputs instead
 of silently truncating them. Bounds accumulate incrementally to limit peak memory
 for large drawings, and visible-layer filtering uses a set.
 
@@ -297,7 +323,8 @@ polylines produce fills or FILLMODE-controlled outlines. PDMODE/PDSIZE symbols
 capture view-relative size at regeneration. Large arcs and infinite geometry can
 be clipped against the current view. An R-tree maintains finite bounds; exact
 primitive distance refines picks and later source order breaks equal-distance ties.
-The existing running-snap subsystem retains its separate candidate pipeline.
+Picking and snapping share the dynamic R-tree implementation, while maintaining
+independent prepared geometry and eligibility appropriate to each query.
 
 The WebGL2 backend groups retained geometry by spatial cells with bounded chunk
 sizes, performs chunk/view culling and rebuilds changed chunks or LODs. Culling

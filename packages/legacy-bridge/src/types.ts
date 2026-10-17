@@ -3,6 +3,7 @@ import type { CadImportDiagnostic, CadImportProgressDiagnostic } from './diagnos
 export interface CadPoint {
   x: number;
   y: number;
+  z?: number;
 }
 export interface CadBounds {
   minX: number;

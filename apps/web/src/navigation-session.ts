@@ -1,4 +1,5 @@
 import { parseDraftPoint, validDraftPoint } from '@hancad/draft';
+import type { CoordinateProvider } from '@hancad/draft';
 import { reverseHangulInput } from '@hancad/input';
 import type { CadPoint } from '@hancad/legacy-bridge';
 import { fitWorldBounds, scaleWorldView, unionViewBounds, windowWorldView } from '@hancad/render';
@@ -18,6 +19,7 @@ export type NavigationStage =
   | 'realtime-zoom'
   | 'dynamic';
 export interface NavigationHost {
+  coordinates?: CoordinateProvider;
   view(): CadWorldView;
   viewport(): ViewportSize;
   limits(): ViewBounds;
@@ -196,7 +198,7 @@ export class NavigationSession {
           ),
         );
       } else {
-        const point = parseDraftPoint(raw);
+        const point = parseDraftPoint(raw, undefined, this.host.coordinates?.());
         if (point) return this.acceptPoint(point);
         else if (this.scale(value)) return false;
         else {
@@ -237,7 +239,7 @@ export class NavigationSession {
       );
       return false;
     }
-    const point = parseDraftPoint(raw, this.first);
+    const point = parseDraftPoint(raw, this.first, this.host.coordinates?.());
     if (point) return this.acceptPoint(point);
     this.error();
     return false;

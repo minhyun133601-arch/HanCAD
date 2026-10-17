@@ -3,10 +3,14 @@
   z-index: 28;
   max-width: min(480px, calc(100% - 20px));
   color: #192530;
-  pointer-events: auto;
+  pointer-events: none;
   white-space: nowrap;
   font-family: 'Malgun Gothic', sans-serif;
+  font-size: 12px;
   filter: drop-shadow(1px 2px 3px #0008);
+}
+.dynamic-input-overlay button {
+  pointer-events: auto;
 }
 .dynamic-prompt {
   display: flex;
@@ -26,6 +30,8 @@
   display: flex;
   gap: 6px;
   margin-top: 5px;
+  max-width: 100%;
+  overflow-x: auto;
 }
 .dynamic-field {
   display: flex;
@@ -33,6 +39,15 @@
   min-width: 70px;
   background: #eef5fb;
   border: 1px solid #6987a3;
+}
+.dynamic-command-text {
+  margin-top: 5px;
+  padding: 3px 5px;
+  background: #fff;
+  border: 1px solid #6987a3;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .dynamic-field.active {
   border-color: #2d6ba3;

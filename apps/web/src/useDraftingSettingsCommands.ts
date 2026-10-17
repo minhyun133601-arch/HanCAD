@@ -22,5 +22,15 @@ export function useDraftingSettingsCommands(registry: CommandRegistry, locale: L
       }),
     );
   }, [registry, locale]);
-  return { tab, close: () => setTab(null) };
+  return {
+    tab,
+    open: (next: DraftingTab) => {
+      previous.current = next;
+      setTab(next);
+    },
+    selectTab: (next: DraftingTab) => {
+      previous.current = next;
+    },
+    close: () => setTab(null),
+  };
 }

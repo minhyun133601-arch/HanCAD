@@ -15,6 +15,7 @@ export function useTempOverrideKeys(options: {
   input: string;
   /** Shift+Space at a selection prompt: cycling through overlapping objects. */
   cycleOverlap: () => void;
+  inputIsDynamic?: () => boolean;
 }): void {
   const latest = useRef(options);
   latest.current = options;
@@ -89,6 +90,13 @@ export function useTempOverrideKeys(options: {
         return;
       }
       const override = event.shiftKey ? tempOverrideKeys[event.code] : undefined;
+      if (
+        event.code === 'Comma' &&
+        event.target instanceof Element &&
+        event.target.closest('.command-input')
+      )
+        return;
+      if (event.code === 'Comma' && live.inputIsDynamic?.()) return;
       if (!override) return;
       event.preventDefault();
       event.stopPropagation();

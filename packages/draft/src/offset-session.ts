@@ -161,7 +161,7 @@ export class OffsetSession {
       }
       if (!value)
         return this.distance === 0 ? failure('positiveDistance') : this.setDistance(this.distance);
-      const number = parseDraftNumber(value);
+      const number = parseDraftNumber(value, this.options.coordinates?.());
       if (number !== undefined)
         return number > 0 ? this.setDistance(number) : failure('positiveDistance');
     } else if (this.prompt !== 'offsetSecondPoint') {
@@ -181,9 +181,9 @@ export class OffsetSession {
         return this.finish();
       }
     }
-    const point = parseDraftPoint(input, this.distanceBase);
+    const point = parseDraftPoint(input, this.distanceBase, this.options.coordinates?.());
     if (point) return this.acceptPick(point);
-    const number = parseDraftNumber(value);
+    const number = parseDraftNumber(value, this.options.coordinates?.());
     if (number !== undefined && this.prompt === 'offsetSecondPoint')
       return number > 0 ? this.setDistance(number) : failure('positiveDistance');
     return failure(this.prompt === 'offsetSelect' ? 'selectOffsetObject' : 'point');

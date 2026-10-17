@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { ModifySession, transformCadSelection, validDraftPoint } from '@hancad/draft';
+import {
+  ModifySession,
+  transformCadSelection,
+  validDraftPoint,
+  coordinateSettings,
+} from '@hancad/draft';
 import type { ModifySnapshot, ModifyTool } from '@hancad/draft';
 import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import type { CommandRegistry } from '@hancad/commands';
@@ -54,8 +59,10 @@ export function useModification(options: Options) {
   function begin(tool: ModifyTool): void {
     finish();
     latest.current.cancelOthers();
-    const active = new ModifySession(tool, (point) =>
-      recordStatusPoint(latest.current.sysvars, point),
+    const active = new ModifySession(
+      tool,
+      (point) => recordStatusPoint(latest.current.sysvars, point),
+      () => coordinateSettings((name) => latest.current.sysvars.get(name)),
     );
     if (latest.current.sysvars.getNumber('PICKFIRST') === 1)
       active.select(latest.current.getState(), latest.current.getSelectedIds());
@@ -68,7 +75,12 @@ export function useModification(options: Options) {
       refresh();
       return;
     }
-    if (delta.x !== 0 || delta.y !== 0 || controller.current.tool === 'COPY')
+    if (
+      delta.x !== 0 ||
+      delta.y !== 0 ||
+      (delta.z ?? 0) !== 0 ||
+      controller.current.tool === 'COPY'
+    )
       pending.current.push(delta);
     if (controller.current.tool === 'MOVE') finish();
     else refresh();

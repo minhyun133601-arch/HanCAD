@@ -8,6 +8,8 @@ import {
   applySettings,
   fieldChecked,
   readSettings,
+  selectedFieldValue,
+  setSelectedFieldValue,
   setFieldChecked,
 } from './drafting-settings-state';
 import type { SettingsDraft } from './drafting-settings-state';
@@ -18,11 +20,13 @@ export function DraftingSettingsDialog({
   sysvars,
   locale,
   close,
+  onTabChange,
 }: {
   tab: DraftingTab | null;
   sysvars: SystemVariables;
   locale: Locale;
   close: () => void;
+  onTabChange: (tab: DraftingTab) => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [active, setActive] = useState<DraftingTab>('snap');
@@ -61,9 +65,9 @@ export function DraftingSettingsDialog({
           <span>{label}</span>
           <select
             aria-label={label}
-            value={raw}
+            value={selectedFieldValue(field, draft)}
             onChange={(event) =>
-              setDraft((old) => ({ ...old, [field.variable]: event.target.value }))
+              setDraft((old) => setSelectedFieldValue(field, old, event.target.value))
             }
           >
             {field.options?.map(([value, korean, english]) => (
@@ -81,7 +85,7 @@ export function DraftingSettingsDialog({
         <span>{label}</span>
         <input
           aria-label={label}
-          type={field.kind === 'text' ? 'text' : 'number'}
+          type={field.kind === 'text' || field.kind === 'angle' ? 'text' : 'number'}
           value={value}
           step={definition?.type === 'integer' ? 1 : 'any'}
           min={definition?.min}
@@ -138,7 +142,10 @@ export function DraftingSettingsDialog({
               type="button"
               role="tab"
               aria-selected={item.id === active}
-              onClick={() => setActive(item.id)}
+              onClick={() => {
+                setActive(item.id);
+                onTabChange(item.id);
+              }}
             >
               {item.label[index]}
             </button>

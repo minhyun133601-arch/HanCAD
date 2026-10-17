@@ -18,6 +18,7 @@ export function lineContinuation(
         point: {
           x: entity.center.x + entity.radius * Math.cos(angle),
           y: entity.center.y + entity.radius * Math.sin(angle),
+          ...(entity.center.z === undefined ? {} : { z: entity.center.z }),
         },
         tangent: { x: -Math.sin(angle) * direction, y: Math.cos(angle) * direction },
       };

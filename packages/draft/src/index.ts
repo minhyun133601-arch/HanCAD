@@ -25,3 +25,4 @@ export * from './snap-index';
 export * from './snap-query';
 export * from './snap-deferred';
 export * from './snap-legacy-sources';
+export * from './extension-tracking';

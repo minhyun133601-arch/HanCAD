@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { MeasureSession, formatMeasurement } from '@hancad/draft';
+import { MeasureSession, formatMeasurement, coordinateSettings } from '@hancad/draft';
 import type { MeasureInputResult, MeasureSnapshot } from '@hancad/draft';
 import type { CommandContext, CommandRegistry } from '@hancad/commands';
 import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
@@ -61,12 +61,14 @@ export function useMeasurement(options: MeasurementOptions) {
     transparent.current = Boolean(context.prefixes?.transparent);
     if (!transparent.current) live.cancelOthers();
     const active = new MeasureSession(live.getState().settings, {
+      coordinates: () => coordinateSettings((name) => latest.current.sysvars.get(name)),
       onAcceptedPoint: (point) => recordStatusPoint(latest.current.sysvars, point),
       precision: live.sysvars.getNumber('LUPREC'),
       onChange: changed,
       onComplete: (result) => {
         const current = latest.current;
         const display = formatMeasurement(result, {
+          coordinates: coordinateSettings((name) => current.sysvars.get(name)),
           linearPrecision: current.sysvars.getNumber('LUPREC'),
           angularPrecision: current.sysvars.getNumber('AUPREC'),
           angleBase: current.sysvars.getNumber('ANGBASE'),

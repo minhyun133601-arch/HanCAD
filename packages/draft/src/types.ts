@@ -12,7 +12,8 @@ export type DraftPrompt =
   | 'oppositeCorner'
   | 'center'
   | 'radius';
-export type DraftError = 'point' | 'positiveRadius' | 'needPoints' | 'zeroLength' | 'closedSession';
+export type DraftError =
+  'point' | 'positiveRadius' | 'needPoints' | 'noContinuation' | 'zeroLength' | 'closedSession';
 export interface DraftInputResult {
   status: 'continue' | 'committed' | 'cancelled' | 'error';
   error?: DraftError;
@@ -28,12 +29,22 @@ export interface DraftSnapshot {
 }
 export interface DraftSessionOptions {
   coordinates?: () => Partial<CoordinateSettings>;
+  resolveTypedPoint?: (
+    point: DraftPoint,
+    override?: PointSnapOverride,
+  ) => ({ point: DraftPoint } & DraftPointOptions) | undefined;
+  getSnapOverride?: () => PointSnapOverride | undefined;
   continuation?: { point: DraftPoint; tangent?: CadPoint };
   onSnapOverride?: (mode: PointSnapOverride) => void;
   onTrackingPoint?: (point: DraftPoint) => void;
   onAcceptedPoint?: (point: CadPoint) => void;
+  /** Includes modifier reference samples, which do not become geometry or LASTPOINT. */
+  onPointSampleAccepted?: () => void;
   onCommit: (entities: CadEntity[]) => void;
   onChange?: (snapshot: DraftSnapshot) => void;
+}
+export interface DraftTextOptions {
+  source?: 'keyboard' | 'script';
 }
 export interface DraftPointOptions {
   /** Exact object snaps take precedence over grid and Ortho constraints. */

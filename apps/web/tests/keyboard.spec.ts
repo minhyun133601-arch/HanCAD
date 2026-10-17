@@ -38,7 +38,7 @@ test('F3, F7-F12 and Ctrl+B/E/F/G/L/U/W flip the right variables and buttons', a
   await expect(status(page, '극좌표 추적')).toHaveAttribute('aria-pressed', 'false');
 
   await press(page, 'F9', '<스냅 켜기>');
-  await expect(page.getByRole('log', { name: '명령 기록' })).toContainText(
+  await expect(page.getByRole('log', { name: '명령 기록' })).not.toContainText(
     '스냅 기능은 아직 구현되지 않았습니다',
   );
   await expect(status(page, '스냅')).toHaveAttribute('aria-pressed', 'true');

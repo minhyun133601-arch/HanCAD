@@ -18,6 +18,7 @@ export class CanvasSurface {
     this.canvas.setAttribute('aria-label', label);
     this.canvas.setAttribute('data-testid', 'drawing-canvas');
     this.canvas.className = 'drawing-canvas';
+    this.canvas.tabIndex = 0;
     host.append(this.canvas);
     try {
       this.renderer = new CadCanvasSurface(this.canvas, options);
@@ -42,6 +43,9 @@ export class CanvasSurface {
   }
   worldToScreen(point: CadPoint): CadPoint {
     return this.renderer.worldToScreen(point);
+  }
+  getCursorPosition(): CadPoint | undefined {
+    return this.renderer.getCursorPosition();
   }
   setSelection(ids: readonly string[]): void {
     this.renderer.setSelection(ids);

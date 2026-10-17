@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { OffsetSession, TrimExtendSession, selectCadArea } from '@hancad/draft';
+import { OffsetSession, TrimExtendSession, selectCadArea, coordinateSettings } from '@hancad/draft';
 import type { OffsetSnapshot, TrimSnapshot } from '@hancad/draft';
 import { getLegacyRuntime, visibleCadEntities } from '@hancad/legacy-bridge';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
@@ -72,6 +72,7 @@ export function useEditingTools(options: Options) {
     controller.current =
       tool === 'OFFSET'
         ? new OffsetSession(live.getState(), {
+            coordinates: () => coordinateSettings((name) => latest.current.sysvars.get(name)),
             onAcceptedPoint: (point) => recordStatusPoint(latest.current.sysvars, point),
             distance: live.sysvars.getNumber('OFFSETDIST'),
             gapType: live.sysvars.getNumber('OFFSETGAPTYPE'),

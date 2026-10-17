@@ -5,7 +5,7 @@ import type {
   CadPoint,
   CadSettings,
 } from '@hancad/legacy-bridge';
-import { parseDraftNumber, parseDraftPoint, validDraftPoint } from './coordinates';
+import { parseDraftAngle, parseDraftNumber, parseDraftPoint, validDraftPoint } from './coordinates';
 import {
   angularDimension,
   automaticLinearKind,
@@ -222,12 +222,12 @@ export class DimensionSession {
       return { status: 'continue' };
     }
     if (this.prompt === 'rotationAngle' || this.prompt === 'textAngle') {
-      const angle = parseDraftNumber(text);
+      const angle = parseDraftAngle(text, this.options.coordinates?.());
       if (angle === undefined) return failure('invalidAngle');
       if (this.prompt === 'rotationAngle') {
-        this.axisAngle = (-angle * Math.PI) / 180;
+        this.axisAngle = -angle;
         this.linearKind = 'horizontal';
-      } else this.textRotation = (-angle * Math.PI) / 180;
+      } else this.textRotation = -angle;
       this.prompt = 'placement';
       this.notify();
       return { status: 'continue' };
@@ -257,7 +257,7 @@ export class DimensionSession {
       return this.changePrompt('vertex');
     }
     const base = this.points.at(-1);
-    const distance = parseDraftNumber(text);
+    const distance = parseDraftNumber(text, this.options.coordinates?.());
     if (distance !== undefined && base && this.cursor) {
       const length = dimensionDistance(base, this.cursor);
       if (length > epsilon)
@@ -266,7 +266,7 @@ export class DimensionSession {
           y: base.y + ((this.cursor.y - base.y) * distance) / length,
         });
     }
-    const point = parseDraftPoint(text, base);
+    const point = parseDraftPoint(text, base, this.options.coordinates?.());
     return point ? this.acceptPoint(point) : failure('point');
   }
 

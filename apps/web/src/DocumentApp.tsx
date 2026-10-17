@@ -10,9 +10,7 @@ import { createPlatform } from './platform';
 import { useCommandSession } from './useCommandSession';
 import { useDrawingFiles } from './useDrawingFiles';
 import { DrawingNotices } from './DrawingNotices';
-import { ProgressDialog } from './ProgressDialog';
 import type { CanvasSurface } from './canvas-surface';
-import { DimensionStyleDialog } from './DimensionStyleDialog';
 import { useCanvasInteraction } from './useCanvasInteraction';
 import { useDrawingCommands } from './useDrawingCommands';
 import { InlineTextEditor } from './InlineTextEditor';
@@ -23,9 +21,14 @@ import type { DocumentManager, DrawingDocument } from '@hancad/sysvars';
 import { useViewNavigation } from './useViewNavigation';
 
 import { useCommandInput } from './useCommandInput';
-import { DisplayOptionsDialog } from './DisplayOptionsDialog';
+import { DocumentDialogs } from './DocumentDialogs';
 import { CommandPanels } from './CommandPanels';
 import { useStatusCoordinates } from './status-coordinates';
+import { useDynamicInput } from './useDynamicInput';
+import { DynamicInputOverlay } from './DynamicInputOverlay';
+import type { DynamicConstraints } from './dynamic-input-state';
+import type { CadPoint } from '@hancad/legacy-bridge';
+import { useDraftingSettingsCommands } from './useDraftingSettingsCommands';
 
 export function DocumentApp({
   document: drawingDocument,
@@ -66,7 +69,17 @@ export function DocumentApp({
       delete drawingDocument.notice;
     },
   });
-  const tools = useDrawingCommands({ session, files, messages });
+  const typedResolver = useRef<ReturnType<typeof useCanvasInteraction>['resolveTypedPoint']>(
+    () => undefined,
+  );
+  const dynamicConstraints = useRef<() => DynamicConstraints>(() => ({ relative: false }));
+  const dynamicEditing = useRef<() => boolean>(() => false);
+  const tools = useDrawingCommands({
+    session,
+    files,
+    messages,
+    resolveTypedPoint: (point, override) => typedResolver.current(point, override),
+  });
   const { draft, dimensions, modification, measurement, editing, text } = tools;
   const canvasSurface = useRef<CanvasSurface | null>(null);
   const navigation = useViewNavigation({
@@ -90,7 +103,9 @@ export function DocumentApp({
     messages,
     surface: canvasSurface,
     navigation,
+    getDynamicConstraints: () => dynamicConstraints.current(),
   });
+  typedResolver.current = interaction.resolveTypedPoint;
   const onNavigate = useViewHistory(session.database, canvasSurface);
   useEffect(() => {
     const saved = session.database.getVariable('CLAYOUT');
@@ -122,6 +137,7 @@ export function DocumentApp({
     focusCommand,
     locale,
     messages,
+    inputIsDynamic: () => dynamicEditing.current(),
   });
   const { routing, toggle, submit, cancel, execute } = input;
   const { inputMode, commandActive, commandName, historyContext } = routing;
@@ -137,6 +153,25 @@ export function DocumentApp({
     pointPrompt: inputMode === 'point' || inputMode === 'number',
     ...(basePoint ? { basePoint } : {}),
   });
+  const [dynamicCursor, setDynamicCursor] = useState<{ point: CadPoint; screen: CadPoint } | null>(
+    null,
+  );
+  const dynamic = useDynamicInput({
+    sysvars: session.sysvars,
+    mode: inputMode,
+    input: session.input,
+    changeInput: session.changeInput,
+    prompt: routing.prompt,
+    commandActive,
+    cursor: dynamicCursor,
+    ...(basePoint ? { base: basePoint } : {}),
+    locale,
+    submit,
+    focusCommand: () => canvasSurface.current?.canvas.focus({ preventScroll: true }),
+  });
+  dynamicConstraints.current = dynamic.getConstraints;
+  dynamicEditing.current = dynamic.isEditing;
+  const draftingSettings = useDraftingSettingsCommands(session.registry, locale);
 
   function focusCommand(): void {
     if (!text.editable) inputRef.current?.focus({ preventScroll: true });
@@ -235,7 +270,9 @@ export function DocumentApp({
         <DrawingSurface
           messages={messages}
           layout={layout}
-          onFocus={focusCommand}
+          onFocus={() => {
+            if (!text.editable) canvasSurface.current?.canvas.focus({ preventScroll: true });
+          }}
           drawing={tools.state}
           onReady={(surface) => {
             canvasSurface.current = surface;
@@ -248,12 +285,25 @@ export function DocumentApp({
           active={tools.active || navigation.active}
           selectionGesture={interaction.selectionGesture}
           onPick={(event) => {
-            interaction.pick(event);
+            if (interaction.pick(event)) dynamic.reset();
             input.inputReceived();
           }}
           onCoordinates={(point) => {
             interaction.cursor(point);
             coordinates.cursor(point);
+            const surface = canvasSurface.current;
+            if (surface) {
+              const p = surface.getCursorPosition() ?? surface.worldToScreen(point),
+                rect = surface.canvas.getBoundingClientRect();
+              const workspace = surface.canvas.closest('.workspace')?.getBoundingClientRect();
+              setDynamicCursor({
+                point,
+                screen: {
+                  x: p.x + rect.left - (workspace?.left ?? rect.left),
+                  y: p.y + rect.top - (workspace?.top ?? rect.top),
+                },
+              });
+            }
           }}
           canSelectArea={interaction.canSelectArea}
           onSelectionDrag={(event) => {
@@ -270,6 +320,7 @@ export function DocumentApp({
           getLinetypes={interaction.getLinetypes}
           getLayerStyles={interaction.getLayerStyles}
         />
+        <DynamicInputOverlay view={dynamic} />
         <div className="drawing-tools">
           <span>
             {messages.drawingObjects}{' '}
@@ -317,6 +368,7 @@ export function DocumentApp({
         )}
         <DrawingNotices files={files} messages={messages} execute={execute} />
         <CommandPanels
+          settings={draftingSettings}
           session={session}
           input={input}
           locale={locale}
@@ -327,6 +379,10 @@ export function DocumentApp({
         />
       </div>
       <StatusBar
+        openDraftingSettings={(tab) => {
+          draftingSettings.selectTab(tab);
+          input.execute("'_DSETTINGS");
+        }}
         messages={messages}
         layout={layout}
         onLayout={changeLayout}
@@ -350,38 +406,15 @@ export function DocumentApp({
           if (file) openFile(file);
         }}
       />
-      <ProgressDialog
+      <DocumentDialogs
         messages={messages}
         locale={locale}
-        open={progressOpen}
-        onClose={() => {
-          setProgressOpen(false);
-          focusCommand();
-        }}
-      />
-      <DimensionStyleDialog
-        messages={messages}
-        open={dimensions.styleOpen}
-        sysvars={session.sysvars}
-        selectedCount={dimensions.selectedDimensionCount}
-        onApply={(values, selected) => {
-          dimensions.applyStyle(values, selected);
-          session.refresh();
-        }}
-        onClose={() => {
-          dimensions.closeStyle();
-          focusCommand();
-        }}
-      />
-      <DisplayOptionsDialog
-        open={navigation.optionsOpen}
-        korean={locale === 'ko-KR'}
-        background={navigation.background}
-        apply={navigation.setBackground}
-        close={() => {
-          navigation.setOptionsOpen(false);
-          focusCommand();
-        }}
+        progressOpen={progressOpen}
+        closeProgress={() => setProgressOpen(false)}
+        dimensions={dimensions}
+        session={session}
+        navigation={navigation}
+        focus={focusCommand}
       />
     </main>
   );

@@ -31,8 +31,8 @@
         "en-US": "TEXT/DTEXT inline Korean input with height, angle, repeated single lines and DXF saving"
       },
       {
-        "ko-KR": "상대·극좌표·거리 입력, 정확한 끝점·교차점 스냅과 직교, DI 거리 측정",
-        "en-US": "Relative, polar and direct distance input; exact endpoint/intersection snaps, Ortho and DI distance measurement"
+        "ko-KR": "단위·3D 좌표·필터 입력, 14종 객체 스냅, 극좌표·객체 추적, 등각 스냅과 동적 입력·제도 설정",
+        "en-US": "Unit-aware/3D coordinate and filter input; 14 object snaps, polar/object tracking, isometric snap, dynamic input and Drafting Settings"
       },
       {
         "ko-KR": "DWG / DXF 로컬 열기, 커서 기준 휠 확대·가운데 버튼 이동·더블클릭 전체 맞춤",
@@ -57,16 +57,16 @@
     ],
     "limitations": [
       {
-        "ko-KR": "페이즈 2(화면 표시·탐색)와 페이즈 3(명령·입력 UI)의 브라우저 검증을 완료했습니다. 실제 Windows IME·페이즈 0 네이티브 검증은 보류 중이며, 동적 입력 필드·고급 스냅은 페이즈 4에서 완성합니다.",
-        "en-US": "Browser validation of Phase 02 rendering/navigation and Phase 03 command/input UI is complete. Actual Windows IME and Phase 00 native checks remain pending; dynamic-input fields and advanced snaps belong to Phase 04."
+        "ko-KR": "페이즈 4 좌표·제도 보조 기능의 브라우저 검증을 완료했습니다. 실제 Windows IME·페이즈 0 네이티브 검증과 설치된 AutoCAD 비교는 남아 있습니다.",
+        "en-US": "Phase 04 coordinate and drafting aids have passed browser validation. Actual Windows IME, Phase 00 native checks and installed-AutoCAD comparison remain pending."
       },
       {
         "ko-KR": "일부 DWG 객체는 생략·근사되며 DXF 저장은 무손실 원본 보존 방식이 아닙니다.",
         "en-US": "Some DWG objects are skipped or approximated. DXF saving does not preserve the original drawing losslessly."
       },
       {
-        "ko-KR": "자르기·연장 대상은 현재 선이며 곡선 폴리선 간격띄우기, 올가미·그립·고급 스냅은 확장 중입니다.",
-        "en-US": "TRIM/EXTEND currently target lines. Curved-polyline offsets, lasso, grips and advanced snaps are still being extended."
+        "ko-KR": "자르기·연장 대상은 현재 선이며 곡선 폴리선 간격띄우기, 올가미·그립은 확장 중입니다.",
+        "en-US": "TRIM/EXTEND currently target lines. Curved-polyline offsets, lasso and grips are still being extended."
       },
       {
         "ko-KR": "문자는 왼쪽 기준선 TEXT를 지원합니다. SHX·BigFont·여러 줄 문자 편집·전체 자리맞추기는 확장 중입니다.",
@@ -137,10 +137,10 @@
         "ko-KR": "좌표 입력·스냅·제도 보조",
         "en-US": "Coordinates, snaps and drafting aids"
       },
-      "status": "in-progress",
+      "status": "complete",
       "detail": {
-        "ko-KR": "절대·상대·극좌표·거리 입력과 직교·기본 객체 스냅 연결. 고급 추적·동적 입력·그리드 확장 예정.",
-        "en-US": "Absolute, relative, polar and direct distance input, Ortho and basic object snaps are connected. Advanced tracking, dynamic input and grid remain planned."
+        "ko-KR": "좌표·단위 입력, 14종 스냅, 객체·극좌표 추적, 등각 스냅, 동적 입력·제도 설정 완료. 단위·호환성·렌더러·브라우저 검증 통과, 실기 AutoCAD 비교는 남아 있습니다.",
+        "en-US": "Coordinate/unit input, 14 snaps, object/polar tracking, isometric snap, dynamic input and Drafting Settings are complete. Unit, compatibility, renderer and browser checks pass; installed-AutoCAD comparison remains pending."
       }
     },
     {

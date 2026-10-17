@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import {
   editableSelection,
   selectCadArea,
-  snapDraftPoint,
   transformCadSelection,
   translateCadEntities,
 } from '@hancad/draft';
@@ -22,6 +21,9 @@ import type { useViewNavigation } from './useViewNavigation';
 import { drawingStyleTables } from '@hancad/render';
 import type { DrawingStyleTables } from '@hancad/render';
 import { tempOverrides } from './temp-overrides';
+import { useEditorAids } from './useEditorAids';
+import { snapLabel } from './drafting-aid-settings';
+import type { DynamicConstraints } from './dynamic-input-state';
 
 interface Options {
   files: ReturnType<typeof useDrawingFiles>;
@@ -36,19 +38,14 @@ interface Options {
   messages: Messages;
   surface: { current: CanvasSurface | null };
   navigation: ReturnType<typeof useViewNavigation>;
+  getDynamicConstraints?: () => DynamicConstraints;
 }
-const snapLabels = {
-  endpoint: 'snapEndpoint',
-  midpoint: 'snapMidpoint',
-  center: 'snapCenter',
-  quadrant: 'snapQuadrant',
-  nearest: 'snapNearest',
-  intersection: 'snapIntersection',
-} as const;
 
 export function useCanvasInteraction(options: Options) {
   const latest = useRef(options);
   latest.current = options;
+  const aids = useEditorAids(options);
+  aids.setRedraw(cursor);
   const moving = useRef<{
     ids: string[];
     entities: CadEntity[];
@@ -138,35 +135,33 @@ export function useCanvasInteraction(options: Options) {
     );
   }
   function resolve(point: CadPoint, force = false) {
-    const live = latest.current;
-    const enabled = force || needsPoint();
-    const result = enabled
-      ? snapDraftPoint(
-          live.editing.getState(),
-          point,
-          live.session.sysvars.getNumber('APERTURE') / (live.surface.current?.getView().scale ?? 1),
-          tempOverrides.number(live.session.sysvars, 'OSMODE'),
-          live.draft.getSnapEntities(),
-        )
-      : undefined;
-    const autosnap = tempOverrides.number(live.session.sysvars, 'AUTOSNAP');
-    live.surface.current?.setSnapMarker(
-      result?.point,
-      result?.kind,
-      result && autosnap & 2 ? live.messages[snapLabels[result.kind]] : undefined,
-      Boolean(autosnap & 1),
-    );
-    return { point: result?.point ?? point, snapped: result !== undefined };
+    return aids.resolve(point, force || needsPoint());
   }
   function pick(event: CadPointerPick): CadPoint | undefined {
     if (blocked()) return;
     const live = latest.current;
     const pointInput = needsPoint();
-    const target = resolve(event.point);
+    let target = resolve(event.point);
     const override = tempOverrides.getObjectSnap();
     if (pointInput && override !== undefined && override !== 'none' && !target.snapped) {
-      live.session.print(live.messages.snapNotFound(live.messages[snapLabels[override]]));
-      return;
+      const acquired = aids.acquireIntersection(event.point);
+      if (acquired === true) return;
+      if (acquired)
+        target = {
+          point: acquired.point,
+          snapped: true,
+          constrained: true,
+          snap: acquired,
+          paths: [],
+        };
+      else {
+        live.session.print(
+          live.messages.snapNotFound(
+            snapLabel(override, live.messages.commandPrompt.startsWith('명령') ? 'ko-KR' : 'en-US'),
+          ),
+        );
+        return;
+      }
     }
     let accepted = false;
     if (live.navigation.isActive())
@@ -185,9 +180,10 @@ export function useCanvasInteraction(options: Options) {
         : undefined;
       accepted = live.dimensions.pick(target.point, entity);
     } else if (live.modification.needsPoint())
-      accepted = live.modification.pick(target.point, target.snapped);
+      accepted = live.modification.pick(target.point, Boolean(target.snapped));
     else accepted = live.draft.pick({ ...event, ...target });
     if (pointInput && accepted) {
+      aids.clear();
       tempOverrides.consumeObjectSnap();
       return target.point;
     }
@@ -210,8 +206,9 @@ export function useCanvasInteraction(options: Options) {
       const id = live.dimensions.needsEntity() ? live.surface.current?.pick(point) : undefined;
       const entity = id ? live.files.getState().entities.find((item) => item.id === id) : undefined;
       live.dimensions.cursor(target.point, entity);
-    } else if (live.modification.isActive()) live.modification.cursor(target.point, target.snapped);
-    else live.draft.cursor(target.point, { snapped: target.snapped });
+    } else if (live.modification.isActive())
+      live.modification.cursor(target.point, Boolean(target.snapped));
+    else live.draft.cursor(target.point, target);
   }
   function suppressSelectionBox(start: CadPoint): boolean {
     const live = latest.current;
@@ -294,6 +291,7 @@ export function useCanvasInteraction(options: Options) {
     suppressSelectionBox,
     selectionDrag,
     dragPreview,
+    resolveTypedPoint: aids.resolveTypedPoint,
     getNavigationSettings: () => {
       const vars = latest.current.session.sysvars;
       return {
@@ -334,6 +332,16 @@ export function useCanvasInteraction(options: Options) {
         gridStyle: vars.getNumber('GRIDSTYLE'),
         limits: { minX: min.x, minY: -max.y, maxX: max.x, maxY: -min.y },
         background: live.navigation.backgroundColor(),
+        snapAngle: vars.getNumber('SNAPANG'),
+        snapBase: { x: pair('SNAPBASE').x, y: -pair('SNAPBASE').y },
+        snapStyle: vars.getNumber('SNAPSTYL'),
+        isoplane: vars.getNumber('SNAPISOPAIR'),
+        aperture: vars.getNumber('APERTURE'),
+        apertureBox: vars.getNumber('APBOX') === 1 && needsPoint(),
+        tooltipSize: vars.getNumber('DYNTOOLTIPS') ? vars.getNumber('TOOLTIPSIZE') : 0,
+        tooltipOpacity: vars.getNumber('DYNTOOLTIPS')
+          ? 1 - vars.getNumber('TOOLTIPTRANSPARENCY') / 100
+          : 1,
       };
     },
     selectionGesture: (): 'area' | 'fence' =>

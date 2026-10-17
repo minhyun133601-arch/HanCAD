@@ -4,7 +4,7 @@ import type { useCommandInput } from './useCommandInput';
 import { useCommandHelp } from './useCommandHelp';
 import { CommandHelpPanel } from './CommandHelpPanel';
 import { DrawingShortcutMenus } from './menus/DrawingShortcutMenus';
-import { useDraftingSettingsCommands } from './useDraftingSettingsCommands';
+import type { useDraftingSettingsCommands } from './useDraftingSettingsCommands';
 import { DraftingSettingsDialog } from './DraftingSettingsDialog';
 
 /** Auxiliary command surfaces share the same routing as the command window. */
@@ -16,9 +16,10 @@ export function CommandPanels(props: {
   focus: () => void;
   locale: Locale;
   blocked: boolean;
+  settings: ReturnType<typeof useDraftingSettingsCommands>;
 }) {
   const help = useCommandHelp(props.session.registry, props.input.routing.commandName);
-  const settings = useDraftingSettingsCommands(props.session.registry, props.locale);
+  const settings = props.settings;
   return (
     <>
       <DrawingShortcutMenus {...props} />
@@ -26,6 +27,7 @@ export function CommandPanels(props: {
         tab={settings.tab}
         sysvars={props.session.sysvars}
         locale={props.locale}
+        onTabChange={settings.selectTab}
         close={() => {
           settings.close();
           props.focus();

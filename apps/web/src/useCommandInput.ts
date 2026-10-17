@@ -47,6 +47,7 @@ export function useCommandInput(options: {
   focusCommand: () => void;
   locale: Locale;
   messages: Messages;
+  inputIsDynamic?: () => boolean;
 }) {
   const { session, navigation, tools, files, surface, commandWindow, messages } = options;
   const shortcutText = getShortcutMessages(options.locale);
@@ -127,6 +128,7 @@ export function useCommandInput(options: {
     pending,
   });
   useTempOverrideKeys({
+    ...(options.inputIsDynamic ? { inputIsDynamic: options.inputIsDynamic } : {}),
     sysvars: session.sysvars,
     mode: routing.inputMode,
     input: session.input,

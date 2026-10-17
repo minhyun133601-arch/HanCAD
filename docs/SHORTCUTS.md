@@ -38,7 +38,7 @@ move/resize overview box; Enter applies and Esc restores the original view.
 F7 toggles GRIDMODE; the lineweight status switch controls LWDISPLAY. OP/OPTIONS
 opens background controls. RE/REA regenerate and R/RA redraw. Prompt keyword
 buttons accept the same option as typing its letter. Cursor dynamic-input fields
-and Down options menus remain Phase 04 work. XP requires the later floating-layout viewport host.
+and Down options menus are implemented in the Phase 04 continuation below. XP requires the later floating-layout viewport host.
 
 ## Verified basic-workflow slice (2026-10-15)
 
@@ -58,6 +58,26 @@ Shift removes. Drag a selected object to move it; Ctrl+drag copies. Wheel zooms 
 the pointer; middle drag pans; double-middle fits. Escape/capture loss cancels an
 unfinished drag. Ctrl+Z/Ctrl+Y undo/redo whole edits. The remaining reference below
 is the target contract; lasso/grips/clipboard and full command options are pending.
+
+## Phase 04 coordinate and drafting-aid continuation (2026-10-17)
+
+LINE uses the complete point-input grammar below, including explicit Z, unit-aware
+lengths/angles, filters, FROM, M2P/MTP, TT/TK and the angle override. Running and
+one-shot snap modes share the same candidate query. F3/F8/F10/F11/F12 read the live
+variables; Shift and the temporary overrides apply only until release. Tab cycles
+snap candidates when no value has been typed and multiple candidates are present;
+otherwise it moves the active dynamic field. Shift+Comma at an initial empty point
+prompt on the canvas is Center; inside a dynamic edit, < selects the angle field.
+Explicit command-line focus accepts < as the literal angle-override prefix.
+
+Dynamic fields never focus an editable input. Type a length, press Tab to lock it
+and move to angle, type an angle, and press Enter or pick the constrained point.
+Comma moves pointer X/Y/Z fields, @/# selects relative/absolute input and Down
+opens the active prompt options. F12 preserves the pointer/dimension mode when
+toggling it off. DYNPROMPT controls cursor command/keyword prompts independently
+of the pointer-field visibility setting. DSETTINGS/DS/SE provides all seven Korean
+tabs and remembers the selected tab; OSNAP opens the Object Snap tab. Right-click
+a drafting status button and choose Settings to open its corresponding tab.
 
 ## Function keys
 F1 Help · F2 expanded command history · F3 running object snaps · F4 3D object snap · F5 cycle isoplane · F6 dynamic UCS · F7 grid · F8 ortho · F9 snap · F10 polar tracking · F11 object snap tracking · F12 dynamic input

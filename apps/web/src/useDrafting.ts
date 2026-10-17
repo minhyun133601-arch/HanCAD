@@ -7,7 +7,13 @@ import {
   lineContinuation,
   pointInputPrompt,
 } from '@hancad/draft';
-import type { DraftPointOptions, DraftSnapshot, DraftTool } from '@hancad/draft';
+import type {
+  DraftPointOptions,
+  DraftSnapshot,
+  DraftTool,
+  PointSnapOverride,
+  DraftTextOptions,
+} from '@hancad/draft';
 import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import type { CommandRegistry } from '@hancad/commands';
 import type { SystemVariables } from '@hancad/sysvars';
@@ -25,6 +31,10 @@ interface DraftingOptions {
   getState: () => LegacyCadState;
   commitState: (label: string, state: LegacyCadState) => void;
   print: (message: string) => void;
+  resolveTypedPoint?: (
+    point: CadPoint,
+    override?: PointSnapOverride,
+  ) => ({ point: CadPoint } & DraftPointOptions) | undefined;
 }
 interface PickInput extends DraftPointOptions {
   point: CadPoint;
@@ -41,6 +51,7 @@ const errors: Record<string, MessageKey> = {
   point: 'invalidPoint',
   positiveRadius: 'positiveRadius',
   needPoints: 'needPoints',
+  noContinuation: 'noContinuation',
   zeroLength: 'zeroLength',
   closedSession: 'closedSession',
 };
@@ -115,11 +126,14 @@ export function useDrafting(options: DraftingOptions) {
     eraseSelection.current = false;
     const session = new DraftSession(tool, settings(), {
       coordinates: () => coordinateSettings((name) => latest.current.sysvars.get(name)),
+      resolveTypedPoint: (point, override) => latest.current.resolveTypedPoint?.(point, override),
+      getSnapOverride: () => tempOverrides.getObjectSnap(),
       ...(tool === 'LINE' && lineContinuation(model.entities)
         ? { continuation: lineContinuation(model.entities)! }
         : {}),
       onSnapOverride: (mode) => tempOverrides.setObjectSnap(mode),
       onAcceptedPoint: (point) => recordStatusPoint(latest.current.sysvars, point),
+      onPointSampleAccepted: () => tempOverrides.consumeObjectSnap(),
       onCommit: (entities) => {
         const active = latest.current;
         active.commitState(tool, appendCadEntities(active.getState(), entities));
@@ -182,10 +196,10 @@ export function useDrafting(options: DraftingOptions) {
         : [...new Set([...current, ...ids])],
     );
   }
-  function submit(value: string): boolean {
+  function submit(value: string, textOptions: DraftTextOptions = {}): boolean {
     if (activeSession.current) {
       latest.current.print(`${currentPrompt(activeSession.current.getSnapshot())} ${value}`);
-      const result = activeSession.current.acceptText(value);
+      const result = activeSession.current.acceptText(value, textOptions);
       if (result.status === 'error') showError(result.error ?? 'point');
       tempOverrides.consumeObjectSnapInput(value, result.status !== 'error');
       return true;

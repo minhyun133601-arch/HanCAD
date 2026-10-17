@@ -1011,3 +1011,63 @@ shows a localized unavailable-location message, never UCS coordinates presented
 as latitude and longitude. Geographic conversion remains later geographic-data
 work. Autodesk permits the Geographic menu option only for drawings containing
 [geographic location information](https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-Core/files/GUID-A4EAB53A-AB2B-497D-8530-119552DF6238.htm).
+
+## 2026-10-17: Phase 04 shared point input and drafting aids
+
+Typed, dynamic and queued input share unit parsing without display-precision
+rounding. ANGBASE/SNAPANG remain radians internally; angle prompts use AUNITS.
+POLARANG/POLARADDANG remain degrees. Absolute XY uses ELEVATION; relative XY
+inherits its base's optional Z. Supported DXF output preserves stored doubles
+and uses elevation/3D polyline records when required. This does not establish
+lossless unsupported-object I/O or a full 3D editor.
+
+OSNAPCOORD follows Autodesk's [keyboard/script priority table](https://help.autodesk.com/cloudhelp/2025/ENU/AutoCAD-Core/files/GUID-94994960-5E62-4044-BEF7-9CF91667F641.htm).
+Explicit single-pick modifiers remain explicit requests; NON bypasses lookup.
+Script origin is a queued-session contract, with SCRIPT execution still later
+work. Canvas-origin dynamic entry uses DYNPICOORDS; explicit command-line entry
+retains absolute defaults. Noneditable focus preserves physical-key IME safety.
+
+Prepared curve geometry and a dynamic R-tree are cached between pointer moves.
+Accepted provisional LINE segments update a small additional index rather than
+rebuilding drawing geometry. Analytic conic/line intersections and numerical
+spline refinement preserve WCS doubles; exact snaps precede mouse constraints.
+Hover acquisition uses an initial 400 ms dwell, seven points and re-hover
+removal. That timing, polar aperture sensitivity and near-tied candidate order
+are reference assumptions awaiting installed-AutoCAD comparison. Explicit
+extended INT retains its first object after an invalid second-object pick.
+
+Natural conic extensions use full conics; open spline extension uses endpoint
+tangents. The latter, circle-center radial Perpendicular ambiguity and rotated
+quadrant conventions are tracked in PARITY_CHECKLIST. OSOPTIONS negative-Z
+suppression requires an actually active dynamic UCS; enabling UCSDETECT alone
+does not activate a face-based UCS in the current 2D editor.
+
+DSETTINGS exposes all seven required tabs, retaining the previous tab and
+selecting the relevant tab from status menus. Settings for future grips, 3D,
+quick properties and selection cycling are stored as system variables; their
+editors remain owned by later phases. [TRACKPATH](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6BF0703C-28B2-4591-8337-34B8C20443F2.htm)
+bit 1 shortens object tracking paths; bit 2 hides polar paths.
+[DYNTOOLTIPS](https://help.autodesk.com/cloudhelp/2022/ENU/AutoCAD-Core/files/GUID-52163CC6-858B-4656-82D1-372D09E3F7DC.htm)
+separates value-only tooltip appearance from all drafting tooltips. No external
+package upgrades were selected; the frozen workspace lockfile check passed.
+
+Detailed geometry, coordinate and UI reference evidence and focused results are
+in phase04-snap-notes.md, phase04-coordinate-notes.md and phase04-dynamic-notes.md.
+The phase's final acceptance evidence is owned by PROGRESS.md.
+
+The final integration audit adds canonical GRID/SNAP/ORTHO/ISOPLANE/ISODRAFT
+prompt sequences and SNAPGRIDLEGACY (profile, default 0). Idle grid snapping is
+shown only when Legacy is enabled; point-prompt snapping remains the default.
+Grid constraints move the displayed crosshair independently of AutoSnap magnet.
+Natural conic tracking overlays clip to the viewport and bound their tessellation
+work, preserving the visible cursor-side chord tolerance at extreme zoom.
+
+Dynamic tooltips use the renderer's actual screen cursor after view changes.
+Their empty space passes pointer events to the canvas; only their controls take
+input. Explicit command-line focus clears dynamic locks and accepts initial
+<angle literally; initial canvas Shift+Comma remains temporary Center. Dynamic
+Tab navigation stays on noneditable canvas focus. Scalar field locks never
+rewrite command keywords or point modifiers. The old typed-menu-snap E2E was
+strengthened to reject a coordinate without its explicitly requested Midpoint,
+then accept a valid Midpoint and verify one-pick expiry. OSNAPCOORD governs
+running snaps; explicit request priority remains an installed-reference check.

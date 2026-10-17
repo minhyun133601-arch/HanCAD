@@ -13,6 +13,7 @@ import type {
   DraftSessionOptions,
   DraftSnapshot,
   DraftTool,
+  DraftTextOptions,
 } from './types';
 
 const epsilon = 1e-8;
@@ -42,6 +43,7 @@ export class DraftSession {
   }
 
   acceptPoint(point: CadPoint, options: DraftPointOptions = {}): DraftInputResult {
+    const samples = this.pointInput.getAcceptedSampleCount();
     const source = this.pointInput.getState().sourcePoint;
     const resolved =
       options.snapped || options.constrained || source ? point : this.constrain(point);
@@ -49,10 +51,10 @@ export class DraftSession {
       this.pointInput.project(resolved, this.inputContext()),
       this.inputContext(),
     );
-    return this.acceptResolved(result, options);
+    return this.reportSample(this.acceptResolved(result, options), samples);
   }
 
-  acceptText(input: string): DraftInputResult {
+  acceptText(input: string, textOptions: DraftTextOptions = {}): DraftInputResult {
     if (this.status !== 'active') return failure('closedSession');
     const value = input.trim();
     if (!value) {
@@ -63,13 +65,15 @@ export class DraftSession {
         if (tangent) this.pointInput.setAngle(Math.atan2(-tangent.y, tangent.x));
         return this.addPoint(point);
       }
+      if (this.tool === 'LINE' && !this.points.length) return failure('noContinuation');
       return this.finish();
     }
     if (value === '\u001b') return this.cancel();
     if (/^(C|CLOSE)$/i.test(value) && (this.tool === 'LINE' || this.tool === 'PLINE'))
       return this.canClose() ? this.finish(true) : failure('point');
     if (/^(U|UNDO)$/i.test(value) && (this.tool === 'LINE' || this.tool === 'PLINE')) {
-      if (this.points.length > 1) this.points.pop();
+      if (this.points.length) this.points.pop();
+      this.deferred = undefined;
       this.pointInput.reset();
       this.notify();
       return { status: 'continue' };
@@ -81,7 +85,23 @@ export class DraftSession {
           ? this.commit([draftCircle(this.settings, this.points[0] ?? { x: 0, y: 0 }, radius)])
           : failure('positiveRadius');
     }
-    return this.acceptResolved(this.pointInput.acceptText(value, this.inputContext()));
+    let resolvedOptions: DraftPointOptions = {};
+    const samples = this.pointInput.getAcceptedSampleCount();
+    const context = this.inputContext();
+    const result = this.pointInput.acceptText(value, {
+      ...context,
+      resolveTypedPoint: (point, override) => {
+        const mode = override ?? this.options.getSnapOverride?.();
+        const priority = context.settings?.osnapcoord ?? 2;
+        const running = priority === 0 || (priority === 2 && textOptions.source === 'script');
+        if (mode === 'none' || (!mode && !running)) return point;
+        const resolved = this.options.resolveTypedPoint?.(point, mode);
+        if (!resolved) return mode && this.options.resolveTypedPoint ? null : point;
+        resolvedOptions = { ...resolved, snapped: true };
+        return resolved.point;
+      },
+    });
+    return this.reportSample(this.acceptResolved(result, resolvedOptions), samples);
   }
 
   moveCursor(point: CadPoint, options: DraftPointOptions = {}): void {
@@ -169,6 +189,7 @@ export class DraftSession {
       ...(basePoint ? { basePoint } : {}),
       ...(previousPoint ? { previousPoint } : {}),
       trackingPoints: pointInput.trackingPoints,
+      ...(this.deferred ? { deferred: this.deferred } : {}),
     };
   }
   private inputContext() {
@@ -199,6 +220,8 @@ export class DraftSession {
       return { status: 'continue' };
     }
     let point = result.point;
+    const originalFirst = this.points[0],
+      originalDeferred = this.deferred;
     if (this.tool === 'LINE' && this.points.length === 1 && this.deferred) {
       const pair = options.deferred
         ? resolveDeferredPair(this.deferred, options.deferred)
@@ -210,6 +233,10 @@ export class DraftSession {
       this.deferred = undefined;
     }
     const accepted = this.addPoint(point);
+    if (accepted.status === 'error' && originalFirst && originalDeferred) {
+      this.points[0] = originalFirst;
+      this.deferred = originalDeferred;
+    }
     if (accepted.status !== 'error' && this.tool === 'LINE' && this.points.length === 1)
       this.deferred = options.deferred;
     return accepted;
@@ -227,6 +254,13 @@ export class DraftSession {
   private addPoint(point: CadPoint): DraftInputResult {
     const result = this.applyPoint(point);
     if (result.status !== 'error') this.options.onAcceptedPoint?.({ ...point });
+    return result;
+  }
+  private reportSample(result: DraftInputResult, samples: number): DraftInputResult {
+    if (this.pointInput.getAcceptedSampleCount() > samples) {
+      if (result.status === 'error') this.pointInput.rejectLastSample();
+      else this.options.onPointSampleAccepted?.();
+    }
     return result;
   }
 
@@ -253,6 +287,7 @@ export class DraftSession {
       ]);
     this.points.push({ ...point });
     this.cursor = undefined;
+    this.cursorOptions = {};
     this.notify();
     return { status: 'continue' };
   }
@@ -278,10 +313,18 @@ export class DraftSession {
             ),
           ]
         : [];
-    const points = [
+    let points = [
       ...this.points,
       ...(this.cursor && distance(last, this.cursor) > epsilon ? [this.cursor] : []),
     ];
+    if (this.tool === 'LINE' && this.deferred && this.cursor) {
+      const pair = this.cursorOptions.deferred
+        ? resolveDeferredPair(this.deferred, this.cursorOptions.deferred)
+        : undefined;
+      const first = pair?.first ?? resolveDeferredSnap(this.deferred, this.cursor);
+      points =
+        first && (!this.cursorOptions.deferred || pair) ? [first, pair?.second ?? this.cursor] : [];
+    }
     return this.tool === 'LINE'
       ? this.lineSegments(points, true)
       : points.length >= 2
@@ -306,6 +349,7 @@ export class DraftSession {
     let result = { ...point };
     if (this.settings.gridSnap && this.settings.gridSize > 0)
       result = {
+        ...point,
         x: Math.round(point.x / this.settings.gridSize) * this.settings.gridSize,
         y: Math.round(point.y / this.settings.gridSize) * this.settings.gridSize,
       };
@@ -328,7 +372,7 @@ export class DraftSession {
   }
 }
 function distance(a: CadPoint, b: CadPoint): number {
-  return Math.hypot(b.x - a.x, b.y - a.y);
+  return Math.hypot(b.x - a.x, b.y - a.y, (b.z ?? 0) - (a.z ?? 0));
 }
 function failure(error: DraftError): DraftInputResult {
   return { status: 'error', error };

@@ -313,6 +313,7 @@ export const en: Messages = {
   invalidPoint: 'Enter a point as X,Y, @DX,DY, or @distance<angle.',
   positiveRadius: 'The radius must be greater than zero.',
   needPoints: 'Specify more points to complete the shape.',
+  noContinuation: 'No line or arc to continue.',
   zeroLength: 'Specify a different point.',
   closedSession: 'There is no active drawing command.',
   currentLayerHidden:

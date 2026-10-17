@@ -289,6 +289,7 @@ export interface Messages {
   invalidPoint: string;
   positiveRadius: string;
   needPoints: string;
+  noContinuation: string;
   zeroLength: string;
   closedSession: string;
   currentLayerHidden: string;
