@@ -3,7 +3,7 @@
   const TAU = Math.PI * 2;
   const LIMIT = Tool.core.cadEngine.ENTITY_LIMIT;
   const MAX_BYTES = 64 * 1024 * 1024;
-  const IDENTITY = [1, 0, 0, 1, 0, 0];
+  const IDENTITY = [1, 0, 0, 1, 0, 0, 1, 0];
   const finite = n => typeof n === "number" && Number.isFinite(n) && Math.abs(n) <= 1e12;
   const mod = n => ((n % TAU) + TAU) % TAU;
   const validPoint = p => p && finite(p.x) && finite(p.y) && (p.z === undefined || finite(p.z));
@@ -14,11 +14,12 @@
   function progress(options, code, fallback, details = {}) { options.onProgress?.(fallback); options.onDiagnosticProgress?.(diagnostic(code, details)); }
   function check(signal) { if (signal?.aborted) throw abort(); }
   function multiply(a, b) {
-    return [a[0]*b[0]+a[2]*b[1], a[1]*b[0]+a[3]*b[1], a[0]*b[2]+a[2]*b[3], a[1]*b[2]+a[3]*b[3], a[0]*b[4]+a[2]*b[5]+a[4], a[1]*b[4]+a[3]*b[5]+a[5]];
+    return [a[0]*b[0]+a[2]*b[1], a[1]*b[0]+a[3]*b[1], a[0]*b[2]+a[2]*b[3], a[1]*b[2]+a[3]*b[3], a[0]*b[4]+a[2]*b[5]+a[4], a[1]*b[4]+a[3]*b[5]+a[5], (a[6]??1)*(b[6]??1), (a[6]??1)*(b[7]??0)+(a[7]??0)];
   }
   function transform(p, m) {
     if (!validPoint(p)) throw invalid("point", "올바르지 않은 좌표");
-    const result = { x: m[0]*p.x+m[2]*p.y+m[4], y: -(m[1]*p.x+m[3]*p.y+m[5]), ...(p.z ? { z: p.z } : {}) };
+    const z = (p.z || 0)*(m[6]??1)+(m[7]??0);
+    const result = { x: m[0]*p.x+m[2]*p.y+m[4], y: -(m[1]*p.x+m[3]*p.y+m[5]), ...(z ? { z } : {}) };
     if (!validPoint(result)) throw invalid("coordinate-range", "좌표 범위 초과");
     return result;
   }
@@ -62,6 +63,7 @@
   }
   function attachDimStyles(text, document) {
     const lines = text.replace(/\r\n?/g,"\n").split("\n");
+    attachSelectionMetadata(lines, document);
     document.dimStyles = new Map();
     const overrides = new Map(), anonymous = new Map();
     const recordTypes = new Set(["DIMSTYLE", "DIMENSION", "BLOCK", "ENDBLK", "POLYLINE", "VERTEX", "SEQEND"]);
@@ -115,10 +117,44 @@
     for (const [name, block] of document.blocks) applyOverrides(block.entities, name);
     return document;
   }
+  function attachSelectionMetadata(lines, document) {
+    const records = [];
+    for (let i = 0; i < lines.length - 1; i += 2) {
+      if (lines[i].trim() !== "0") continue;
+      const type = lines[i + 1].trim(), tags = [];
+      for (i += 2; i < lines.length - 1 && lines[i].trim() !== "0"; i += 2)
+        tags.push([Number(lines[i]), lines[i + 1]]);
+      i -= 2;
+      if (["DICTIONARY", "GROUP", "XRECORD"].includes(type)) records.push({ type, tags });
+    }
+    const names = new Map(), filterHandles = new Set();
+    const first = (record, code) => record.tags.find(tag => tag[0] === code)?.[1]?.trim();
+    records.filter(record => record.type === "DICTIONARY").forEach(record => {
+      let name = "";
+      record.tags.forEach(([code, value]) => {
+        if (code === 3) name = value;
+        else if (code === 350 || code === 360) {
+          names.set(value.trim().toUpperCase(), name);
+          if (name === "HANCAD_SELECTION_FILTERS") filterHandles.add(value.trim().toUpperCase());
+        }
+      });
+    });
+    document.selectionGroups = records.filter(record => record.type === "GROUP").map(record => ({
+      id: first(record, 5),
+      name: names.get(first(record, 5)?.toUpperCase()) || `*A${records.indexOf(record) + 1}`,
+      description: record.tags.find(tag => tag[0] === 300)?.[1] || "",
+      selectable: first(record, 71) !== "0", handles: record.tags.filter(tag => tag[0] === 340).map(tag => tag[1].trim().toUpperCase()),
+    }));
+    document.selectionFilters = records.filter(record => record.type === "XRECORD" && filterHandles.has(first(record, 330)?.toUpperCase())).flatMap(record => {
+      try { return [{ name: names.get(first(record, 5)?.toUpperCase()), expression: JSON.parse(record.tags.filter(tag => tag[0] === 1).map(tag => tag[1]).join("")) }]; }
+      catch { return []; }
+    });
+  }
   function convertDocument(document, options = {}) {
     const parser = globalThis.CadDxf;
     const report = { format: options.format || "DXF", version: options.version || document.header?.acadVersion || "", imported: 0, sourceEntities: document.entities.length, skipped: 0, approximated: 0, unsupported: [], warnings: [] };
     const missing = new Map(), warnings = new Map(), entities = [];
+    const clipboardBlocks = [], clipboardBlockNames = new Set();
     const addWarning = (message, identity) => warnings.set(message, identity || null);
     const skip = (type, reason, identity) => { report.skipped++; missing.set(type, (missing.get(type) || 0) + 1); if (reason) addWarning(reason, identity); };
     function hex(aci, trueColor) {
@@ -220,17 +256,25 @@
         if (e.type === "INSERT") {
           const block = document.blocks.get(e.blockName);
           if (!block || stack.includes(e.blockName) || stack.length >= 32) { const name = String(e.blockName).slice(0, 80); skip("INSERT", `블록 누락 또는 순환 참조: ${name}`, diagnostic("block-reference", { name })); return; }
-          const { scaleX: sx, scaleY: sy, rotation, columnCount: cols, rowCount: rows } = e;
-          if (![sx, sy, rotation, e.columnSpacing, e.rowSpacing].every(finite) || !sx || !sy || !Number.isInteger(cols) || !Number.isInteger(rows) || cols < 1 || rows < 1 || cols*rows > 10000 || !validPoint(e.insertionPoint) || !validPoint(block.basePoint)) throw invalid("block-transform", "블록 변환 데이터가 올바르지 않습니다.");
+          const { scaleX: sx, scaleY: sy, rotation, columnCount: cols, rowCount: rows } = e, sz = e.scaleZ ?? 1;
+          if (![sx, sy, sz, rotation, e.columnSpacing, e.rowSpacing].every(finite) || !sx || !sy || !sz || !Number.isInteger(cols) || !Number.isInteger(rows) || cols < 1 || rows < 1 || cols*rows > 10000 || !validPoint(e.insertionPoint) || !validPoint(block.basePoint)) throw invalid("block-transform", "블록 변환 데이터가 올바르지 않습니다.");
           const angle = rotation*Math.PI/180, c = Math.cos(angle), n = Math.sin(angle), b = block.basePoint;
           for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++) {
             const dx = col*e.columnSpacing, dy = row*e.rowSpacing;
-            const local = [c*sx,n*sx,-n*sy,c*sy,e.insertionPoint.x+c*dx-n*dy-c*sx*b.x+n*sy*b.y,e.insertionPoint.y+n*dx+c*dy-n*sx*b.x-c*sy*b.y];
+            const local = [c*sx,n*sx,-n*sy,c*sy,e.insertionPoint.x+c*dx-n*dy-c*sx*b.x+n*sy*b.y,e.insertionPoint.y+n*dx+c*dy-n*sx*b.x-c*sy*b.y,sz,(e.insertionPoint.z||0)-sz*(b.z||0)];
             const next = multiply(m, local);
+            const first = entities.length;
             for (const child of block.entities) visit(child, next, s, [...stack,e.blockName]);
+            if (!stack.length && entities.length > first) {
+              const originalName = String(e.blockName), basePoint = transform({x:e.insertionPoint.x+c*dx-n*dy,y:e.insertionPoint.y+n*dx+c*dy,z:e.insertionPoint.z||0},m);
+              let name = originalName, suffix = 2;
+              while (clipboardBlockNames.has(name.toUpperCase())) name = `${originalName}$${suffix++}`;
+              clipboardBlockNames.add(name.toUpperCase());
+              clipboardBlocks.push({ name, basePoint, entityIds: entities.slice(first).map(entity => entity.id) });
+            }
           }
           for (const attr of e.attribs || []) visit({ ...e, ...attr, type: "TEXT", widthFactor: 1, hAlign: 0, vAlign: 0, generationFlags: 0 }, m, s, stack);
-          addWarning("블록은 개별 편집 객체로 분해합니다.", diagnostic("blocks-exploded")); return;
+          if (stack.length) addWarning("중첩 블록은 상위 블록 안의 개별 편집 객체로 변환합니다.", diagnostic("blocks-exploded")); return;
         }
         if (e.type === "DIMENSION") {
           const type=e.dimType & 7;
@@ -268,8 +312,13 @@
         }
         if (e.type === "LINE") add({ ...s, type: "line", a: transform(e.start,m), b: transform(e.end,m) });
         else if (["LWPOLYLINE","POLYLINE"].includes(e.type)) {
-          poly(bulgePoints(e.vertices.map(v => e.elevation ? {...v,z:e.elevation} : v),e.closed),e.closed,m,s);
-          if (e.vertices.some(v => Math.abs(v.bulge || 0) > 1e-10)) { report.approximated++; addWarning("곡선 폴리선 / 타원 / 비균일 축척의 원은 편집 가능한 폴리선으로 근사합니다.", diagnostic("curve-approximated")); }
+          const sx=Math.hypot(m[0],m[1]),sy=Math.hypot(m[2],m[3]),uniform=Math.abs(sx-sy)<1e-8*Math.max(1,sx,sy)&&Math.abs(m[0]*m[2]+m[1]*m[3])<1e-8*Math.max(1,sx*sy);
+          const vertices=e.vertices.map(v=>e.elevation?{...v,z:e.elevation}:v);
+          if(uniform) add({...s,type:"polyline",points:vertices.map(p=>transform(p,m)),closed:e.closed,bulges:vertices.map(v=>(v.bulge||0)*(m[0]*m[3]-m[1]*m[2]<0?1:-1))});
+          else {
+            poly(bulgePoints(vertices,e.closed),e.closed,m,s);
+            if (e.vertices.some(v => Math.abs(v.bulge || 0) > 1e-10)) { report.approximated++; addWarning("비균일 축척의 곡선 폴리선은 편집 가능한 폴리선으로 근사합니다.", diagnostic("curve-approximated")); }
+          }
           if (e.is3d) addWarning("3D 폴리선의 Z 좌표를 보존하며 화면에는 XY 평면으로 투영합니다.", diagnostic("polyline-projected"));
         } else if (["CIRCLE","ARC"].includes(e.type)) {
           if (!validPoint(e.center) || !finite(e.radius) || e.radius <= 1e-8) throw invalid("circle-radius", "원 반지름이 올바르지 않습니다.");
@@ -292,8 +341,8 @@
           let p = transform(e.alignmentPoint && (e.hAlign || e.vAlign) ? e.alignmentPoint : e.insertionPoint,m);
           const angle = Math.atan2(dir.y,dir.x), width = Math.max(...text.split("\n").map(v => Array.from(v).length))*size*0.7;
           const horizontal = e.type === "MTEXT" ? (e.attachmentPoint-1)%3 : (e.hAlign === 1 || e.hAlign === 4) ? 1 : e.hAlign === 2 ? 2 : 0;
-          p = { x:p.x-Math.cos(angle)*width*horizontal/2, y:p.y-Math.sin(angle)*width*horizontal/2 };
-          if (e.type === "MTEXT") p = { x:p.x-Math.sin(angle)*size, y:p.y+Math.cos(angle)*size };
+          p = { ...p,x:p.x-Math.cos(angle)*width*horizontal/2, y:p.y-Math.sin(angle)*width*horizontal/2 };
+          if (e.type === "MTEXT") p = { ...p,x:p.x-Math.sin(angle)*size, y:p.y+Math.cos(angle)*size };
           add({ ...s,type:"text",point:p,text,textSize:size,rotation:angle });
           if (e.type === "MTEXT" || e.widthFactor !== 1 || e.obliqueAngle || e.generationFlags || e.hAlign || e.vAlign) { report.approximated++; addWarning("문자 서식 / 글꼴 / 정렬은 기본 문자로 근사합니다.", diagnostic("text-approximated")); }
         } else if (["SOLID","TRACE","3DFACE"].includes(e.type)) {
@@ -321,13 +370,24 @@
         skip(e.type,`${e.type}: ${message}`, diagnostic("entity-skipped", { entityType: e.type, reason }));
       }
     }
-    for (const e of document.entities) visit(e,IDENTITY);
+    const sourceHandles = new Map();
+    for (const e of document.entities) {
+      const index = entities.length;
+      visit(e,IDENTITY);
+      if (e.handle) sourceHandles.set(e.handle.toUpperCase(), entities.slice(index).map(entity => entity.id));
+    }
     if (!entities.length) throw failure("no-editable-entities", "편집 가능한 2D 객체가 없습니다. 원래 도면은 그대로 유지됩니다.");
     if (layers.length > 256) throw failure("layer-limit", "레이어가 256개를 초과합니다. 필요한 레이어만 분리해 주세요.", { limit: 256 });
     const unit = ({4:"mm",5:"cm",6:"m"})[document.header?.insUnits] ?? "";
     if (!unit) addWarning("도면 단위가 mm / cm / m로 지정되지 않아 단위 없는 좌표로 가져옵니다.", diagnostic("unit-unspecified"));
     const linetypes = [...document.lineTypes.values()].map((entry) => ({ name: entry.name, description: entry.description || "", pattern: entry.pattern || [] }));
     const state = Tool.core.cadEngine.normalizeState({ version:1,entities,layers,linetypes,selectedIds:[],settings:{ unit,layer:"0" } });
+    if (document.selectionGroups?.length) state.groups = document.selectionGroups.map(group => ({
+      id: group.id, name: group.name, description: group.description, selectable: group.selectable,
+      ids: [...new Set(group.handles.flatMap(value => sourceHandles.get(value) || []))],
+    }));
+    if (document.selectionFilters?.length) state.selectionFilters = document.selectionFilters;
+    if (clipboardBlocks.length) state.clipboardBlocks = clipboardBlocks;
     if (state.entities.length !== entities.length) throw failure("imported-invalid", "가져온 도면 검증에 실패했습니다.");
     report.imported = state.entities.length;
     report.unsupported = [...missing].map(([type,count])=>({type,count}));

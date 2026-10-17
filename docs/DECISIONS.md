@@ -1,5 +1,58 @@
 # Decisions
 
+## 2026-10-17: Phase 05 selection, grips and Clipboard
+
+Selection gestures follow the independent PICKAUTO bits and PICKDRAG input
+methods documented by Autodesk: [PICKAUTO](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-7BAAA374-8409-4296-B520-C5355941C836.htm),
+[PICKDRAG](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-46CBF4EF-E210-447D-AE6E-793249551640.htm).
+Default press-drag is lasso; click-release-click is the rectangular method.
+PICKFIRST=0 blocks idle preselection while command-owned selection stays usable.
+The common prompt remains literally `객체 선택:`; supplemental keyword controls
+and dynamic options expose its otherwise hidden English methods.
+
+Hover/selection styling changes only affected GPU style texels. ACI variables
+control area colors and opacity; SELECTIONAREA=0 keeps the outline without fill.
+SELECTIONPREVIEWLIMIT defaults to the documented 20,000; its current integer
+validation uses 0..32767 pending installed-reference range comparison.
+[Autodesk preview limit](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9CDDA4F9-5B88-428F-B0C8-345E9A9DC4F1.htm).
+GRIPMULTIFUNCTIONAL (3), GRIPTIPS (1), PREVIEWFILTER (3) and this preview limit
+were added to the declarative catalog. No dependency upgrade was selected.
+
+Grip transforms retain accepted copies provisionally and publish one command
+transaction. Shift hot-grip selection is transient; its first Esc clears hot
+state before a subsequent Esc clears object selection. Exact curve edits retain
+polyline bulges in model Y-down coordinates, inverted once for WCS/DXF. Aggregate
+group/clipboard-block grips follow GROUPDISPLAYMODE/GRIPBLOCK; group copies receive
+separate definitions and persistent identities.
+
+Grip dimension input reads DYNDIVIS and DYNDIGRIP rather than treating every
+numeric field as pointer displacement. Single supported shape grips resolve
+result/change lengths, angles and arc radii against their original geometry;
+locks project through the shared point pipeline without rounding doubles.
+Invalid object dimensions cannot commit through Enter or a mouse pick. TEXT,
+DIMENSION, ARC endpoints and aggregate/multiple hot grips retain displacement
+input. The exact adjacent-segment presentation remains an installed-reference
+comparison item; official sources are recorded in phase05-grip-notes.md.
+
+Named groups and clipboard block instances survive local recovery and supported
+DXF. Named FILTER definitions use a profile-global store with 18-character names;
+Apply then asks for objects and filters the picked methods. XOR takes exactly two
+operands and NOT takes one. The earlier optional drawing/DXF filter extension is
+still decoded for compatibility; it is not the authoritative named-filter store.
+Mirrored native entities provide real persistent
+handles, ownership and reactors inside the same command transaction; they are
+excluded from duplicate display/snaps. These adapters do not claim lossless
+foreign-object DWG/DXF preservation or complete later-phase block editing.
+
+Win32 Clipboard uses a real HWND, registered HanCAD.Drawing.v1 and PNG formats,
+CF_DIB and Unicode text. Browser ClipboardItem offers exact JSON plus PNG; denied
+OS access is explicitly reported and falls back to same-origin IndexedDB for
+cross-window use. COPYCLIP's inferred lower-left base and 500 ms grip-menu hover
+timing require comparison with installed Korean AutoCAD. Native compilation and
+runtime checks are blocked by missing MSVC/Windows SDK, independently of passing
+actual browser system Clipboard checks. Detailed sources and tests are in the
+three phase05 workstream notes; final verification belongs to PROGRESS.md.
+
 ## 2026-10-17: Phase 04 WIP checkpoint and pause
 
 The user explicitly paused Phase 04 before integration and acceptance. The new

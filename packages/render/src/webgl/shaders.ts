@@ -82,6 +82,7 @@ flat in float vHalfWidth;
 out vec4 color;
 void main() {
   if (vColor.a <= 0.) discard;
+  if (vStyle.w > .5 && mod(gl_FragCoord.x + gl_FragCoord.y, 8.) > 4.) discard;
   if (uPass == 0 && vColor.a < .999) discard;
   if (uPass == 1 && vColor.a >= .999) discard;
   if (uFill == 0 && ((uWide == 0 && vStyle.x > 1.) || (uWide == 1 && vStyle.x <= 1. && uForceWide == 0))) discard;

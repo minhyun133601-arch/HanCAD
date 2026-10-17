@@ -2,6 +2,7 @@ import type { CadPoint } from '@hancad/legacy-bridge';
 import type { CadAidSettings } from './drafting-aids';
 import type { DisplayLayerStyle } from './sources/style-tables';
 import type { LinetypeDefinition } from './style/linetype';
+import { selectionPolicy, type SelectionGesture, type SelectionPolicy } from './selection-policy';
 
 export interface CadView {
   scale: number;
@@ -12,6 +13,7 @@ export interface CadPointerPick {
   point: CadPoint;
   entityId?: string;
   shiftKey: boolean;
+  ctrlKey?: boolean;
 }
 export interface CadSelectionDrag {
   start: CadPoint;
@@ -20,7 +22,9 @@ export interface CadSelectionDrag {
   ctrlKey: boolean;
   phase: 'start' | 'move' | 'end' | 'cancel';
   reason?: 'escape';
-  gesture?: 'area' | 'fence';
+  gesture?: SelectionGesture;
+  mode?: 'window' | 'crossing' | 'fence';
+  twoPoint?: boolean;
   points?: readonly CadPoint[];
 }
 /** The displayed model region: center in drawing-session coordinates and height in units. */
@@ -41,7 +45,8 @@ export interface CadCanvasOptions {
   onCoordinates?: (point: CadPoint) => void;
   onPick?: (pick: CadPointerPick) => void;
   canSelectArea?: () => boolean;
-  selectionGesture?: () => 'area' | 'fence';
+  selectionGesture?: () => SelectionGesture;
+  selectionCommandActive?: () => boolean;
   suppressSelectionBox?: (start: CadPoint) => boolean;
   onSelectionDrag?: (event: CadSelectionDrag) => void;
   getNavigationSettings?: () => CadNavigationSettings;
@@ -76,8 +81,11 @@ interface Press {
   ctrlKey: boolean;
   suppressBox: boolean;
   dragging: boolean;
-  gesture: 'area' | 'fence';
+  gesture: SelectionGesture;
   points: CadPoint[];
+  policy: SelectionPolicy;
+  awaitingCorner: boolean;
+  mode?: 'window' | 'crossing' | 'fence';
 }
 
 /** Keeps canvas capture, selection gestures and view navigation out of drawing code. */
@@ -164,14 +172,23 @@ export class CadPointerController {
       shiftKey: press.shiftKey,
       ctrlKey: press.ctrlKey,
       phase,
-      gesture: press.gesture,
-      ...(press.gesture === 'fence' ? { points: press.points.map((point) => ({ ...point })) } : {}),
+      gesture: press.mode === 'fence' ? 'fence' : press.gesture,
+      ...(press.mode ? { mode: press.mode } : {}),
+      ...(press.awaitingCorner ? { twoPoint: true } : {}),
+      ...(['fence', 'lasso'].includes(press.gesture)
+        ? { points: press.points.map((point) => ({ ...point })) }
+        : {}),
       ...(reason === undefined ? {} : { reason }),
     };
   }
-  private pick(point: CadPoint, shiftKey: boolean): void {
+  private pick(point: CadPoint, shiftKey: boolean, ctrlKey = false): void {
     const entityId = this.host.pick(point);
-    this.options.onPick?.({ point, shiftKey, ...(entityId === undefined ? {} : { entityId }) });
+    this.options.onPick?.({
+      point,
+      shiftKey,
+      ctrlKey,
+      ...(entityId === undefined ? {} : { entityId }),
+    });
   }
   private readonly onWheel = (event: WheelEvent): void => {
     event.preventDefault();
@@ -204,11 +221,36 @@ export class CadPointerController {
     const mode = event.button === 0 ? this.options.getNavigationMode?.() : 'pan';
     if (event.button === 0 && !mode) {
       const point = this.host.worldPoint(local);
+      if (this.press?.awaitingCorner) {
+        const pending = this.press;
+        this.press = undefined;
+        pending.end = point;
+        this.options.onSelectionDrag?.(this.selectionEvent(pending, 'end'));
+        this.host.invalidate();
+        return;
+      }
       if (!this.options.canSelectArea?.()) {
-        this.pick(point, event.shiftKey);
+        this.pick(point, event.shiftKey, event.ctrlKey);
         return;
       }
       this.cancel();
+      const gesture = this.options.selectionGesture?.() ?? 'area';
+      const value = (name: string, fallback: number) => {
+        const current = this.options.getSystemVariable?.(name);
+        return typeof current === 'number' ? current : fallback;
+      };
+      const policy = selectionPolicy(
+        value('PICKAUTO', 5),
+        value('PICKDRAG', 2),
+        Boolean(this.host.pick(point)),
+        this.options.selectionCommandActive?.() ?? false,
+      );
+      if (gesture !== 'area') {
+        // TRIM/EXTEND use a held-button fence; a plain click still picks its target.
+        policy.clickWindow = gesture !== 'fence';
+        policy.dragWindow = true;
+        policy.lasso = false;
+      }
       this.press = {
         pointerId: event.pointerId,
         local,
@@ -218,8 +260,10 @@ export class CadPointerController {
         ctrlKey: event.ctrlKey,
         suppressBox: !event.shiftKey && (this.options.suppressSelectionBox?.(point) ?? false),
         dragging: false,
-        gesture: this.options.selectionGesture?.() ?? 'area',
+        gesture,
         points: [{ ...point }],
+        policy,
+        awaitingCorner: false,
       };
     } else {
       const previous = this.middleClick;
@@ -281,13 +325,25 @@ export class CadPointerController {
     const point = this.host.worldPoint(local);
     const press = this.press;
     if (press && (event.pointerId === undefined || event.pointerId === press.pointerId)) {
-      if (event.buttons !== undefined && !(event.buttons & 1)) this.cancel();
+      if (!press.awaitingCorner && event.buttons !== undefined && !(event.buttons & 1))
+        this.cancel();
       else {
         press.end = point;
         press.ctrlKey = event.ctrlKey;
-        if (press.gesture === 'fence') this.appendFencePoint(press, point);
-        if (press.dragging || Math.hypot(local.x - press.local.x, local.y - press.local.y) >= 4) {
+        if (press.gesture === 'fence' || press.gesture === 'lasso')
+          this.appendFencePoint(press, point);
+        if (
+          press.awaitingCorner ||
+          press.dragging ||
+          ((press.policy.dragWindow || press.suppressBox) &&
+            Math.hypot(local.x - press.local.x, local.y - press.local.y) >= 4)
+        ) {
           const phase = press.dragging ? 'move' : 'start';
+          if (!press.dragging && !press.suppressBox && press.policy.lasso) {
+            press.gesture = 'lasso';
+            press.mode = point.x < press.start.x ? 'crossing' : 'window';
+            this.appendFencePoint(press, point);
+          }
           press.dragging = true;
           this.options.onSelectionDrag?.(this.selectionEvent(press, phase));
           this.host.invalidate();
@@ -310,14 +366,22 @@ export class CadPointerController {
     this.press = undefined;
     press.end = this.host.worldPoint(this.localPoint(event));
     press.ctrlKey = event.ctrlKey;
-    if (press.gesture === 'fence') this.appendFencePoint(press, press.end);
+    if (press.gesture === 'fence' || press.gesture === 'lasso')
+      this.appendFencePoint(press, press.end);
     this.release(press.pointerId);
     if (press.dragging) {
       this.options.onSelectionDrag?.(this.selectionEvent(press, 'end'));
       this.host.invalidate();
-    } else this.pick(press.start, press.shiftKey);
+    } else if (press.policy.clickWindow && !press.suppressBox) {
+      press.awaitingCorner = true;
+      press.dragging = true;
+      this.press = press;
+      this.options.onSelectionDrag?.(this.selectionEvent(press, 'start'));
+      this.host.invalidate();
+    } else this.pick(press.start, press.shiftKey, press.ctrlKey);
   };
   private readonly onPointerCancel = (event: PointerEvent): void => {
+    if (event.type === 'lostpointercapture' && this.press?.awaitingCorner) return;
     if (event.pointerId === this.press?.pointerId || event.pointerId === this.pan?.pointerId)
       this.cancel();
   };
@@ -326,6 +390,18 @@ export class CadPointerController {
     if (!last || point.x !== last.x || point.y !== last.y) press.points.push({ ...point });
   }
   private readonly onKeyDown = (event: KeyboardEvent): void => {
+    if (event.code === 'Space' && this.press?.dragging && this.press.gesture === 'lasso') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.press.mode =
+        this.press.mode === 'window'
+          ? 'crossing'
+          : this.press.mode === 'crossing'
+            ? 'fence'
+            : 'window';
+      this.host.invalidate();
+      return;
+    }
     if (event.code !== 'Escape') return;
     if (this.press || this.pan) {
       event.preventDefault();

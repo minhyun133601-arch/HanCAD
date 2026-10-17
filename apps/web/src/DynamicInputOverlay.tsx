@@ -1,6 +1,6 @@
 import type { useDynamicInput } from './useDynamicInput';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { keywordOf, promptOptions } from './command-line/PromptKeywords';
+import { keywordOf } from './command-line/PromptKeywords';
 import { dynamicPosition } from './dynamic-input-state';
 import './dynamic-input.css';
 
@@ -10,6 +10,11 @@ const labels = {
   x: ['X', 'X'],
   y: ['Y', 'Y'],
   z: ['Z', 'Z'],
+  result: ['결과 길이', 'Resulting length'],
+  lengthChange: ['길이 변경', 'Length change'],
+  absoluteAngle: ['절대 각도', 'Absolute angle'],
+  angleChange: ['각도 변경', 'Angle change'],
+  radius: ['호 반지름', 'Arc radius'],
 } as const;
 export function DynamicInputOverlay({ view }: { view: ReturnType<typeof useDynamicInput> }) {
   const overlay = useRef<HTMLDivElement>(null);
@@ -35,7 +40,7 @@ export function DynamicInputOverlay({ view }: { view: ReturnType<typeof useDynam
   }, [view.visible, view.screen.x, view.screen.y, view.menu, view.size]);
   if (!view.visible) return null;
   const ko = view.locale === 'ko-KR';
-  const options = promptOptions(view.prompt);
+  const options = view.optionLabels;
   return (
     <div
       className="dynamic-input-overlay"
@@ -88,6 +93,7 @@ export function DynamicInputOverlay({ view }: { view: ReturnType<typeof useDynam
                   className={view.state.field === field ? 'dynamic-field active' : 'dynamic-field'}
                   data-field={field}
                   data-locked={locked}
+                  aria-invalid={view.invalid && locked}
                 >
                   <button
                     type="button"

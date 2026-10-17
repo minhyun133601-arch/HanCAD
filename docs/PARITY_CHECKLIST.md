@@ -3,6 +3,15 @@
 These checks track reference behavior and unresolved compatibility. A registered
 command is not an implemented command.
 
+- [ ] Phase 05 installed-reference selection: compare all 18 keyword labels/prompts, found/duplicate/locked punctuation, PICKADD 0/1/2, PICKAUTO 0..7, PICKDRAG 0/1/2, PICKFIRST=0, lasso Space cycling, click-release-click cancellation and Ctrl+polyline segment selection.
+- [ ] Phase 05 visuals: compare exact ACI area colors/opacity, dashed versus glowing selection, preview widths, overlap badge/list order, high-DPI grips, GROUPDISPLAYMODE, GRIPBLOCK, hot/hover colors, GRIPOBJLIMIT and selection-preview limit range. GPU styles and overlays implement behavior; an installed-AutoCAD visual match is not certified.
+- [ ] Phase 05 filters/groups: compare QSELECT include/exclude/current/append, SELECTSIMILAR unsupported style identities, nested FILTER classic-dialog presentation, Korean names/descriptions and stable GROUP rename/copy behavior. Solid subobjects await the later kernel.
+- [ ] Phase 05 grip editing: compare exact mode/option prompts, 500 ms hover timing, Ctrl action/copy behavior, multiple hot grips, circle radius and line Lengthen scalar exceptions, ARC endpoint reconstruction, and adjacent bulge behavior after Add/Remove Vertex. MIRRTEXT is limited by the current TEXT schema.
+- [ ] Phase 05 grip dimensions: compare DYNDIVIS/DYNDIGRIP field order, labels and arc major/minor branches. Single supported shape grips expose result/change/angle/radius dimensions; TEXT, DIMENSION, ARC endpoints and aggregate/multiple hot grips use displacement fields. Compare adjacent-segment and annotated dimension presentation with installed Korean AutoCAD.
+- [ ] Phase 05 Clipboard: compare COPYCLIP's default lower-left base, duplicate named definitions and messages, PASTEBLOCK naming/grips and supported DXF inserts; proprietary AutoCAD clipboard/OLE/foreign DWG transfers remain later work.
+- [ ] Phase 05 native Windows acceptance: compile and execute the Win32 Clipboard bridge and desktop key bindings after MSVC C++ tools/Windows SDK are installed. Actual browser JSON+PNG Clipboard and cross-window fallback tests do not certify the native adapter.
+- [ ] Phase 05 Properties: compare the basic palette's Korean captions and mixed-value edits; full docking/customization, configured QPMODE=2 type lists and complete property coverage remain Phase 08 requirements.
+
 - [ ] Phase 04 installed-reference comparison: coordinate unit/surveyor formatting, omitted-Z/ELEVATION inheritance, OSNAPCOORD keyboard/script and explicit override priority, local LINE U/continuation wording, deferred first-point previews and exact Korean modifier prompts. Automated fixtures and browser acceptance are recorded in PROGRESS.md; they are not an installed-AutoCAD comparison.
 - [ ] Phase 04 acquisition/display: compare 400 ms dwell and re-hover removal, seven-point eviction, near-tied Tab candidate order, polar aperture sensitivity, rotated/isometric snap spacing, all marker shapes and Korean tooltips, TRACKPATH 0..3 and Shift-only acquisition.
 - [ ] Phase 04 geometry assumptions: compare spline endpoint-tangent extensions, radial Perpendicular from a circle center, rotated-circle versus rotated-ellipse quadrants, conic extension display, and repeated second-object selection after a nonintersecting extended INT pick. Arbitrary UCS/face-based dynamic UCS remains later work; OSOPTIONS negative-Z suppression is enabled only by an actually active dynamic UCS.
@@ -72,7 +81,7 @@ command is not an implemented command.
 - [ ] Verify command prefixes, last-command repeat, cancellation and transparent commands.
 - [ ] Verify Korean IME command entry and Korean free-text composition on Windows.
 - [ ] Verify selection with PICKAUTO/PICKDRAG and lasso/window/crossing settings.
-- [ ] Compare rectangular drag window/crossing and Shift removal; implement lasso, click-click and full PICKAUTO/PICKDRAG behavior.
+- [ ] Compare the implemented rectangular window/crossing, Shift removal, lasso, click-click and PICKAUTO/PICKDRAG behavior with installed Korean AutoCAD.
 - [ ] Verify selected-object drag/Ctrl-copy, snapped targets with Ortho, PICKADD/PICKFIRST and whole-command COPY undo.
 - [ ] Complete COPYMODE, Array, Undo and Displacement beyond repeated two-point copies.
 - [ ] Compare APERTURE/AUTOSNAP feedback, exact endpoints/intersections at large coordinates and dense zoom levels.

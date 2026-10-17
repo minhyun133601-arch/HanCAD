@@ -1,5 +1,35 @@
 # Architecture
 
+Phase 05 routes SELECT, modifying commands and Clipboard selection through one
+headless SelectionSession. Selection membership is transient; groups are drawing
+metadata and named FILTER definitions belong to the shared profile. Native GROUP dictionary/member/reactor records and
+clipboard BLOCK_RECORD/BLOCK/INSERT records publish inside the same transaction
+as the transitional view, preserving command-level undo. Their mirrored native
+geometry is excluded from the display/snap merge to avoid duplicate candidates.
+
+CadPointerController implements PICKAUTO/PICKDRAG with captured lassos and
+click-release-click windows. Its awaiting-corner state survives the expected
+lost-capture event after the first release. Selection preview queries the retained
+R-tree; changed hover/selection styles upload only the affected GPU texture
+texels. Selection areas, group bounds and grips draw on the existing aid overlay.
+
+GripProvider and GripSession own definition grips, multi-hot state, transforms,
+multifunction actions and provisional copies. Mouse points reuse the editor aid
+pipeline; typed input uses PointInputController. Signed polyline bulges survive
+normalization, native display, snaps and supported DXF, with one Y-axis/sign
+conversion at each WCS boundary. Browser ClipboardItem and the Win32 adapter
+exchange exact versioned drawing JSON plus images; a reported IndexedDB fallback
+supports browser windows lacking OS Clipboard permission. Basic Properties and
+Quick Properties validate one state replacement per edit. Full palette and block
+editing remain with their original later phases.
+
+Pure grip-dimension contexts derive result/change lengths, angles and arc radii
+from the original entity and active definition grip. DYNDIVIS/DYNDIGRIP choose
+fields in the shared dynamic-input overlay. Locked object values resolve to exact
+target points through a projector in the existing aid constraints; invalid values
+cannot commit through keyboard or pointer input. Aggregate/multiple-hot and
+unsupported shape dimensions keep displacement input.
+
 Original Phases 01 and 02 are complete. Phase 00 native acceptance remains
 deferred and unverified. Subsequent work stays in original phase order.
 Previously delivered later-phase adapters remain supported, but their presence
@@ -407,8 +437,8 @@ up, cancellation, Escape, capture loss and window blur. Idle left drags emit
 directional selection events; selected-object drags emit provisional transforms
 and commit once on release. Ctrl copies with fresh identities. Window selection
 requires whole-object containment; crossing selection tests supported geometry.
-Hidden/locked layers are excluded from edits. PICKADD/PICKFIRST are read by selection
-and command entry; full PICKAUTO/PICKDRAG/lasso behavior remains pending. Navigation
+Hidden/locked layers are excluded from edits. Phase 05 connects PICKAUTO/PICKDRAG
+gesture policy, selection previews and the shared selection prompt. Navigation
 reads ZOOMFACTOR/ZOOMWHEEL/MBUTTONPAN live.
 
 ModifySession separates MOVE/COPY point input from provisional previews. MOVE

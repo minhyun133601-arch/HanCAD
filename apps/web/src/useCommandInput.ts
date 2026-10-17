@@ -48,6 +48,7 @@ export function useCommandInput(options: {
   locale: Locale;
   messages: Messages;
   inputIsDynamic?: () => boolean;
+  cycleOverlap?: () => void;
 }) {
   const { session, navigation, tools, files, surface, commandWindow, messages } = options;
   const shortcutText = getShortcutMessages(options.locale);
@@ -87,18 +88,23 @@ export function useCommandInput(options: {
   }
   /** Menus, ribbon and buttons run AutoCAD macros; a bare command name gets ^C^C_. */
   function execute(command: string): void {
+    if (command === '^C^C_PROPERTIES' && tools.properties.open) command = '^C^C_PROPERTIESCLOSE';
     surface.current?.cancelPointerInteraction();
     if (files.restoring) files.cancelRestore(false);
     commandWindow.show();
     void macros.run(/[\^;\\$*']/.test(command) ? command : `^C^C_${command}`);
     options.focusCommand();
   }
-  const pending = (action: 'cycleViewports' | 'cycleOverlap'): void =>
-    session.print(shortcutText.actionPending(shortcutText[action]));
+  const pending = (action: 'cycleViewports' | 'cycleOverlap'): void => {
+    if (action === 'cycleOverlap' && options.cycleOverlap) options.cycleOverlap();
+    else session.print(shortcutText.actionPending(shortcutText[action]));
+  };
   useWorkspaceShortcuts({
     files,
     draft: tools.draft,
     isActive: routing.isActive,
+    isSelectionPrompt: () => routing.inputMode === 'selection',
+    canPreselect: () => session.sysvars.getNumber('PICKFIRST') !== 0,
     cancelTools: () => {
       tools.cancelAll();
       navigation.cancel(false);
@@ -150,7 +156,9 @@ export function useCommandInput(options: {
           tools.modification.needsPoint() ||
           tools.measurement.isActive() ||
           tools.editing.needsPoint() ||
-          tools.text.needsPoint()),
+          tools.text.needsPoint() ||
+          tools.grip.needsPoint() ||
+          tools.clipboard.needsPoint()),
     pendingTooltip: shortcutText.pendingTooltip,
   };
 }

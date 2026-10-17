@@ -47,6 +47,7 @@ export function legacyDisplayGeometry(entity: CadEntity, unit?: string): Display
       entity.points.forEach((point, index) => {
         vertices[index * 5] = point.x;
         vertices[index * 5 + 1] = -point.y;
+        vertices[index * 5 + 2] = -(entity.bulges?.[index] ?? 0);
       });
       return { type: 'polyline', vertices, closed: entity.closed };
     }

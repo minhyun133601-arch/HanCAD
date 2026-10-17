@@ -65,12 +65,13 @@ describe('imperative imported drawing surface', () => {
     expect(fixture.canvas.dataset.selectionCount).toBe('1');
     const styleUploads = fixture.operations.filter(
       (operation) =>
-        operation.name === 'gl:texImage2D' && operation.args[8] instanceof Float32Array,
+        operation.name === 'gl:texSubImage2D' && operation.args[8] instanceof Float32Array,
     );
     const selectedStyle = styleUploads.at(-1)?.args[8] as Float32Array;
     expect(selectedStyle[0]).toBeCloseTo(0x38 / 255);
     expect(selectedStyle[1]).toBeCloseTo(0xbd / 255);
     expect(selectedStyle[2]).toBeCloseTo(0xf8 / 255);
+    expect(selectedStyle[4]).toBe(3);
     surface.setPreview([state.entities[0]].filter((entity) => entity !== undefined));
     expect(fixture.canvas.dataset.previewCount).toBe('1');
     const view = surface.getView();

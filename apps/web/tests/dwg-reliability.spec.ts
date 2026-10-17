@@ -324,15 +324,15 @@ test('a cold DWG reader reopens the same Korean-named file and restores it after
   await page.goto('/');
   await chooseFile(page, fixture);
   await waitForRead(page);
-  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
-  await expect(page.getByTestId('drawing-import-report')).toContainText('134');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('71');
+  await expect(page.getByTestId('drawing-import-report')).toContainText('133');
   const tabs = page
     .getByRole('navigation', { name: '도면 탭' })
     .getByRole('button', { name: fixture.name, exact: true });
   const reports = page
     .getByRole('log', { name: '명령 기록' })
     .locator('.history-line')
-    .filter({ hasText: /70개 객체/ });
+    .filter({ hasText: /71개 객체/ });
   const documentIdentity = () =>
     page.evaluate(() => {
       const session = JSON.parse(localStorage.getItem('hancad.active-drawing.v1') ?? '{}') as {
@@ -347,7 +347,7 @@ test('a cold DWG reader reopens the same Korean-named file and restores it after
   expect(firstDocumentId).toBeTruthy();
   await chooseFile(page, fixture);
   await waitForRead(page);
-  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('71');
   const name = page.getByRole('navigation', { name: '도면 탭' });
   await expect(name).toContainText(fixture.name);
   // Each successful OPEN owns a new document and one import report in its command workspace.
@@ -359,23 +359,35 @@ test('a cold DWG reader reopens the same Korean-named file and restores it after
   expect(secondDocumentId).not.toBe(firstDocumentId);
   await tabs.first().click();
   await expect(tabs.first()).toHaveAttribute('aria-current', 'page');
-  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
-  await expect(page.getByTestId('drawing-import-report')).toContainText('134');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('71');
+  await expect(page.getByTestId('drawing-import-report')).toContainText('133');
   expect(await documentIdentity()).toBe(firstDocumentId);
   await tabs.nth(1).click();
   await expect(tabs.nth(1)).toHaveAttribute('aria-current', 'page');
-  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('71');
   expect(await documentIdentity()).toBe(secondDocumentId);
   await page.reload();
-  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('71');
   await expect(name).toContainText(fixture.name);
-  await expect(page.getByTestId('drawing-import-report')).toContainText('134');
+  await expect(page.getByTestId('drawing-import-report')).toContainText('133');
 });
 
 test('an empty file chooser result and cancelling a read preserve the current drawing', async ({
   page,
 }) => {
   test.setTimeout(120000);
+  await page.addInitScript(() => {
+    const NativeWorker = Worker;
+    globalThis.Worker = new Proxy(NativeWorker, {
+      construct(target, args: [string | URL, WorkerOptions?]) {
+        const worker = new target(...args);
+        // Hold the real DWG worker at a pending decode so the cancel button is
+        // tested before completion, independently of scheduler/fixture speed.
+        if (args[1]?.name === 'local-dwg-reader') worker.postMessage = () => {};
+        return worker;
+      },
+    });
+  });
   await page.goto('/');
   await chooseFile(page, {
     name: 'previous.dxf',
@@ -395,6 +407,7 @@ test('an empty file chooser result and cancelling a read preserve the current dr
   await waitForRead(page);
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('1');
   await expect(page.getByRole('navigation', { name: '도면 탭' })).toContainText('previous.dxf');
+  await expect(page.getByRole('log', { name: '명령 기록' })).toContainText('취소');
 });
 
 test('a replacement DXF wins over a DWG still being decoded and can be reopened', async ({
@@ -452,6 +465,6 @@ test('a replacement DXF wins over a DWG still being decoded and can be reopened'
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('1');
   await expect(page.getByRole('navigation', { name: '도면 탭' })).toContainText(replacement.name);
   await expect(page.getByRole('log', { name: '명령 기록' })).not.toContainText(
-    'example_2000.dwg: 70',
+    'example_2000.dwg: 71',
   );
 });

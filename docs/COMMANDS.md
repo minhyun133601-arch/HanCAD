@@ -20,7 +20,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | ACTUSERMESSAGE      | -ARM, ARM                                           | 사용자 메시지 삽입         | Not implemented; explicit message (Phase 20)                                                                                            |
 | ADCENTER            | ADC, ADCENTER, CONTENT, DC, DCENTER                 | 디자인센터                 | Not implemented; explicit message (Phase 20)                                                                                            |
 | ADDSELECTED         |                                                     | 선택 항목 추가             | Not implemented; explicit message (Phase 06)                                                                                            |
-| AI_SELALL           |                                                     | 모두 선택                  | Not implemented; explicit message (Phase 05)                                                                                            |
+| AI_SELALL           |                                                     | 모두 선택                  | All visible editable entities; same path as Ctrl+A                                                                                      |
 | ALIASEDIT           |                                                     | 별칭 편집                  | Aliases, external commands, AutoCorrect and synonym lists; user acad.pgp file                                                           |
 | ALIGN               | AL                                                  | 정렬                       | Not implemented; explicit message (Phase 07)                                                                                            |
 | ALLPLAY             | APLAY                                               | 모두 재생                  | Not implemented; explicit message (Phase 23)                                                                                            |
@@ -70,12 +70,12 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | CONSTRAINTBAR       | CBAR                                                | 구속조건 막대              | Not implemented; explicit message (Phase 18)                                                                                            |
 | CONSTRAINTSETTINGS  | CSETTINGS                                           | 구속조건 설정              | Not implemented; explicit message (Phase 18)                                                                                            |
 | COPY                | CO, CP                                              | 복사                       | Selection, base/second point, repeated copies, Exit/Enter/Esc; one undo group                                                           |
-| COPYBASE            |                                                     | 기준점을 사용하여 복사     | Not implemented; explicit message (Phase 05)                                                                                            |
-| COPYCLIP            |                                                     | 복사                       | Not implemented; explicit message (Phase 05)                                                                                            |
+| COPYBASE            |                                                     | 기준점을 사용하여 복사     | Base-point-first selection; exact drawing Clipboard plus PNG                                                                            |
+| COPYCLIP            |                                                     | 복사                       | Current selection or shared object prompt; native/browser drawing Clipboard plus image                                                  |
 | COUNT               |                                                     | 개수                       | Not implemented; explicit message (Phase 15)                                                                                            |
 | CTABLESTYLE         | CT                                                  | 현재 테이블 스타일         | Not implemented; explicit message (Phase 16)                                                                                            |
 | CUI                 |                                                     | 사용자 인터페이스 사용자화 | Not implemented; explicit message (Phase 20)                                                                                            |
-| CUTCLIP             |                                                     | 잘라내기                   | Not implemented; explicit message (Phase 05)                                                                                            |
+| CUTCLIP             |                                                     | 잘라내기                   | Copy succeeds before one undoable erase                                                                                                 |
 | CVADD               | INSERTCONTROLPOINT                                  | 조정 정점 추가             | Not implemented; explicit message (Phase 22)                                                                                            |
 | CVHIDE              | POINTOFF                                            | 조정 정점 숨기기           | Not implemented; explicit message (Phase 22)                                                                                            |
 | CVREBUILD           | REBUILD                                             | 재작성                     | Not implemented; explicit message (Phase 22)                                                                                            |
@@ -87,7 +87,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | DATALINKUPDATE      | DLU                                                 | 데이터 링크 업데이트       | Not implemented; explicit message (Phase 16)                                                                                            |
 | DBCONNECT           | AAD, AEX, ALI, ARO, ASE, ASQ, DBC                   | 데이터베이스 연결          | Not implemented; explicit message (Phase 20)                                                                                            |
 | DDEDIT              |                                                     | 문자 편집                  | Not implemented; explicit message (Phase 10)                                                                                            |
-| DDGRIPS             | GR                                                  | 그립 옵션                  | Not implemented; explicit message (Phase 05)                                                                                            |
+| DDGRIPS             | GR                                                  | 그립 옵션                  | Selection options dialog for PICK*, preview/area/grip and group settings                                                                |
 | DDPTYPE             |                                                     | 점 스타일                  | Not implemented; explicit message (Phase 06)                                                                                            |
 | DDVPOINT            | VP                                                  | 관측점 사전 설정           | Not implemented; explicit message (Phase 21)                                                                                            |
 | DELAY               |                                                     | 지연                       | Not implemented; explicit message (Phase 19)                                                                                            |
@@ -127,7 +127,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | EDITSHOT            | ESHOT                                               | 샷 편집                    | Not implemented; explicit message (Phase 23)                                                                                            |
 | ELEV                |                                                     | 고도                       | Not implemented; explicit message (Phase 21)                                                                                            |
 | ELLIPSE             | EL                                                  | 타원                       | Not implemented; explicit message (Phase 06)                                                                                            |
-| ERASE               | DELETE, E                                           | 지우기                     | Partial / Pick or preselection; Delete shortcut                                                                                         |
+| ERASE               | DELETE, E                                           | 지우기                     | Shared object selection methods, noun-verb selection, Delete, locked-layer reporting                                                    |
 | ETRANSMIT           |                                                     | 전송                       | Not implemented; explicit message (Phase 09)                                                                                            |
 | EXPLODE             | X                                                   | 분해                       | Not implemented; explicit message (Phase 07)                                                                                            |
 | EXPORT              | EXP, -QPUB                                          | 내보내기                   | Not implemented; explicit message (Phase 09)                                                                                            |
@@ -144,7 +144,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | EXTRUDE             | EXT                                                 | 돌출                       | Not implemented; explicit message (Phase 22)                                                                                            |
 | FILL                |                                                     | 채우기                     | Not implemented; explicit message (Phase 06)                                                                                            |
 | FILLET              | F                                                   | 모깎기                     | Not implemented; explicit message (Phase 07)                                                                                            |
-| FILTER              | FI                                                  | 필터                       | Not implemented; explicit message (Phase 05)                                                                                            |
+| FILTER              | FI                                                  | 필터                       | Named nested AND/OR/NOT/XOR filters in profile-global filter.nfl-style browser storage; Apply starts filtered object selection          |
 | FIND                |                                                     | 찾기                       | Not implemented; explicit message (Phase 10)                                                                                            |
 | FLATSHOT            | FSHOT                                               | 평면 스냅샷                | Not implemented; explicit message (Phase 23)                                                                                            |
 | GEOGRAPHICLOCATION  | GEO, NORTH, NORTHDIR                                | 지리적 위치                | Not implemented; explicit message (Phase 21)                                                                                            |
@@ -153,7 +153,8 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | GRADIENT            | GD                                                  | 그라데이션                 | Not implemented; explicit message (Phase 12)                                                                                            |
 | GRAPHSCR            |                                                     | 그래픽 화면                | Closes the text window                                                                                                                  |
 | GRID                |                                                     | 그리드                     | Implemented / spacing, X multiples, On/Off, Snap, Major, Adaptive, Limits, Follow, Aspect; drafting-commands tests                      |
-| GROUP               | -G, G                                               | 그룹                       | Not implemented; explicit message (Phase 05)                                                                                            |
+| GROUP               | -G, G                                               | 그룹                       | Named/unnamed groups, description, native dictionary/member reactors and supported DXF                                                  |
+| GROUPEDIT           |                                                     | 그룹 편집                  | Add/remove/rename/description/explode; stable native GROUP identity                                                                     |
 | HANPROGRESS         |                                                     | 개발 진행 상황             | Current features, limitations and all 26 phase statuses                                                                                 |
 | HANSAVE             |                                                     | HCD 저장                   | Full native .hcd graph and blob download                                                                                                |
 | HATCH               | BH, -H, H                                           | 해치                       | Not implemented; explicit message (Phase 12)                                                                                            |
@@ -235,7 +236,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | NEWSHOT             | NSHOT                                               | 새 샷                      | Not implemented; explicit message (Phase 23)                                                                                            |
 | NEWVIEW             | NVIEW                                               | 새 뷰                      | Not implemented; explicit message (Phase 21)                                                                                            |
 | OFFSET              | O                                                   | 간격띄우기                 | Distance/two points/Through, Erase/Layer/Multiple/Exit/Undo; supported 2D subset                                                        |
-| OOPS                |                                                     | 복원                       | Partial / Restore latest erase set across edits and tab reactivation                                                                    |
+| OOPS                |                                                     | 복원                       | Restore latest erase set across edits and document activation                                                                           |
 | OPEN                | DXFIN, OPENURL                                      | 열기                       | Partial / New document from HCD or lossy local DWG/DXF import                                                                           |
 | OPTIONS             | OP, PREFERENCES                                     | 옵션                       | Display background controls; other Options tabs explicitly pending                                                                      |
 | ORTHO               |                                                     | 직교                       | Implemented / On/Off and transparent prompts; drafting-commands tests                                                                   |
@@ -245,9 +246,9 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | PAN                 | -P, P                                               | 초점이동                   | Realtime left drag; -PAN base/second point or displacement, one navigation undo                                                         |
 | PARAMETERS          | -PAR, PAR                                           | 매개변수 관리자            | Not implemented; explicit message (Phase 18)                                                                                            |
 | PARTIALOPEN         | PARTIALOPEN                                         | 부분 열기                  | Not implemented; explicit message (Phase 09)                                                                                            |
-| PASTEBLOCK          |                                                     | 블록으로 붙여넣기          | Not implemented; explicit message (Phase 05)                                                                                            |
-| PASTECLIP           |                                                     | 붙여넣기                   | Not implemented; explicit message (Phase 05)                                                                                            |
-| PASTEORIG           |                                                     | 원래 좌표로 붙여넣기       | Not implemented; explicit message (Phase 05)                                                                                            |
+| PASTEBLOCK          |                                                     | 블록으로 붙여넣기          | Persistent block membership and native BLOCK_RECORD/BLOCK/INSERT; one undo group                                                        |
+| PASTECLIP           |                                                     | 붙여넣기                   | Exact base-point placement across drawings/windows; one undo group                                                                      |
+| PASTEORIG           |                                                     | 원래 좌표로 붙여넣기       | Stored original coordinates with fresh entity identities                                                                                |
 | PASTESPEC           | PA                                                  | 선택하여 붙여넣기          | Not implemented; explicit message (Phase 13)                                                                                            |
 | PEDIT               | PE                                                  | 폴리선 편집                | Not implemented; explicit message (Phase 07)                                                                                            |
 | PLAN                |                                                     | 평면도                     | Not implemented; explicit message (Phase 21)                                                                                            |
@@ -262,8 +263,8 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | POLYGON             | POL                                                 | 폴리곤                     | Not implemented; explicit message (Phase 06)                                                                                            |
 | POLYSOLID           | PSOLID                                              | 폴리솔리드                 | Not implemented; explicit message (Phase 22)                                                                                            |
 | PREVIEW             | PRE                                                 | 플롯 미리보기              | Not implemented; explicit message (Phase 14)                                                                                            |
-| PROPERTIES          | CH, DDCHPROP, DDMODIFY, MO, PR, PROPS               | 특성                       | Not implemented; explicit message (Phase 08)                                                                                            |
-| PROPERTIESCLOSE     | PRCLOSE                                             | 특성 닫기                  | Not implemented; explicit message (Phase 08)                                                                                            |
+| PROPERTIES          | CH, DDCHPROP, DDMODIFY, MO, PR, PROPS               | 특성                       | Partial / Basic common and type-specific properties with WCS editing; full palette Phase 08                                             |
+| PROPERTIESCLOSE     | PRCLOSE                                             | 특성 닫기                  | Close the basic Properties palette                                                                                                      |
 | PSPACE              | PS                                                  | 도면 공간                  | Not implemented; explicit message (Phase 14)                                                                                            |
 | PTYPE               |                                                     | 점 스타일                  | Not implemented; explicit message (Phase 06)                                                                                            |
 | PUBLISH             |                                                     | 게시                       | Not implemented; explicit message (Phase 14)                                                                                            |
@@ -274,10 +275,10 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | QLEADER             | LE                                                  | 빠른 지시선                | Not implemented; explicit message (Phase 11)                                                                                            |
 | QNEW                |                                                     | 새로 만들기                | Not implemented; explicit message (Phase 09)                                                                                            |
 | QSAVE               |                                                     | 저장                       | Partial / Supported-entity DXF download                                                                                                 |
-| QSELECT             |                                                     | 빠른 선택                  | Not implemented; explicit message (Phase 05)                                                                                            |
+| QSELECT             |                                                     | 빠른 선택                  | Type/property/operators, scope, include/exclude and append dialog                                                                       |
 | QUICKCALC           | QC                                                  | 빠른 계산기                | Not implemented; explicit message (Phase 15)                                                                                            |
 | QUICKCUI            | QCUI                                                | 빠른 CUI                   | Not implemented; explicit message (Phase 20)                                                                                            |
-| QUICKPROPERTIES     | QP                                                  | 빠른 특성                  | Not implemented; explicit message (Phase 05)                                                                                            |
+| QUICKPROPERTIES     | QP                                                  | 빠른 특성                  | Basic current-type palette; QPMODE/PICKFIRST and shortcut toggle                                                                        |
 | QUIT                | EXIT                                                | 종료                       | Not implemented; explicit message (Phase 09)                                                                                            |
 | QVDRAWING           | QVD                                                 | 빠른 뷰 도면               | Not implemented; explicit message (Phase 20)                                                                                            |
 | QVDRAWINGCLOSE      | QVDC                                                | 빠른 뷰 도면 닫기          | Not implemented; explicit message (Phase 20)                                                                                            |
@@ -314,8 +315,8 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | SECTIONPLANE        | SPLANE                                              | 단면 평면                  | Not implemented; explicit message (Phase 23)                                                                                            |
 | SECTIONPLANEJOG     | JOGSECTION                                          | 단면 꺾기 추가             | Not implemented; explicit message (Phase 23)                                                                                            |
 | SECTIONPLANETOBLOCK | GENERATESECTION                                     | 단면 생성                  | Not implemented; explicit message (Phase 23)                                                                                            |
-| SELECT              |                                                     | 선택                       | Visible unlocked picks, window/crossing drag, Shift removal, Ctrl+A                                                                     |
-| SELECTSIMILAR       |                                                     | 유사 객체 선택             | Not implemented; explicit message (Phase 05)                                                                                            |
+| SELECT              |                                                     | 선택                       | All 19 prompt keywords; rectangle/polygon/fence/lasso, PICK rules, subobjects and cycling                                               |
+| SELECTSIMILAR       |                                                     | 유사 객체 선택             | Type-constrained property/name matching and settings bitcode                                                                            |
 | SEQUENCEPLAY        | SPLAY                                               | 시퀀스 재생                | Not implemented; explicit message (Phase 23)                                                                                            |
 | SETVAR              | SET                                                 | 시스템 변수 설정           | Partial / Typed/scoped validation; drawing values undoable; some ranges pending                                                         |
 | SHADEMODE           | SHA, SHADE                                          | 음영 처리                  | Not implemented; explicit message (Phase 21)                                                                                            |
@@ -359,7 +360,7 @@ The command table is generated from the Phase 03 catalog (`packages/commands/src
 | UCSMAN              | DDUCSP, UC                                          | 명명된 UCS                 | Not implemented; explicit message (Phase 21)                                                                                            |
 | UNDEFINE            |                                                     | 정의 해제                  | Partial / Disable a command; argument form                                                                                              |
 | UNDO                |                                                     | 명령 취소                  | Partial / All options; Auto groups runner macros; zoom/pan steps combine; Layer UI P08                                                  |
-| UNGROUP             |                                                     | 그룹 해제                  | Not implemented; explicit message (Phase 05)                                                                                            |
+| UNGROUP             |                                                     | 그룹 해제                  | Remove named/selected group definitions with undo                                                                                       |
 | UNION               | UNI                                                 | 합집합                     | Not implemented; explicit message (Phase 22)                                                                                            |
 | UNISOLATEOBJECTS    | UNHIDE, UNISOLATE                                   | 객체 격리 끝               | Not implemented; explicit message (Phase 15)                                                                                            |
 | UNITS               | DDUNITS, -UN, UN                                    | 단위                       | Not implemented; explicit message (Phase 15)                                                                                            |
@@ -465,14 +466,38 @@ snaps bypass grid/Ortho constraints. APERTURE and AUTOSNAP control search and fe
 modes are not substituted with another mode. Grid, polar/object tracking, dynamic
 input and full lineweight display controls are visibly unavailable until implemented.
 
+## Phase 05 selection, grips and Clipboard
+
+SELECT and command-then-select prompts share W/C/BOX/ALL/F/WP/CP/G/A/R/M/P/U/AU/
+SI/SU/O/L. PICKADD, PICKFIRST, PICKAUTO, PICKDRAG and PICKSTYLE are live. Idle
+selection is disabled at PICKFIRST=0. Press-drag uses a lasso when PICKAUTO bit 4
+is set; click-release-click uses a directional rectangle. Shift removes objects
+(or toggles at PICKADD=0). Locked candidates produce a message. Ctrl+A shares the
+active selection prompt. Ctrl+W toggles selection cycling; Shift+Space cycles
+overlapping candidates, and SELECTIONCYCLING=2 offers the choice list.
+
+QSELECT, SELECTSIMILAR Settings, named FILTER trees and GROUP/GROUPEDIT/UNGROUP
+use the drawing's supported properties. DDGRIPS edits selection/grip settings.
+Grips support Space/Enter mode cycling, Base/Copy/Undo/Reference/eXit, multiple hot
+grips and polyline/line multifunction actions. Current entity families have grip
+providers and use the shared point/drafting aid pipeline.
+
+COPYCLIP/CUTCLIP/COPYBASE and PASTECLIP/PASTEBLOCK/PASTEORIG transfer exact drawing
+data plus an image across documents and windows. Clipboard blocks materialize
+native records and supported DXF definitions/inserts; broad foreign-object
+fidelity remains a later I/O requirement. PROPERTIES/PROPERTIESCLOSE and
+QUICKPROPERTIES provide the basic palette; full Phase 08 acceptance is separate.
+Implementation references, tests and known limits are in phase05-selection-notes,
+phase05-grip-notes, phase05-clipboard-notes and PROGRESS.md.
+
 ## Practical editing and inquiry subset
 
 Left-to-right rectangular dragging selects completely enclosed objects; right-to-left
 crossing selects objects whose geometry crosses the region. Shift removes selections;
 hidden/locked layers cannot be edited. Drag a preselected object to move the selection,
 or hold Ctrl to copy it. Release commits once; Escape cancels the gesture while retaining
-selection, and a second Escape clears it. PICKADD/PICKFIRST are read; lasso, click-click,
-grips and complete PICKAUTO/PICKDRAG behavior remain pending.
+selection, and a second Escape clears it. Phase 05 adds lasso, click-click,
+the shared selection prompt, grip editing and complete PICKAUTO/PICKDRAG routing.
 
 M/MOVE and CO/CP/COPY accept a selected set or ask for objects and Enter, then base and
 second points. Coordinates, relative/polar input, direct distance, Ortho and exact
@@ -566,9 +591,9 @@ time-sensitive clicks and MBUTTONPAN. `snap-menu.spec.ts` checks one-shot modes,
 failed acquisition, typed/cancelled input and transparent ZOOM. `status-help.spec.ts`
 checks every status toggle, settings menus, profile visibility, coordinates and
 context help. `keyboard-routing.spec.ts` and `ribbon-keytips.spec.ts` check focus
-priority, key release and Alt tips. Later-phase menu targets (clipboard, advanced
-selection/properties and calculator) remain explicit pending
-commands in the catalog, and are not claimed as implemented features.
+priority, key release and Alt tips. Phase 05 now implements the Clipboard,
+selection and basic Properties menu targets. Calculator and full Properties
+customization remain explicit later-phase commands in the catalog.
 
 ## Phase 02 display/navigation verification
 
@@ -606,8 +631,12 @@ fields; comma selects the next Cartesian component; @/# chooses relative/absolut
 < chooses the angle inside an edit; Down opens the active prompt's keyword menu.
 Locked fields constrain both keyboard submission and the next mouse pick. Tooltip
 size/transparency honors DYNTOOLTIPS and stays within the drawing viewport.
-DYNDIGRIP controls are retained for later grip-stretch editing, where that variable
-applies; LINE always exposes its supported length and angle pair.
+Grip stretch reads DYNDIVIS: 0 shows length change, 1 also shows resulting length,
+and 2 filters resulting length, length change, absolute angle, angle change and
+arc radius through DYNDIGRIP. Single line endpoints, straight polyline vertices,
+circle quadrants and arc/bulged-segment midpoints expose their object dimensions.
+TEXT, DIMENSION, ARC endpoints, aggregate and multiple hot grips retain pointer
+displacement input. LINE always exposes its supported length and angle pair.
 
 Focused coverage: dynamic-input-state.test.ts, drafting-settings-state.test.ts,
 status-bar.test.ts, osnap-command.test.ts and phase04-dynamic.spec.ts. Current

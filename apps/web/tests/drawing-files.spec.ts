@@ -26,9 +26,9 @@ test('official DWG opens locally, zooms, persists, and exports real PDF and imag
   await page.setViewportSize({ width: 1600, height: 1000 });
   await page.goto('/');
   await chooseFile(page, fixture);
-  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70', { timeout: 90000 });
-  await expect(page.getByTestId('drawing-import-report')).toContainText('134');
-  await expect(page.getByTestId('drawing-import-report')).toContainText('18');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('71', { timeout: 90000 });
+  await expect(page.getByTestId('drawing-import-report')).toContainText('133');
+  await expect(page.getByTestId('drawing-import-report')).toContainText('17');
   await page.getByRole('button', { name: '모든 도면층 켜기', exact: true }).click();
   const canvas = page.getByTestId('drawing-canvas');
   await expect(canvas).toHaveAttribute('data-entity-count', /[1-9]\d*/);
@@ -88,9 +88,9 @@ test('official DWG opens locally, zooms, persists, and exports real PDF and imag
     else expect(Array.from(bytes.subarray(0, 2))).toEqual([255, 216]);
   }
   await page.reload();
-  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
-  await expect(page.getByTestId('drawing-import-report')).toContainText('134');
-  await expect(page.getByTestId('drawing-import-report')).toContainText('18');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('71');
+  await expect(page.getByTestId('drawing-import-report')).toContainText('133');
+  await expect(page.getByTestId('drawing-import-report')).toContainText('17');
   await expect(page.getByRole('navigation', { name: '도면 탭' })).toContainText('example_2000.dwg');
   const zoomBeforeError = await canvas.getAttribute('data-zoom');
   await page.getByTestId('cad-file-input').setInputFiles({
@@ -101,7 +101,7 @@ test('official DWG opens locally, zooms, persists, and exports real PDF and imag
   await expect(page.getByRole('log', { name: '명령 기록' })).toContainText(
     /DWG 파일 서명|DWG.*오류|명령 실행 오류/,
   );
-  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('71');
   await expect(page.getByRole('navigation', { name: '도면 탭' })).toContainText('example_2000.dwg');
   await expect(canvas).toHaveAttribute('data-zoom', zoomBeforeError ?? '');
   await page.getByTestId('cad-file-input').setInputFiles({
@@ -112,7 +112,7 @@ test('official DWG opens locally, zooms, persists, and exports real PDF and imag
   await expect(page.getByRole('log', { name: '명령 기록' })).toContainText(
     /손상|올바르|찾을 수 없|오류/,
   );
-  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('71');
   await expect(page.getByRole('navigation', { name: '도면 탭' })).toContainText('example_2000.dwg');
   await page.getByRole('button', { name: '개발 현황', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: '개발 현황', exact: true });
@@ -120,7 +120,7 @@ test('official DWG opens locally, zooms, persists, and exports real PDF and imag
   await expect(dialog.locator('tbody tr')).toHaveCount(26);
   await page.keyboard.press('Escape');
   await expect(dialog).not.toBeVisible();
-  await expect(page.getByTestId('drawing-entity-count')).toHaveText('70');
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('71');
   expect(errors).toEqual([]);
   expect(externalRequests).toEqual([]);
 });

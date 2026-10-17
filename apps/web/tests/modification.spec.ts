@@ -62,6 +62,8 @@ test('preselected ribbon MOVE applies an exact relative displacement and preserv
 test('MOVE without preselection combines picked and window-selected objects before Enter', async ({
   page,
 }) => {
+  await enter(page, 'PICKAUTO');
+  await enter(page, '1');
   await line(page, '0,0', '10,0');
   await line(page, '30,10', '50,10');
   await line(page, '70,20', '90,20');

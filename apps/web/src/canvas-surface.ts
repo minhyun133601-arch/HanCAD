@@ -5,8 +5,9 @@ import type {
   CadWorldView,
   CadNavigationKind,
   CadTrackingOverlay,
+  CadEditOverlay,
 } from '@hancad/render';
-import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
+import type { CadBounds, CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 
 /** Owns the DOM canvas; React only provides the host element. */
 export class CanvasSurface {
@@ -50,6 +51,9 @@ export class CanvasSurface {
   setSelection(ids: readonly string[]): void {
     this.renderer.setSelection(ids);
   }
+  setEditOverlay(overlay: CadEditOverlay): void {
+    this.renderer.setEditOverlay(overlay);
+  }
   setSnapMarker(point?: CadPoint, kind?: CadSnapKind, label?: string, showMarker = true): void {
     this.renderer.setSnapMarker(point, kind, label, showMarker);
   }
@@ -64,6 +68,24 @@ export class CanvasSurface {
   }
   pick(point: CadPoint): string | undefined {
     return this.renderer.pick(point);
+  }
+  pickAll(point: CadPoint, includeLocked = false): string[] {
+    return this.renderer.pickAll(point, includeLocked);
+  }
+  setHighlight(ids: readonly string[]): void {
+    this.renderer.setHighlight(ids);
+  }
+  query(bounds: CadBounds): string[] {
+    return this.renderer.query(bounds);
+  }
+  screenToWorld(point: CadPoint): CadPoint {
+    const view = this.getWorldView(),
+      size = this.getViewportSize(),
+      scale = this.getView().scale;
+    return {
+      x: view.center.x + (point.x - size.width / 2) / scale,
+      y: view.center.y + (point.y - size.height / 2) / scale,
+    };
   }
   fit(): void {
     this.renderer.fit();

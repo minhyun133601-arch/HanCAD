@@ -1,10 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  editableSelection,
-  selectCadArea,
-  transformCadSelection,
-  translateCadEntities,
-} from '@hancad/draft';
+import { editableSelection, transformCadSelection, translateCadEntities } from '@hancad/draft';
 import type { CadEntity, CadPoint } from '@hancad/legacy-bridge';
 import type { CadPointerPick, CadSelectionDrag } from '@hancad/render';
 import type { Messages } from '@hancad/ui';
@@ -18,14 +13,16 @@ import type { useCommandSession } from './useCommandSession';
 import type { useEditingTools } from './useEditingTools';
 import type { useTextCreation } from './useTextCreation';
 import type { useViewNavigation } from './useViewNavigation';
-import { drawingStyleTables } from '@hancad/render';
-import type { DrawingStyleTables } from '@hancad/render';
 import { tempOverrides } from './temp-overrides';
 import { useEditorAids } from './useEditorAids';
 import { snapLabel } from './drafting-aid-settings';
 import type { DynamicConstraints } from './dynamic-input-state';
+import type { useGrips } from './useGrips';
+import type { useClipboardCommands } from './useClipboardCommands';
+import { useSelectionPreview } from './useSelectionPreview';
+import { useCanvasSettings } from './useCanvasSettings';
 
-interface Options {
+export interface CanvasInteractionOptions {
   files: ReturnType<typeof useDrawingFiles>;
   draft: ReturnType<typeof useDrafting>;
   dimensions: ReturnType<typeof useDimensions>;
@@ -33,6 +30,8 @@ interface Options {
   measurement: ReturnType<typeof useMeasurement>;
   editing: ReturnType<typeof useEditingTools>;
   text: ReturnType<typeof useTextCreation>;
+  grip: ReturnType<typeof useGrips>;
+  clipboard: ReturnType<typeof useClipboardCommands>;
   session: ReturnType<typeof useCommandSession>;
   progressOpen: boolean;
   messages: Messages;
@@ -41,10 +40,24 @@ interface Options {
   getDynamicConstraints?: () => DynamicConstraints;
 }
 
-export function useCanvasInteraction(options: Options) {
+export function useCanvasInteraction(options: CanvasInteractionOptions) {
   const latest = useRef(options);
   latest.current = options;
   const aids = useEditorAids(options);
+  const canvasSettings = useCanvasSettings(options, needsPoint);
+  const selectionPreview = useSelectionPreview({
+    surface: options.surface,
+    sysvars: options.session.sysvars,
+    getState: options.files.getState,
+    enabled: () => !needsPoint() && !blocked(),
+    selectionActive: () =>
+      latest.current.draft.isActive() || latest.current.modification.isActive(),
+    pick: (event) => {
+      latest.current.draft.pick(event);
+      latest.current.surface.current?.canvas.focus();
+    },
+    korean: options.messages.cancel.includes('취소'),
+  });
   aids.setRedraw(cursor);
   const moving = useRef<{
     ids: string[];
@@ -55,17 +68,6 @@ export function useCanvasInteraction(options: Options) {
   const [dragPreview, setDragPreview] = useState<readonly CadEntity[] | null>(null);
   const shift = useRef(false);
   const lastCursor = useRef<CadPoint | null>(null);
-  const styleCache = useRef<{
-    state: ReturnType<Options['files']['getState']>;
-    tables: DrawingStyleTables;
-  } | null>(null);
-  useEffect(
-    () =>
-      options.session.database.events.subscribe(() => {
-        styleCache.current = null;
-      }),
-    [options.session.database],
-  );
   useEffect(() => {
     tempOverrides.clearObjectSnap();
     return () => tempOverrides.clearObjectSnap();
@@ -77,16 +79,6 @@ export function useCanvasInteraction(options: Options) {
       }),
     [],
   );
-  function styleTables(): DrawingStyleTables {
-    const live = latest.current,
-      state = live.files.getState();
-    if (styleCache.current?.state !== state)
-      styleCache.current = {
-        state,
-        tables: drawingStyleTables(live.session.database.all(), state),
-      };
-    return styleCache.current.tables;
-  }
   useEffect(() => {
     const changed = (event: KeyboardEvent): void => {
       if (event.code !== 'ShiftLeft' && event.code !== 'ShiftRight') return;
@@ -112,6 +104,15 @@ export function useCanvasInteraction(options: Options) {
   function canSelectArea(): boolean {
     const live = latest.current;
     if (live.navigation.isActive()) return !blocked() && live.navigation.canSelectArea();
+    if (
+      !live.draft.isActive() &&
+      !live.modification.isActive() &&
+      !live.clipboard.isActive() &&
+      !live.editing.isActive() &&
+      live.session.sysvars.getNumber('PICKFIRST') === 0
+    )
+      return false;
+    if (live.draft.getSelectionGesture()) return false;
     return (
       !blocked() &&
       !live.draft.isDrafting() &&
@@ -119,6 +120,8 @@ export function useCanvasInteraction(options: Options) {
       !live.modification.needsPoint() &&
       !live.measurement.isActive() &&
       !live.text.isActive() &&
+      !live.grip.isActive() &&
+      !live.clipboard.needsPoint() &&
       (!live.editing.isActive() || live.editing.canSelectArea())
     );
   }
@@ -131,7 +134,9 @@ export function useCanvasInteraction(options: Options) {
       live.modification.needsPoint() ||
       live.measurement.isActive() ||
       live.editing.needsPoint() ||
-      live.text.needsPoint()
+      live.text.needsPoint() ||
+      live.grip.needsPoint() ||
+      live.clipboard.needsPoint()
     );
   }
   function resolve(point: CadPoint, force = false) {
@@ -140,7 +145,51 @@ export function useCanvasInteraction(options: Options) {
   function pick(event: CadPointerPick): CadPoint | undefined {
     if (blocked()) return;
     const live = latest.current;
+    if (needsPoint() && live.getDynamicConstraints?.().invalid) {
+      live.session.print(live.messages.invalidPoint);
+      return;
+    }
+    if (
+      !needsPoint() &&
+      !live.draft.isActive() &&
+      !live.modification.isActive() &&
+      !live.clipboard.isActive() &&
+      !live.editing.isActive() &&
+      !live.navigation.isActive() &&
+      !live.dimensions.isActive() &&
+      live.session.sysvars.getNumber('PICKFIRST') === 0
+    )
+      return;
+    if (
+      !live.navigation.isActive() &&
+      !live.draft.isDrafting() &&
+      !live.dimensions.isActive() &&
+      !live.modification.isActive() &&
+      !live.measurement.isActive() &&
+      !live.editing.isActive() &&
+      !live.text.isActive() &&
+      !live.clipboard.isActive() &&
+      !live.draft.isActive() &&
+      live.grip.pickGrip(
+        event.point,
+        Math.max(4, live.session.sysvars.getNumber('GRIPSIZE')) /
+          (live.surface.current?.getView().scale ?? 1),
+        event.shiftKey,
+      )
+    )
+      return;
     const pointInput = needsPoint();
+    if (
+      !pointInput &&
+      !live.navigation.isActive() &&
+      !live.editing.isActive() &&
+      !live.dimensions.isActive() &&
+      !live.draft.getSelectionGesture()
+    ) {
+      const selected = selectionPreview.pick(event);
+      if (!selected) return;
+      event = selected;
+    }
     let target = resolve(event.point);
     const override = tempOverrides.getObjectSnap();
     if (pointInput && override !== undefined && override !== 'none' && !target.snapped) {
@@ -164,8 +213,25 @@ export function useCanvasInteraction(options: Options) {
       }
     }
     let accepted = false;
+    if (
+      !pointInput &&
+      event.entityId &&
+      (event.ctrlKey || live.draft.isSubobjectSelection()) &&
+      live.files
+        .getState()
+        .entities.some(
+          (entity) =>
+            entity.id === event.entityId && (entity.type === 'polyline' || entity.type === 'rect'),
+        )
+    ) {
+      live.draft.pickSubobject(event.entityId, event.point, event.shiftKey);
+      return;
+    }
     if (live.navigation.isActive())
       accepted = live.navigation.pick({ ...event, point: target.point }) === true;
+    else if (live.grip.isActive())
+      accepted = live.grip.pick(target.point, Boolean(target.snapped), event.ctrlKey);
+    else if (live.clipboard.needsPoint()) accepted = live.clipboard.pick(target.point);
     else if (live.measurement.isActive()) accepted = live.measurement.pick(target.point);
     else if (live.editing.isActive()) {
       const entity = live.editing.entityAt(
@@ -191,13 +257,26 @@ export function useCanvasInteraction(options: Options) {
   function cursor(point: CadPoint): void {
     lastCursor.current = point;
     if (blocked() || moving.current) return;
+    selectionPreview.hover(point);
     const live = latest.current;
+    if (!needsPoint() && !live.navigation.isActive()) {
+      const surface = live.surface.current;
+      const local = surface?.worldToScreen(point),
+        rect = surface?.canvas.getBoundingClientRect();
+      live.grip.hover(
+        point,
+        Math.max(4, live.session.sysvars.getNumber('GRIPSIZE')) / (surface?.getView().scale ?? 1),
+        local && rect ? { x: local.x + rect.left, y: local.y + rect.top } : undefined,
+      );
+    }
     const target = resolve(point);
     if (live.navigation.isActive()) {
       live.navigation.cursor(target.point);
       return;
     }
-    if (live.measurement.isActive()) live.measurement.cursor(target.point);
+    if (live.grip.isActive()) live.grip.cursor(target.point, Boolean(target.snapped));
+    else if (live.clipboard.needsPoint()) live.clipboard.cursor(target.point);
+    else if (live.measurement.isActive()) live.measurement.cursor(target.point);
     else if (live.editing.isActive()) {
       const entity = live.editing.entityAt(point, 8 / (live.surface.current?.getView().scale ?? 1));
       live.editing.cursor(target.point, entity, shift.current);
@@ -214,6 +293,7 @@ export function useCanvasInteraction(options: Options) {
     const live = latest.current;
     const id = live.surface.current?.pick(start);
     return (
+      !(live.session.sysvars.getNumber('PICKAUTO') & 2) &&
       !live.draft.isActive() &&
       !live.modification.isActive() &&
       !live.editing.isActive() &&
@@ -223,11 +303,20 @@ export function useCanvasInteraction(options: Options) {
   }
   function selectionDrag(event: CadSelectionDrag): void {
     const live = latest.current;
+    selectionPreview.area(event);
+    if (
+      event.twoPoint &&
+      event.phase === 'start' &&
+      !live.editing.isActive() &&
+      !live.navigation.isActive()
+    )
+      live.draft.beginImpliedWindow(event.start);
     if (live.navigation.isActive()) {
       live.navigation.selectionDrag(event);
       return;
     }
     if (event.phase === 'cancel' || blocked()) {
+      if (event.twoPoint) live.draft.resetSelectionPrompt();
       if (event.reason === 'escape') live.session.print(live.messages.cancel);
       moving.current = null;
       setDragPreview(null);
@@ -269,6 +358,7 @@ export function useCanvasInteraction(options: Options) {
             move.ids,
             delta,
             event.ctrlKey,
+            Boolean(live.session.sysvars.getNumber('PICKSTYLE') & 1),
           );
           live.files.commitState(event.ctrlKey ? 'COPY' : 'MOVE', result.state);
           live.draft.clearSelection();
@@ -278,11 +368,24 @@ export function useCanvasInteraction(options: Options) {
         setDragPreview(null);
         live.surface.current?.setSnapMarker();
       } else setDragPreview(translateCadEntities(move.entities, delta));
-    } else if (event.phase === 'end')
-      live.draft.selectIds(
-        selectCadArea(live.files.getState(), event.start, event.end),
-        event.shiftKey,
-      );
+    } else if (event.phase === 'end') {
+      if (event.gesture === 'lasso' || event.gesture === 'fence') {
+        const crossing =
+          event.mode === 'crossing' ||
+          (event.mode !== 'window' && (event.points?.[1]?.x ?? event.end.x) < event.start.x);
+        live.draft.selectPath(
+          event.points ?? [event.start, event.end],
+          event.gesture === 'fence' ? 'fence' : crossing ? 'crossing' : 'window',
+          event.shiftKey,
+        );
+      } else
+        live.draft.selectArea(
+          event.start,
+          event.end,
+          event.shiftKey,
+          event.gesture === 'window' || event.gesture === 'crossing' ? event.gesture : 'box',
+        );
+    }
   }
   return {
     pick,
@@ -291,58 +394,21 @@ export function useCanvasInteraction(options: Options) {
     suppressSelectionBox,
     selectionDrag,
     dragPreview,
+    selectionOverlay: selectionPreview.overlay,
+    cycleOverlap: selectionPreview.cycle,
     resolveTypedPoint: aids.resolveTypedPoint,
-    getNavigationSettings: () => {
-      const vars = latest.current.session.sysvars;
-      return {
-        zoomFactor: vars.getNumber('ZOOMFACTOR'),
-        zoomWheel: vars.getNumber('ZOOMWHEEL'),
-        middleButtonPan: vars.getNumber('MBUTTONPAN'),
-        transitionEnabled: vars.getNumber('VTENABLE'),
-        transitionDuration: vars.getNumber('VTDURATION'),
-        transitionFps: vars.getNumber('VTFPS'),
-      };
-    },
-    getNavigationMode: () => latest.current.navigation.mode(),
-    getNavigationWindow: () => latest.current.navigation.window(),
-    getSystemVariable: (name: string): unknown => latest.current.session.sysvars.get(name),
-    getLinetypes: () => styleTables().linetypes,
-    getLayerStyles: () => styleTables().layers,
-    getAidSettings: () => {
+    ...canvasSettings,
+    openGripMenu: (x: number, y: number): boolean => {
       const live = latest.current,
-        vars = live.session.sysvars;
-      const pair = (name: string) => {
-        const value = vars.get(name);
-        return {
-          x: Array.isArray(value) && typeof value[0] === 'number' ? value[0] : 0,
-          y: Array.isArray(value) && typeof value[1] === 'number' ? value[1] : 0,
-        };
-      };
-      const min = pair('LIMMIN'),
-        max = pair('LIMMAX');
-      return {
-        cursorSize: vars.getNumber('CURSORSIZE'),
-        pickbox: vars.getNumber('PICKBOX'),
-        ucsIcon: vars.getNumber('UCSICON'),
-        gridMode: vars.getNumber('GRIDMODE'),
-        gridUnit: pair('GRIDUNIT'),
-        snapUnit: pair('SNAPUNIT'),
-        gridMajor: vars.getNumber('GRIDMAJOR'),
-        gridDisplay: vars.getNumber('GRIDDISPLAY'),
-        gridStyle: vars.getNumber('GRIDSTYLE'),
-        limits: { minX: min.x, minY: -max.y, maxX: max.x, maxY: -min.y },
-        background: live.navigation.backgroundColor(),
-        snapAngle: vars.getNumber('SNAPANG'),
-        snapBase: { x: pair('SNAPBASE').x, y: -pair('SNAPBASE').y },
-        snapStyle: vars.getNumber('SNAPSTYL'),
-        isoplane: vars.getNumber('SNAPISOPAIR'),
-        aperture: vars.getNumber('APERTURE'),
-        apertureBox: vars.getNumber('APBOX') === 1 && needsPoint(),
-        tooltipSize: vars.getNumber('DYNTOOLTIPS') ? vars.getNumber('TOOLTIPSIZE') : 0,
-        tooltipOpacity: vars.getNumber('DYNTOOLTIPS')
-          ? 1 - vars.getNumber('TOOLTIPTRANSPARENCY') / 100
-          : 1,
-      };
+        surface = live.surface.current;
+      if (!surface) return false;
+      const rect = surface.canvas.getBoundingClientRect();
+      return live.grip.openMenu(
+        surface.screenToWorld({ x: x - rect.left, y: y - rect.top }),
+        Math.max(4, live.session.sysvars.getNumber('GRIPSIZE')) / surface.getView().scale,
+        x,
+        y,
+      );
     },
     selectionGesture: (): 'area' | 'fence' =>
       latest.current.editing.needsFence() ? 'fence' : 'area',

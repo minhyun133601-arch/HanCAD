@@ -29,6 +29,8 @@ import { DynamicInputOverlay } from './DynamicInputOverlay';
 import type { DynamicConstraints } from './dynamic-input-state';
 import type { CadPoint } from '@hancad/legacy-bridge';
 import { useDraftingSettingsCommands } from './useDraftingSettingsCommands';
+import { GripMenu } from './menus/GripMenu';
+import { selectionKeywordLabels } from '@hancad/draft';
 
 export function DocumentApp({
   document: drawingDocument,
@@ -98,6 +100,8 @@ export function DocumentApp({
     measurement,
     editing,
     text,
+    grip: tools.grip,
+    clipboard: tools.clipboard,
     session,
     progressOpen,
     messages,
@@ -138,16 +142,26 @@ export function DocumentApp({
     locale,
     messages,
     inputIsDynamic: () => dynamicEditing.current(),
+    cycleOverlap: interaction.cycleOverlap,
   });
   const { routing, toggle, submit, cancel, execute } = input;
   const { inputMode, commandActive, commandName, historyContext } = routing;
+  const selectionKeywords =
+    inputMode === 'selection' && !draft.hasSelectionSubprompt()
+      ? selectionKeywordLabels(locale === 'ko-KR')
+      : [];
   const points =
     measurement.snapshot?.points ?? dimensions.snapshot?.points ?? draft.snapshot?.points;
-  const basePoint =
-    points?.at(-1) ??
-    modification.snapshot?.basePoint ??
-    (editing.snapshot?.tool === 'OFFSET' ? editing.snapshot.basePoint : undefined) ??
-    text.snapshot?.point;
+  const gripPointInput = tools.grip.snapshot?.pointInput;
+  const basePoint = tools.grip.snapshot
+    ? gripPointInput?.sourcePoint
+      ? undefined
+      : (gripPointInput?.temporaryBase ?? tools.grip.snapshot.basePoint)
+    : (points?.at(-1) ??
+      modification.snapshot?.basePoint ??
+      tools.clipboard.snapshot?.basePoint ??
+      (editing.snapshot?.tool === 'OFFSET' ? editing.snapshot.basePoint : undefined) ??
+      text.snapshot?.point);
   const coordinates = useStatusCoordinates({
     sysvars: session.sysvars,
     pointPrompt: inputMode === 'point' || inputMode === 'number',
@@ -162,8 +176,10 @@ export function DocumentApp({
     input: session.input,
     changeInput: session.changeInput,
     prompt: routing.prompt,
+    keywords: selectionKeywords,
     commandActive,
     cursor: dynamicCursor,
+    ...(tools.grip.dynamicContext ? { grip: tools.grip.dynamicContext } : {}),
     ...(basePoint ? { base: basePoint } : {}),
     locale,
     submit,
@@ -172,6 +188,10 @@ export function DocumentApp({
   dynamicConstraints.current = dynamic.getConstraints;
   dynamicEditing.current = dynamic.isEditing;
   const draftingSettings = useDraftingSettingsCommands(session.registry, locale);
+  const selectionGesture = draft.getSelectionGesture();
+  const selectionPoints = selectionGesture?.points;
+  const selectionStart = selectionPoints?.[0];
+  const selectionEnd = dynamicCursor?.point ?? selectionPoints?.at(-1);
 
   function focusCommand(): void {
     if (!text.editable) inputRef.current?.focus({ preventScroll: true });
@@ -283,6 +303,36 @@ export function DocumentApp({
           previewHiddenIds={tools.previewHiddenIds}
           selectedIds={navigation.snapshot?.selectedIds ?? tools.selectedIds}
           active={tools.active || navigation.active}
+          editOverlay={{
+            grips: tools.active && !tools.grip.active ? [] : tools.grip.grips,
+            groupBounds: draft.groupBounds,
+            ...(selectionGesture && selectionStart && selectionEnd
+              ? {
+                  selection: {
+                    start: selectionStart,
+                    end: selectionEnd,
+                    phase: 'move',
+                    shiftKey: false,
+                    ctrlKey: false,
+                    gesture:
+                      selectionGesture.kind === 'polygon'
+                        ? 'lasso'
+                        : selectionGesture.kind === 'box'
+                          ? 'area'
+                          : selectionGesture.kind,
+                    ...(selectionGesture.kind === 'polygon'
+                      ? {
+                          mode: selectionGesture.crossing
+                            ? ('crossing' as const)
+                            : ('window' as const),
+                        }
+                      : {}),
+                    points: [...(selectionPoints ?? []), selectionEnd],
+                  },
+                }
+              : {}),
+          }}
+          selectionCommandActive={() => tools.isActive()}
           selectionGesture={interaction.selectionGesture}
           onPick={(event) => {
             if (interaction.pick(event)) dynamic.reset();
@@ -321,6 +371,20 @@ export function DocumentApp({
           getLayerStyles={interaction.getLayerStyles}
         />
         <DynamicInputOverlay view={dynamic} />
+        {interaction.selectionOverlay}
+        {tools.properties.panels}
+        {draft.dialogs}
+        <GripMenu
+          menu={tools.grip.menu}
+          korean={locale === 'ko-KR'}
+          action={tools.grip.action}
+          onClose={tools.grip.closeMenu}
+          {...(tools.grip.snapshot ? { activeMode: tools.grip.snapshot.mode } : {})}
+          setMode={tools.grip.setMode}
+          submit={(value) => {
+            tools.grip.submit(value);
+          }}
+        />
         <div className="drawing-tools">
           <span>
             {messages.drawingObjects}{' '}
@@ -340,6 +404,7 @@ export function DocumentApp({
           session={session}
           drawingName={displayName}
           prompt={routing.prompt}
+          selectionKeywords={selectionKeywords}
           commandName={commandName}
           editable={routing.editable}
           mode={inputMode}
@@ -369,6 +434,7 @@ export function DocumentApp({
         <DrawingNotices files={files} messages={messages} execute={execute} />
         <CommandPanels
           settings={draftingSettings}
+          openGripMenu={interaction.openGripMenu}
           session={session}
           input={input}
           locale={locale}

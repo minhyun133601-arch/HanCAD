@@ -12,6 +12,8 @@ interface Options {
   draft: Pick<ReturnType<typeof useDrafting>, 'selectAll'>;
   /** A command, navigation or prompt is running (Delete only erases at idle). */
   isActive: () => boolean;
+  isSelectionPrompt: () => boolean;
+  canPreselect: () => boolean;
   /** Ends every running tool silently (Ctrl+A). */
   cancelTools: () => void;
   execute: (macro: string) => void;
@@ -48,8 +50,8 @@ export function useWorkspaceShortcuts(options: Options): void {
         case 'commandLine':
           return live.toggleCommand();
         case 'selectAll':
+          if (!live.isSelectionPrompt() && (live.isActive() || !live.canPreselect())) return;
           live.cancelPointer();
-          live.cancelTools();
           live.draft.selectAll();
           return live.focusCommand();
         case 'erase':

@@ -1,11 +1,126 @@
 # HanCAD progress
 
+## Active phase: Phase 05 selection, grips and clipboard (2026-10-17)
+
+Source: `docs/prompt-source/prompts/phase-05-selection-grips-clipboard.md`.
+Authorized by the user after Phase 04 completion. The recorded accepted baseline
+below remains valid; do not rerun the full suite at phase start. Preserve existing
+AGENTS.md/prompt protocol edits outside feature commits. Phase 06 is not authorized.
+
+| Milestone                         | Status                              | Scope                                                                                                                           |
+| --------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 5.1 Selection engine and gestures | Implemented                         | PICK* rules, all 18 selection keywords, polygon/fence/lasso, preview/effects, cycling, counts and locked filtering              |
+| 5.2 Filters and groups            | Implemented                         | QSELECT, SELECTSIMILAR settings, profile-global named FILTER expressions, GROUP/GROUPEDIT and native group persistence          |
+| 5.3 Grip editing                  | Implemented                         | Providers, five modes/options, multiple hot grips, multifunction actions, drafting aids, object dimensions and one-command undo |
+| 5.4 Clipboard and properties      | Implemented; native QA blocked      | Cross-document/window internal+image clipboard, copy/cut/base/paste/block/original, basic Properties and Quick Properties       |
+| 5.5 Acceptance and integration    | Browser verified; native QA blocked | Comprehensive verification, production UI checks, performance/persistence and documentation                                     |
+
+Implementation is split across selection/filter/group, grip and clipboard/property
+workstreams, while the root integrates canvas gestures, render preview/cycling,
+command routing and shared aid ownership. Add meaningful feature tests alongside
+implementation; use focused tests/typechecking only when needed. Run pnpm verify
+and additional required platform/performance/round-trip checks after implementation
+is complete, fix failures and rerun affected checks. Never report unrun native or
+installed-AutoCAD comparisons as passed.
+
+### What changed
+
+SELECT, modification and Clipboard prompts share selection sessions, method
+keywords, counts, previous sets and locked filtering. Indexed preview/cycling,
+directional rectangles, two-click corners and default lasso respect PICK variables.
+QSELECT/SELECTSIMILAR settings, global named FILTER definitions and GROUP editing
+are integrated. Native GROUP ownership/reactors and Clipboard BLOCK/INSERT records
+share the command transaction and preserve stable handles during supported edits.
+
+Every current entity family has grips. Five modes, Base/Copy/Undo/Reference/Exit,
+multiple hot grips and polyline/line multifunction edits share snapping, polar,
+tracking and dynamic locks. DYNDIVIS/DYNDIGRIP expose object result/change lengths,
+angles and arc radii on supported single shape grips; unsupported shape dimensions
+retain documented pointer-displacement input. Curved polyline edits keep exact
+bulges through rendering, recovery, snaps, SVG and supported DXF round trips.
+
+Clipboard commands transfer precise geometry/base points across drawings/windows.
+Actual browser Clipboard JSON+PNG and the explicitly reported IndexedDB fallback
+are covered. PASTEBLOCK retains supported block definitions, inserts and base points
+through recovery/DXF. Basic Properties/Quick Properties edit common/type geometry
+with WCS conversions, mixed-value handling, locks and validation.
+
+### Final verification evidence
+
+The final comprehensive `pnpm verify` pass ran with HANCAD_PRODUCTION=1 and
+HANCAD_RUNNING_APP=1 against the freshly built production files. Results:
+
+- WASM build/round-trip, lint, formatting, strict TypeScript and browser production
+  build passed. All 794 unit tests in 108 files and 30 compatibility tests passed.
+  Four additional app-level grip dimension tests passed afterward, proving
+  reciprocal lock replacement, independent angle/length locks and invalid radii.
+  Their strict TypeScript and focused lint checks also passed; no product code
+  changed. Current total: 798 unit tests in 109 files.
+- Command drift check passed for 377 commands. The additional sysvar drift check
+  passed for 868 definitions and 214 header mappings; frozen offline workspace
+  lockfile validation passed. No dependencies were upgraded.
+- Renderer verification passed 28 scenes, 37 exact-color contracts, 3 viewport
+  boundary contracts and 20 high-zoom comparisons. Translated large-coordinate
+  scenes remain identical; maximum compositing channel error is 1.
+- Full browser run: 140 passed, one timed out and one skipped out of 142. The
+  timeout was the comprehensive dimension workflow's default 30-second budget;
+  its trace had already passed geometry, five exports, reload and error checks.
+  Only that workflow now has a 60-second budget. Its isolated rerun passed in
+  38.1 seconds with command exit 0. Final unique browser result: 141 passed and
+  one skipped; the optional personal DWG check requires HANCAD_DWG_PATH.
+  The complete verify command exited nonzero for that timeout; the failed check
+  and focused lint passed after the test-only correction. Product code did not
+  change after the comprehensive production run.
+- The integration pass exposed actual TRIM click/two-corner ownership and grip
+  popup/REDO focus regressions; both were fixed and focused regressions passed.
+  Old rectangle/body-drag fixtures now set PICKAUTO=1 and avoid actual midpoint
+  grips. DWG cancellation holds the worker pending to test cancellation before
+  completion. Full-pass logs retain the original failures separately.
+- The official DWG fixture now imports 71 editable entities, skips 133 and
+  approximates 17. A valid closed 3,635-vertex bulged polyline formerly exceeded
+  the tessellation limit; exact-vertex/bulge assertions prevent its omission.
+  This fixture remains supported-geometry conversion, not lossless foreign I/O.
+- `pnpm test:render:stress` passed with 1,000,000 entities at 1920x1080 on Intel
+  UHD 730: load 241.1 ms, pan 60.0 fps, zoom 59.60 fps, frame p95 16.8 ms,
+  submit p95 1.6/7.3 ms and GL error 0. Artifacts are in render-stress/.
+- Production screenshots cover lasso, exact bulged grips, all grip dimension
+  fields, QSELECT, FILTER, DDGRIPS and Properties. Dialog layouts/scrolling were
+  inspected; the isolated dialog browser reported no page errors.
+- `cargo fmt --all` passed. `pnpm check:desktop` and the attempted
+  `cargo check -p hancad-desktop --locked --offline` are blocked by missing MSVC
+  C++ tools/link.exe and Windows SDK. vswhere found no Visual Studio instance.
+  Native Clipboard code has not been compiled or executed here.
+
+Logs: test-artifacts/phase05-verify-final.log (current final pass),
+phase05-verify-integration.log (integration failures), phase05-verify-initial.log
+(initial stale assertions). Detailed sources and focused evidence are in the
+phase05 selection, grip, Clipboard and integration notes. Local artifacts are
+ignored by Git.
+
+### Manual acceptance and remaining work
+
+See [the keystroke-by-keystroke sequence](phase05-integration-notes.md#current-build-manual-sequence)
+for all five original acceptance scenarios, basic Properties and selection
+settings. The current browser build implements these scenarios. Installed Korean
+AutoCAD comparison remains pending for exact prompt punctuation, visual glow,
+hover timing, overlap order, adjacent grip dimensions and default clipboard bounds.
+TEXT schema, full Properties customization and opaque foreign-object preservation
+retain their documented later-phase limits.
+
+Exact next step: prepare MSVC x64 C++ tools and Windows
+SDK, pass `pnpm check:desktop` and the locked native cargo check, then exercise
+COPYBASE/PASTECLIP between two native HanCAD windows, JSON+PNG/DIB formats,
+clipboard failure/cut safety and desktop-reserved shortcuts. Preserve actual
+Windows IME/startup checks from Phase 00 as pending. Phase 05 is not fully accepted
+until the required native checks pass; the last accepted whole-phase baseline
+remains Phase 04. Phase 06 awaits a separate user request.
+
 ## Completed phase: Phase 04 coordinate input and drafting aids (2026-10-17)
 
 Source: `docs/prompt-source/prompts/phase-04-coordinate-input-and-drafting-aids-line-as-the-reference-com.md`.
 Resumed at the user's request and completed through the final integration audit.
-Phase 05 has not started. Pre-existing protocol edits in AGENTS.md and the prompt
-copies remain outside the feature commit.
+At that checkpoint Phase 05 had not started. Pre-existing protocol edits in
+AGENTS.md and the prompt copies remain outside the feature commit.
 
 | Milestone                               | Status | Scope                                                                                                                        |
 | --------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -112,9 +227,8 @@ OSOPTIONS suppression is exercised through the pure geometry API when active
 UCS metadata is explicitly supplied. Windows-native startup/real IME checks from
 Phase 00 remain deferred. These limits are recorded in PARITY_CHECKLIST.md.
 
-Wait for the user to request Phase 05 (selection, grips and clipboard). Do not
-start it automatically. Read its prompt and the current evidence before planning
-5.1 onward; do not rerun a full baseline just because the next phase begins.
+The user subsequently authorized Phase 05; its active milestones and current
+verification evidence are recorded at the top of this document.
 
 ## Completed phase: Phase 03 command system, command line, shortcuts and Korean IME (2026-10-17)
 

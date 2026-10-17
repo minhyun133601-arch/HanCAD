@@ -38,6 +38,11 @@ export class WebGlRenderer {
   private state: LegacyCadState | undefined;
   private selected: ReadonlySet<string> = new Set();
   private hidden: ReadonlySet<string> = new Set();
+  private preview: ReadonlySet<string> = new Set();
+  private readonly styleChanges = new Set<string>();
+  private slots = new Map<string, number>();
+  private styleData = new Float32Array();
+  private patterns: ReadonlyMap<string, number> = new Map();
   private stylesDirty = true;
   private styleKey = '';
   private hasWide = false;
@@ -62,6 +67,7 @@ export class WebGlRenderer {
     const diff = this.source.sync(state),
       old = this.entities;
     this.entities = diff.entities;
+    this.slots = new Map(this.entities.map((entity, i) => [entity.id, i]));
     this.count = this.entities.length;
     const changed = new Set([...diff.added, ...diff.modified].map((e) => e.id));
     const layoutChanged =
@@ -103,29 +109,50 @@ export class WebGlRenderer {
     this.releaseChunks();
     this.stressCount = 0;
     this.entities = entities;
+    this.slots = new Map(entities.map((entity, i) => [entity.id, i]));
     this.count = entities.length;
     this.index.set(entities);
     this.chunks = partitionEntities(this.entities);
     this.stylesDirty = true;
   }
   setSelection(selected: ReadonlySet<string>, hidden: ReadonlySet<string>) {
+    for (const id of this.selected) if (!selected.has(id)) this.styleChanges.add(id);
+    for (const id of selected) if (!this.selected.has(id)) this.styleChanges.add(id);
+    if (this.hidden.size !== hidden.size || [...hidden].some((id) => !this.hidden.has(id)))
+      this.stylesDirty = true;
     this.selected = selected;
     this.hidden = hidden;
-    this.stylesDirty = true;
+  }
+  setHighlight(ids: readonly string[]): void {
+    const next = new Set(ids);
+    for (const id of this.preview) if (!next.has(id)) this.styleChanges.add(id);
+    for (const id of next) if (!this.preview.has(id)) this.styleChanges.add(id);
+    this.preview = next;
   }
   pick(point: CadPoint, tolerance: number): string | undefined {
-    if (this.stressCount) return undefined;
+    return this.pickAll(point, tolerance)[0];
+  }
+  pickAll(point: CadPoint, tolerance: number, includeLocked = false): string[] {
+    if (this.stressCount) return [];
     const hits = this.index.pick({ x: point.x, y: -point.y }, tolerance);
     const locked = new Set(
       this.state?.layers.filter((l) => l.locked || !l.visible).map((l) => l.name),
     );
     const layers = this.settings.layers?.();
-    return hits.find(
-      (hit) =>
-        !locked.has(hit.entity.layer) &&
-        layers?.get(hit.entity.layer)?.locked !== true &&
-        layers?.get(hit.entity.layer)?.visible !== false,
-    )?.entity.id;
+    return hits
+      .filter(
+        (hit) =>
+          (includeLocked ||
+            (!locked.has(hit.entity.layer) && layers?.get(hit.entity.layer)?.locked !== true)) &&
+          !this.state?.layers.some((layer) => layer.name === hit.entity.layer && !layer.visible) &&
+          layers?.get(hit.entity.layer)?.visible !== false,
+      )
+      .map((hit) => hit.entity.id);
+  }
+  query(bounds: Bounds2): string[] {
+    return this.index
+      .search({ minX: bounds.minX, maxX: bounds.maxX, minY: -bounds.maxY, maxY: -bounds.minY })
+      .map((entity) => entity.id);
   }
   regenerate(height: number) {
     this.regenHeight = height;
@@ -172,6 +199,7 @@ export class WebGlRenderer {
       linetypes: this.settings.linetypes?.() ?? tables.linetypes,
       selected: this.selected,
       hidden: this.hidden,
+      preview: this.preview,
     };
   }
   draw(eye: Vec2, scale: number, width: number, height: number, background: number) {
@@ -207,6 +235,9 @@ export class WebGlRenderer {
         'PSLTSCALE',
         'CANNOSCALEVALUE',
         'TRANSPARENCYDISPLAY',
+        'SELECTIONEFFECT',
+        'SELECTIONEFFECTCOLOR',
+        'HIGHLIGHT',
       ].map((n) => environment.variable(n)),
       [...environment.layers].map(([name, l]) => [
         name,
@@ -234,6 +265,7 @@ export class WebGlRenderer {
     }
     if (this.stylesDirty) {
       const patterns = patternTable(environment.linetypes);
+      this.patterns = patterns.names;
       this.device.uploadPatterns(patterns.data, patterns.height);
       const data = new Float32Array(Math.max(8, this.entities.length * 8));
       const transparent: { entity: DisplayEntity; slot: number }[] = [];
@@ -256,6 +288,8 @@ export class WebGlRenderer {
           chunk.stressCount ??
           chunk.entries.reduce((sum, e) => sum + (data[e.slot * 8 + 3]! > 0 ? 1 : 0), 0);
       this.device.uploadStyles(data);
+      this.styleData = data;
+      this.styleChanges.clear();
       this.stylesDirty = false;
       const transparentKey = transparent.map((e) => e.entity.id).join('\0');
       if (transparentKey !== this.transparentKey) {
@@ -274,6 +308,16 @@ export class WebGlRenderer {
             slot: e.slot,
           }));
     }
+    for (const id of this.styleChanges) {
+      const slot = this.slots.get(id);
+      if (slot === undefined) continue;
+      const style = entityStyle(this.entities[slot]!, environment, this.patterns);
+      this.styleData.set(style, slot * 8);
+      this.device.updateStyle(slot, this.styleData.subarray(slot * 8, slot * 8 + 8));
+      this.hasWide ||= style[4]! > 1;
+      this.maximumStrokeWidth = Math.max(this.maximumStrokeWidth, style[4]!);
+    }
+    this.styleChanges.clear();
     const view: Bounds2 = {
       minX: eye.x - width / scale / 2,
       minY: eye.y - height / scale / 2,

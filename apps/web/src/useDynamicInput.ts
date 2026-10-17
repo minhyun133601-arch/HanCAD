@@ -1,7 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CadPoint } from '@hancad/legacy-bridge';
 import type { PromptInputMode } from '@hancad/input';
-import { coordinateSettings, formatDraftAngle, formatDraftNumber } from '@hancad/draft';
+import {
+  coordinateSettings,
+  formatDraftAngle,
+  formatDraftNumber,
+  visibleGripDimensions,
+} from '@hancad/draft';
+import type { GripDimensionContext } from '@hancad/draft';
+import {
+  gripDimensionConstraints,
+  gripDimensionDisplay,
+  gripDimensionLocks,
+  gripDimensionToken,
+  isGripDimensionField,
+} from './grip-dynamic-input';
 import type { SystemVariables } from '@hancad/sysvars';
 import type { Locale } from '@hancad/ui';
 import { keywordOf, promptOptions } from './command-line/PromptKeywords';
@@ -21,6 +34,8 @@ export interface DynamicInputOptions {
   locale: Locale;
   submit: (value: string) => void | Promise<void>;
   focusCommand: () => void;
+  grip?: GripDimensionContext;
+  keywords?: readonly string[];
 }
 
 /** Tooltip fields share the command buffer and never create an editable IME target. */
@@ -29,13 +44,19 @@ export function useDynamicInput(options: DynamicInputOptions) {
   latest.current = options;
   const vars = options.sysvars;
   const mode = vars.getNumber('DYNMODE');
+  const grip = mode > 0 && Boolean(mode & 2) ? options.grip : undefined;
+  const gripFields = grip
+    ? visibleGripDimensions(grip, vars.getNumber('DYNDIVIS'), vars.getNumber('DYNDIGRIP'))
+    : undefined;
   const dimensional = Boolean(options.base && mode & 2 && options.mode === 'point');
   const polar = Boolean(options.base && vars.getNumber('DYNPIFORMAT') === 0);
-  const active =
-    mode > 0 &&
-    (options.mode === 'number' || (options.mode === 'point' && (dimensional || mode & 1)));
+  const active = gripFields
+    ? gripFields.length > 0
+    : mode > 0 &&
+      (options.mode === 'number' || (options.mode === 'point' && (dimensional || mode & 1)));
   const defaultFields =
-    options.mode === 'number' ? (['distance'] as const) : dynamicFields(dimensional, polar);
+    gripFields ??
+    (options.mode === 'number' ? (['distance'] as const) : dynamicFields(dimensional, polar));
   const relative = dimensional || Boolean(options.base && vars.getNumber('DYNPICOORDS') === 0);
   const initial: DynamicEdit = {
     field: defaultFields[0] ?? 'x',
@@ -48,7 +69,7 @@ export function useDynamicInput(options: DynamicInputOptions) {
   const fields = state.cartesian ? dynamicFields(false, false) : defaultFields;
   const [menu, setMenu] = useState(false);
   const [highlight, setHighlight] = useState(0);
-  const context = `${options.commandActive}:${options.prompt}:${options.base?.x}:${options.base?.y}:${dimensional}:${polar}:${relative}:${mode}`;
+  const context = `${options.commandActive}:${options.prompt}:${options.base?.x}:${options.base?.y}:${dimensional}:${polar}:${relative}:${mode}:${grip?.key}:${gripFields?.join(',')}`;
   useEffect(() => {
     edit.current = initial;
     setState(initial);
@@ -71,6 +92,12 @@ export function useDynamicInput(options: DynamicInputOptions) {
       z: formatDraftNumber(0, settings),
       distance: formatDraftNumber(Math.hypot(dx, dy), settings),
       angle: formatDraftAngle(Math.atan2(dy, dx), settings),
+      result: '',
+      lengthChange: '',
+      absoluteAngle: '',
+      angleChange: '',
+      radius: '',
+      ...(live.grip ? gripDimensionDisplay(live.grip, settings) : {}),
     };
   }
   function advance(field: DynamicField): void {
@@ -81,10 +108,13 @@ export function useDynamicInput(options: DynamicInputOptions) {
       : value.startsWith('@')
         ? true
         : edit.current.relative;
-    const locked = {
-      ...edit.current.locked,
-      ...(value ? { [edit.current.field]: value.replace(/^[#@]/, '') } : {}),
-    };
+    const locked =
+      live.grip && !edit.current.cartesian && isGripDimensionField(edit.current.field)
+        ? gripDimensionLocks(edit.current, value, live.grip)
+        : {
+            ...edit.current.locked,
+            ...(value ? { [edit.current.field]: value.replace(/^[#@]/, '') } : {}),
+          };
     change({
       ...edit.current,
       field,
@@ -100,7 +130,8 @@ export function useDynamicInput(options: DynamicInputOptions) {
       const live = latest.current;
       if (event.defaultPrevented || inputBlocked() || isTextEditingTarget(event.target)) return;
       const target = event.target;
-      const options = promptOptions(live.prompt);
+      const parsedOptions = promptOptions(live.prompt);
+      const options = parsedOptions.length ? parsedOptions : (live.keywords ?? []);
       const enabled =
         active ||
         (live.sysvars.getNumber('DYNMODE') > 0 &&
@@ -187,12 +218,12 @@ export function useDynamicInput(options: DynamicInputOptions) {
       if (
         event.code === 'Comma' &&
         event.shiftKey &&
-        fields.includes('angle') &&
+        (fields.includes('angle') || fields.includes('absoluteAngle')) &&
         (edit.current.engaged || live.input)
       ) {
         event.preventDefault();
         event.stopPropagation();
-        advance('angle');
+        advance(fields.includes('absoluteAngle') ? 'absoluteAngle' : 'angle');
         return;
       }
       if (event.code === 'Comma' && edit.current.engaged) {
@@ -222,7 +253,21 @@ export function useDynamicInput(options: DynamicInputOptions) {
       if ((event.code === 'Enter' || event.code === 'NumpadEnter') && edit.current.engaged) {
         const token = live.input.trim().replace(/^_/, '').toUpperCase();
         const keyword = options.some((label) => keywordOf(label)?.toUpperCase() === token);
-        const value = keyword ? live.input : dynamicToken(edit.current, live.input, fallback());
+        const value = keyword
+          ? live.input
+          : live.grip && !edit.current.cartesian && isGripDimensionField(edit.current.field)
+            ? gripDimensionToken(
+                edit.current,
+                live.input,
+                live.grip,
+                coordinateSettings((name) => live.sysvars.get(name)),
+              )
+            : dynamicToken(edit.current, live.input, fallback());
+        if (value === null) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
         if (value !== undefined) {
           event.preventDefault();
           event.stopPropagation();
@@ -246,6 +291,18 @@ export function useDynamicInput(options: DynamicInputOptions) {
   }, [active, fields.join(','), menu, highlight, context]);
   const displayed = fallback();
   const values = constraintsFor(state, options.input);
+  const invalid = Boolean(
+    grip &&
+    state.engaged &&
+    !state.cartesian &&
+    isGripDimensionField(state.field) &&
+    gripDimensionConstraints(
+      state,
+      options.input,
+      grip,
+      coordinateSettings((name) => vars.get(name)),
+    ).invalid,
+  );
   const visibility = vars.getNumber('DYNPIVIS');
   const showFields =
     (active &&
@@ -262,10 +319,14 @@ export function useDynamicInput(options: DynamicInputOptions) {
     fields,
     state,
     displayed,
+    invalid,
     values,
     menu,
     highlight,
     prompt: vars.getNumber('DYNPROMPT') ? options.prompt : '',
+    optionLabels: promptOptions(options.prompt).length
+      ? promptOptions(options.prompt)
+      : (options.keywords ?? []),
     size: vars.getNumber('TOOLTIPSIZE'),
     opacity: 1 - vars.getNumber('TOOLTIPTRANSPARENCY') / 100,
     allTooltips: vars.getNumber('DYNTOOLTIPS') === 1,
@@ -289,7 +350,14 @@ export function useDynamicInput(options: DynamicInputOptions) {
     },
     getConstraints: (): DynamicConstraints =>
       active && edit.current.engaged
-        ? constraintsFor(edit.current, latest.current.input)
+        ? latest.current.grip && !edit.current.cartesian && isGripDimensionField(edit.current.field)
+          ? gripDimensionConstraints(
+              edit.current,
+              latest.current.input,
+              latest.current.grip,
+              coordinateSettings((name) => latest.current.sysvars.get(name)),
+            )
+          : constraintsFor(edit.current, latest.current.input)
         : { relative },
     isEditing: (): boolean => edit.current.engaged || Object.keys(edit.current.locked).length > 0,
     reset: () => {

@@ -91,9 +91,11 @@ describe('drafting view navigation and pointer gestures', () => {
     const picks = vi.fn();
     const drags: CadSelectionDrag[] = [];
     let areaEnabled = true;
+    let pickauto = 4;
     const surface = new CadCanvasSurface(fixture.canvas, {
       observeResize: false,
       canSelectArea: () => areaEnabled,
+      getSystemVariable: (name) => (name === 'PICKAUTO' ? pickauto : undefined),
       onPick: picks,
       onSelectionDrag: (event) => drags.push(event),
     });
@@ -104,6 +106,7 @@ describe('drafting view navigation and pointer gestures', () => {
     fixture.fire('pointerup', pointer(0, 103, 100));
     expect(picks).toHaveBeenCalledOnce();
     expect(drags).toHaveLength(0);
+    pickauto = 1;
     fixture.fire('pointerdown', pointer(0, 100, 100, { shiftKey: true }));
     fixture.fire('pointermove', pointer(0, 180, 180, { buttons: 1 }));
     expect(fixture.canvas.dataset.selectionArea).toBe('window');
@@ -138,6 +141,7 @@ describe('drafting view navigation and pointer gestures', () => {
       observeResize: false,
       canSelectArea: () => true,
       suppressSelectionBox: () => true,
+      getSystemVariable: (name) => (name === 'PICKAUTO' ? 1 : undefined),
       onSelectionDrag: drags,
     });
     surface.setDrawing(createEmptyCadState());

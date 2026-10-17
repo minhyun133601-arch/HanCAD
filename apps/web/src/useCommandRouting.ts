@@ -30,6 +30,7 @@ export function useCommandRouting({
     session,
     navigation,
     measurement: tools.measurement,
+    selection: { isActive: tools.draft.isFilterCommandActive, cancel: tools.draft.cancel },
     outerActive: () => navigation.isActive() || tools.isActive() || session.isPrompting('main'),
     locale,
   });
@@ -43,7 +44,8 @@ export function useCommandRouting({
     navigation.active || tools.active || session.promptCommand !== null || nested;
   const outerName = commandActive ? (session.promptCommand ?? session.startedCommand) : null;
   const commandName = transparent.name ? `'${transparent.name}` : outerName;
-  const prompt = nested ? session.prompt : (navigation.prompt ?? tools.prompt);
+  const rawPrompt = nested ? session.prompt : (navigation.prompt ?? tools.prompt);
+  const prompt = transparent.owner === 'selection' ? `>>${rawPrompt}` : rawPrompt;
   /** Up/Down recall values given at the same kind of prompt of the same command. */
   const historyContext = inputMode === 'command' ? 'command' : `${commandName ?? ''}:${inputMode}`;
 
@@ -72,7 +74,10 @@ export function useCommandRouting({
       await session.execute(value);
       return;
     }
+    const selectionGesture = tools.draft.getSelectionGesture();
     if (tools.submit(value)) {
+      if (selectionGesture && !tools.draft.getSelectionGesture())
+        surface.current?.cancelPointerInteraction();
       session.changeInput('');
       if (!tools.isActive()) surface.current?.setSnapMarker();
       return;

@@ -148,6 +148,10 @@
       if (entity.points.some((entry) => !entry) || entity.points.length < 2 || (raw.type === "rect" && entity.points.length !== 4)) return null;
       if (raw.type === "rect" && (distance(entity.points[0], entity.points[1]) < EPSILON || distance(entity.points[1], entity.points[2]) < EPSILON)) return null;
       entity.closed = raw.type === "rect" || raw.closed === true;
+      if (raw.bulges !== undefined) {
+        if (!Array.isArray(raw.bulges) || raw.bulges.length !== entity.points.length || raw.bulges.some(value => !finite(value))) return null;
+        entity.bulges = raw.bulges.slice();
+      }
     } else if (["circle", "arc"].includes(raw.type)) {
       entity.center = point(raw.center); entity.radius = raw.radius;
       if (!entity.center || !finite(raw.radius) || raw.radius < EPSILON) return null;
@@ -338,7 +342,14 @@
       const geometry = dimensionGeometry(entity);
       return geometry.points;
     }
-    if (["rect", "polyline"].includes(entity.type)) return entity.points;
+    if (["rect", "polyline"].includes(entity.type)) {
+      const points = entity.points.slice();
+      entity.points.forEach((a, index) => {
+        const arc = polylineArc(entity, index);
+        if (arc) points.push(...[0, Math.PI / 2, Math.PI, Math.PI * 1.5].filter(angle => arcContains(arc, angle)).map(angle => circlePoint(arc, angle)));
+      });
+      return points;
+    }
     if (entity.type === "text") return textCorners(entity);
     if (entity.type === "circle") return [0, Math.PI / 2, Math.PI, Math.PI * 1.5].map((angle) => circlePoint(entity, angle));
     if (entity.type === "arc") return [entity.startAngle, entity.endAngle, ...[0, Math.PI / 2, Math.PI, Math.PI * 1.5].filter((angle) => arcContains(entity, angle))].map((angle) => circlePoint(entity, angle));
@@ -369,12 +380,34 @@
       return [...geometry.lines, ...arrowSegments, ...arcSegments];
     }
     if (["rect", "polyline", "text"].includes(entity.type)) {
-      const points = entity.type === "text" ? textCorners(entity) : entity.points;
+      const points = entity.type === "text" ? textCorners(entity) : polylineCurvePoints(entity);
       const result = points.slice(1).map((entry, index) => [points[index], entry]);
       if (entity.closed || entity.type === "text") result.push([points[points.length - 1], points[0]]);
       return result;
     }
     return [];
+  }
+
+  function polylineArc(entity, index) {
+    const a = entity.points[index], b = entity.points[(index + 1) % entity.points.length], bulge = entity.bulges?.[index] || 0;
+    if (!a || !b || (!entity.closed && index === entity.points.length - 1) || Math.abs(bulge) < EPSILON) return null;
+    const dx = b.x - a.x, dy = b.y - a.y, chord = Math.hypot(dx, dy);
+    if (chord < EPSILON) return null;
+    const center = {x:(a.x+b.x)/2-dy*(1-bulge*bulge)/(4*bulge),y:(a.y+b.y)/2+dx*(1-bulge*bulge)/(4*bulge)};
+    const startAngle = Math.atan2(a.y-center.y,a.x-center.x);
+    return {center,radius:chord*(1+bulge*bulge)/(4*Math.abs(bulge)),startAngle,endAngle:startAngle+4*Math.atan(bulge),clockwise:bulge>0};
+  }
+
+  function polylineCurvePoints(entity) {
+    const result = [];
+    entity.points.forEach((a,index) => {
+      result.push(a);
+      const arc = polylineArc(entity,index);
+      if (!arc) return;
+      const sweep = arc.endAngle - arc.startAngle, steps = Math.min(512,Math.max(2,Math.ceil(Math.abs(sweep)/(Math.PI/180))));
+      for(let i=1;i<steps;i++) result.push(circlePoint(arc,arc.startAngle+sweep*i/steps));
+    });
+    return result;
   }
 
   function segmentParameter(testPoint, a, b) {

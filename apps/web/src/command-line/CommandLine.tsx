@@ -8,7 +8,7 @@ import { ContextMenu } from '../menus/ContextMenu';
 import type { MenuEntry } from '../menus/ContextMenu';
 import { inputBlocked } from '../ui-focus';
 import { HistoryView } from './HistoryView';
-import { PromptKeywords } from './PromptKeywords';
+import { PromptKeywords, keywordOf } from './PromptKeywords';
 import type { AutoCompleteView } from './useAutoComplete';
 import type { CommandLineLayout } from './layout';
 import './command-line.css';
@@ -25,6 +25,7 @@ export interface CommandLineProps {
   editable: boolean;
   /** Active prompt type; decides physical-key versus IME text handling. */
   mode: PromptInputMode;
+  selectionKeywords?: readonly string[];
   blocked?: boolean;
   expanded: boolean;
   promptLines: number;
@@ -244,6 +245,31 @@ export function CommandLine(props: CommandLineProps) {
             }}
           />
         </span>
+        {!!props.selectionKeywords?.length && (
+          <button
+            type="button"
+            className="command-tool"
+            aria-label={messages.commandPrompt === '명령:' ? '선택 옵션' : 'Selection options'}
+            aria-haspopup="menu"
+            onClick={(event) => {
+              const rect = event.currentTarget.getBoundingClientRect();
+              openMenu(
+                rect.left,
+                rect.top - 4,
+                (props.selectionKeywords ?? []).map((label) => ({
+                  id: keywordOf(label) ?? label,
+                  label,
+                  onSelect: () => {
+                    const token = keywordOf(label);
+                    if (token) void props.execute(token);
+                  },
+                })),
+              );
+            }}
+          >
+            ▼
+          </button>
+        )}
         {editable ? (
           <input
             ref={(element) => {

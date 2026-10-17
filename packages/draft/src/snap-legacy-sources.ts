@@ -55,9 +55,9 @@ export function legacyEntitySnapSources(entity: CadEntity): SnapSource[] {
         ...common,
         geometry: {
           type: 'LWPOLYLINE',
-          vertices: entity.points.map((point) => ({
+          vertices: entity.points.map((point, index) => ({
             position: snapWcs(point),
-            bulge: 0,
+            bulge: -(entity.bulges?.[index] ?? 0),
             startWidth: 0,
             endWidth: 0,
           })),

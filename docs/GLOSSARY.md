@@ -1,6 +1,21 @@
 # Reference A — Korean AutoCAD UI glossary
 (Save as docs/GLOSSARY.md. Use these exact Korean terms in the UI. If a term is missing or doubtful, use the term from Autodesk's Korean AutoCAD help, add it here, and list it in docs/PARITY_CHECKLIST.md.)
 
+## 선택·그립·클립보드 (페이즈 05)
+
+| English | 한국어 UI |
+| --- | --- |
+| Select objects / Specify opposite corner | 객체 선택 / 반대 구석 지정 |
+| Window / Crossing / Fence / Lasso | 윈도우 / 걸침 / 울타리 / 올가미 |
+| Selection cycling / Selection preview | 선택 순환 / 선택 미리보기 |
+| Grip / Hot grip / Multifunctional grip | 그립 / 핫 그립 / 다기능 그립 |
+| Stretch / Move / Rotate / Scale / Mirror | 신축 / 이동 / 회전 / 축척 / 대칭 |
+| Add Vertex / Remove Vertex / Convert to Arc / Convert to Line | 정점 추가 / 정점 제거 / 호로 변환 / 선으로 변환 |
+| Quick Select / Object Selection Filters | 신속 선택 / 객체 선택 필터 |
+| Group / Description / Ungroup | 그룹 / 설명 / 그룹 해제 |
+| Base point / Insertion point / Clipboard | 기준점 / 삽입점 / 클립보드 |
+| Properties / Quick Properties | 특성 / 빠른 특성 |
+
 ## Shell
 | English | 한국어 UI |
 |---|---|

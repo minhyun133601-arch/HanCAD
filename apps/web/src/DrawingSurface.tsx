@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import type { Messages } from '@hancad/ui';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
-import type { CadCanvasOptions, CadPointerPick } from '@hancad/render';
+import type { CadCanvasOptions, CadPointerPick, CadEditOverlay } from '@hancad/render';
 import { CanvasSurface } from './canvas-surface';
 import { errorMessage } from './error-presenter';
 
@@ -33,6 +33,8 @@ export function DrawingSurface({
   getSystemVariable,
   getLinetypes,
   getLayerStyles,
+  editOverlay,
+  selectionCommandActive,
 }: {
   messages: Messages;
   layout: LayoutId;
@@ -45,6 +47,8 @@ export function DrawingSurface({
   previewHiddenIds: readonly string[];
   selectedIds: readonly string[];
   active: boolean;
+  editOverlay: CadEditOverlay;
+  selectionCommandActive: NonNullable<CadCanvasOptions['selectionCommandActive']>;
   onPick: (event: CadPointerPick) => void;
   onCoordinates: (point: CadPoint) => void;
   canSelectArea: NonNullable<CadCanvasOptions['canSelectArea']>;
@@ -76,6 +80,7 @@ export function DrawingSurface({
         suppressSelectionBox,
         getNavigationSettings,
         selectionGesture,
+        selectionCommandActive,
         onNavigate,
         getNavigationMode,
         getNavigationWindow,
@@ -118,6 +123,9 @@ export function DrawingSurface({
   useLayoutEffect(() => {
     surface.current?.setSelection(selectedIds);
   }, [selectedIds, drawing]);
+  useLayoutEffect(() => {
+    surface.current?.setEditOverlay(editOverlay);
+  }, [editOverlay]);
   useLayoutEffect(() => {
     surface.current?.setLabel(messages.drawingCanvas);
   }, [messages]);

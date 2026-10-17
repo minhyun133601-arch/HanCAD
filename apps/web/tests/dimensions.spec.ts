@@ -10,6 +10,9 @@ const output = fileURLToPath(new URL('../../../test-artifacts/dimensions', impor
 test('dimension coordinates, styles, Korean text, circle picks, undo, and exports work', async ({
   page,
 }) => {
+  // This full workflow creates seven dimensions, exports five formats and reloads
+  // the drawing; parallel renderer/file tests can consume the default 30s budget.
+  test.setTimeout(60000);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.setViewportSize({ width: 1600, height: 1000 });

@@ -9,6 +9,7 @@ import { drawSelectionOverlay } from './selection-overlay';
 import { drawDraftingAids } from './drafting-aids';
 import type { CadAidSettings } from './drafting-aids';
 import { drawTrackingOverlay, type CadTrackingOverlay } from './tracking-overlay';
+import { drawEditOverlay, type CadEditOverlay } from './edit-overlay';
 
 interface OverlayState {
   width: number;
@@ -25,6 +26,8 @@ interface OverlayState {
   window: CadWorldView | undefined;
   worldToScreen: (p: CadPoint) => CadPoint;
   tracking?: CadTrackingOverlay;
+  edit?: CadEditOverlay;
+  variable?: (name: string) => unknown;
 }
 export function drawSurfaceOverlay(canvas: HTMLCanvasElement, state: OverlayState): string {
   const context = canvas.getContext('2d');
@@ -59,8 +62,10 @@ export function drawSurfaceOverlay(canvas: HTMLCanvasElement, state: OverlayStat
         maxY: (state.height / 2 - view.ty) / view.scale,
       },
     });
-  if (area) drawSelectionOverlay(context, area, origin, view.scale);
+  if (area) drawSelectionOverlay(context, area, origin, view.scale, state.variable);
   context.restore();
+  if (state.edit)
+    drawEditOverlay(context, state.edit, state.worldToScreen, state.variable ?? (() => undefined));
   if (state.tracking)
     drawTrackingOverlay(
       context,
@@ -80,8 +85,10 @@ export function drawSurfaceOverlay(canvas: HTMLCanvasElement, state: OverlayStat
   return area
     ? area.gesture === 'fence'
       ? 'fence'
-      : area.end.x >= area.start.x
-        ? 'window'
-        : 'crossing'
+      : area.gesture === 'lasso'
+        ? 'lasso'
+        : area.gesture === 'window' || (area.gesture !== 'crossing' && area.end.x >= area.start.x)
+          ? 'window'
+          : 'crossing'
     : '';
 }

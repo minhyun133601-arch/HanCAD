@@ -4,7 +4,7 @@ import type { CommandLocale } from '@hancad/commands';
 import type { useCommandSession } from './useCommandSession';
 
 /** Who answers the transparent command's prompts. */
-type Owner = 'navigation' | 'measurement' | 'session';
+type Owner = 'navigation' | 'measurement' | 'selection' | 'session';
 interface Running {
   /** Interrupted command, named in "LINE 명령 재개 중." */
   outer: string;
@@ -25,6 +25,7 @@ export function useTransparentCommands(options: {
   session: ReturnType<typeof useCommandSession>;
   navigation: Interactive;
   measurement: Interactive;
+  selection: Interactive;
   /** The interrupted command (tool, navigation or session prompt) is still running. */
   outerActive: () => boolean;
   locale: CommandLocale;
@@ -44,6 +45,7 @@ export function useTransparentCommands(options: {
     const live = latest.current;
     if (owner === 'navigation') return live.navigation.isActive();
     if (owner === 'measurement') return live.measurement.isActive();
+    if (owner === 'selection') return live.selection.isActive();
     return live.session.isPrompting('nested');
   }
   function settle(): void {
@@ -87,7 +89,9 @@ export function useTransparentCommands(options: {
           ? 'navigation'
           : name === 'DIST'
             ? 'measurement'
-            : 'session';
+            : name === 'FILTER'
+              ? 'selection'
+              : 'session';
       // A command cannot interrupt another instance of itself.
       if (busy(owner) && owner !== 'session') {
         session.print(commandMessages.transparent(name, locale));
@@ -110,6 +114,7 @@ export function useTransparentCommands(options: {
       const live = latest.current;
       if (active.owner === 'navigation') live.navigation.cancel(false);
       else if (active.owner === 'measurement') live.measurement.cancel(false);
+      else if (active.owner === 'selection') live.selection.cancel(false);
       live.session.cancelNested();
       return true;
     },

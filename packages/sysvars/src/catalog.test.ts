@@ -53,6 +53,10 @@ describe('Autodesk-sourced declarative catalog', () => {
       LIMMAX: [420, 297],
       GRIPS: 2,
       SELECTIONCYCLING: 0,
+      SELECTIONPREVIEWLIMIT: 20000,
+      PREVIEWFILTER: 3,
+      GRIPMULTIFUNCTIONAL: 3,
+      GRIPTIPS: 1,
       FONTALT: 'simplex.shx',
       FONTMAP: 'acad.fmp',
       ISAVEBAK: 1,
@@ -201,10 +205,10 @@ describe('Autodesk-sourced declarative catalog', () => {
     ] as const)
       expect(() => variables.set(name, value)).toThrow(SystemVariableError);
     expect(variables.database.undoCount).toBe(0);
-    expect(systemVariableDefinitions).toHaveLength(864);
+    expect(systemVariableDefinitions).toHaveLength(868);
     expect(
       systemVariableDefinitions.filter((definition) => definition.default !== undefined),
-    ).toHaveLength(802);
+    ).toHaveLength(806);
     expect(
       systemVariableDefinitions.filter((definition) => definition.default === undefined),
     ).toHaveLength(62);

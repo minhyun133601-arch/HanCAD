@@ -174,6 +174,26 @@ test('OFFSET Multiple previews, locally undoes and repeats offsets before whole-
   expect(await lines(page)).toEqual(result);
 });
 
+test('Standard TRIM two-click boundary windows retain editing ownership through the target and Enter', async ({
+  page,
+}) => {
+  await line(page, '0,50', '100,50');
+  await line(page, '30,0', '30,100');
+  await line(page, '70,0', '70,100');
+  await variable(page, 'TRIMEXTENDMODE', '0');
+  const view = await mapping(page);
+  await enter(page, 'TRIM');
+  await point(page, view, 35, 40);
+  await point(page, view, 25, 20);
+  await expect(page.getByTestId('drawing-canvas')).toHaveAttribute('data-selection-count', '1');
+  await enter(page, '');
+  await expect(page.locator('.command-prompt')).toContainText('자를 객체 선택');
+  await point(page, view, 50, 50);
+  await enter(page, '');
+  expect((await lines(page))[0]).toMatchObject({ a: { x: 0, y: -50 }, b: { x: 30, y: -50 } });
+  await expect(page.locator('.command-prompt')).toHaveText('명령:');
+});
+
 test('circle Through and session/profile settings survive NEW while OFFSETDIST resets on reload', async ({
   page,
 }) => {

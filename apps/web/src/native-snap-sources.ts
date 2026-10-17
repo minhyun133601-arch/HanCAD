@@ -11,7 +11,12 @@ export function nativeSnapSources(
   objects: readonly DatabaseObject[],
   legacy?: LegacyCadState,
 ): SnapSource[] {
-  const active = objects.filter((object) => !object.erased),
+  const active = objects.filter(
+      (object) =>
+        !object.erased &&
+        !object.fields.hancadClipboardBlock &&
+        !object.fields.hancadSelectionEntityId,
+    ),
     byOwner = new Map<string, DatabaseObject[]>();
   for (const object of active)
     if (object.owner) {
@@ -194,6 +199,15 @@ export function drawingSnapSources(
     nativeSnapSources(database.all(), state).map((source) => [source.id, source]),
   );
   for (const source of legacySnapSources(state, additionalEntities)) merged.set(source.id, source);
+  for (const block of state.clipboardBlocks ?? []) {
+    const point = { x: block.basePoint.x, y: -block.basePoint.y, z: block.basePoint.z ?? 0 };
+    merged.set(`clipboard-block:${block.name}`, {
+      id: `clipboard-block:${block.name}`,
+      insertion: point,
+      node: false,
+      geometry: { type: 'POINT', position: point },
+    });
+  }
   return [...merged.values()];
 }
 export function createDrawingSnapIndex(

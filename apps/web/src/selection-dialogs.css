@@ -1,0 +1,53 @@
+.selection-dialog {
+  color: #e1e7ee;
+  background: #293540;
+  border: 1px solid #657482;
+  border-radius: 5px;
+  min-width: 370px;
+  max-width: 620px;
+  max-height: 88vh;
+  overflow: auto;
+}
+.selection-dialog::backdrop {
+  background: #0006;
+}
+.selection-dialog h2 {
+  margin: 0 0 16px;
+  font-size: 17px;
+}
+.selection-dialog label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 8px 0;
+}
+.selection-dialog select,
+.selection-dialog input:not([type='checkbox']) {
+  flex: 1;
+  min-width: 100px;
+  background: #19232c;
+  color: inherit;
+  border: 1px solid #657482;
+  padding: 5px;
+}
+.selection-dialog fieldset {
+  border: 1px solid #657482;
+  margin: 12px 0;
+}
+.selection-dialog footer,
+.selection-filter-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+.selection-dialog button {
+  padding: 5px 12px;
+}
+.selection-dialog li {
+  margin: 6px 0;
+}
+.selection-dialog code {
+  font-size: 11px;
+  white-space: pre-wrap;
+}

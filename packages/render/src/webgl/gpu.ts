@@ -90,6 +90,22 @@ export class GpuDevice {
     padded.set(data);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 1024, height, 0, gl.RGBA, gl.FLOAT, padded);
   }
+  updateStyle(slot: number, data: Float32Array): void {
+    const gl = this.gl;
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, this.styles);
+    gl.texSubImage2D(
+      gl.TEXTURE_2D,
+      0,
+      (slot * 2) % 1024,
+      Math.floor(slot / 512),
+      2,
+      1,
+      gl.RGBA,
+      gl.FLOAT,
+      data,
+    );
+  }
   uploadPatterns(data: Float32Array, height: number) {
     const gl = this.gl;
     gl.activeTexture(gl.TEXTURE1);

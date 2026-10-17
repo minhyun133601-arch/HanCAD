@@ -35,6 +35,7 @@ export function DrawingShortcutMenus(props: {
   focus: () => void;
   locale: Locale;
   blocked: boolean;
+  openGripMenu?: (x: number, y: number) => boolean;
 }) {
   const latest = useRef(props);
   latest.current = props;
@@ -72,6 +73,7 @@ export function DrawingShortcutMenus(props: {
       const live = latest.current,
         { routing } = live.input;
       if (live.blocked || inputBlocked()) return;
+      if (!click.snap && live.openGripMenu?.(event.clientX, event.clientY)) return;
       const action = rightClickAction(
         live.session.sysvars.getNumber('SHORTCUTMENU'),
         event.timeStamp - click.time,

@@ -66,7 +66,13 @@ test('Ctrl shortcuts run macros, repeat commands and report commands not built y
   page,
 }) => {
   await page.goto('/');
-  await press(page, 'Control+1', '명령 "PROPERTIES"은(는) 아직 구현되지 않았습니다.');
+  await page.keyboard.press('Control+1');
+  await expect(page.getByTestId('properties-palette')).toBeVisible();
+  await page
+    .getByTestId('properties-palette')
+    .getByRole('button', { name: '닫기', exact: true })
+    .click();
+  await page.getByRole('textbox', { name: '명령 입력', exact: true }).focus();
   await press(page, 'Control+8', '명령 "QUICKCALC"은(는) 아직 구현되지 않았습니다.');
   await enter(page, 'L');
   await enter(page, '0,0');

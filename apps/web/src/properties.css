@@ -1,0 +1,61 @@
+.properties-palette {
+  position: absolute;
+  z-index: 15;
+  top: 0;
+  right: 0;
+  bottom: var(--command-dock-height, 90px);
+  width: 290px;
+  overflow: auto;
+  border: 1px solid #57616e;
+  background: #303740;
+  box-shadow: 0 4px 16px #0006;
+  font-size: 12px;
+  color: #e3e7ed;
+}
+.properties-palette header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 8px;
+  background: #424b57;
+}
+.properties-palette p {
+  margin: 8px;
+}
+.properties-fields label {
+  display: grid;
+  grid-template-columns: 44% 56%;
+  align-items: center;
+  min-height: 27px;
+  border-top: 1px solid #48515b;
+}
+.properties-fields label > span {
+  padding: 4px 8px;
+}
+.properties-fields input,
+.properties-fields select {
+  width: 100%;
+  min-width: 0;
+  height: 27px;
+  padding: 3px 5px;
+  color: #e3e7ed;
+  background: #252c34;
+  border: 1px solid transparent;
+  font: inherit;
+}
+.properties-fields input:disabled {
+  color: #adb5c0;
+}
+.properties-fields input:focus {
+  outline: 1px solid #74b6ee;
+}
+.properties-error {
+  color: #ffb5a7;
+}
+.quick-properties {
+  top: 18%;
+  right: 315px;
+  bottom: auto;
+  width: 270px;
+  max-height: 55%;
+}

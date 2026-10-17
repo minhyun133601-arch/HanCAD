@@ -1,0 +1,74 @@
+[
+  {
+    "name": "SELECTIONPREVIEWLIMIT",
+    "type": "integer",
+    "default": 20000,
+    "scope": "profile",
+    "description": "윈도우 또는 걸침 선택 중 미리보기 강조 표시가 가능한 객체 수를 제한합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9CDDA4F9-5B88-428F-B0C8-345E9A9DC4F1.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "20000"
+    },
+    "min": 0,
+    "max": 32767
+  },
+  {
+    "name": "GRIPMULTIFUNCTIONAL",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "다기능 그립 옵션에 접근하는 방법을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-A88576CB-7CDD-4DC4-819C-EA0F892E72CB.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "bits": { "1": "Ctrl cycling", "2": "Hover grip menu" },
+    "min": 0,
+    "max": 3,
+    "bitmask": 3
+  },
+  {
+    "name": "GRIPTIPS",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "그립 위에 커서를 놓을 때 그립 팁의 표시를 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-8ADD9045-DD1B-416E-92E4-839C6FADC109.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PREVIEWFILTER",
+    "type": "integer",
+    "default": 3,
+    "scope": "profile",
+    "description": "지정한 객체 유형을 선택 미리보기에서 제외합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9B75C028-6429-4FC0-9EC6-72C21E29A5D8.htm",
+      "type": "Bitcode",
+      "savedIn": "Registry",
+      "initial": "3"
+    },
+    "bits": {
+      "1": "Locked layers",
+      "2": "Xrefs",
+      "4": "Tables",
+      "8": "Multiline text",
+      "16": "Hatches",
+      "32": "Groups"
+    },
+    "min": 0,
+    "max": 63,
+    "bitmask": 63
+  }
+]

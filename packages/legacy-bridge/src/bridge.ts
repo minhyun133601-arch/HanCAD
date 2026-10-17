@@ -10,6 +10,8 @@ import type {
 } from './types';
 import { CAD_ENTITY_LIMIT } from './limits';
 import { CadImportError } from './diagnostics';
+import { restoreSelectionMetadata } from './selection-metadata';
+import { restoreClipboardMetadata } from './clipboard-metadata';
 
 export function getLegacyRuntime(): LegacyCadRuntime {
   const runtime = (globalThis as typeof globalThis & { HeechangTool?: LegacyCadRuntime })
@@ -51,6 +53,8 @@ export function normalizeCadState(value: unknown): LegacyCadState {
       { namespace: 'cad-import', code: 'stored-entities-invalid' },
       '저장된 도면 객체 검증에 실패했습니다.',
     );
+  restoreSelectionMetadata(state, value);
+  restoreClipboardMetadata(state, value);
   return state;
 }
 

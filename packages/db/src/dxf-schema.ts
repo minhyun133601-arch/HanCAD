@@ -230,6 +230,18 @@ schema(
   'object',
 );
 schema(
+  'GROUP',
+  'AcDbGroup',
+  [
+    field('description', 300),
+    field('unnamed', 70),
+    field('selectable', 71),
+    field('entities', 340, 'values'),
+  ],
+  'GUID-5F1372C4-37C8-4056-9303-EE1715F58E67',
+  'object',
+);
+schema(
   'LAYOUT',
   'AcDbLayout',
   [

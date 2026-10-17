@@ -67,7 +67,7 @@ export function useEditorAids(options: Options) {
       tempOverrides.clearObjectSnap();
     };
   }, [options.session.database, options.files.fitRevision]);
-  const context = `${options.draft.snapshot?.tool}:${options.draft.snapshot?.points.length}:${options.draft.snapshot?.pointInput.stage}:${options.navigation.active}:${options.measurement.active}:${options.modification.active}`;
+  const context = `${options.draft.snapshot?.tool}:${options.draft.snapshot?.points.length}:${options.draft.snapshot?.pointInput.stage}:${options.navigation.active}:${options.measurement.active}:${options.modification.active}:${options.grip.active}:${options.clipboard.active}`;
   useEffect(clear, [context]);
   useEffect(() => {
     const refresh = (): void => {
@@ -120,11 +120,14 @@ export function useEditorAids(options: Options) {
     const live = latest.current,
       state = live.editing.getState();
     const accepted = live.draft.snapshot?.points;
+    const gripCopies = live.grip.getSnapEntities();
     const points = JSON.stringify([
       live.draft.snapshot?.tool,
       accepted?.length,
       accepted?.[0],
       accepted?.at(-1),
+      gripCopies.length,
+      gripCopies.at(-1)?.id,
     ]);
     if (cache.current.state !== state) {
       index.current.replaceAll(drawingSnapSources(live.session.database, state));
@@ -132,7 +135,9 @@ export function useEditorAids(options: Options) {
     }
     if (cache.current.points !== points) {
       for (const id of cache.current.draftIds) index.current.remove(id);
-      const extra = live.draft.getSnapEntities().flatMap(legacyEntitySnapSources);
+      const extra = [...live.draft.getSnapEntities(), ...gripCopies].flatMap(
+        legacyEntitySnapSources,
+      );
       for (const source of extra) index.current.upsert(source);
       cache.current.points = points;
       cache.current.draftIds = extra.map((source) => source.id);
@@ -142,6 +147,25 @@ export function useEditorAids(options: Options) {
   function baseContext() {
     const live = latest.current,
       context = live.draft.getAidContext();
+    const gripInput = live.grip.snapshot?.pointInput;
+    if (gripInput)
+      return {
+        base: gripInput.sourcePoint
+          ? undefined
+          : (gripInput.temporaryBase ?? live.grip.snapshot?.basePoint),
+        previous: undefined,
+        temporary: gripInput.trackingPoints,
+      };
+    if (live.clipboard.needsPoint()) {
+      const clipboard = live.clipboard.getAidContext();
+      return {
+        base: clipboard.pointInput.sourcePoint
+          ? undefined
+          : (clipboard.pointInput.temporaryBase ?? clipboard.basePoint),
+        previous: undefined,
+        temporary: clipboard.trackingPoints,
+      };
+    }
     const points = live.measurement.snapshot?.points ?? live.dimensions.snapshot?.points;
     const base = live.draft.isDrafting()
       ? context.pointInput.sourcePoint || context.deferred
@@ -149,6 +173,8 @@ export function useEditorAids(options: Options) {
         : context.basePoint
       : (points?.at(-1) ??
         live.modification.snapshot?.basePoint ??
+        live.grip.snapshot?.basePoint ??
+        live.clipboard.snapshot?.basePoint ??
         live.text.snapshot?.point ??
         (live.editing.snapshot?.tool === 'OFFSET' ? live.editing.snapshot.basePoint : undefined));
     return { base, previous: context.previousPoint, temporary: context.trackingPoints };
@@ -201,6 +227,16 @@ export function useEditorAids(options: Options) {
       ...(previous ? { previous } : {}),
     });
     const dynamic = live.getDynamicConstraints?.();
+    const lockedAngle = live.grip.snapshot?.pointInput.lockedAngle;
+    if (lockedAngle !== undefined && base) {
+      const dx = Math.cos(lockedAngle),
+        dy = -Math.sin(lockedAngle);
+      const distance = (result.point.x - base.x) * dx + (result.point.y - base.y) * dy;
+      result.point = { ...result.point, x: base.x + distance * dx, y: base.y + distance * dy };
+      result.snapped = false;
+      delete result.snap;
+      delete result.deferred;
+    }
     if (dynamic && Object.keys(dynamic).some((key) => key !== 'relative')) {
       result.point = constrainDynamicPoint(result.point, base, dynamic, vars);
       result.snapped = false;

@@ -41,7 +41,13 @@ export function useModification(options: Options) {
       const live = latest.current;
       let state = live.getState();
       for (const delta of pending.current)
-        state = transformCadSelection(state, active.getIds(), delta, active.tool === 'COPY').state;
+        state = transformCadSelection(
+          state,
+          active.getIds(),
+          delta,
+          active.tool === 'COPY',
+          Boolean(live.sysvars.getNumber('PICKSTYLE') & 1),
+        ).state;
       live.commitState(active.tool, state);
       live.clearSelection();
     }

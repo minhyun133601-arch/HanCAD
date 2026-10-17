@@ -19,8 +19,16 @@
         "en-US": "Create horizontal, vertical, aligned, radius, diameter and angular dimensions with basic style settings"
       },
       {
-        "ko-KR": "윈도우·교차 드래그 선택, 객체 드래그 이동·Ctrl 복사, MOVE/COPY와 실행 취소",
-        "en-US": "Window/crossing drag selection, object drag to move, Ctrl-drag to copy, MOVE/COPY and undo"
+        "ko-KR": "윈도우·걸침·올가미·울타리 선택, PICK 설정·선택 순환, MOVE/COPY와 실행 취소",
+        "en-US": "Window/crossing/lasso/fence selection, PICK settings, selection cycling, MOVE/COPY and undo"
+      },
+      {
+        "ko-KR": "신속 선택·유사 선택·명명된 필터·그룹, 다기능 그립·5개 편집 모드와 곡선 폴리선",
+        "en-US": "Quick/similar selection, named filters and groups; multifunction grips, five edit modes and curved polylines"
+      },
+      {
+        "ko-KR": "도면·창 사이 기준점 클립보드 복사와 붙여넣기, 기본 특성·빠른 특성 편집",
+        "en-US": "Base-point Clipboard copying/pasting across drawings/windows, basic Properties and Quick Properties editing"
       },
       {
         "ko-KR": "TRIM/EXTEND 빠른·표준 모드, Shift 전환과 울타리 자르기, OFFSET 거리·통과점·반복 작업",
@@ -57,16 +65,16 @@
     ],
     "limitations": [
       {
-        "ko-KR": "페이즈 4 좌표·제도 보조 기능의 브라우저 검증을 완료했습니다. 실제 Windows IME·페이즈 0 네이티브 검증과 설치된 AutoCAD 비교는 남아 있습니다.",
-        "en-US": "Phase 04 coordinate and drafting aids have passed browser validation. Actual Windows IME, Phase 00 native checks and installed-AutoCAD comparison remain pending."
+        "ko-KR": "페이즈 5 선택·그립·클립보드를 사용할 수 있습니다. MSVC·Windows SDK가 없어 네이티브 클립보드 검증은 보류이며 실제 Windows IME·설치된 AutoCAD 비교도 남아 있습니다.",
+        "en-US": "Phase 05 selection, grips and Clipboard are available. Native Clipboard validation awaits MSVC and the Windows SDK; actual Windows IME and installed-AutoCAD comparison also remain pending."
       },
       {
         "ko-KR": "일부 DWG 객체는 생략·근사되며 DXF 저장은 무손실 원본 보존 방식이 아닙니다.",
         "en-US": "Some DWG objects are skipped or approximated. DXF saving does not preserve the original drawing losslessly."
       },
       {
-        "ko-KR": "자르기·연장 대상은 현재 선이며 곡선 폴리선 간격띄우기, 올가미·그립은 확장 중입니다.",
-        "en-US": "TRIM/EXTEND currently target lines. Curved-polyline offsets, lasso and grips are still being extended."
+        "ko-KR": "자르기·연장 대상은 현재 선이며 곡선 대상 수정과 곡선 폴리선 간격띄우기는 확장 중입니다.",
+        "en-US": "TRIM/EXTEND currently target lines. Curved targets and curved-polyline offsets are still being extended."
       },
       {
         "ko-KR": "문자는 왼쪽 기준선 TEXT를 지원합니다. SHX·BigFont·여러 줄 문자 편집·전체 자리맞추기는 확장 중입니다.",
@@ -151,8 +159,8 @@
       },
       "status": "in-progress",
       "detail": {
-        "ko-KR": "클릭·윈도우/교차 드래그·Shift 제거·전체 선택과 객체 이동/복사 연결. 올가미·그립·클립보드 확장 예정.",
-        "en-US": "Click, window/crossing drag, Shift removal, select-all and object move/copy are connected. Lasso, grips and clipboard remain planned."
+        "ko-KR": "PICK 설정·올가미·선택 순환·필터·그룹·다기능 그립·클립보드·기본 특성을 구현했습니다. MSVC·Windows SDK가 없어 Windows 네이티브 클립보드 검증은 보류입니다.",
+        "en-US": "PICK settings, lasso, cycling, filters, groups, multifunction grips, Clipboard and basic Properties are implemented. Native Windows Clipboard validation is pending because MSVC and the Windows SDK are unavailable."
       }
     },
     {

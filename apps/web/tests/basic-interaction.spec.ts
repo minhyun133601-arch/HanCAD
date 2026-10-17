@@ -145,6 +145,8 @@ test('exact endpoint snaps override Ortho and supply exact dimension and inquiry
 test('window/crossing selection, Shift removal, selected-object move and Ctrl-copy use real drags', async ({
   page,
 }, testInfo) => {
+  // This fixture exercises rectangles; default PICKAUTO=5 uses a press-drag lasso.
+  await variable(page, 'PICKAUTO', '1');
   await variable(page, 'OSMODE', '0');
   await variable(page, 'ORTHOMODE', '0');
   await line(page, '20,40', '50,40');
@@ -161,11 +163,12 @@ test('window/crossing selection, Shift removal, selected-object move and Ctrl-co
   await drag(page, screen(view, 120, 50), screen(view, 100, 30), 'crossing');
   await expect(canvas).toHaveAttribute('data-selection-count', '2');
   await page.keyboard.down('Shift');
-  await point(page, view, 35, 40);
+  // Use object bodies: midpoint clicks now activate the real Phase 05 grips.
+  await point(page, view, 30, 40);
   await page.keyboard.up('Shift');
   await expect(canvas).toHaveAttribute('data-selection-count', '1');
-  const start = screen(view, 110, 40),
-    end = screen(view, 120, 60);
+  const start = screen(view, 100, 40),
+    end = screen(view, 110, 60);
   await drag(page, start, end, '');
   const moved = (await drawing(page)).entities.find(
     (entity) => entity.id === before.entities[1]?.id,
@@ -175,7 +178,7 @@ test('window/crossing selection, Shift removal, selected-object move and Ctrl-co
   expect(moved.a.x).toBeCloseTo(80 + (end.x - start.x) / view.zoom, 6);
   expect(moved.a.y).toBeCloseTo(-40 + (end.y - start.y) / view.zoom, 6);
   await expect(canvas).toHaveAttribute('data-selection-count', '1');
-  const copyStart = screen(view, (moved.a.x + moved.b.x) / 2, -(moved.a.y + moved.b.y) / 2);
+  const copyStart = screen(view, moved.a.x * 0.75 + moved.b.x * 0.25, -(moved.a.y + moved.b.y) / 2);
   const copyEnd = { x: copyStart.x + 80, y: copyStart.y - 50 };
   await page.keyboard.down('Control');
   await drag(page, copyStart, copyEnd, '');

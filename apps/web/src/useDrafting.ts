@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import {
   DraftSession,
   appendCadEntities,
-  deleteCadEntities,
   coordinateSettings,
   lineContinuation,
   pointInputPrompt,
@@ -22,6 +21,7 @@ import type { MessageKey, Messages } from '@hancad/ui';
 import { creationSettings } from './creation-settings';
 import { tempOverrides } from './temp-overrides';
 import { recordStatusPoint } from './status-point-store';
+import { useSelectionController } from './useSelectionController';
 
 interface DraftingOptions {
   registry: CommandRegistry;
@@ -31,6 +31,9 @@ interface DraftingOptions {
   getState: () => LegacyCadState;
   commitState: (label: string, state: LegacyCadState) => void;
   print: (message: string) => void;
+  cancelOthers?: () => void;
+  onSelectionComplete?: () => void;
+  selectionPromptActive?: () => boolean;
   resolveTypedPoint?: (
     point: CadPoint,
     override?: PointSnapOverride,
@@ -62,11 +65,15 @@ export function useDrafting(options: DraftingOptions) {
   latest.current = options;
   const activeSession = useRef<DraftSession | null>(null);
   const [snapshot, setSnapshot] = useState<DraftSnapshot | null>(null);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const selectionRef = useRef<string[]>([]);
-  const [selecting, setSelecting] = useState(false);
-  const eraseSelection = useRef(false);
-  const selectionMode = useRef(false);
+  const selection = useSelectionController({
+    ...options,
+    cancelDraft: () => {
+      latest.current.cancelOthers?.();
+      activeSession.current?.cancel();
+      activeSession.current = null;
+      setSnapshot(null);
+    },
+  });
   const cursorRef = useRef<CadPoint | null>(null);
   const cursorOptions = useRef<DraftPointOptions>({});
   // Re-render when a temporary override (Shift for Ortho) is pressed or released.
@@ -81,10 +88,6 @@ export function useDrafting(options: DraftingOptions) {
       ortho: tempOverrides.number(latest.current.sysvars, 'ORTHOMODE') === 1,
     };
   }
-  function setSelectMode(value: boolean): void {
-    selectionMode.current = value;
-    setSelecting(value);
-  }
   useEffect(() => {
     const active = activeSession.current;
     if (active) {
@@ -92,15 +95,6 @@ export function useDrafting(options: DraftingOptions) {
       if (cursorRef.current) active.moveCursor(cursorRef.current, cursorOptions.current);
     }
   }, [ortho, state.settings]);
-
-  function select(ids: string[]): void {
-    selectionRef.current = ids;
-    setSelectedIds(ids);
-  }
-  useEffect(() => {
-    const present = new Set(state.entities.map((entity) => entity.id));
-    select(selectionRef.current.filter((id) => present.has(id)));
-  }, [state]);
 
   function showError(code: string): void {
     const key = errors[code] ?? 'invalidPoint';
@@ -121,9 +115,7 @@ export function useDrafting(options: DraftingOptions) {
       current.print(current.messages.currentLayerHidden);
       return;
     }
-    select([]);
-    setSelectMode(false);
-    eraseSelection.current = false;
+    selection.clearSelection();
     const session = new DraftSession(tool, settings(), {
       coordinates: () => coordinateSettings((name) => latest.current.sysvars.get(name)),
       resolveTypedPoint: (point, override) => latest.current.resolveTypedPoint?.(point, override),
@@ -146,26 +138,14 @@ export function useDrafting(options: DraftingOptions) {
   }
   function cancel(print = true): boolean {
     const active = activeSession.current;
-    const hadActive = active !== null || selectionMode.current;
+    const hadActive = active !== null || selection.isActive();
     if (active) active.cancel();
     activeSession.current = null;
     setSnapshot(null);
-    eraseSelection.current = false;
-    setSelectMode(false);
-    if (!hadActive) select([]);
+    selection.cancel(false);
+    if (!hadActive) selection.clearSelection();
     if (print) latest.current.print(latest.current.messages.cancel);
     return hadActive;
-  }
-  function erase(): void {
-    const active = latest.current;
-    const result = deleteCadEntities(active.getState(), selectionRef.current);
-    if (result.deleted) {
-      active.commitState('ERASE', result.state);
-      select([]);
-      active.print(active.messages.erasedObjects(result.deleted));
-    } else active.print(active.messages.noSelection);
-    eraseSelection.current = false;
-    setSelectMode(false);
   }
   function pick(event: PickInput): boolean {
     if (activeSession.current) {
@@ -175,26 +155,12 @@ export function useDrafting(options: DraftingOptions) {
       if (result.status === 'error') showError(result.error ?? 'point');
       return result.status !== 'error';
     }
-    if (!event.entityId) {
-      if (!eraseSelection.current) select([]);
-      return false;
-    }
-    selectIds([event.entityId], event.shiftKey);
-    return false;
+    return selection.pick(event.point, event.entityId, event.shiftKey);
   }
   function cursor(point: CadPoint, pointOptions: DraftPointOptions = {}): void {
     cursorRef.current = point;
     cursorOptions.current = pointOptions;
     activeSession.current?.moveCursor(point, pointOptions);
-  }
-  function selectIds(ids: readonly string[], remove = false): void {
-    const wanted = new Set(ids);
-    const current = latest.current.sysvars.getNumber('PICKADD') === 0 ? [] : selectionRef.current;
-    select(
-      remove
-        ? selectionRef.current.filter((id) => !wanted.has(id))
-        : [...new Set([...current, ...ids])],
-    );
   }
   function submit(value: string, textOptions: DraftTextOptions = {}): boolean {
     if (activeSession.current) {
@@ -204,26 +170,7 @@ export function useDrafting(options: DraftingOptions) {
       tempOverrides.consumeObjectSnapInput(value, result.status !== 'error');
       return true;
     }
-    if (selectionMode.current) {
-      if (!value.trim()) {
-        if (eraseSelection.current) erase();
-        else setSelectMode(false);
-      } else latest.current.print(latest.current.messages.selectObjects);
-      return true;
-    }
-    return false;
-  }
-  function selectAll(): void {
-    const current = latest.current.getState();
-    select(
-      current.entities
-        .filter((entity) =>
-          current.layers.some(
-            (layer) => layer.name === entity.layer && layer.visible && !layer.locked,
-          ),
-        )
-        .map((entity) => entity.id),
-    );
+    return selection.submit(value);
   }
 
   useEffect(() => {
@@ -236,28 +183,6 @@ export function useDrafting(options: DraftingOptions) {
         description: { 'ko-KR': ko.draftingUsage, 'en-US': en.draftingUsage },
         execute: () => begin(name),
       });
-    registry.register({
-      name: 'SELECT',
-      displayName: { 'ko-KR': ko.select, 'en-US': en.select },
-      description: { 'ko-KR': ko.selectObjects, 'en-US': en.selectObjects },
-      execute: () => {
-        cancel(false);
-        setSelectMode(true);
-      },
-    });
-    registry.register({
-      name: 'ERASE',
-      displayName: { 'ko-KR': ko.erase, 'en-US': en.erase },
-      description: { 'ko-KR': ko.selectObjects, 'en-US': en.selectObjects },
-      execute: () => {
-        if (activeSession.current || selectionMode.current) cancel(false);
-        if (selectionRef.current.length) erase();
-        else {
-          eraseSelection.current = true;
-          setSelectMode(true);
-        }
-      },
-    });
   }, [registry, messages]);
 
   function currentPrompt(current: DraftSnapshot): string {
@@ -270,22 +195,17 @@ export function useDrafting(options: DraftingOptions) {
       ) ?? latest.current.messages[current.prompt]
     );
   }
-  const prompt = snapshot ? currentPrompt(snapshot) : selecting ? messages.selectObjects : null;
+  const prompt = snapshot ? currentPrompt(snapshot) : selection.prompt;
   return {
+    ...selection,
     snapshot,
-    selectedIds,
-    active: snapshot !== null || selectionMode.current,
+    active: snapshot !== null || selection.isActive(),
     prompt,
     begin,
     cancel,
     pick,
     cursor,
     submit,
-    erase,
-    selectAll,
-    selectIds,
-    clearSelection: () => select([]),
-    getSelectedIds: () => selectionRef.current,
     getSnapEntities: () => activeSession.current?.getSnapEntities() ?? [],
     getPointInput: () => activeSession.current?.getPointInput(),
     getAidContext: (): ReturnType<DraftSession['getAidContext']> =>
@@ -293,7 +213,7 @@ export function useDrafting(options: DraftingOptions) {
         pointInput: { stage: 'point' as const, trackingPoints: [], sourcePoint: false },
         trackingPoints: [],
       },
-    isActive: () => activeSession.current !== null || selectionMode.current,
+    isActive: () => activeSession.current !== null || selection.isActive(),
     isDrafting: () => activeSession.current !== null,
   };
 }

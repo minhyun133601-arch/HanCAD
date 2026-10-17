@@ -34,6 +34,8 @@ import { useDrawingFileCommands } from './useDrawingFileCommands';
 import { setDocumentSource } from './document-source';
 import { useDrawingFileNotice } from './useDrawingFileNotice';
 import { viewVariables } from './view-history';
+import { syncClipboardBlockRecords } from './clipboard-block-records';
+import { syncSelectionGroupRecords } from './selection-group-records';
 
 interface DrawingFilesOptions {
   registry: CommandRegistry;
@@ -271,6 +273,8 @@ export function useDrawingFiles({
             variables ?? (newBase ? { ...next.dimensionStyle, ...next.draftingVariables } : {}),
           ))
             transaction.setVariable(name, value);
+          syncClipboardBlockRecords(database, transaction, next.state);
+          syncSelectionGroupRecords(database, transaction, next.state);
           transaction.setVariable(drawingViewVariable, serialized);
         });
       });

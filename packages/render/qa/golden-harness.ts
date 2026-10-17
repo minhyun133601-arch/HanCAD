@@ -124,6 +124,8 @@ export function runGolden(index: number) {
       scale,
       unit: state.settings.unit,
       selected: selected.has(entity.id),
+      // Phase 05 selected strokes have a minimum three-CSS-pixel highlight.
+      ...(selected.has(entity.id) ? { lineWidth: Math.max(3, entity.lineWidth) } : {}),
     });
   }
   const renderer = new WebGlRenderer(gpuCanvas, {

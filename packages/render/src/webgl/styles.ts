@@ -1,4 +1,4 @@
-import { resolveDisplayColor, resolveTransparency } from '../style/aci';
+import { ACI_RGB, foregroundColor, resolveDisplayColor, resolveTransparency } from '../style/aci';
 import type { EntityColor, EntityTransparency } from '../style/aci';
 import { effectiveLinetypeScale, builtinLinetypes } from '../style/linetype';
 import type { LinetypeDefinition } from '../style/linetype';
@@ -19,6 +19,7 @@ export interface RenderEnvironment {
   linetypes: ReadonlyMap<string, LinetypeDefinition>;
   selected: ReadonlySet<string>;
   hidden: ReadonlySet<string>;
+  preview?: ReadonlySet<string>;
 }
 export function numberVariable(environment: RenderEnvironment, name: string, fallback: number) {
   const value = environment.variable(name);
@@ -46,12 +47,22 @@ export function entityStyle(
   patterns: ReadonlyMap<string, number>,
 ) {
   const layer = environment.layers.get(entity.layer);
-  const rgb = environment.selected.has(entity.id)
-    ? 0x38bdf8
-    : resolveDisplayColor(entity.color, {
-        layer: layer?.color ?? { kind: 'aci', index: 7 },
-        background: environment.background,
-      });
+  const selected =
+    environment.selected.has(entity.id) && numberVariable(environment, 'HIGHLIGHT', 1) !== 0;
+  const preview = environment.preview?.has(entity.id) ?? false;
+  const effect = numberVariable(environment, 'SELECTIONEFFECT', 1);
+  const effectColor = numberVariable(environment, 'SELECTIONEFFECTCOLOR', 0);
+  const rgb =
+    selected && effect !== 0
+      ? effectColor
+        ? (ACI_RGB[effectColor] ?? 0x38bdf8)
+        : 0x38bdf8
+      : preview
+        ? foregroundColor(environment.background)
+        : resolveDisplayColor(entity.color, {
+            layer: layer?.color ?? { kind: 'aci', index: 7 },
+            background: environment.background,
+          });
   const alpha =
     1 -
     resolveTransparency(
@@ -82,10 +93,13 @@ export function entityStyle(
     ((rgb >> 8) & 255) / 255,
     (rgb & 255) / 255,
     visible ? alpha : 0,
-    lineweightPixels(weight, Boolean(environment.variable('LWDISPLAY'))),
+    Math.max(
+      selected && effect !== 0 ? 3 : preview ? 2 : 1,
+      lineweightPixels(weight, Boolean(environment.variable('LWDISPLAY'))),
+    ),
     patterns.get(linetype) ?? 0,
     scale,
-    0,
+    selected && effect === 0 ? 1 : 0,
   ];
 }
 export function entityDash(entity: DisplayEntity, environment: RenderEnvironment) {

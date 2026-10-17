@@ -37,6 +37,8 @@ export interface CadPolyline extends CadEntityBase {
   type: 'polyline' | 'rect';
   points: CadPoint[];
   closed: boolean;
+  /** Signed tangent of one quarter of each outgoing arc sweep in model Y-down coordinates. */
+  bulges?: number[];
 }
 export interface CadCircle extends CadEntityBase {
   type: 'circle';
@@ -122,11 +124,54 @@ export interface LegacyCadState {
   selectedIds: string[];
   settings: CadSettings;
   linetypes?: CadLinetype[];
+  clipboardBlocks?: CadClipboardBlock[];
+  groups?: CadGroup[];
+  selectionFilters?: CadNamedFilter[];
+}
+export interface CadGroup {
+  id?: string;
+  name: string;
+  description: string;
+  selectable: boolean;
+  ids: string[];
+}
+export type CadFilterProperty =
+  | 'type'
+  | 'layer'
+  | 'color'
+  | 'linetype'
+  | 'linetypeScale'
+  | 'lineweight'
+  | 'transparency'
+  | 'text'
+  | 'radius'
+  | 'length'
+  | 'name';
+export interface CadFilterCondition {
+  property: CadFilterProperty;
+  operator: '=' | '!=' | '>' | '>=' | '<' | '<=' | 'wildcard';
+  value: string | number;
+}
+export type CadFilterExpression =
+  | CadFilterCondition
+  | {
+      operator: 'and' | 'or' | 'not' | 'xor';
+      children: CadFilterExpression[];
+    };
+export interface CadNamedFilter {
+  name: string;
+  expression: CadFilterExpression;
 }
 export interface CadLinetype {
   name: string;
   description: string;
   pattern: number[];
+}
+/** Transitional block instances retain membership while display uses flattened geometry. */
+export interface CadClipboardBlock {
+  name: string;
+  basePoint: CadPoint;
+  entityIds: string[];
 }
 export interface CadImportReport {
   format: string;

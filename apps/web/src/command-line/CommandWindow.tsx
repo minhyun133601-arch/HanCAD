@@ -25,6 +25,7 @@ interface CommandWindowProps {
   prompt: string;
   commandName: string | null;
   mode: PromptInputMode;
+  selectionKeywords?: readonly string[];
   /** A command or command-owned prompt is running (suggestions need ' input). */
   commandActive: boolean;
   editable: boolean;
@@ -129,6 +130,7 @@ export function CommandWindow(props: CommandWindowProps) {
           commandName={props.commandName}
           editable={props.editable}
           mode={props.mode}
+          {...(props.selectionKeywords ? { selectionKeywords: props.selectionKeywords } : {})}
           busy={session.busy}
           blocked={props.blocked}
           expanded={state.expanded}

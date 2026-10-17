@@ -54,6 +54,7 @@ export function constrainDynamicPoint(
   vars: SystemVariables,
 ): CadPoint {
   if (!constraints) return point;
+  if (constraints.project) return constraints.project(point);
   const settings = coordinateSettings((name) => vars.get(name));
   const origin = constraints.relative ? (base ?? { x: 0, y: 0 }) : { x: 0, y: 0 };
   const parse = (value: string | undefined): number | undefined =>

@@ -45,6 +45,7 @@ import variables43 from './variables-44.json';
 import variables44 from './variables-45.json';
 import variables45 from './variables-46.json';
 import variables46 from './variables-47.json';
+import variables47 from './variables-48.json';
 import headers0 from './headers-01.json';
 import headers1 from './headers-02.json';
 import headers2 from './headers-03.json';
@@ -100,6 +101,7 @@ export const catalogData: readonly unknown[] = [
   ...variables44,
   ...variables45,
   ...variables46,
+  ...variables47,
 ];
 export const headerData: readonly unknown[] = [
   ...headers0,

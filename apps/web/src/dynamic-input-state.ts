@@ -1,13 +1,19 @@
 import { parseDraftAngle, parseDraftNumber } from '@hancad/draft';
+import type { GripDimensionField } from '@hancad/draft';
+import type { CadPoint } from '@hancad/legacy-bridge';
 
-export type DynamicField = 'distance' | 'angle' | 'x' | 'y' | 'z';
-export interface DynamicConstraints {
+type PointerDynamicField = 'distance' | 'angle' | 'x' | 'y' | 'z';
+export type DynamicField = PointerDynamicField | GripDimensionField;
+export interface DynamicConstraints extends Partial<Record<GripDimensionField, string>> {
   distance?: string;
   angle?: string;
   x?: string;
   y?: string;
   z?: string;
   relative: boolean;
+  project?: (point: CadPoint) => CadPoint;
+  constraintKey?: string;
+  invalid?: boolean;
 }
 export interface DynamicEdit {
   field: DynamicField;
@@ -31,7 +37,7 @@ export function constraintsFor(edit: DynamicEdit, input: string): DynamicConstra
 export function dynamicToken(
   edit: DynamicEdit,
   input: string,
-  fallback: Readonly<Record<DynamicField, string>>,
+  fallback: Readonly<Record<PointerDynamicField, string>>,
 ): string | undefined {
   const value = input.trim();
   const scalar = value.replace(/^[#@]/, '');

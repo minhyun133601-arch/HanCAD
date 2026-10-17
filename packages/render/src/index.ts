@@ -16,3 +16,5 @@ export * from './sources/database-source';
 export * from './view-navigation';
 export * from './drafting-aids';
 export * from './tracking-overlay';
+export * from './edit-overlay';
+export * from './selection-policy';

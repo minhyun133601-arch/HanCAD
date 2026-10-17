@@ -32,12 +32,15 @@ test('DXF imports editable geometry, colors, units and clockwise conversion', as
   assert.match(state.entities[2].text,/한글 °/);assert.equal(state.entities[2].rotation,-Math.PI/2);
   assert.equal(report.skipped,0);
 });
-test('DXF polyline bulges flatten the correct semicircle, including closure', () => {
+test('DXF polyline bulges retain the exact semicircle, including closure', () => {
   const ctx=setup();
   const {state,report}=ctx.HeechangTool.core.cadImporters.parseDxf(dxf(record('LWPOLYLINE',[70,1,10,0,20,0,42,1,10,10,20,0,10,10,20,10])));
-  const poly=state.entities[0];assert.equal(poly.closed,true);assert.ok(poly.points.length>50);
+  const poly=state.entities[0];assert.equal(poly.closed,true);assert.equal(poly.points.length,3);
+  assert.deepEqual(plain(poly.bulges),[-1,0,0]);
   // Positive bulge travels counterclockwise along the lower world semicircle.
-  assert.ok(poly.points.some(p=>p.y>4.99));assert.equal(report.approximated,1);
+  assert.equal(ctx.HeechangTool.core.cadEngine.bounds(poly).maxY,5);
+  assert.equal(ctx.HeechangTool.core.cadEngine.hitTest([poly],{x:5,y:5},1e-8)?.id,poly.id);
+  assert.equal(report.approximated,0);
 });
 test('nested INSERT transforms, inherited layer/color, off/locked layer and dimensions', () => {
   const ctx=setup();
@@ -152,5 +155,12 @@ test('real official LibreDWG DWG fixture converts offline and imports editable e
   console.log(`Official DWG fixture: ${report.imported} editable entities, ${report.skipped} skipped, ${report.approximated} approximated. Types: ${[...new Set(state.entities.map(e=>e.type))].join(', ')}`);
   assert.equal(report.format,'DWG');assert.equal(report.version,'AC1015');assert.ok(state.entities.length>50);
   assert.ok(state.entities.some(e=>e.type==='line'));assert.ok(state.entities.some(e=>e.type==='text'));
+  assert.equal(report.imported,71);assert.equal(report.skipped,133);assert.equal(report.approximated,17);
+  const retained=state.entities.find(e=>e.type==='polyline'&&e.layer==='Tavolo 3'&&e.points.length===3635);
+  assert.ok(retained,'LWPOLYLINE handle 75B must remain an exact bulged polyline instead of exceeding the tessellated-point limit');
+  assert.equal(retained.closed,true);assert.equal(retained.bulges.length,3635);
+  assert.ok(retained.bulges.every(value=>Math.abs(value+0.52056705)<1e-10));
+  assert.ok(retained.points.every(point=>Number.isFinite(point.x)&&Number.isFinite(point.y)));
+
   assert.equal(terminated,1);assert.equal(blobs.size,0);
 });

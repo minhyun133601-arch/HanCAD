@@ -89,7 +89,16 @@
       const points = polygonPoints(entity);
       if (points.length) {
         context.beginPath(); context.moveTo(points[0].x, points[0].y);
-        points.slice(1).forEach((at) => context.lineTo(at.x, at.y));
+        const count=entity.closed||entity.type==="rect"?points.length:points.length-1;
+        for(let i=0;i<count;i++) {
+          const a=points[i],b=points[(i+1)%points.length],bulge=entity.bulges?.[i]||0;
+          if(Math.abs(bulge)<1e-12) context.lineTo(b.x,b.y);
+          else {
+            const dx=b.x-a.x,dy=b.y-a.y,cx=(a.x+b.x)/2-dy*(1-bulge*bulge)/(4*bulge),cy=(a.y+b.y)/2+dx*(1-bulge*bulge)/(4*bulge);
+            const radius=Math.hypot(dx,dy)*(1+bulge*bulge)/(4*Math.abs(bulge)),start=Math.atan2(a.y-cy,a.x-cx);
+            context.arc(cx,cy,radius,start,start+4*Math.atan(bulge),bulge<0);
+          }
+        }
         if (entity.closed || entity.type === "rect") context.closePath();
         context.stroke();
       }
@@ -146,7 +155,10 @@
     const includeAll = (points) => { for (const at of points) include(at); };
     entitiesOf(snapshot, visibleOnly).forEach((entity) => {
       if (entity.type === "line") { include(point(entity.a)); include(point(entity.b)); }
-      if (entity.type === "polyline" || entity.type === "rect") includeAll(polygonPoints(entity));
+      if (entity.type === "polyline" || entity.type === "rect") {
+        const b=Tool.core.cadEngine.bounds(entity);
+        if(b) { include({x:b.minX,y:b.minY}); include({x:b.maxX,y:b.maxY}); }
+      }
       if (entity.type === "circle" || entity.type === "arc") {
         const center = point(entity.center), radius = Math.abs(number(entity.radius));
         include({ x: center.x - radius, y: center.y - radius }); include({ x: center.x + radius, y: center.y + radius });
@@ -178,7 +190,21 @@
       lines.push(`<g data-layer="${escapeXml(layerName(entity))}" stroke="${stroke}" stroke-width="${cleanNumber(Math.max(1, Math.min(6, number(entity.lineWidth, 1.5))))}" stroke-linecap="round" stroke-linejoin="round" fill="none">`);
       const line = (a, b) => `<line x1="${cleanNumber(a.x)}" y1="${cleanNumber(a.y)}" x2="${cleanNumber(b.x)}" y2="${cleanNumber(b.y)}"${vectorStroke}/>`;
       if (entity.type === "line") lines.push(line(point(entity.a), point(entity.b)));
-      if (entity.type === "polyline" || entity.type === "rect") lines.push(`<${entity.closed || entity.type === "rect" ? "polygon" : "polyline"} points="${polygonPoints(entity).map(xy).join(" ")}"${vectorStroke}/>`);
+      if (entity.type === "polyline" || entity.type === "rect") {
+        if(entity.bulges?.some(value=>Math.abs(value)>1e-12)) {
+          const points=polygonPoints(entity),count=entity.closed?points.length:points.length-1,path=[`M${xy(points[0])}`];
+          for(let i=0;i<count;i++) {
+            const a=points[i],b=points[(i+1)%points.length],bulge=entity.bulges[i]||0;
+            if(Math.abs(bulge)<1e-12) path.push(`L${xy(b)}`);
+            else {
+              const radius=Math.hypot(b.x-a.x,b.y-a.y)*(1+bulge*bulge)/(4*Math.abs(bulge));
+              path.push(`A${cleanNumber(radius)},${cleanNumber(radius)} 0 ${Math.abs(bulge)>1?1:0},${bulge>0?1:0} ${xy(b)}`);
+            }
+          }
+          if(entity.closed)path.push("Z");
+          lines.push(`<path d="${path.join(" ")}"${vectorStroke}/>`);
+        } else lines.push(`<${entity.closed || entity.type === "rect" ? "polygon" : "polyline"} points="${polygonPoints(entity).map(xy).join(" ")}"${vectorStroke}/>`);
+      }
       if (entity.type === "circle") lines.push(`<circle cx="${cleanNumber(point(entity.center).x)}" cy="${cleanNumber(point(entity.center).y)}" r="${cleanNumber(Math.abs(number(entity.radius)))}"${vectorStroke}/>`);
       if (entity.type === "arc") {
         const center = point(entity.center), radius = Math.abs(number(entity.radius)), start = number(entity.startAngle), sweep = arcSweep(entity);
@@ -226,6 +252,11 @@
     const tableHandles = Object.fromEntries(["LTYPE", "LAYER", "STYLE", "DIMSTYLE", "BLOCK_RECORD"].map((name) => [name, handle()]));
     const textStyleHandle = handle();
     const blockRecords = [{ name: "*Model_Space", handle: handle() }, { name: "*Paper_Space", handle: handle() }];
+    const groupDefinitions = (snapshot.groups || []).map(group => ({ ...group, handle: handle() }));
+    const rootDictionary = handle(), groupDictionary = handle(), filterDictionary = handle();
+    const filterDefinitions = (snapshot.selectionFilters || []).map(filter => ({ ...filter, handle: handle() }));
+    const entityHandles = new Map();
+    let currentEntityId = null, currentEntityIds = null;
     const dimStyles = new Map(), dimensions = new Map();
     entitiesOf(snapshot).filter((entity) => entity.type === "dimension").forEach((raw, index) => {
       const entity = Tool.core.cadEngine.normalizeEntity(raw, snapshot.settings || Tool.core.cadEngine.DEFAULT_SETTINGS);
@@ -235,6 +266,21 @@
       if (!dimStyles.has(key)) dimStyles.set(key, { name: `CAD_DIM_${dimStyles.size + 1}`, handle: handle(), entity: { ...entity, unit: styleUnit } });
       const block = { name: `*D${index + 1}`, handle: handle(), entity, geometry: dimensionGeometry(entity, unit) };
       blockRecords.push(block); dimensions.set(raw, { ...block, style: dimStyles.get(key) });
+    });
+    const clipboardMembership = new Map(), clipboardNames = new Set(blockRecords.map(block => block.name.toUpperCase()));
+    const sourceById = new Map(entitiesOf(snapshot).map(entity => [entity.id, entity]));
+    (snapshot.clipboardBlocks || []).forEach(definition => {
+      const members = definition.entityIds.map(id => sourceById.get(id)).filter(Boolean);
+      if (!members.length) return;
+      if (members.some(entity => clipboardMembership.has(entity.id))) throw new Error("Overlapping clipboard block membership.");
+      const baseName = safeString(definition.name).replace(/[<>/\\":;?|=]/g, "_") || "HANCAD_BLOCK";
+      let name = baseName, suffix = 2;
+      while (clipboardNames.has(name.toUpperCase())) name = `${baseName}_${suffix++}`;
+      clipboardNames.add(name.toUpperCase());
+      const block = { name, handle: handle(), clipboard: true, basePoint: definition.basePoint,
+        entityIds: members.map(entity => entity.id), entities: members };
+      blockRecords.push(block);
+      members.forEach(entity => clipboardMembership.set(entity.id, block));
     });
     push(0, "SECTION"); push(2, "HEADER"); push(9, "$ACADVER"); push(1, "AC1021"); push(9, "$INSUNITS"); push(70, ({ mm: 4, cm: 5, m: 6, in: 1, ft: 2 })[unit] || 0);
     // Definitions are editable, but no AcDbDimAssoc geometry links are written yet.
@@ -264,7 +310,14 @@
     blockRecords.forEach((block) => { record("BLOCK_RECORD", tableHandles.BLOCK_RECORD, "AcDbBlockTableRecord", block.handle); push(2, block.name); push(70, 0); push(280, 1); push(281, 0); });
     push(0, "ENDTAB"); push(0, "ENDSEC");
     const position = (at, code = 10) => { push(code, cleanNumber(at.x)); push(code + 10, cleanNumber(-at.y)); push(code + 20, cleanNumber(at.z || 0)); };
-    const start = (type, entity, owner) => { const id = handle(); push(0, type); push(5, id); push(330, owner); push(100, "AcDbEntity"); push(8, dxfLayer(layerName(entity))); if (entity.color) { push(62, 7); push(420, parseInt(color(entity.color).slice(1), 16)); } return id; };
+    const start = (type, entity, owner) => { const id = handle(); push(0, type); push(5, id);
+      const sourceIds = currentEntityIds || (currentEntityId ? [currentEntityId] : []);
+      if (sourceIds.length && owner === blockRecords[0].handle) {
+        sourceIds.forEach(sourceId => { if (!entityHandles.has(sourceId)) entityHandles.set(sourceId, id); });
+        const reactors = groupDefinitions.filter(group => group.ids.some(sourceId => sourceIds.includes(sourceId)));
+        if (reactors.length) { push(102, "{ACAD_REACTORS"); reactors.forEach(group => push(330, group.handle)); push(102, "}"); }
+      }
+      push(330, owner); push(100, "AcDbEntity"); push(8, dxfLayer(layerName(entity))); if (entity.color) { push(62, 7); push(420, parseInt(color(entity.color).slice(1), 16)); } return id; };
     const line = (entity, a, b, owner) => { start("LINE", entity, owner); push(100, "AcDbLine"); position(a); position(b, 11); };
     const polyline = (entity, points, closed, owner) => {
       const elevation = points[0]?.z || 0;
@@ -276,7 +329,7 @@
       }
       start("LWPOLYLINE", entity, owner); push(100, "AcDbPolyline"); push(90, points.length); push(70, closed ? 1 : 0);
       if (elevation) push(38, cleanNumber(elevation));
-      points.forEach((at) => { push(10, cleanNumber(at.x)); push(20, cleanNumber(-at.y)); });
+      points.forEach((at,index) => { push(10, cleanNumber(at.x)); push(20, cleanNumber(-at.y)); if(entity.bulges?.[index]) push(42,cleanNumber(-entity.bulges[index])); });
     };
     const text = (entity, value, at, size, rotation, owner, centered = false) => {
       start("TEXT", entity, owner); push(100, "AcDbText"); position(at); push(40, cleanNumber(size)); push(1, safeString(value)); push(50, cleanNumber(normalAngle(-number(rotation)) * 180 / Math.PI)); push(7, "STANDARD");
@@ -292,33 +345,17 @@
         push(100, "AcDbArc"); push(50, cleanNumber(normalAngle(startAngle) * 180 / Math.PI)); push(51, cleanNumber(normalAngle(endAngle) * 180 / Math.PI));
       }
     };
-    push(0, "SECTION"); push(2, "BLOCKS");
-    blockRecords.forEach((block) => {
-      const entity = block.entity || { layer: "0" };
-      start("BLOCK", { layer: "0" }, block.handle); push(100, "AcDbBlockBegin"); push(2, block.name); push(70, block.entity ? 1 : 0); position({ x: 0, y: 0 }); push(3, block.name); push(1, "");
-      if (block.geometry) {
-        const geometry = block.geometry;
-        geometry.lines.forEach(([a, b]) => line(entity, a, b, block.handle));
-        geometry.arcs.forEach((arc) => circleArc({ ...entity, ...arc, type: "arc" }, block.handle));
-        geometry.arrows.forEach((triangle) => {
-          start("SOLID", entity, block.handle); push(100, "AcDbTrace"); position(triangle[0]); position(triangle[1], 11); position(triangle[2], 12); position(triangle[2], 13);
-        });
-        text(entity, geometry.label, geometry.textPoint, geometry.textSize, geometry.rotation, block.handle, true);
-      }
-      start("ENDBLK", { layer: "0" }, block.handle); push(100, "AcDbBlockEnd");
-    });
-    push(0, "ENDSEC"); push(0, "SECTION"); push(2, "ENTITIES");
-    const modelOwner = blockRecords[0].handle;
-    entitiesOf(snapshot).forEach((entity) => {
-      if (entity.type === "line") line(entity, point(entity.a), point(entity.b), modelOwner);
-      if (entity.type === "polyline" || entity.type === "rect") polyline(entity, polygonPoints(entity), entity.closed || entity.type === "rect", modelOwner);
-      if (entity.type === "circle" || entity.type === "arc") circleArc(entity, modelOwner);
-      if (entity.type === "text") text(entity, entity.text, point(entity.point), Math.max(0.1, number(entity.textSize, 3.5)), entity.rotation, modelOwner);
+    function emitEntity(entity, owner) {
+      currentEntityId = entity.id;
+      if (entity.type === "line") line(entity, point(entity.a), point(entity.b), owner);
+      if (entity.type === "polyline" || entity.type === "rect") polyline(entity, polygonPoints(entity), entity.closed || entity.type === "rect", owner);
+      if (entity.type === "circle" || entity.type === "arc") circleArc(entity, owner);
+      if (entity.type === "text") text(entity, entity.text, point(entity.point), Math.max(0.1, number(entity.textSize, 3.5)), entity.rotation, owner);
       if (entity.type === "dimension" && dimensions.has(entity)) {
         const dimension = dimensions.get(entity), normalized = dimension.entity, geometry = dimension.geometry;
         const kind = normalized.kind;
         const dimensionType = ({ horizontal: 0, vertical: 0, aligned: 1, diameter: 3, radius: 4, angular: 5 })[kind];
-        start("DIMENSION", normalized, modelOwner); push(100, "AcDbDimension"); push(2, dimension.name);
+        start("DIMENSION", normalized, owner); push(100, "AcDbDimension"); push(2, dimension.name);
         position(kind === "radius" ? normalized.center : kind === "angular" ? geometry.labelPoint : kind === "diameter" ? geometry.q1 : geometry.q2);
         position(geometry.textPoint, 11); push(70, dimensionType + 32); push(71, 5); push(42, cleanNumber(kind === "angular" ? geometry.measurement * Math.PI / 180 : geometry.measurement)); push(1, safeString(normalized.text || "<>")); push(3, dimension.style.name);
         if (normalized.textRotation !== undefined) push(53, cleanNumber(normalAngle(-normalized.textRotation) * 180 / Math.PI));
@@ -334,8 +371,62 @@
           push(100, "AcDb3PointAngularDimension"); position(normalized.clockwise ? normalized.b : normalized.a, 13); position(normalized.clockwise ? normalized.a : normalized.b, 14); position(normalized.center, 15);
         }
       }
+    }
+    push(0, "SECTION"); push(2, "BLOCKS");
+    blockRecords.forEach((block) => {
+      const entity = block.entity || { layer: "0" };
+      start("BLOCK", { layer: "0" }, block.handle); push(100, "AcDbBlockBegin"); push(2, block.name); push(70, block.entity || block.clipboard && block.name.startsWith("*") ? 1 : 0); position(block.clipboard ? block.basePoint : { x: 0, y: 0 }); push(3, block.name); push(1, "");
+      if (block.clipboard) block.entities.forEach(entity => emitEntity(entity, block.handle));
+      if (block.geometry) {
+        const geometry = block.geometry;
+        geometry.lines.forEach(([a, b]) => line(entity, a, b, block.handle));
+        geometry.arcs.forEach((arc) => circleArc({ ...entity, ...arc, type: "arc" }, block.handle));
+        geometry.arrows.forEach((triangle) => {
+          start("SOLID", entity, block.handle); push(100, "AcDbTrace"); position(triangle[0]); position(triangle[1], 11); position(triangle[2], 12); position(triangle[2], 13);
+        });
+        text(entity, geometry.label, geometry.textPoint, geometry.textSize, geometry.rotation, block.handle, true);
+      }
+      start("ENDBLK", { layer: "0" }, block.handle); push(100, "AcDbBlockEnd");
     });
-    push(0, "ENDSEC"); push(0, "EOF");
+    push(0, "ENDSEC"); push(0, "SECTION"); push(2, "ENTITIES");
+    const modelOwner = blockRecords[0].handle;
+    const emittedBlocks = new Set();
+    entitiesOf(snapshot).forEach((entity) => {
+      const block = clipboardMembership.get(entity.id);
+      if (!block) { emitEntity(entity, modelOwner); return; }
+      if (emittedBlocks.has(block.name)) return;
+      emittedBlocks.add(block.name);
+      currentEntityId = null; currentEntityIds = block.entityIds;
+      const insertHandle = start("INSERT", { layer: "0" }, modelOwner);
+      block.entityIds.forEach(id => entityHandles.set(id, insertHandle));
+      push(100, "AcDbBlockReference"); push(2, block.name); position(block.basePoint);
+      push(41, 1); push(42, 1); push(43, 1); push(50, 0);
+      currentEntityIds = null;
+    });
+    currentEntityId = null;
+    push(0, "ENDSEC");
+    if (groupDefinitions.length || filterDefinitions.length) {
+      push(0, "SECTION"); push(2, "OBJECTS");
+      const dictionary = (id, owner, entries) => {
+        push(0, "DICTIONARY"); push(5, id); push(330, owner); push(100, "AcDbDictionary"); push(281, 1);
+        entries.forEach(([name, target]) => { push(3, safeString(name)); push(350, target); });
+      };
+      dictionary(rootDictionary, "0", [["ACAD_GROUP", groupDictionary], ["HANCAD_SELECTION_FILTERS", filterDictionary]]);
+      dictionary(groupDictionary, rootDictionary, groupDefinitions.map(group => [group.name, group.handle]));
+      dictionary(filterDictionary, rootDictionary, filterDefinitions.map(filter => [filter.name, filter.handle]));
+      groupDefinitions.forEach(group => {
+        push(0, "GROUP"); push(5, group.handle); push(330, groupDictionary); push(100, "AcDbGroup");
+        push(300, safeString(group.description)); push(70, group.name.startsWith("*") ? 1 : 0); push(71, group.selectable ? 1 : 0);
+        [...new Set(group.ids.map(id => entityHandles.get(id)).filter(Boolean))].forEach(id => push(340, id));
+      });
+      filterDefinitions.forEach(filter => {
+        push(0, "XRECORD"); push(5, filter.handle); push(330, filterDictionary); push(100, "AcDbXrecord"); push(280, 1);
+        const json = JSON.stringify(filter.expression);
+        for (let i = 0; i < json.length; i += 240) push(1, json.slice(i, i + 240));
+      });
+      push(0, "ENDSEC");
+    }
+    push(0, "EOF");
     const seedIndex = output.indexOf("__HANDSEED__"); output[seedIndex] = handleCounter.toString(16).toUpperCase();
     return `${output.join("\r\n")}\r\n`;
   }

@@ -57,7 +57,7 @@ Left drag selects complete objects left-to-right or crossing objects right-to-le
 Shift removes. Drag a selected object to move it; Ctrl+drag copies. Wheel zooms at
 the pointer; middle drag pans; double-middle fits. Escape/capture loss cancels an
 unfinished drag. Ctrl+Z/Ctrl+Y undo/redo whole edits. The remaining reference below
-is the target contract; lasso/grips/clipboard and full command options are pending.
+is the target contract; Phase 05 implements lasso, grips and the drawing clipboard.
 
 ## Phase 04 coordinate and drafting-aid continuation (2026-10-17)
 
@@ -80,6 +80,17 @@ tabs and remembers the selected tab; OSNAP opens the Object Snap tab. Right-clic
 a drafting status button and choose Settings to open its corresponding tab.
 
 ## Function keys
+
+Phase 05: Ctrl+A selects at the active object prompt or at idle when PICKFIRST=1.
+Ctrl+Shift+A toggles group selection. Ctrl+C/X/V and Ctrl+Shift+C/V run drawing
+Clipboard commands. Ctrl+1 toggles the basic Properties palette; Ctrl+Shift+P
+toggles Quick Properties. Ctrl+W toggles overlap cycling; Shift+Space cycles its
+candidates. Browser-reserved keys retain the browser limitation described above.
+Click a grip, press Space three times and enter `2` to scale about that grip.
+Shift+click makes multiple grips hot; Esc first ends hot-grip editing and a later
+Esc clears object selection. Hover/right-click a polyline grip for vertex/arc
+actions. Space while a lasso is captured cycles Window/Crossing/Fence.
+
 F1 Help · F2 expanded command history · F3 running object snaps · F4 3D object snap · F5 cycle isoplane · F6 dynamic UCS · F7 grid · F8 ortho · F9 snap · F10 polar tracking · F11 object snap tracking · F12 dynamic input
 
 ## Ctrl shortcuts

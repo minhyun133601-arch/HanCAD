@@ -14,6 +14,7 @@ import { drawSurfaceOverlay } from './surface-overlay';
 import { fitWorldBounds, PreviousViews, sameWorldView, ViewTransition } from './view-navigation';
 import type { ViewBounds } from './view-navigation';
 import type { CadTrackingOverlay } from './tracking-overlay';
+import type { CadEditOverlay } from './edit-overlay';
 export type { CadSnapKind } from './snap-overlay';
 export type {
   CadCanvasOptions,
@@ -44,6 +45,7 @@ export class CadCanvasSurface {
   private previewHiddenIds = new Set<string>();
   private snapMarker: CadSnapMarker | undefined;
   private trackingOverlay: CadTrackingOverlay | undefined;
+  private editOverlay: CadEditOverlay = { grips: [] };
   private baseDirty = true;
   private animationFrame: number | undefined;
   private pendingCoordinates: CadPoint | undefined;
@@ -164,6 +166,10 @@ export class CadCanvasSurface {
     this.baseDirty = true;
     this.render();
   }
+  setEditOverlay(overlay: CadEditOverlay): void {
+    this.editOverlay = overlay;
+    this.requestRender();
+  }
   setSnapMarker(
     point?: CadPoint,
     kind: CadSnapKind = 'endpoint',
@@ -186,6 +192,17 @@ export class CadCanvasSurface {
   pick(point: CadPoint): string | undefined {
     const size = this.options.getAidSettings?.().pickbox ?? defaultAidSettings.pickbox;
     return this.gpu.pick(point, Math.max(0.5, size / 2) / this.view.scale);
+  }
+  pickAll(point: CadPoint, includeLocked = false): string[] {
+    const size = this.options.getAidSettings?.().pickbox ?? defaultAidSettings.pickbox;
+    return this.gpu.pickAll(point, Math.max(0.5, size / 2) / this.view.scale, includeLocked);
+  }
+  query(bounds: ViewBounds): string[] {
+    return this.gpu.query(bounds);
+  }
+  setHighlight(ids: readonly string[]): void {
+    this.gpu.setHighlight(ids);
+    this.requestRender(true);
   }
   getView(): CadView {
     return { ...this.view };
@@ -354,11 +371,14 @@ export class CadCanvasSurface {
       window: this.options.getNavigationWindow?.(),
       worldToScreen: (p) => this.worldToScreen(p),
       ...(this.trackingOverlay ? { tracking: this.trackingOverlay } : {}),
+      edit: this.editOverlay,
+      ...(this.options.getSystemVariable ? { variable: this.options.getSystemVariable } : {}),
     });
     Object.assign(this.canvas.dataset, {
       previewCount: String(this.preview.length),
       previewHiddenCount: String(this.previewHiddenIds.size),
       selectionCount: String(this.selected.size),
+      gripCount: String(this.editOverlay.grips.length),
       snapActive: this.snapMarker ? '1' : '0',
       snapKind: this.snapMarker?.kind ?? '',
       zoom: String(this.view.scale),

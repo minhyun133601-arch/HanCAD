@@ -17,6 +17,7 @@ export function CommandPanels(props: {
   locale: Locale;
   blocked: boolean;
   settings: ReturnType<typeof useDraftingSettingsCommands>;
+  openGripMenu?: (x: number, y: number) => boolean;
 }) {
   const help = useCommandHelp(props.session.registry, props.input.routing.commandName);
   const settings = props.settings;

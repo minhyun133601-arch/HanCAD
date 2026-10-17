@@ -1,0 +1,34 @@
+.selection-cycle-badge {
+  position: fixed;
+  color: #b9d4ff;
+  pointer-events: none;
+  z-index: 12;
+  font-size: 15px;
+}
+.selection-cycle-list {
+  position: fixed;
+  z-index: 70;
+  display: grid;
+  min-width: 180px;
+  max-height: 300px;
+  overflow: auto;
+  padding: 5px;
+  border: 1px solid #8495aa;
+  background: #303943;
+  color: #eef3f8;
+  box-shadow: 0 4px 14px #0008;
+}
+.selection-cycle-list strong {
+  padding: 5px;
+}
+.selection-cycle-list button {
+  text-align: left;
+  padding: 6px 10px;
+  border: 0;
+  color: inherit;
+  background: transparent;
+}
+.selection-cycle-list button:hover,
+.selection-cycle-list button:focus {
+  background: #496783;
+}

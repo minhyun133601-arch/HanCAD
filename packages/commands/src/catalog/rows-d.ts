@@ -6,6 +6,7 @@ export const rowsD: readonly string[] = [
   'DBCONNECT|데이터베이스 연결|dbConnect|외부 데이터베이스 테이블에 대한 인터페이스를 제공합니다.|Provides an interface to external database tables.|20',
   'DDEDIT|문자 편집|Edit Text|단일 행 문자, 치수 문자 또는 속성 정의를 편집합니다.|Edits single-line text, dimension text or attribute definitions.|10',
   'DDGRIPS|그립 옵션|Grip Options|옵션 대화상자의 선택 탭을 표시합니다.|Displays the Selection tab of the Options dialog box.|5',
+  'GROUPEDIT|그룹 편집|Edit Group|그룹에 객체를 추가하거나 제거하고 이름 또는 설명을 변경합니다.|Adds or removes group members and changes a group name or description.|5',
   'DDPTYPE|점 스타일|Point Style|점 객체의 표시 스타일과 크기를 지정합니다.|Specifies the display style and size of point objects.|6',
   'DDVPOINT|관측점 사전 설정|Viewpoint Presets|3D 관측 방향을 설정합니다.|Sets the 3D viewing direction.|21',
   'DELAY|지연|Delay|스크립트에서 시간 지연을 지정합니다.|Provides a timed pause within a script.|19',
