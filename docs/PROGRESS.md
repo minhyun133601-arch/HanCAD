@@ -1,11 +1,89 @@
 # HanCAD progress
 
-## Active phase: Phase 05 selection, grips and clipboard (2026-10-17)
+## Active phase: Phase 05 selection, grips and clipboard (resumed 2026-10-19)
 
 Source: `docs/prompt-source/prompts/phase-05-selection-grips-clipboard.md`.
 Authorized by the user after Phase 04 completion. The recorded accepted baseline
 below remains valid; do not rerun the full suite at phase start. Preserve existing
 AGENTS.md/prompt protocol edits outside feature commits. Phase 06 is not authorized.
+
+### Resume plan (2026-10-19)
+
+The user requested continuation of Phase 05. Preserve the recorded comprehensive
+browser evidence; do not rerun it merely to resume. The fresh `pnpm check:desktop`
+still reports only MSVC and Windows SDK missing. The previous automatic approval
+rejection of Build Tools installation remains recorded in DECISIONS.md; do not
+retry installation through another route.
+
+| Milestone                     | Status                              | Remaining scope                                                                                                                   |
+| ----------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 5.6 Native boundary audit     | Implemented; native compile pending | Stage Win32 allocations, validate payload limits, and cover IPC packet, failure, delayed-cut and persistent-backup safety         |
+| 5.7 Native acceptance handoff | Done                                | Updated capability docs and exact native build/two-window/format/shortcut steps; bounded contention helper verified independently |
+| 5.8 Native execution          | Blocked by prerequisites            | Run the locked native check/build and actual Win32/window acceptance once MSVC C++ tools and Windows SDK are available            |
+
+Mocked IPC tests exercise command behavior and transport contracts only. They do
+not compile or execute the Rust bridge and cannot accept the native milestone.
+
+### Continuation evidence (2026-10-19)
+
+Native memory is now prepared before EmptyClipboard, with RAII ownership until
+SetClipboardData succeeds. Reads permit allocation padding while requiring a
+terminated, valid UTF-8 payload within the limit. Four Rust validation tests were
+added but remain uncompiled/unrun with the bridge. An actual locked offline
+Cargo check exited 101 at dependency build scripts because link.exe is missing.
+SetClipboardData itself can still partially publish formats on failure; CUTCLIP
+does not erase drawing geometry after any rejected write.
+
+Browser copying now requires either a successful system Clipboard write or a
+persistent shared IndexedDB copy. Memory-only success was removed. A reproduced
+two-backend bug selected an older COPYBASE packet after IndexedDB recovered;
+IndexedDB is now the sole backup and old localStorage packets are ignored.
+Failures retain the source, selection and undo journal, with a localized message.
+
+Verification completed in this continuation:
+
+- Production `HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=0 pnpm verify` exited 0:
+  WASM build/round-trip, lint, formatting, strict TypeScript, 798 unit tests in
+  109 files, 30 compatibility tests, 377-command drift check, production build,
+  renderer verification and 146 browser tests passed. One opt-in personal DWG
+  check was skipped. Browser duration was 4.3 minutes. Renderer results remain
+  28 scenes, 37 exact-color contracts, 3 viewport boundaries and 20 high-zoom
+  comparisons; translated scenes are identical and compositing channel error
+  is at most 1.
+- The final single-store correction followed that complete run. The latest
+  source was rebuilt and all 12 affected production Clipboard/Properties tests
+  passed across the initial run and a focused rerun. They cover exact native IPC
+  JSON/PNG/DIB, rejection, Escape, document switching, failed persistent backup,
+  stale localStorage and successful system writing without IndexedDB. The first
+  affected run had 11 passes and an incorrect REDO expectation: REDO requires
+  immediately preceding Undo, so MREDO 1 now checks the preserved redo journal.
+  Both tests in that file passed afterward; product code did not change again.
+  The combined current browser inventory is 148 passed and one optional skip;
+  it is not a second complete run of all 149 cases against the final build.
+- Strict TypeScript, affected ESLint and formatting passed after the final
+  correction. The sysvar drift check passed for 868 variables/214 headers;
+  `cargo fmt --all -- --check` and whitespace checks passed. No dependency changed.
+- `scripts/hold-clipboard.ps1` independently established actual Win32 contention
+  with a unique message-only HWND: while its holder was alive, a second helper
+  exited 1, and reopening after release exited 0. The helper never reads or
+  replaces Clipboard contents. This proves the helper only, not the HanCAD
+  native bridge, native CUTCLIP behavior or two-window acceptance.
+
+Logs: `test-artifacts/phase05-verify-20261019.log`,
+`phase05-clipboard-rebuild-20261019.log`,
+`phase05-clipboard-final-20261019-initial.log`,
+`phase05-clipboard-backup-final-20261019.log`,
+`phase05-native-check-20261019.log` and
+`phase05-clipboard-contention-result.json`. Artifacts remain ignored.
+
+This is a WIP checkpoint; Phase 05 remains unaccepted and Phase 04 remains the
+last accepted phase. Exact next step: have the missing MSVC x64 C++ tools and
+Windows SDK prepared, then follow
+[the native acceptance procedure](phase05-native-acceptance.md). Pass the
+prerequisite gate, locked Cargo check/tests and native release build, then run
+the original cases and Clipboard format/failure/shortcut checks between two
+native windows. No automatic installation was retried. Phase 00 native checks
+and installed Korean AutoCAD comparisons remain pending. Do not start Phase 06.
 
 | Milestone                         | Status                              | Scope                                                                                                                           |
 | --------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |

@@ -17,7 +17,11 @@ import {
   pasteDrawingClipboard,
 } from './drawing-clipboard';
 import type { DrawingClipboard } from './drawing-clipboard';
-import { readDrawingClipboard, writeDrawingClipboard } from './drawing-clipboard-platform';
+import {
+  DrawingClipboardUnavailableError,
+  readDrawingClipboard,
+  writeDrawingClipboard,
+} from './drawing-clipboard-platform';
 import { tempOverrides } from './temp-overrides';
 import { recordStatusPoint } from './status-point-store';
 
@@ -78,10 +82,14 @@ export function useClipboardCommands(options: Options) {
   }
   function report(error: unknown): void {
     const korean = latest.current.messages.commandPrompt.startsWith('명령');
+    const detail =
+      error instanceof DrawingClipboardUnavailableError && korean
+        ? '시스템 클립보드와 브라우저 저장소를 사용할 수 없습니다.'
+        : error instanceof Error
+          ? error.message
+          : String(error);
     latest.current.print(
-      korean
-        ? `클립보드 작업에 실패했습니다: ${error instanceof Error ? error.message : String(error)}`
-        : `Clipboard operation failed: ${error instanceof Error ? error.message : String(error)}`,
+      korean ? `클립보드 작업에 실패했습니다: ${detail}` : `Clipboard operation failed: ${detail}`,
     );
   }
   async function copy(): Promise<void> {

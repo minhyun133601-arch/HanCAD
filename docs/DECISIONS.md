@@ -1,5 +1,39 @@
 # Decisions
 
+## 2026-10-19: Phase 05 Clipboard failure preservation
+
+The resumed Phase 05 native audit found that HGLOBAL allocation and locking
+occurred after EmptyClipboard. Prepare all four native memory blocks before
+opening/replacing the Clipboard, then transfer each block only on successful
+SetClipboardData. RAII frees blocks that were not transferred. This preserves
+the previous Clipboard on preparation failure. Windows does not provide an
+atomic multiple-format publication: a later SetClipboardData failure can leave
+partial formats; CUTCLIP still retains the source drawing on any rejected write.
+References: Microsoft [EmptyClipboard](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-emptyclipboard)
+and [SetClipboardData](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setclipboarddata).
+
+GlobalAlloc may round allocation sizes up. Limit native reads by the actual
+NUL-terminated UTF-8 payload within 128 MiB, rather than rejecting a larger
+allocation block. Reject unterminated, invalid UTF-8 or literal-NUL write data.
+The producer already JSON-escapes embedded NUL in CAD text. UTF-16 limits include
+the text terminator. Microsoft documents the [allocation size behavior](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-globalalloc).
+
+Browser fallback success requires a persistent shared-origin IndexedDB copy.
+The old localStorage fallback could publish a newer copy while leaving an older
+IndexedDB packet authoritative after that backend recovered; this was reproduced
+with two different COPYBASE points. Use one authoritative IndexedDB store and
+ignore old localStorage Clipboard backups. Do not introduce replicated backup
+revisions for this transient data. If system Clipboard access and IndexedDB both
+fail, report the localized failure and retain CUTCLIP's source, selection and
+history. A window-local memory copy cannot satisfy cross-window transfer or
+recovery after reload. A successful system write still permits copying/cutting
+when browser storage is unavailable.
+
+No dependency changed and no system tool was installed. MSVC/SDK remain absent;
+the earlier automatic installation rejection is respected. Mock native IPC
+fixtures verify command/packet behavior only. Rust compilation, its new boundary
+tests and actual Win32/window acceptance remain pending.
+
 ## 2026-10-17: Phase 05 selection, grips and Clipboard
 
 Selection gestures follow the independent PICKAUTO bits and PICKDRAG input

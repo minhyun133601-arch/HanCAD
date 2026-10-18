@@ -10,11 +10,16 @@ export interface DrawingClipboardPacket {
 }
 export type ClipboardSource = 'system' | 'browser';
 const storageKey = 'hancad.drawing-clipboard.v1';
-let memory: string | undefined;
 
-/** Browser windows share one origin-scoped backup when OS permissions are unavailable. */
+export class DrawingClipboardUnavailableError extends Error {
+  constructor() {
+    super('System clipboard and persistent browser backup are unavailable.');
+    this.name = 'DrawingClipboardUnavailableError';
+  }
+}
+
+/** One shared store prevents an older backup from shadowing a newer copy. */
 async function storedPayload(value?: string): Promise<string | undefined> {
-  if (value !== undefined) memory = value;
   try {
     const database = await new Promise<IDBDatabase>((resolve, reject) => {
       const request = indexedDB.open(storageKey, 1);
@@ -39,12 +44,7 @@ async function storedPayload(value?: string): Promise<string | undefined> {
       database.close();
     }
   } catch {
-    try {
-      if (value !== undefined) localStorage.setItem(storageKey, value);
-      return localStorage.getItem(storageKey) ?? memory;
-    } catch {
-      return memory;
-    }
+    return undefined;
   }
 }
 
@@ -103,7 +103,7 @@ export async function writeDrawingClipboard(payload: DrawingClipboard): Promise<
     await invoke('write_drawing_clipboard', { packet: { payload: json, png, dib } });
     return 'system';
   }
-  await storedPayload(json);
+  const backup = await storedPayload(json);
   try {
     const text = new Blob([json], { type: 'text/plain' }),
       image = new Blob([new Uint8Array(png)], { type: 'image/png' });
@@ -114,6 +114,9 @@ export async function writeDrawingClipboard(payload: DrawingClipboard): Promise<
     await navigator.clipboard.write([new ClipboardItem(data)]);
     return 'system';
   } catch {
+    // A window-local copy cannot support another window or survive a reload.
+    // In particular, CUTCLIP must not erase its source without a durable copy.
+    if (backup !== json) throw new DrawingClipboardUnavailableError();
     return 'browser';
   }
 }

@@ -23,6 +23,13 @@ supports browser windows lacking OS Clipboard permission. Basic Properties and
 Quick Properties validate one state replacement per edit. Full palette and block
 editing remain with their original later phases.
 
+Native Clipboard publication prepares every HGLOBAL before replacing existing
+content; unpublished blocks remain under RAII ownership. Reads validate the
+terminated UTF-8 payload within the limit, allowing GlobalAlloc padding.
+Browser fallback success requires persistent shared-origin storage; a memory-only
+copy never authorizes CUTCLIP source deletion. Rejected, cancelled and stale
+asynchronous Clipboard completions leave drawing history intact.
+
 Pure grip-dimension contexts derive result/change lengths, angles and arc radii
 from the original entity and active definition grip. DYNDIVIS/DYNDIGRIP choose
 fields in the shared dynamic-input overlay. Locked object values resolve to exact

@@ -74,6 +74,42 @@ English in the Korean UI.
 
 ## Verification
 
+### 2026-10-19 continuation
+
+The native audit moved all HGLOBAL allocation/locking ahead of EmptyClipboard,
+with RAII freeing unpublished blocks and releasing ownership only after
+SetClipboardData succeeds. Preparation failures preserve the previous Clipboard;
+publication itself can still partially fail because Win32 offers no transaction
+across formats. A rejected write never authorizes CUTCLIP source deletion.
+Native read limits now apply to NUL-terminated UTF-8 content, allowing allocation
+padding. Four Rust payload/limit tests were added but cannot be compiled or run
+until the native prerequisites are available.
+
+The browser no longer reports success from a memory-only backup. IndexedDB is
+the sole authoritative shared backup. The old localStorage path could retain a
+newer copy while recovered IndexedDB returned an older COPYBASE packet; the
+reproduced stale-base-point case motivated removing that second backend. Old
+localStorage Clipboard data is ignored. If OS access and IndexedDB both fail,
+the command reports a localized error and leaves source/selection/undo intact.
+A successful system write remains valid when IndexedDB is unavailable.
+
+`phase05-native-clipboard-contract.spec.ts` adds five production-command tests
+with a mocked Tauri transport: exact JSON and decoded PNG/matching top-down
+32-bit DIB, native paste routing, rejected CUT, Escape during pending CUT,
+drawing switch during pending CUT, and unavailable OS/persistent browser storage.
+The packet/paste checks share one scenario. The five tests plus the five existing
+Clipboard/Properties tests passed together in 47.9 seconds against Vite.
+Actual browser JSON+PNG Clipboard access was included. This is not actual Win32
+or native application execution. A separate phase05-clipboard-backup.spec.ts
+covers stale localStorage data, unavailable IndexedDB and successful system
+writes without browser backup. Final results belong to PROGRESS.md.
+
+The locked offline native Cargo check was attempted again and exited 101 at
+dependency build scripts because link.exe is missing. Its log is
+`test-artifacts/phase05-native-check-20261019.log`. The complete continuation
+verification result is recorded in PROGRESS.md. Native build/two-window/format/
+shortcut steps are prepared in phase05-native-acceptance.md.
+
 - Focused Clipboard/Properties unit suite: 11 tests across drawing-clipboard.test.ts,
   entity-properties.test.ts and clipboard-block-dxf.test.ts. The native-handle
   regression additionally proves stable INSERT/member identities across movement,
