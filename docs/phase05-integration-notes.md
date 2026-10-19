@@ -2,8 +2,9 @@
 
 The original phase prompt is selection, grips and Clipboard. Implementation is
 complete for the current supported entity families; final verification is
-recorded in PROGRESS.md. Native Windows acceptance remains separately blocked
-by the missing MSVC linker and Windows SDK.
+recorded in PROGRESS.md. Native compilation and actual Windows execution now
+follow the user-authorized MSVC/SDK installation; current results are recorded
+in phase05-native-acceptance.md rather than inferred from browser mocks.
 
 | Build item                                            | Implementation / evidence                                                                                                                                                                          |
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -74,7 +75,10 @@ completion rather than a race against a completed read.
 
 Detailed sources and focused checks are in phase05-selection-notes.md,
 phase05-grip-notes.md and phase05-clipboard-notes.md. Renderer references are
-independent test drawings, not screenshots of installed AutoCAD. Native Tauri
-Clipboard, Windows IME and browser-reserved shortcuts still require the native
-toolchain/reference environment. Complete opaque foreign DXF/DWG preservation,
-full block editing and full Properties remain their original later phases.
+independent test drawings, not screenshots of installed AutoCAD. The native
+toolchain is now installed, and actual Tauri processes exercise the real Win32
+Clipboard and image consumers; final current-build results are recorded in
+[native acceptance](phase05-native-acceptance.md). Physical Windows IME and
+OS-routed shortcut comparisons remain separately identified checks. Complete
+opaque foreign DXF/DWG preservation, full block editing and full Properties
+remain their original later phases.

@@ -89,6 +89,20 @@ test('registered Visual Studio without actual headers/libraries never passes nat
   assert.match(desktopFailureMessage(inventory), /C\+\+를 사용한 데스크톱 개발/);
 });
 
+test('current MSVC linker help exit 1100 passes only with the actual help banner and options', () => {
+  const fixture = windowsFixture();
+  fixture.failed.set('link', {
+    status: 1100,
+    stdout: 'Microsoft (R) Incremental Linker Version 14.51.36260.0\n/OUT:filename',
+    stderr: '',
+  });
+  assert.deepEqual(desktopFailures(inspectDesktop(fixture.options)), []);
+  for (const stdout of ['', 'Unrelated process error', 'Microsoft (R) Incremental Linker Version 14.51']) {
+    fixture.failed.set('link', { status: 1100, stdout, stderr: '' });
+    assert.deepEqual(desktopFailures(inspectDesktop(fixture.options)), ['msvc']);
+  }
+});
+
 test('SDK headers alone, absent WebView2 and the wrong Rust host all produce separate actionable failures', () => {
   const fixture = windowsFixture();
   fixture.files.delete(path.win32.join(fixture.sdk, 'Lib', fixture.version, 'um', 'x64', 'kernel32.lib'));

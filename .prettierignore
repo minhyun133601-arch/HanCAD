@@ -10,6 +10,7 @@ node_modules/
 **/dist/
 **/target/
 **/generated/
+apps/desktop/src-tauri/gen/schemas/
 packages/geom/wasm/
 apps/web/public/runtime/
 packages/legacy-bridge/runtime/

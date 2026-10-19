@@ -1,5 +1,9 @@
 # Phase 05 Clipboard and basic Properties notes
 
+Current native execution evidence is in [native acceptance](phase05-native-acceptance.md).
+The MSVC/SDK hold in the historical verification below has been resolved by the
+user-authorized installation; actual native processes now exercise the bridge.
+
 ## References and decisions
 
 - [COPYCLIP Korean help](https://help.autodesk.com/cloudhelp/2024/KOR/AutoCAD-Core/files/GUID-8C693775-7BB2-48D6-9A6B-770F8A870707.htm)
@@ -16,7 +20,7 @@
 - [Microsoft clipboard operations](https://learn.microsoft.com/windows/win32/dataxchg/clipboard-operations)
   and [clipboard formats](https://learn.microsoft.com/en-gb/windows/desktop/dataxchg/clipboard-formats)
   underpin the native ownership/format handling. The native bridge uses the
-  actual Tauri HWND, registered `HanCAD.Drawing.v1` and `PNG`, CF_DIB and
+  actual Tauri HWND, registered `HanCAD.Drawing.v1` and `PNG`, CF_DIB, CF_BITMAP and
   CF_UNICODETEXT. Windows owns HGLOBAL only after SetClipboardData succeeds.
 
 The [official Korean copy workflow](https://help.autodesk.com/cloudhelp/2022/KOR/AutoCAD-Core/files/GUID-345B759D-D758-488A-9E85-542A30A901C4.htm)
@@ -103,6 +107,8 @@ Actual browser JSON+PNG Clipboard access was included. This is not actual Win32
 or native application execution. A separate phase05-clipboard-backup.spec.ts
 covers stale localStorage data, unavailable IndexedDB and successful system
 writes without browser backup. Final results belong to PROGRESS.md.
+
+### Historical verification before the authorized tool installation
 
 The locked offline native Cargo check was attempted again and exited 101 at
 dependency build scripts because link.exe is missing. Its log is

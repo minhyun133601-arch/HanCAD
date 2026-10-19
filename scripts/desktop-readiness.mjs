@@ -30,7 +30,7 @@ export function inspectDesktop(options = {}) {
   const execute = options.execute ?? spawnSync;
   const paths = platform === 'win32' ? path.win32 : path;
   const cargoBin = paths.join(env.USERPROFILE || env.HOME || homedir(), '.cargo', 'bin');
-  function inspect(command, args, nonempty = false) {
+  function inspect(command, args, nonempty = false, accepts = (result) => result.status === 0) {
     const local = paths.join(cargoBin, platform === 'win32' ? `${command}.exe` : command);
     const executable = exists(local) ? local : command;
     const result =
@@ -48,7 +48,7 @@ export function inspectDesktop(options = {}) {
             timeout: 15000,
           });
     const value = result.stdout?.trim() ?? '';
-    if (result.error || result.status !== 0 || (nonempty && !value))
+    if (result.error || !accepts(result) || (nonempty && !value))
       return unavailable(
         result.error?.message || result.stderr?.trim() || `검사 실패: ${command}`,
         value,
@@ -144,7 +144,17 @@ export function inspectDesktop(options = {}) {
       continue;
     }
     const compilerProbe = inspect(compiler, ['/?']);
-    const linkerProbe = inspect(linker, ['/?']);
+    // MSVC 14.51 prints valid help with exit 1100 even on a complete installation.
+    const linkerProbe = inspect(
+      linker,
+      ['/?'],
+      true,
+      (result) =>
+        result.status === 0 ||
+        (result.status === 1100 &&
+          /Microsoft \(R\) Incremental Linker Version/i.test(result.stdout ?? '') &&
+          /\/OUT:/i.test(result.stdout ?? '')),
+    );
     inventory.msvc = {
       available: compilerProbe.available && linkerProbe.available,
       value: toolset,

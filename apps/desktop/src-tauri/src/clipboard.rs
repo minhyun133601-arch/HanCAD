@@ -41,6 +41,20 @@ mod windows {
         fn SetClipboardData(format: u32, memory: *mut c_void) -> *mut c_void;
         fn GetClipboardData(format: u32) -> *mut c_void;
         fn IsClipboardFormatAvailable(format: u32) -> i32;
+        fn GetDC(window: *mut c_void) -> *mut c_void;
+        fn ReleaseDC(window: *mut c_void, context: *mut c_void) -> i32;
+    }
+    #[link(name = "gdi32")]
+    extern "system" {
+        fn CreateDIBitmap(
+            context: *mut c_void,
+            header: *const c_void,
+            flags: u32,
+            bits: *const c_void,
+            info: *const c_void,
+            usage: u32,
+        ) -> *mut c_void;
+        fn DeleteObject(object: *mut c_void) -> i32;
     }
     #[link(name = "kernel32")]
     extern "system" {
@@ -113,6 +127,44 @@ mod windows {
             }
         }
     }
+    struct ClipboardBitmap(*mut c_void);
+    impl ClipboardBitmap {
+        fn prepare(dib: &[u8]) -> Result<Self, String> {
+            let context = unsafe { GetDC(ptr::null_mut()) };
+            if context.is_null() {
+                return Err("클립보드 이미지 컨텍스트를 만들 수 없습니다.".into());
+            }
+            let bitmap = unsafe {
+                CreateDIBitmap(
+                    context,
+                    dib.as_ptr().cast(),
+                    4,
+                    dib[40..].as_ptr().cast(),
+                    dib.as_ptr().cast(),
+                    0,
+                )
+            };
+            unsafe { ReleaseDC(ptr::null_mut(), context) };
+            if bitmap.is_null() {
+                return Err("클립보드 비트맵을 만들 수 없습니다.".into());
+            }
+            Ok(Self(bitmap))
+        }
+        fn publish(mut self) -> Result<(), String> {
+            if unsafe { SetClipboardData(2, self.0) }.is_null() {
+                return Err("클립보드 이미지를 저장할 수 없습니다.".into());
+            }
+            self.0 = ptr::null_mut();
+            Ok(())
+        }
+    }
+    impl Drop for ClipboardBitmap {
+        fn drop(&mut self) {
+            if !self.0.is_null() {
+                unsafe { DeleteObject(self.0) };
+            }
+        }
+    }
     pub fn put(owner: *mut c_void, payload: &str, png: &[u8], dib: &[u8]) -> Result<(), String> {
         // Prepare all data and native allocations before replacing the old clipboard.
         // A failed CUTCLIP must leave its source drawing untouched.
@@ -161,6 +213,8 @@ mod windows {
             (8, ClipboardData::prepare(dib)?),
             (13, ClipboardData::prepare(&text)?),
         ];
+        // Some consumers cannot synthesize CF_BITMAP from a top-down CF_DIB.
+        let bitmap = ClipboardBitmap::prepare(dib)?;
         let _clipboard = Clipboard::open(owner)?;
         if unsafe { EmptyClipboard() } == 0 {
             return Err("클립보드를 비울 수 없습니다.".into());
@@ -168,6 +222,7 @@ mod windows {
         for (format, memory) in prepared {
             memory.publish(format)?;
         }
+        bitmap.publish()?;
         Ok(())
     }
     pub fn get() -> Result<Option<String>, String> {
