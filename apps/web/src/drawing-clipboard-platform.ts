@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import type { DrawingDatabase } from '@hancad/db';
-import { drawingBounds, getLegacyRuntime, readableCadColor } from '@hancad/legacy-bridge';
+import { drawingBounds, getLegacyRuntime } from '@hancad/legacy-bridge';
 import { DRAWING_CLIPBOARD_MIME } from './drawing-clipboard';
 import type { DrawingClipboard } from './drawing-clipboard';
 import { drawingExportState } from './drawing-export-state';
@@ -72,7 +72,8 @@ export async function drawingClipboardImage(
   context.scale(scale, scale);
   for (const entity of imageState.entities)
     runtime.core.cadExporters.drawEntity(context, entity, {
-      color: readableCadColor(entity.color),
+      state: imageState,
+      exporting: true,
       scale,
       unit: payload.state.settings.unit,
     });

@@ -47,7 +47,7 @@ export function systemVariableMarkdown(
     '',
     'Generated from `packages/sysvars/src/catalog/*.json` by `pnpm docs:sysvars`.',
     '',
-    `The catalog contains ${variables.length} variables: ${fixed} documented fixed/metric defaults and ${variables.length - fixed} explicit environment/document-dependent initial values. Metadata was checked against Autodesk AutoCAD 2026 Windows help on 2026-10-15.`,
+    `The catalog contains ${variables.length} variables: ${fixed} documented fixed/metric defaults and ${variables.length - fixed} explicit environment/document-dependent initial values. The base metadata was checked against Autodesk AutoCAD 2026 Windows help on 2026-10-15; Phase 06/07 additions were checked on 2026-10-19.`,
     '',
     'Registry/User-settings map to profile scope; Not-saved maps to session scope. Switch/Bitcode/Enum values are stored as integers, and Single-character values use their character code. Registration validates and stores values; it does not implement the feature controlled by that variable. Numeric constraints marked pending remain a parity gap.',
     '',

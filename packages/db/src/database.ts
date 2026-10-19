@@ -13,8 +13,10 @@ import type {
   NewDatabaseObject,
   SymbolTableName,
 } from './types';
-import { UndoJournal } from './history';
+import { UndoJournal, mergeChanges } from './history';
 import type { ChangeSet, UndoCategory, UndoMode } from './history';
+import { DatabaseTransaction } from './transaction';
+export { DatabaseTransaction } from './transaction';
 
 export class DrawingDatabase {
   readonly events = new EventBus<DatabaseEvent>();
@@ -28,6 +30,8 @@ export class DrawingDatabase {
   private lastErased: Handle[] = [];
   private lastUndoSize = 0;
   private active: ChangeSet | undefined;
+  private atomicEntries: ChangeSet[] | undefined;
+  private rollingBack = false;
 
   constructor(snapshot: DatabaseSnapshot = createMetricSnapshot()) {
     validateSnapshot(snapshot);
@@ -92,6 +96,8 @@ export class DrawingDatabase {
     operation: (transaction: DatabaseTransaction) => Result,
     category: UndoCategory = 'command',
   ): Result {
+    if (this.rollingBack)
+      throw new Error('Cannot modify the database while rolling back a command.');
     if (this.active)
       throw new Error(
         'Nested transactions are not supported; reuse the active command transaction.',
@@ -123,12 +129,42 @@ export class DrawingDatabase {
       throw error;
     }
     if (changes.objects.size || changes.variables.size) {
-      const erased = [...changes.objects.entries()]
-        .filter(([, entry]) => !entry.before?.erased && entry.after?.erased)
-        .map(([handle]) => handle);
-      if (erased.length) this.lastErased = erased;
-      this.history.record(changes);
-      this.publishChanges(changes, 'after');
+      if (this.atomicEntries) {
+        this.atomicEntries.push(changes);
+        this.publishChanges(changes, 'after');
+      } else this.recordChanges(changes);
+    }
+    return result;
+  }
+
+  /** Synchronous host commands can compose transactions without publishing failed history. */
+  atomic<Result>(label: string, operation: () => Result): Result {
+    this.assertHistoryIdle();
+    const entries: ChangeSet[] = [],
+      lastUndoSize = this.lastUndoSize;
+    this.atomicEntries = entries;
+    let result: Result;
+    try {
+      result = operation();
+      if (result instanceof Promise)
+        throw new Error('Atomic database operations must be synchronous.');
+    } catch (error) {
+      this.atomicEntries = undefined;
+      this.rollingBack = true;
+      try {
+        this.lastUndoSize = lastUndoSize;
+        for (const changes of [...entries].reverse()) this.restore(changes, 'before');
+        if (entries.length) this.publishChanges(mergeChanges(entries), 'before');
+      } finally {
+        this.rollingBack = false;
+      }
+      throw error;
+    }
+    this.atomicEntries = undefined;
+    if (entries.length) {
+      const changes = mergeChanges(entries);
+      changes.label = label;
+      this.recordChanges(changes, false);
     }
     return result;
   }
@@ -197,7 +233,8 @@ export class DrawingDatabase {
    * entries that touch the same name still restore their own before/after values.
    */
   writeUntrackedVariable(name: string, value: JsonValue, publish = false): void {
-    if (this.active) throw new Error('Untracked variables cannot be written inside a transaction.');
+    if (this.active || this.atomicEntries || this.rollingBack)
+      throw new Error('Untracked variables cannot be written inside a transaction.');
     assertJson(value);
     name = name.toUpperCase();
     const before = this.getVariable(name);
@@ -207,7 +244,7 @@ export class DrawingDatabase {
   }
 
   clearHistory(): void {
-    if (this.active) throw new Error('Cannot clear history inside a transaction.');
+    this.assertHistoryIdle();
     this.history.clear();
     this.lastUndoSize = 0;
     this.lastErased = [];
@@ -305,7 +342,17 @@ export class DrawingDatabase {
   }
 
   private assertHistoryIdle(): void {
-    if (this.active) throw new Error('Cannot change history inside a transaction.');
+    if (this.active || this.atomicEntries || this.rollingBack)
+      throw new Error('Cannot change history inside a transaction.');
+  }
+  private recordChanges(changes: ChangeSet, publish = true): void {
+    const erased = [...changes.objects.entries()]
+      .filter(([, entry]) => !entry.before?.erased && entry.after?.erased)
+      .map(([handle]) => handle);
+    if (erased.length) this.lastErased = erased;
+    this.history.record(changes);
+    if (publish) this.publishChanges(changes, 'after');
+    else this.publishHistory();
   }
   private applyHistory(entries: readonly ChangeSet[], state: 'before' | 'after'): number {
     if (state === 'before') this.lastUndoSize = entries.length;
@@ -366,42 +413,5 @@ export class DrawingDatabase {
       undoCount: this.undoCount,
       redoCount: this.redoCount,
     });
-  }
-}
-
-export class DatabaseTransaction {
-  private open = true;
-  constructor(private readonly database: DrawingDatabase) {}
-  add(input: NewDatabaseObject): DatabaseObject {
-    this.assertOpen();
-    return this.database.createObject(input);
-  }
-  get(handle: Handle, includeErased = false): DatabaseObject | undefined {
-    this.assertOpen();
-    return this.database.get(handle, includeErased);
-  }
-  modify(handle: Handle, update: (object: DatabaseObject) => void): DatabaseObject {
-    this.assertOpen();
-    return this.database.updateObject(handle, update);
-  }
-  erase(handle: Handle): void {
-    this.modify(handle, (object) => {
-      object.erased = true;
-    });
-  }
-  unerase(handle: Handle): void {
-    this.modify(handle, (object) => {
-      object.erased = false;
-    });
-  }
-  setVariable(name: string, value: JsonValue): void {
-    this.assertOpen();
-    this.database.writeVariable(name, value);
-  }
-  close(): void {
-    this.open = false;
-  }
-  private assertOpen(): void {
-    if (!this.open) throw new Error('Transaction is already closed.');
   }
 }

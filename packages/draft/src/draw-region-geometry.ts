@@ -64,6 +64,13 @@ export function reverseRegionCurve(curve: CurveGeometry): CurveGeometry {
       controlPoints: [...curve.controlPoints].reverse(),
       weights: [...curve.weights].reverse(),
       fitPoints: [...curve.fitPoints].reverse(),
+      ...(curve.kinkFitIndices
+        ? {
+            kinkFitIndices: curve.kinkFitIndices
+              .map((i) => curve.fitPoints.length - 1 - i)
+              .sort((a, b) => a - b),
+          }
+        : {}),
     };
     delete result.startTangent;
     delete result.endTangent;

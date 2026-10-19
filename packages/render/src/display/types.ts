@@ -37,6 +37,7 @@ export interface DisplayText {
   text: string;
   height: number;
   rotation: number;
+  mirroredX?: boolean;
   align: 'left' | 'center';
   /** Explicit rendered world width, when known by the source/font provider. */
   width?: number;

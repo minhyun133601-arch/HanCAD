@@ -25,6 +25,7 @@ export function textLocalBox(text: DisplayText): {
   };
 }
 export function textWorldPoint(text: DisplayText, x: number, y: number): Vec2 {
+  if (text.mirroredX) x = -x;
   const cosine = Math.cos(text.rotation),
     sine = Math.sin(text.rotation);
   return { x: text.position.x + x * cosine - y * sine, y: text.position.y + x * sine + y * cosine };

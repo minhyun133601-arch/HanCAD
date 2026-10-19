@@ -64,6 +64,7 @@
   function attachDimStyles(text, document) {
     const lines = text.replace(/\r\n?/g,"\n").split("\n");
     attachSelectionMetadata(lines, document);
+    attachNativeStyle(lines,document);
     document.dimStyles = new Map();
     const overrides = new Map(), anonymous = new Map();
     const recordTypes = new Set(["DIMSTYLE", "DIMENSION", "BLOCK", "ENDBLK", "POLYLINE", "VERTEX", "SEQEND"]);
@@ -119,6 +120,20 @@
     applyOverrides(document.entities);
     for (const [name, block] of document.blocks) applyOverrides(block.entities, name);
     return document;
+  }
+  // Supplement supported AcDbEntity fields omitted by the preserved offline parser.
+  function attachNativeStyle(lines,document){
+    const byHandle=new Map(),anonymous=new Map();let block='';
+    for(let i=0;i<lines.length-1;i+=2){
+      if(lines[i].trim()!=='0')continue;const type=lines[i+1].trim(),tags=new Map();
+      for(i+=2;i<lines.length-1&&lines[i].trim()!=='0';i+=2){const code=Number(lines[i]);if([2,5,39,440].includes(code))tags.set(code,lines[i+1].trim());}i-=2;
+      if(type==='BLOCK'){block=tags.get(2)??'';continue;}if(type==='ENDBLK'){block='';continue;}
+      const values={...(tags.has(39)?{thickness:Number(tags.get(39))}:{}),...(tags.has(440)?{transparencyValue:Number(tags.get(440))}:{})};
+      if(tags.has(5))byHandle.set(tags.get(5).toUpperCase(),values);
+      else{const key=`${block}:${type}`,queue=anonymous.get(key)??[];queue.push(values);anonymous.set(key,queue);}
+    }
+    const apply=(entities,block='')=>{const indexes=new Map();for(const entity of entities){const key=`${block}:${entity.type}`,index=indexes.get(key)??0;indexes.set(key,index+1);const values=entity.handle?byHandle.get(entity.handle.toUpperCase()):anonymous.get(key)?.[index];if(values)Object.assign(entity,values);}};
+    apply(document.entities);for(const [name,block]of document.blocks)apply(block.entities,name);
   }
   function attachSelectionMetadata(lines, document) {
     const records = [];
@@ -212,6 +227,8 @@
         : lineweight === -2 ? -3 : lineweight;
       return { layer, color: hex(resolvedColor.aci, resolvedColor.trueColor), aci, trueColor,
         linetype, linetypeScale: e.lineTypeScale ?? 1, lineweight,
+        transparency:e.transparencyValue===0x01000000?'byblock':(e.transparencyValue&0x02000000)?Math.max(0,Math.min(90,Math.round((1-(e.transparencyValue&255)/255)*100))):'bylayer',
+        ...(e.thickness===undefined?{}:{thickness:e.thickness}),
         lineWidth: Math.max(0.25, Math.min(100, resolvedLineweight > 0 ? resolvedLineweight / 100 : 1.5)),
         resolvedColor, resolvedLinetype, resolvedLineweight };
     }
@@ -380,12 +397,14 @@
           if (!finite(rotation)) throw invalid("text-rotation", "문자 회전이 올바르지 않습니다.");
           const dir = { x:m[0]*Math.cos(rotation)+m[2]*Math.sin(rotation), y:-(m[1]*Math.cos(rotation)+m[3]*Math.sin(rotation)) };
           let p = transform(e.alignmentPoint && (e.hAlign || e.vAlign) ? e.alignmentPoint : e.insertionPoint,m);
-          const angle = Math.atan2(dir.y,dir.x), width = Math.max(...text.split("\n").map(v => Array.from(v).length))*size*0.7;
+          const reflected=m[0]*m[3]-m[1]*m[2]<0,upsideDown=(e.generationFlags&4)!==0;
+          const angle = Math.atan2(dir.y,dir.x)+(reflected?Math.PI:0)+(upsideDown?Math.PI:0), width = Math.max(...text.split("\n").map(v => Array.from(v).length))*size*0.7;
           const horizontal = e.type === "MTEXT" ? (e.attachmentPoint-1)%3 : (e.hAlign === 1 || e.hAlign === 4) ? 1 : e.hAlign === 2 ? 2 : 0;
           p = { ...p,x:p.x-Math.cos(angle)*width*horizontal/2, y:p.y-Math.sin(angle)*width*horizontal/2 };
           if (e.type === "MTEXT") p = { ...p,x:p.x-Math.sin(angle)*size, y:p.y+Math.cos(angle)*size };
-          add({ ...s,type:"text",point:p,text,textSize:size,rotation:angle });
-          if (e.type === "MTEXT" || e.widthFactor !== 1 || e.obliqueAngle || e.generationFlags || e.hAlign || e.vAlign) { report.approximated++; addWarning("문자 서식 / 글꼴 / 정렬은 기본 문자로 근사합니다.", diagnostic("text-approximated")); }
+          const mirroredX=Boolean(e.generationFlags&2)!==Boolean(upsideDown!==reflected);
+          add({ ...s,type:"text",point:p,text,textSize:size,rotation:angle,...(mirroredX?{mirroredX:true}:{}) });
+          if (e.type === "MTEXT" || e.widthFactor !== 1 || e.obliqueAngle || (e.generationFlags&~6) || e.hAlign || e.vAlign) { report.approximated++; addWarning("문자 서식 / 글꼴 / 정렬은 기본 문자로 근사합니다.", diagnostic("text-approximated")); }
         } else if (["SOLID","TRACE","3DFACE"].includes(e.type)) {
           const p = [...e.points]; if (e.type !== "3DFACE" && p.length === 4) [p[2],p[3]] = [p[3],p[2]];
           poly(p,true,m,s); report.approximated++; addWarning("솔리드 / 해치 채움은 윤곽선으로 가져옵니다.", diagnostic("fill-outlined"));

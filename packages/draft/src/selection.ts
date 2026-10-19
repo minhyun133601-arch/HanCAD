@@ -87,6 +87,7 @@ export function transformCadSelection(
     (block) => block.entityIds.length > 0 && block.entityIds.every((id) => remap.has(id)),
   );
   const updated = movedBlocks.map((block) => ({
+    ...block,
     name: copy ? `A$C${crypto.randomUUID().replaceAll('-', '').toUpperCase()}` : block.name,
     basePoint: {
       x: block.basePoint.x + delta.x,

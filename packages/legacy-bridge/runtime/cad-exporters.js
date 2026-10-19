@@ -40,6 +40,8 @@
   }
 
   function entityColor(snapshot, entity, readable = false) {
+    const resolved=Tool.core.cadDrawingExport?.style(entity,snapshot);
+    if(resolved)return resolved.color;
     const layer = layerOf(snapshot, entity);
     return color(entity.color || (layer && layer.color) || "#26364c", readable);
   }
@@ -63,10 +65,11 @@
     return Tool.core.cadEngine.dimensionGeometry(entity, unit);
   }
 
-  function drawText(context, value, at, textSize, rotation, centered = false) {
+  function drawText(context, value, at, textSize, rotation, centered = false, mirrored = false) {
     context.save();
     context.translate(at.x, at.y);
     context.rotate(number(rotation));
+    if (mirrored) context.scale(-1, 1);
     context.font = `${textSize}px Arial, "Malgun Gothic", sans-serif`;
     context.textAlign = centered ? "center" : "left";
     context.textBaseline = centered ? "middle" : "alphabetic";
@@ -77,10 +80,12 @@
   function drawEntity(context, entity, options = {}) {
     if (!context || !entity) return;
     const scale = Math.max(0.000001, Math.abs(number(options.scale, 1)));
+    const style=Tool.core.cadDrawingExport?.style(entity,options.state,{mode:options.exporting?'export':'display',...(options.background===undefined?{}:{background:options.background})});
     context.save();
-    context.strokeStyle = color(options.selected ? "#38bdf8" : (options.color || entity.color));
+    context.strokeStyle = color(options.selected ? "#38bdf8" : (options.color || style?.color || entity.color));
     context.fillStyle = context.strokeStyle;
-    context.lineWidth = Math.max(0.25, number(options.lineWidth, number(entity.lineWidth, 1.5))) / scale;
+    context.lineWidth = Math.max(0.25, number(options.lineWidth, style?.lineWidth ?? number(entity.lineWidth, 1.5))) / scale;
+    if(style){context.globalAlpha=number(context.globalAlpha,1)*style.opacity;context.setLineDash?.(style.dashes);}
     context.lineCap = "round";
     context.lineJoin = "round";
     if (Tool.core.cadDrawingExport?.draw(context, entity, options)) { context.restore(); return; }
@@ -113,7 +118,7 @@
         context.stroke();
       }
     }
-    if (entity.type === "text") drawText(context, entity.text, point(entity.point), Math.max(0.1, number(entity.textSize, 12)), entity.rotation);
+    if (entity.type === "text") drawText(context, entity.text, point(entity.point), Math.max(0.1, number(entity.textSize, 12)), entity.rotation, false, entity.mirroredX === true);
     if (entity.type === "dimension") {
       const dimension = dimensionGeometry(entity, options.unit);
       if (!dimension) { context.restore(); return; }
@@ -129,7 +134,7 @@
     context.restore();
   }
 
-  function textBounds(at, value, textSize, rotation, centered = false) {
+  function textBounds(at, value, textSize, rotation, centered = false, mirrored = false) {
     const lines = String(value || "").split(/\r?\n/);
     if (!measurementAttempted && typeof document !== "undefined") {
       measurementAttempted = true;
@@ -144,7 +149,7 @@
     const left = centered ? -width / 2 : 0, top = centered ? -textSize / 2 : -textSize;
     const height = textSize * Math.max(1, lines.length) * 1.25;
     const cosine = Math.cos(number(rotation)), sine = Math.sin(number(rotation));
-    return [[left, top], [left + width, top], [left + width, top + height], [left, top + height]].map(([x, y]) => ({ x: at.x + x * cosine - y * sine, y: at.y + x * sine + y * cosine }));
+    return [[left, top], [left + width, top], [left + width, top + height], [left, top + height]].map(([x, y]) => ({ x: at.x + x * (mirrored ? -1 : 1) * cosine - y * sine, y: at.y + x * (mirrored ? -1 : 1) * sine + y * cosine }));
   }
 
   function boundsOf(snapshot, visibleOnly = true) {
@@ -166,7 +171,7 @@
         const center = point(entity.center), radius = Math.abs(number(entity.radius));
         include({ x: center.x - radius, y: center.y - radius }); include({ x: center.x + radius, y: center.y + radius });
       }
-      if (entity.type === "text") includeAll(textBounds(point(entity.point), entity.text, Math.max(0.1, number(entity.textSize, 12)), entity.rotation));
+      if (entity.type === "text") includeAll(textBounds(point(entity.point), entity.text, Math.max(0.1, number(entity.textSize, 12)), entity.rotation, false, entity.mirroredX === true));
       if (entity.type === "dimension") {
         const dimension = dimensionGeometry(entity, snapshot.settings && snapshot.settings.unit);
         if (dimension) includeAll(dimension.points);
@@ -184,13 +189,14 @@
     const vectorStroke = ' vector-effect="non-scaling-stroke"';
     const lines = [`<?xml version="1.0" encoding="UTF-8"?>`, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${cleanNumber(bounds.minX - margin)} ${cleanNumber(bounds.minY - margin)} ${cleanNumber(width)} ${cleanNumber(height)}" width="${viewportWidth}" height="${viewportHeight}">`, `<title>${escapeXml(snapshot.name || "CAD drawing")}</title>`, `<rect x="${cleanNumber(bounds.minX - margin)}" y="${cleanNumber(bounds.minY - margin)}" width="${cleanNumber(width)}" height="${cleanNumber(height)}" fill="#ffffff"/>`];
     const xy = (at) => `${cleanNumber(at.x)},${cleanNumber(at.y)}`;
-    const text = (value, at, size, rotation, fill, centered = false) => {
+    const text = (value, at, size, rotation, fill, centered = false, mirrored = false) => {
       const content = String(value || "").split(/\r?\n/).map((line, index) => `<tspan x="0" dy="${index ? cleanNumber(size * 1.25) : "0"}">${escapeXml(line)}</tspan>`).join("");
-      return `<text transform="translate(${cleanNumber(at.x)} ${cleanNumber(at.y)}) rotate(${cleanNumber(number(rotation) * 180 / Math.PI)})" fill="${fill}" stroke="none" font-family="Arial, Malgun Gothic, sans-serif" font-size="${cleanNumber(size)}"${centered ? ' text-anchor="middle" dominant-baseline="central"' : ""}>${content}</text>`;
+      return `<text transform="translate(${cleanNumber(at.x)} ${cleanNumber(at.y)}) rotate(${cleanNumber(number(rotation) * 180 / Math.PI)})${mirrored ? ' scale(-1 1)' : ''}" fill="${fill}" stroke="none" font-family="Arial, Malgun Gothic, sans-serif" font-size="${cleanNumber(size)}"${centered ? ' text-anchor="middle" dominant-baseline="central"' : ""}>${content}</text>`;
     };
     entitiesOf(snapshot, true).forEach((entity) => {
       const stroke = entityColor(snapshot, entity, true);
-      lines.push(`<g data-layer="${escapeXml(layerName(entity))}" color="${stroke}" stroke="${stroke}" stroke-width="${cleanNumber(Math.max(1, Math.min(6, number(entity.lineWidth, 1.5))))}" stroke-linecap="round" stroke-linejoin="round" fill="none">`);
+      const style=Tool.core.cadDrawingExport?.style(entity,snapshot),opacity=style&&style.opacity!==1?` opacity="${cleanNumber(style.opacity)}"`:"",dash=style?.dashes.length?` stroke-dasharray="${style.dashes.map(cleanNumber).join(' ')}"`:"";
+      lines.push(`<g data-layer="${escapeXml(layerName(entity))}" color="${stroke}" stroke="${stroke}" stroke-width="${cleanNumber(Math.max(0.25,style?.lineWidth??number(entity.lineWidth, 1.5)))}"${opacity}${dash} stroke-linecap="round" stroke-linejoin="round" fill="none">`);
       const exact = Tool.core.cadDrawingExport?.svg(entity, {minX:bounds.minX-margin,minY:bounds.minY-margin,maxX:bounds.maxX+margin,maxY:bounds.maxY+margin});
       if (exact !== undefined) { lines.push(exact, "</g>"); return; }
       const line = (a, b) => `<line x1="${cleanNumber(a.x)}" y1="${cleanNumber(a.y)}" x2="${cleanNumber(b.x)}" y2="${cleanNumber(b.y)}"${vectorStroke}/>`;
@@ -217,7 +223,7 @@
         if (Math.abs(sweep) >= TAU - 1e-9) lines.push(`<circle cx="${cleanNumber(center.x)}" cy="${cleanNumber(center.y)}" r="${cleanNumber(radius)}"${vectorStroke}/>`);
         else lines.push(`<path d="M ${xy(at(start))} A ${cleanNumber(radius)} ${cleanNumber(radius)} 0 ${Math.abs(sweep) > Math.PI ? 1 : 0} ${entity.clockwise ? 1 : 0} ${xy(at(start + sweep))}"${vectorStroke}/>`);
       }
-      if (entity.type === "text") lines.push(text(entity.text, point(entity.point), Math.max(0.1, number(entity.textSize, 12)), entity.rotation, stroke));
+      if (entity.type === "text") lines.push(text(entity.text, point(entity.point), Math.max(0.1, number(entity.textSize, 12)), entity.rotation, stroke, false, entity.mirroredX === true));
       if (entity.type === "dimension") {
         const dimension = dimensionGeometry(entity, snapshot.settings && snapshot.settings.unit);
         if (!dimension) { lines.push("</g>"); return; }
@@ -298,9 +304,10 @@
     const table = (name, count) => { push(0, "TABLE"); push(2, name); push(5, tableHandles[name]); push(330, "0"); push(100, "AcDbSymbolTable"); push(70, count); };
     const record = (type, owner, subclass, recordHandle = handle(), handleCode = 5) => { push(0, type); push(handleCode, recordHandle); push(330, owner); push(100, "AcDbSymbolTableRecord"); push(100, subclass); };
     push(0, "SECTION"); push(2, "TABLES");
-    table("LTYPE", 1); record("LTYPE", tableHandles.LTYPE, "AcDbLinetypeTableRecord"); push(2, "CONTINUOUS"); push(70, 0); push(3, "Solid line"); push(72, 65); push(73, 0); push(40, 0); push(0, "ENDTAB");
+    const linetypes=Tool.core.cadDrawingExport?.linetypes(snapshot)??[{name:'CONTINUOUS',description:'Solid line',pattern:[]}];
+    table("LTYPE", linetypes.length);linetypes.forEach(type=>{record("LTYPE",tableHandles.LTYPE,"AcDbLinetypeTableRecord");push(2,safeString(type.name));push(70,0);push(3,safeString(type.description));push(72,65);push(73,type.pattern.length);push(40,type.pattern.reduce((sum,value)=>sum+Math.abs(value),0));for(const length of type.pattern){push(49,length);push(74,0);}});push(0,"ENDTAB");
     table("LAYER", layers.size);
-    layers.forEach((layer, name) => { record("LAYER", tableHandles.LAYER, "AcDbLayerTableRecord"); push(2, dxfLayer(name)); push(70, layer.locked ? 4 : 0); push(62, layer.visible === false ? -7 : 7); push(420, parseInt(color(layer.color).slice(1), 16)); push(6, "CONTINUOUS"); });
+    layers.forEach((layer, name) => { record("LAYER", tableHandles.LAYER, "AcDbLayerTableRecord"); push(2, dxfLayer(name)); push(70, layer.locked ? 4 : 0); push(62, (layer.visible===false?-1:1)*(layer.aci>0&&layer.aci<256?layer.aci:7));if(layer.trueColor!==undefined)push(420,layer.trueColor);else if(layer.aci===undefined)push(420,parseInt(color(layer.color).slice(1),16));push(6,layer.linetype??'CONTINUOUS');if(layer.lineweight!==undefined)push(370,layer.lineweight); });
     push(0, "ENDTAB"); table("STYLE", 1); record("STYLE", tableHandles.STYLE, "AcDbTextStyleTableRecord", textStyleHandle); push(2, "STANDARD"); push(70, 0); push(40, 0); push(41, 1); push(50, 0); push(71, 0); push(42, 3.5); push(3, "arial.ttf"); push(4, ""); push(0, "ENDTAB");
     table("DIMSTYLE", dimStyles.size);
     dimStyles.forEach((style) => {
@@ -330,8 +337,13 @@
         push(102, "{ACAD_XDICTIONARY"); push(360, dictionary); push(102, "}");
         drawingMetadata.push({ owner: id, dictionary, record, json: metadata });
       }
-      push(330, owner); push(100, "AcDbEntity"); push(8, dxfLayer(layerName(entity))); if (entity.color) { push(62, 7); push(420, parseInt(color(entity.color).slice(1), 16)); } return id; };
-    const line = (entity, a, b, owner) => { start("LINE", entity, owner); push(100, "AcDbLine"); position(a); position(b, 11); };
+      push(330, owner); push(100, "AcDbEntity"); push(8, dxfLayer(layerName(entity)));
+      if(entity.aci!==undefined)push(62,entity.aci);else if(entity.color)push(62,7);
+      if(entity.trueColor!==undefined)push(420,entity.trueColor);else if(entity.aci===undefined&&entity.color)push(420,parseInt(color(entity.color).slice(1),16));
+      if(entity.linetype!==undefined)push(6,safeString(entity.linetype));if(entity.linetypeScale!==undefined)push(48,entity.linetypeScale);if(entity.lineweight!==undefined)push(370,entity.lineweight);
+      if(typeof entity.transparency==='number')push(440,0x02000000|Math.round(255*(1-entity.transparency/100)));else if(entity.transparency==='byblock')push(440,0x01000000);
+      return id; };
+    const line = (entity, a, b, owner) => { start("LINE", entity, owner); push(100, "AcDbLine"); position(a); position(b, 11); if (entity.thickness !== undefined) push(39, entity.thickness); };
     const polyline = (entity, points, closed, owner) => {
       const elevation = entity.elevation ?? points[0]?.z ?? 0;
       if (entity.sourceType === "3DPOLY" || points.some(at => (at.z || 0) !== elevation)) {
@@ -351,12 +363,15 @@
     };
     const text = (entity, value, at, size, rotation, owner, centered = false) => {
       start("TEXT", entity, owner); push(100, "AcDbText"); position(at); push(40, cleanNumber(size)); push(1, safeString(value)); push(50, cleanNumber(normalAngle(-number(rotation)) * 180 / Math.PI)); push(7, "STANDARD");
+      if (entity.mirroredX) push(71, 2);
+      if (entity.thickness !== undefined) push(39, entity.thickness);
       if (centered) { push(72, 1); position(at, 11); }
       push(100, "AcDbText"); if (centered) push(73, 2);
     };
     const circleArc = (entity, owner) => {
       const full = entity.type === "circle" || Math.abs(arcSweep(entity)) >= TAU - 1e-9;
       start(full ? "CIRCLE" : "ARC", entity, owner); push(100, "AcDbCircle"); position(point(entity.center)); push(40, cleanNumber(Math.abs(number(entity.radius))));
+      if (entity.thickness !== undefined) push(39, entity.thickness);
       if (!full) {
         const startAngle = entity.clockwise ? -number(entity.endAngle) : -number(entity.startAngle);
         const endAngle = entity.clockwise ? -number(entity.startAngle) : -number(entity.endAngle);
@@ -475,7 +490,7 @@
     if (!context) throw new Error("PNG 이미지를 만들 수 없습니다.");
     context.fillStyle = "#ffffff"; context.fillRect(0, 0, canvas.width, canvas.height);
     context.translate(margin - bounds.minX * scale, margin - bounds.minY * scale); context.scale(scale, scale);
-    entitiesOf(snapshot, true).forEach((entity) => drawEntity(context, entity, { color: entityColor(snapshot, entity, true), lineWidth: Math.max(1, number(entity.lineWidth, 1.5) * scale), scale, unit: snapshot.settings && snapshot.settings.unit }));
+    entitiesOf(snapshot, true).forEach((entity) => drawEntity(context, entity, {state:snapshot,exporting:true,color:entityColor(snapshot,entity,true),lineWidth:Math.max(1,(Tool.core.cadDrawingExport?.style(entity,snapshot).lineWidth??number(entity.lineWidth,1.5))*scale),scale,unit:snapshot.settings&&snapshot.settings.unit}));
     const blob = await new Promise((resolve, reject) => canvas.toBlob((value) => value ? resolve(value) : reject(new Error("PNG 이미지를 만들지 못했습니다.")), "image/png"));
     return exporter.downloadBlob(blob, `${name}.png`);
   }

@@ -1,5 +1,34 @@
 # Architecture
 
+Phase 07 modifying tools share the typed drawing coroutine host. The host
+captures command-first or preselected sets, crossing-window acquisitions and
+individual picks, including selection Undo. Nested PEDIT/SPLINEDIT selections
+adapt the shared SelectionSession. Commands receive exact picked modifiers and
+view-indexed entity acquisition rather than a separate input implementation.
+
+Accepted provisional geometry stays outside the database until command
+completion. The completion boundary validates replacements, explicit display
+order, block/group metadata and staged variables. Matching IDs replace objects
+at their existing ranks; independent copies append new identities. Clipboard
+blocks preserve insertion, rotation and membership through commands and grips.
+
+MIRROR also accepts top-level native HATCH objects through temporary boundary
+selection adapters. Its native results preserve DXF groups and clone owned
+metadata in the same atomic command as legacy geometry. Nonassociative pattern
+definitions honor MIRRHATCH; unsupported gradient/association graphs fail
+explicitly. Native hatch pattern rendering and authoring remain Phase 12 work.
+
+Analytic curves and rational knot operations remain authoritative. PEDIT keeps
+the control frame and persisted vertex tangents distinct from fitted display
+geometry. MIRRTEXT reflects the glyph basis used by display, picking and export.
+SPLINEDIT keeps validated kink fit indices through piecewise fitting, transforms,
+reversal, recovery and native SPLINE metadata round trips.
+Polyline OFFSET calls pinned Cavalier 0.9.0 through initialized geometry WASM,
+then reconstructs gap 0/2 joins. General conic/spline parallels use bounded
+numerical cubic fitting; the Phase 07 notes record tolerances and reference
+kernel comparison assumptions. The OVERKILL dialog and CLI use one pure cleanup
+implementation and one transaction boundary.
+
 Phase 06 drawing tools run as typed command coroutines. `DrawSession` owns the
 current request, shared point acquisition, localized prompts, accepted geometry,
 cursor preview and staged sysvar changes. Every factory runs both interactively
@@ -129,9 +158,9 @@ Arbitrary constrained periodic fitting, natural end conditions without tangents
 and exact interpolation despite a stored nonzero fit tolerance remain reference
 assumptions.
 
-The system-variable registry contains 864 distinct definitions with source links,
+The system-variable registry contains 875 distinct definitions with source links,
 scope, type, description, read-only status and available validation metadata.
-802 have fixed or selected metric defaults; 62 environment/document-dependent
+813 have fixed or selected metric defaults; 62 environment/document-dependent
 defaults remain explicitly unavailable until a runtime provider supplies them.
 214 DXF header mappings are separate from SETVAR definitions. GETVAR, SETVAR and
 direct variable names share validation and bilingual diagnostics. Profile state

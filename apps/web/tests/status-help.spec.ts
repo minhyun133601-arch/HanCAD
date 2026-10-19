@@ -131,6 +131,11 @@ test('F1 shows Korean registry help for the interrupted command and Escape resum
   await help.getByRole('searchbox', { name: '명령 도움말 검색', exact: true }).fill('FILLET');
   await help.getByRole('button', { name: /^FILLET ·/ }).click();
   await expect(help.getByRole('heading')).toContainText('FILLET');
+  await expect(help).toContainText('두 객체의 모서리를 둥글게 하거나 모깎기합니다.');
+  await expect(help).not.toContainText('이 명령은 아직 구현되지 않았습니다.');
+  await help.getByRole('searchbox', { name: '명령 도움말 검색', exact: true }).fill('HATCH');
+  await help.getByRole('button', { name: /^HATCH ·/ }).click();
+  await expect(help.getByRole('heading')).toContainText('HATCH');
   await expect(help).toContainText('이 명령은 아직 구현되지 않았습니다.');
   await help.getByRole('button', { name: '도움말 닫기', exact: true }).click();
   await page.getByRole('combobox', { name: '언어', exact: true }).selectOption('en-US');

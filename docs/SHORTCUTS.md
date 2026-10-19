@@ -1,4 +1,14 @@
 # Reference B — Shortcuts, aliases, mouse behavior, input syntax
+
+## Phase 07 modifying command input
+
+Shift-pick in FILLET temporarily uses radius zero without changing FILLETRAD.
+Shift-pick in TRIM/EXTEND performs the opposite operation. Quick TRIM supports
+dragged fences; explicit Fence/Crossing keywords share the same command-local
+Undo. Crossing selection acquisitions in STRETCH retain their individual masks;
+single object picks move complete objects. COPY Escape retains accepted copies,
+while cancelled proposed arrays are discarded. One U restores a completed edit.
+`-ARRAY` and `-OVERKILL` use the canonical command-prefix dispatcher.
 (Save as docs/SHORTCUTS.md. Every binding here must work. Bindings whose command is not built yet must still be registered and print the Korean not-implemented message.)
 
 ## Phase 03 keyboard bindings (2026-10-16)

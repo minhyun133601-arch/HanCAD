@@ -167,7 +167,7 @@ export class UndoJournal {
 }
 
 /** First before-state and final after-state make one atomic, reversible command group. */
-function mergeChanges(entries: readonly ChangeSet[]): ChangeSet {
+export function mergeChanges(entries: readonly ChangeSet[]): ChangeSet {
   const first = entries[0],
     last = entries.at(-1);
   if (!first || !last) throw new Error('Cannot merge an empty undo group.');

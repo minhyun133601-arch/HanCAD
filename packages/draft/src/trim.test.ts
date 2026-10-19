@@ -187,7 +187,7 @@ describe('TRIM/EXTEND accepted edits and geometry', () => {
     expect(session.acceptText('garbage')).toEqual({ error: 'input' });
   });
 
-  it('uses visible locked boundaries, protects locked/hidden targets and reports unsupported targets', () => {
+  it('uses visible locked boundaries, protects locked/hidden targets and Quick deletes uncut circles', () => {
     const state = fixture();
     state.layers.push(
       { name: 'locked', visible: true, locked: true, color: '#ffffff' },
@@ -200,7 +200,8 @@ describe('TRIM/EXTEND accepted edits and geometry', () => {
     const session = new TrimExtendSession('TRIM', state);
     expect(session.acceptPick({ x: 20, y: 0 }, state.entities[1])).toEqual({ error: 'locked' });
     expect(session.acceptPick({ x: 70, y: 0 }, state.entities[2])).toEqual({ error: 'locked' });
-    expect(session.acceptPick({ x: 210, y: 0 }, circle)).toEqual({ error: 'unsupported' });
+    expect(session.acceptPick({ x: 210, y: 0 }, circle)).toEqual({ changed: true });
+    expect(target(session, 'circle')).toBeUndefined();
     session.acceptPick({ x: 50, y: 0 }, state.entities[0]);
     expect(target(session)).toMatchObject({ b: { x: 20, y: 0 } });
     const standard = new TrimExtendSession('TRIM', state, { mode: 0 });

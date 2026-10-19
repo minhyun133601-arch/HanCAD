@@ -166,6 +166,7 @@
       entity.text = raw.text.slice(0, 2000);
       entity.textSize = positive(raw.textSize, settings.textSize, 1000);
       entity.rotation = finite(raw.rotation) ? raw.rotation : 0;
+      if (raw.mirroredX === true) entity.mirroredX = true;
     }
     return entity;
   }
@@ -326,8 +327,8 @@
     const top = centered ? -size * 0.6 : -size;
     const bottom = top + size * 1.2 + (lines.length - 1) * size * 1.25;
     return [{ x: left, y: top }, { x: left + width, y: top }, { x: left + width, y: bottom }, { x: left, y: bottom }].map((entry) => ({
-      x: entity.point.x + entry.x * cosine - entry.y * sine,
-      y: entity.point.y + entry.x * sine + entry.y * cosine,
+      x: entity.point.x + entry.x * (entity.mirroredX ? -1 : 1) * cosine - entry.y * sine,
+      y: entity.point.y + entry.x * (entity.mirroredX ? -1 : 1) * sine + entry.y * cosine,
     }));
   }
 

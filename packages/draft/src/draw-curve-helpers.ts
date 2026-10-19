@@ -7,7 +7,7 @@ import { drawPoint, type DrawContext, type DrawRequest, type DrawValue } from '.
 export const TAU = Math.PI * 2;
 export const positiveAngle = (angle: number): number => ((angle % TAU) + TAU) % TAU;
 export const wcs = (point: CadPoint): Vec3 => ({ x: point.x, y: -point.y, z: point.z ?? 0 });
-export const model = (point: Vec3): CadPoint => ({ x: point.x, y: -point.y, z: point.z });
+export const model = (point: Vec3): CadPoint => ({ x: point.x, y: -point.y || 0, z: point.z });
 export const difference = (a: CadPoint, b: CadPoint): CadPoint => ({ x: a.x - b.x, y: a.y - b.y });
 export const distance = (a: CadPoint, b: CadPoint): number => Math.hypot(a.x - b.x, a.y - b.y);
 export const middle = (a: CadPoint, b: CadPoint): CadPoint => ({

@@ -24,6 +24,7 @@ import { SelectionSettingsDialog } from './SelectionSettingsDialog';
 import type { SelectionDialogKind } from './SelectionDialogs';
 import { selectionFilterStore } from './selection-filter-store';
 import { registerSelectionCommands } from './selection-command-registration';
+import { pruneSelectionPresence } from './selection-presence';
 
 type SelectionMode = 'SELECT' | 'ERASE' | 'SELECTSIMILAR' | 'FILTER' | GroupTool;
 
@@ -33,6 +34,7 @@ export interface SelectionControllerOptions {
   messages: Messages;
   state: LegacyCadState;
   getState: () => LegacyCadState;
+  additionalValidIds?: () => readonly string[];
   commitState: (label: string, state: LegacyCadState) => void;
   print: (message: string) => void;
   cancelDraft: () => void;
@@ -66,6 +68,7 @@ export function useSelectionController(options: SelectionControllerOptions) {
   }
   const korean = () => latest.current.messages.commandPrompt === '명령:';
   function replace(ids: string[]): void {
+    if (!ids.length) selection.current?.clearAcquisitions();
     selectionRef.current = ids;
     setSelectedIds(ids);
     setSelectedSubobjects((previous) =>
@@ -305,9 +308,14 @@ export function useSelectionController(options: SelectionControllerOptions) {
     return !!entityId;
   }
   useEffect(() => {
-    const present = new Set(options.state.entities.map((entity) => entity.id));
-    replace(selectionRef.current.filter((id) => present.has(id)));
-    if (session.previous.some((id) => !present.has(id))) session.previous = [];
+    const next = pruneSelectionPresence(
+      options.state.entities.map((entity) => entity.id),
+      options.additionalValidIds?.() ?? [],
+      selectionRef.current,
+      session.previous,
+    );
+    replace(next.selected);
+    session.previous = next.previous;
   }, [options.state]);
   useEffect(() => {
     registerSelectionCommands(options.registry, {
@@ -390,12 +398,20 @@ export function useSelectionController(options: SelectionControllerOptions) {
       kind: 'window' | 'crossing' | 'box' = 'box',
     ) => {
       session.gesture = undefined;
-      selectIds(selectCadArea(latest.current.getState(), a, b, kind, true), remove);
+      const area = {
+        points: [a, { x: b.x, y: a.y }, b, { x: a.x, y: b.y }],
+        crossing: kind === 'crossing' || (kind === 'box' && b.x < a.x),
+      };
+      session.apply(selectCadArea(latest.current.getState(), a, b, kind, true), remove, area);
       changed();
     },
     selectPath: (points: readonly CadPoint[], kind: SelectionPathMode, remove = false) => {
       session.gesture = undefined;
-      selectIds(selectCadPath(latest.current.getState(), points, kind, true), remove);
+      session.apply(
+        selectCadPath(latest.current.getState(), points, kind, true),
+        remove,
+        kind === 'fence' ? undefined : { points, crossing: kind === 'crossing' },
+      );
       changed();
     },
     getSelectionGesture: () => session.gesture,
@@ -409,6 +425,8 @@ export function useSelectionController(options: SelectionControllerOptions) {
     selectionKeywords: 'W C BOX ALL F WP CP G A R M P U AU SI SU O L'.split(' '),
     clearSelection: () => replace([]),
     getSelectedIds: () => selectionRef.current,
+    getSelectionWindows: () => session.getSelectionWindows(),
+    getIndividuallySelectedIds: () => session.getIndividuallySelectedIds(),
     isActive: () =>
       mode.current !== null || session.gesture !== undefined || session.expectsGroupName,
     isSubobjectSelection: () => session.subobject,

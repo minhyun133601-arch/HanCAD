@@ -203,7 +203,7 @@ test('MOVE accepts Korean group names and Single completes command-then-select a
   await enter(page, 'MOVE');
   await enter(page, 'SI');
   await enter(page, 'ALL');
-  await expect(page.locator('.command-prompt')).toHaveText('기준점 지정:');
+  await expect(page.locator('.command-prompt')).toHaveText('기준점 지정 또는 [변위(D)] <변위>:');
   await enter(page, '0,0');
   await enter(page, '@10,0');
   expect((await drawing(page)).entities[0]).toMatchObject({ a: { x: 10, y: 0 } });

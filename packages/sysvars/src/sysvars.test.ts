@@ -14,6 +14,14 @@ describe('declarative system variables', () => {
     expect(variables.get('DIMSTYLE')).toBe('ISO-25');
     expect(variables.get('TRIMEXTENDMODE')).toBe(1);
     expect(variables.get('EDGEMODE')).toBe(0);
+    for (const name of ['PLINECONVERTMODE', 'PLINEREVERSEWIDTHS']) {
+      expect(variables.get(name)).toBe(0);
+      variables.set(name, 1);
+      expect(variables.get(name)).toBe(1);
+      expect(() => variables.set(name, 2)).toThrow();
+      expect(() => variables.set(name, -1)).toThrow();
+      variables.set(name, 0);
+    }
     expect(() => variables.set('OSMODE', 99999)).toThrow('유효하지');
     expect(variables.get('OSMODE')).toBe(4133);
     expect(() => variables.set('LUPREC', 2.5)).toThrow();

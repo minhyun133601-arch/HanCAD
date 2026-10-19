@@ -89,6 +89,8 @@ export interface SplineGeometry {
   endTangent?: Vec3;
   fitTolerance: number;
   knotParameterization: 'chord' | 'centripetal' | 'uniform';
+  /** Fit-point indices intentionally permitted to have independent incoming/outgoing tangents. */
+  kinkFitIndices?: readonly number[];
 }
 /** Analytic conical helix; height zero is an Archimedean spiral in its own plane. */
 export interface HelixGeometry {

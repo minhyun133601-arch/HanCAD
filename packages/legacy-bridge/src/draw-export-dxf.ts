@@ -42,6 +42,7 @@ export function writeDrawingDxf(entity: CadEntity, writer: DxfWriter): boolean {
       for (const polygon of entity.drawFill) {
         if (polygon.length > 4) throw new Error('DXF 솔리드 패치는 최대 네 정점까지 지원합니다.');
         begin(type, type === '3DFACE' ? 'AcDbFace' : 'AcDbTrace');
+        if (type !== '3DFACE' && entity.thickness !== undefined) push(39, entity.thickness);
         const order =
           polygon.length === 4 && type !== '3DFACE'
             ? [0, 1, 3, 2]
@@ -54,11 +55,13 @@ export function writeDrawingDxf(entity: CadEntity, writer: DxfWriter): boolean {
   }
   if (curve.type === 'POINT') {
     begin('POINT', 'AcDbPoint');
+    if (entity.thickness !== undefined) push(39, entity.thickness);
     wcs(curve.position);
     return true;
   }
   if (curve.type === 'LINE') {
     begin('LINE', 'AcDbLine');
+    if (entity.thickness !== undefined) push(39, entity.thickness);
     wcs(curve.start);
     wcs(curve.end, 11);
     return true;
@@ -114,6 +117,7 @@ export function writeDrawingDxf(entity: CadEntity, writer: DxfWriter): boolean {
       z: dot3(curve.center, normal),
     });
     push(40, curve.radius);
+    if (entity.thickness !== undefined) push(39, entity.thickness);
     wcs(normal, 210);
     if (!full) {
       const first = geometryEvaluation(curve, 0).point;

@@ -1,5 +1,86 @@
 # HanCAD progress
 
+## Phase 07 final acceptance (2026-10-19)
+
+Source: `prompt-source/prompts/phase-07-2d-modify-commands.md`.
+Authorized by the user on 2026-10-19. Preserve the accepted Phase 06 baseline
+and the user's existing AGENTS.md/prompt edits outside the feature commit.
+
+| Milestone                         | Status      | Scope                                                                                                                                  |
+| --------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 7.1 Shared modifying command host | Implemented | Coroutine selection, modifier state, replacement/order results, previews, atomic failure rollback and one command journal entry.       |
+| 7.2 Transform and array commands  | Implemented | MOVE/COPY, ROTATE/SCALE, MIRROR/STRETCH/ALIGN and nonassociative arrays; native MIRRHATCH definitions and stable selection identities. |
+| 7.3 Offset and corners            | Implemented | OFFSET geometry/options, FILLET, CHAMFER and BLEND; elevated planes and construction-curve corner regressions.                         |
+| 7.4 Curve and topology editors    | Implemented | BREAK/JOIN/EXPLODE/LENGTHEN, PEDIT/SPLINEDIT and REVERSE; persistent fit-point kink regression.                                        |
+| 7.5 Remaining modify tools        | Implemented | TRIM/EXTEND curves and gestures, DRAWORDER, CHANGE/CHPROP and OVERKILL dialog/CLI.                                                     |
+| 7.6 Integration and acceptance    | Accepted    | Comprehensive web, 13 native modify and 2 native HATCH cases pass, together with Clipboard/WIPEOUT regressions and performance checks. |
+
+Implementation, functional acceptance and the final release artifact are
+complete. The original five acceptance scenarios pass in production browser and
+native WebView2, including exact one-command U/REDO. Exact next step: Phase 08
+(layers/properties), only when the user requests it.
+
+Pre-gate evidence: locked offline pnpm install and Windows readiness pass;
+`cargo fmt --all -- --check` and `cargo test --workspace --locked` pass (6 tests).
+The unchanged 1,000,000-entity, 1920x1080 stress gate passes: pan 60.00 fps,
+zoom 59.80 fps, frame p95 16.8 ms, GL error 0 and final pending refinement 0.
+Log: `test-artifacts/phase07-render-stress-final.log`. Family notes and
+`phase07-acceptance.md` record command coverage, manual keystrokes and reference
+boundaries. System-variable documentation matches 875 variables and 214 headers.
+
+Full `HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=1 pnpm verify` run 4 exited 0:
+1,181 tests/161 files, 32 compatibility cases, 381-command check, production
+build, renderer QA and 192 browser cases pass; one personal-DWG case is skipped
+without a supplied file. Browser duration 6.6 minutes. Log:
+`test-artifacts/phase07-verify-run4-20261019.log`.
+The final native selection-ID lifetime fix retains a DB-local allocation map
+and reserves historical legacy IDs, preventing deletion/Undo from reusing another
+object's identity. Post-fix lint/format/TypeScript, all 1,184 unit tests and 32
+compatibility cases pass. All 43 affected production-browser cases pass after
+the final production rebuild. Log:
+`test-artifacts/phase07-final-affected-20261019.log`.
+
+Actual Windows release build and `verify-native-phase07.mjs` pass: 13 modify
+cases, all original acceptance scenarios, exact U/REDO and no page errors.
+Two-process Windows Clipboard/grip regressions and WIPEOUT display/export pass;
+PNG/DIB/Bitmap consumer comparisons report zero RGB pixel mismatches. Logs:
+`phase07-native-build-20261019.log`, `phase07-native-modify-20261019.log`,
+`phase07-native-clipboard-20261019.log`, and
+`phase07-native-wipeout-20261019.log` under `test-artifacts/`.
+
+Both native MIRRHATCH 0/1 cases pass: raw boundary/pattern/style/XDATA,
+copy/erase, mixed legacy geometry, Previous selection, exact U/REDO and reload,
+with no page errors. Native pattern rendering remains explicitly unsupported.
+Log: `test-artifacts/phase07-native-hatch-20261019.log`. Initial harness failures
+were an assumed fixture documentId and exact comparison of a trigonometric
+coordinate; observable import completion and 1e-9 geometric tolerance corrected
+those checks without weakening byte-exact U/REDO/reload comparisons.
+
+Clean-checkout web generation passes with the generated WASM folder absent:
+the build regenerates it automatically. Web dev/build and Tauri prebuild now
+include WASM generation. Log: `phase07-clean-web-build-20261019.log`.
+Earlier gate failures, fixes and conditional skips are retained and explained in
+`phase07-acceptance.md`; no unrun check is reported as passed.
+
+The final `pnpm tauri build --no-bundle` passed through the complete automatic
+WASM/web pipeline in 2m 08s. Its only behavior-bundle difference from the tested
+release is completed progress metadata. The final browser progress-language
+case passes, and actual final Tauri execution confirms Phase 07 shows complete,
+MOVE has the expected geometry, one U/REDO restores exact entities, and no page
+errors occur. Final bundle: `index-D1CEJ06A.js`; executable SHA-256:
+`ec7580c3f708b19d0048475011e76d5c2b3366848e4f4944c128b523cee2d726`.
+Logs: `phase07-native-build-final-20261019.log`,
+`phase07-final-progress-browser-20261019.log` and
+`phase07-final-artifact-20261019.log` under `test-artifacts/`.
+
+Installed Korean AutoCAD comparisons, physical Windows IME/Hanja and reserved
+shortcut routing remain unverified. Native automation dispatches keys/mouse
+through WebView2 CDP and independently exercises real Win32 Clipboard formats.
+Numerical spline offsets/fitting do not assert identical proprietary control
+points. Top-level nonassociative native HATCH mirror definitions are supported;
+pattern rendering/authoring and gradient/association graphs remain with Phase 12.
+The unsupported graphs fail explicitly. See the family notes and parity list.
+
 ## Accepted Phases 05 and 06 (2026-10-19)
 
 The user explicitly authorized both phases. All requested implementation and
@@ -96,9 +177,9 @@ Korean AutoCAD comparisons were not certified. Actual Win32 image consumption
 was verified independently. The native acceptance notes record the unavailable
 Computer Use helper and distinguish dispatched WebView keys from physical input.
 
-Exact next step: Phase 07 only when the user requests it. No Phase 07
-implementation has started. Preserve the user's existing AGENTS.md and prompt
-protocol edits outside the verified feature commits.
+The Phase 06 delivery handed off to Phase 07 only on request. The user has now
+requested it; the active Phase 07 section above supersedes that handoff. Preserve
+the user's existing AGENTS.md and prompt protocol edits outside feature commits.
 
 ## Historical Phase 05 checkpoints (before final native acceptance)
 

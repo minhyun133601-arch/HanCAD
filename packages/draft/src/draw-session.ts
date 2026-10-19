@@ -27,12 +27,14 @@ export interface DrawSessionOptions extends Omit<DraftSessionOptions, 'onCommit'
     changes: ReadonlyMap<string, number | string | readonly number[]>,
   ) => void;
   onNotice?: (notice: { ko: string; en: string }) => void;
+  onFailure?: (error: unknown) => void;
 }
 
 /** One coroutine owns interactive, scripted and cursor-preview acquisition. */
 export class DrawSession {
   private readonly program: DrawProgram;
   private readonly pointInput: PointInputController;
+  private readonly sourceById: ReadonlyMap<string, CadEntity>;
   private readonly changes = new Map<string, number | string | readonly number[]>();
   private request: DrawRequest | undefined;
   private cursor: CadPoint | undefined;
@@ -42,6 +44,8 @@ export class DrawSession {
   private status: DraftSnapshot['status'] = 'active';
   private partial: CadEntity[] = [];
   private partialEraseIds: string[] = [];
+  private partialResult: DrawResult | undefined;
+  private failure: unknown;
   private settings: CadSettings;
 
   constructor(
@@ -50,6 +54,7 @@ export class DrawSession {
     private readonly options: DrawSessionOptions,
   ) {
     this.settings = options.context.settings;
+    this.sourceById = new Map(options.context.entities.map((entity) => [entity.id, entity]));
     this.pointInput = new PointInputController(options);
     const context: DrawContext = {
       ...options.context,
@@ -68,6 +73,9 @@ export class DrawSession {
   getRequest(): DrawRequest | undefined {
     return this.request;
   }
+  getFailure(): unknown {
+    return this.failure;
+  }
   getPointInput() {
     return this.pointInput.getState();
   }
@@ -82,19 +90,42 @@ export class DrawSession {
   getSnapEntities(): CadEntity[] {
     return structuredClone(this.partial);
   }
+  getSelectionEntities(): CadEntity[] {
+    const erased = new Set(this.partialEraseIds),
+      replacements = new Map(this.partial.map((entity) => [entity.id, entity]));
+    return [
+      ...this.options.context.entities.flatMap((entity) => {
+        const next = replacements.get(entity.id);
+        replacements.delete(entity.id);
+        return next ? [next] : erased.has(entity.id) ? [] : [entity];
+      }),
+      ...replacements.values(),
+    ];
+  }
   getSnapshot(): DraftSnapshot {
     const request = this.request;
+    const preview = this.preview();
     return {
       tool: this.tool,
       status: this.status,
       prompt: 'firstPoint',
       canClose: false,
       points: request?.base ? [request.base] : [],
-      preview: this.preview(),
+      preview,
+      previewHiddenIds: [
+        ...new Set([
+          ...this.partialEraseIds,
+          ...(request?.previewHiddenIds ??
+            preview.filter((entity) => this.sourceById.has(entity.id)).map((entity) => entity.id)),
+        ]),
+      ],
+      acceptedEraseIds: this.partialEraseIds,
+      ...(request?.selectionIds ? { selectionIds: request.selectionIds } : {}),
       pointInput: this.pointInput.getState(),
       ...(request
         ? {
             promptText: { ko: request.ko, en: request.en },
+            ...(request.dialog ? { dialog: request.dialog } : {}),
             inputMode:
               request.kind === 'entity'
                 ? ('selection' as const)
@@ -136,7 +167,12 @@ export class DrawSession {
     )
       return this.acceptText(options.scalar);
     if (this.request?.kind === 'entity') {
-      const entity = this.options.context.entities.find((item) => item.id === entityId);
+      const entity =
+        this.partial.find((item) => item.id === entityId) ??
+        (this.partialEraseIds.includes(entityId ?? '')
+          ? undefined
+          : this.sourceById.get(entityId ?? ''));
+      if (!entity && this.request.selectionSet) return this.advance(point);
       if (!entity) return { status: 'error', error: 'point' };
       return this.advance({ entity, point });
     }
@@ -159,6 +195,7 @@ export class DrawSession {
   acceptText(text: string, textOptions: DraftTextOptions = {}): DraftInputResult {
     if (this.status !== 'active') return { status: 'error', error: 'closedSession' };
     if (text === '\u001b') return this.cancel();
+    if (text.trim() === '@' && this.tool === 'BREAK') return this.advance('@');
     const keyword = this.keyword(text);
     if (keyword) return this.advance(keyword);
     const modifier = this.pointInput.getState().stage !== 'point';
@@ -205,11 +242,26 @@ export class DrawSession {
     this.cursor = undefined;
     this.request = undefined;
     this.program.return({ entities: [] });
-    if (this.partial.length || this.partialEraseIds.length || this.changes.size)
-      this.options.onComplete(
-        { entities: structuredClone(this.partial), eraseIds: [...this.partialEraseIds] },
-        this.changes,
-      );
+    try {
+      if (this.partial.length || this.partialEraseIds.length || this.changes.size)
+        this.options.onComplete(
+          {
+            ...this.partialResult,
+            entities: structuredClone(this.partial),
+            eraseIds: [...this.partialEraseIds],
+          },
+          this.changes,
+        );
+    } catch (error) {
+      this.failure = error;
+      this.options.onFailure?.(error);
+      this.options.onNotice?.({
+        ko: '객체를 작성할 수 없습니다.',
+        en: 'Cannot create the objects.',
+      });
+      this.notify();
+      return { status: 'error', error: 'point' };
+    }
     this.notify();
     return { status: 'cancelled' };
   }
@@ -221,7 +273,9 @@ export class DrawSession {
     let next: IteratorResult<DrawRequest, DrawResult>;
     try {
       next = value === undefined ? this.program.next() : this.program.next(value);
-    } catch {
+    } catch (error) {
+      this.failure = error;
+      this.options.onFailure?.(error);
       this.cancel();
       return { status: 'error', error: 'point' };
     }
@@ -233,7 +287,9 @@ export class DrawSession {
       this.request = undefined;
       try {
         this.options.onComplete(next.value, this.changes);
-      } catch {
+      } catch (error) {
+        this.failure = error;
+        this.options.onFailure?.(error);
         this.status = 'cancelled';
         this.options.onNotice?.({
           ko: '객체를 작성할 수 없습니다.',
@@ -246,7 +302,9 @@ export class DrawSession {
       if (next.value.checkpoint) {
         try {
           this.options.onComplete(next.value.checkpoint, new Map(this.changes));
-        } catch {
+        } catch (error) {
+          this.failure = error;
+          this.options.onFailure?.(error);
           this.status = 'cancelled';
           this.request = undefined;
           this.options.onNotice?.({
@@ -259,10 +317,12 @@ export class DrawSession {
         this.changes.clear();
         this.partial = [];
         this.partialEraseIds = [];
+        this.partialResult = undefined;
       }
       this.request = next.value;
       if (next.value.partial) this.partial = structuredClone(next.value.partial);
       if (next.value.partialEraseIds) this.partialEraseIds = [...next.value.partialEraseIds];
+      if (next.value.partialResult) this.partialResult = structuredClone(next.value.partialResult);
       if (next.value.notice) this.options.onNotice?.(next.value.notice);
       this.pointInput.reset();
     }
@@ -299,7 +359,7 @@ export class DrawSession {
         );
       return this.cursor && this.request?.preview
         ? this.request.preview(this.cursor)
-        : structuredClone(this.partial);
+        : structuredClone([...(this.request?.previewEntities ?? this.partial)]);
     } catch {
       this.cursor = undefined;
       this.options.onNotice?.({

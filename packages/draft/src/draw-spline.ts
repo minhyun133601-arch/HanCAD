@@ -101,9 +101,10 @@ export function splineObject(entity: CadEntity): SplineGeometry | undefined {
   )
     return undefined;
   const degree = entity.sourceType === 'POLYLINE_SPLINE_QUADRATIC' ? 2 : 3;
-  return entity.points.length > degree
-    ? splineFromPoints(entity.points, false, degree, 2, entity.closed)
-    : undefined;
+  if (entity.points.length < 2) return undefined;
+  const points = [...entity.points];
+  while (!entity.closed && points.length <= degree) points.splice(1, 0, points[0]!);
+  return splineFromPoints(points, false, degree, 2, entity.closed);
 }
 function* objectInput(context: DrawContext): DrawProgram {
   const entities: CadEntity[] = [],

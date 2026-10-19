@@ -284,6 +284,9 @@ importers:
 
   packages/draft:
     dependencies:
+      '@hancad/db':
+        specifier: workspace:*
+        version: link:../db
       '@hancad/geom':
         specifier: workspace:*
         version: link:../geom

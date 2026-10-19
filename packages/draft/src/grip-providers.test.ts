@@ -251,8 +251,14 @@ it('mirrors polyline bulges and arcs, scales radii/styles, and respects MIRRTEXT
     { point: { x: 10, y: -20 }, rotation: Math.PI / 6 },
   );
   expect(transformGripEntity(text, 'MIRROR', { x: 0, y: 0 }, { x: 10, y: 0 }, true)).toMatchObject({
-    rotation: -Math.PI / 6,
+    rotation: Math.PI - Math.PI / 6,
+    mirroredX: true,
   });
+  const mirrored = transformGripEntity(text, 'MIRROR', { x: 0, y: 0 }, { x: 10, y: 0 }, true);
+  if (mirrored.type !== 'text') throw new Error('Expected TEXT');
+  const sign = mirrored.mirroredX ? -1 : 1;
+  expect(sign * Math.cos(mirrored.rotation)).toBeCloseTo(Math.cos(text.rotation), 12);
+  expect(sign * Math.sin(mirrored.rotation)).toBeCloseTo(-Math.sin(text.rotation), 12);
 });
 
 it('uses one block insertion grip with GRIPBLOCK=0, children with 1, and retains transformed/copied block metadata', () => {

@@ -204,6 +204,28 @@ describe('shared DrawSession acquisition and commit host', () => {
     expect(complete).toHaveBeenCalledTimes(1);
     expect(notice).toHaveBeenCalledTimes(1);
   });
+  it('contains persistence failure when Escape publishes accepted provisional geometry', () => {
+    const failure = new Error('Rejected accepted work');
+    const complete = vi.fn(() => {
+        throw failure;
+      }),
+      notice = vi.fn(),
+      failed = vi.fn();
+    const { session } = host('PLINE', outlineContext(), {
+      onComplete: complete,
+      onNotice: notice,
+      onFailure: failed,
+    });
+    session.acceptText('0,0');
+    session.acceptText('10,0');
+    expect(session.cancel()).toEqual({ status: 'error', error: 'point' });
+    expect(session.getSnapshot().status).toBe('cancelled');
+    expect(session.getFailure()).toBe(failure);
+    expect(failed).toHaveBeenCalledWith(failure);
+    expect(notice).toHaveBeenCalledTimes(1);
+    session.cancel();
+    expect(complete).toHaveBeenCalledTimes(1);
+  });
   it('ignores compatibility outlines for continuation and retains exact curve tangents', () => {
     const first = host('CIRCLE');
     first.session.acceptText('0,0');

@@ -1,5 +1,66 @@
 # Decisions
 
+Phase 07 audit additions (2026-10-19): XLINE/RAY trimming uses the unbounded
+parameter domain: surviving unbounded intervals are RAYs and bounded intervals
+are LINEs. EXTEND moves a RAY's finite base to the nearest backward boundary;
+XLINE has no finite endpoint to extend. Physical fence acquisition uses these
+domains rather than the unit display sample. This mathematical construction is
+covered by headless source and local-U tests; exact installed-AutoCAD pick/order
+comparison remains on the parity checklist. Reference: Autodesk
+[construction lines and rays](https://help.autodesk.com/view/ACD/2026/ENU/?caas=caas%2Fdocumentation%2FCIV3D%2F2014%2FENU%2FfilesACD%2FGUID-429F0150-30C7-4A46-9193-EBBC7BB84D6C-htm.html).
+
+The command host composes synchronous drawing transactions with
+`DrawingDatabase.atomic`, preserving existing undo groups, marks and redo until
+success. Failure restores drawing objects, variables and handle seed, publishes
+inverse object events and restores profile/session maps. It does not emulate
+rollback by calling U against a possibly unrelated prior command.
+
+## 2026-10-19: Phase 07 modifying command boundaries
+
+The Tauri release pre-build invokes the complete `pnpm build` pipeline so a
+clean checkout generates the required geometry WASM before bundling the web
+assets. Phase 07 initializes that module before command execution; desktop
+release builds must not depend on an ignored WASM artifact from a prior session.
+Both `dev:web` and `build:web` generate WASM before launching Vite; `build` uses
+that complete web pipeline rather than requiring a hidden manual prerequisite.
+
+Use the existing typed coroutine/input host for every modifying family. Preserve
+selection acquisition methods, immutable accepted work, original display ranks,
+block/group identities and one command undo. Reuse SelectionSession for nested
+edit selections. Headless fixtures must use real SystemVariables and persisted
+entity validation so an absent variable or stale width array cannot hide behind
+a permissive test context. Browser acceptance found and fixed both failures.
+
+Pin `cavalier_contours =0.9.0`, the verified current stable crate, for actual
+polyline parallel offsets. Translate survey coordinates before the kernel and
+reconstruct gap 0/2 supporting corners after its rounded joins. The geometry
+WASM is initialized before command execution. General conic/spline parallels
+use bounded cubic fitting with a sampled 1e-6 mm target; singular/over-budget
+inputs fail explicitly. This is not a claim of proprietary kernel identity.
+
+Keep rational curve definitions through trimming, joining and spline refinement.
+Spline EXTEND follows the documented endpoint tangent rather than arbitrary
+polynomial extrapolation. PEDIT stores its control frame and vertex tangents;
+fitted display samples do not replace that frame. Text reflection changes the
+glyph basis and survives rendering/recovery/export.
+
+PLINECONVERTMODE and PLINEREVERSEWIDTHS are sourced profile integers with default
+0 and allowed values 0/1. See the linked definitions in SYSVARS.md. MIRROR now
+transforms supported top-level nonassociative native HATCH boundary/pattern
+definitions with MIRRHATCH 0/1, preserving raw data and owned metadata through
+atomic copy/erase/undo. Gradient and association graphs are rejected explicitly;
+native hatch authoring/rendering, material appearance and complete text-style
+editing retain their owning producer/I/O phases. Pattern phase/direction and
+arbitrary OCS comparisons remain installed-reference checks.
+BLEND tension, spline fitting, corner branch/variable-width choices and spatial
+array frame conventions require installed-reference comparison. Sources and
+precise numerical assumptions are in
+[transform notes](phase07-transform-notes.md),
+[offset/corner notes](phase07-offset-corner-notes.md) and
+[curve editing notes](phase07-curve-edit-notes.md). Supported text/style
+serialization and actual image-export checks are in
+[modify export notes](phase07-export-notes.md).
+
 ## 2026-10-19: Explicit native toolchain installation authorization
 
 After the blocked Phase 05 checkpoint, the user explicitly requested the missing

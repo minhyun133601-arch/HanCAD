@@ -7,8 +7,24 @@ import { divideProgram, measureProgram } from './draw-divide';
 import { mlineProgram } from './draw-mline';
 import { extraCurvePrograms } from './draw-extra-curves';
 import { regionOutlineFactories } from './draw-region-outlines';
+import { transformFactories } from './modify-transform';
+import { arrayFactories } from './modify-array';
+import { offsetFactories } from './modify-offset';
+import { cornerFactories } from './modify-corner';
+import { curveEditFactories } from './modify-curve-edit';
+import { propertyFactories } from './modify-properties';
+import { overkillFactories } from './modify-overkill';
+import { overkillDialogFactory } from './overkill-dialog-program';
 
 export const drawFactories: Partial<Record<DraftTool, DrawFactory>> = {
+  ...transformFactories,
+  ...arrayFactories,
+  ...offsetFactories,
+  ...cornerFactories,
+  ...curveEditFactories,
+  ...propertyFactories,
+  ...overkillFactories,
+  OVERKILL: overkillDialogFactory,
   ...outlineFactories,
   ...curvePrograms,
   ...extraCurvePrograms,

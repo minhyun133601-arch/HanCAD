@@ -184,7 +184,7 @@ export async function nativeAcceptance(outputName, defaultPort) {
           'failure-history',
           i,
           await page
-            .getByRole('log', { name: '?? ??' })
+            .getByRole('log', { name: '명령 기록' })
             .innerText()
             .catch(() => ''),
         );

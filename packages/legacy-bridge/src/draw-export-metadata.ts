@@ -5,6 +5,12 @@ import type { CadEntity, CadPoint } from './types';
 
 export function drawingEntityMetadata(entity: CadEntity): string | undefined {
   return entity.curve ||
+    (entity.type === 'text' && entity.mirroredX) ||
+    entity.peditTangents ||
+    entity.thickness !== undefined ||
+    entity.material ||
+    entity.plotStyle ||
+    entity.annotative !== undefined ||
     entity.sourceType ||
     entity.drawFill ||
     entity.drawPaths ||

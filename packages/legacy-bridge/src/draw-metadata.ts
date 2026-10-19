@@ -68,6 +68,37 @@ export function restoreDrawMetadata(
     const target = state.entities[i]!;
     if (typeof source !== 'object' || source === null) throw new Error('Invalid drawing entity.');
     const record = source as Record<string, unknown>;
+    if (record.peditTangents !== undefined) {
+      const tangents = record.peditTangents;
+      if (
+        !tangents ||
+        typeof tangents !== 'object' ||
+        Array.isArray(tangents) ||
+        !Object.entries(tangents).every(
+          ([key, value]) =>
+            /^\d+$/.test(key) && typeof value === 'number' && Number.isFinite(value),
+        )
+      )
+        throw new Error('Invalid polyline vertex tangents.');
+      target.peditTangents = structuredClone(tangents) as Record<string, number>;
+    }
+    for (const key of ['material', 'plotStyle'] as const) {
+      const value = record[key];
+      if (value !== undefined) {
+        if (typeof value !== 'string' || !value || value.length > 255)
+          throw new Error(`Invalid entity ${key}.`);
+        target[key] = value;
+      }
+    }
+    if (record.annotative !== undefined) {
+      if (typeof record.annotative !== 'boolean') throw new Error('Invalid annotative flag.');
+      target.annotative = record.annotative;
+    }
+    if (record.thickness !== undefined) {
+      if (typeof record.thickness !== 'number' || !Number.isFinite(record.thickness))
+        throw new Error('Invalid entity thickness.');
+      target.thickness = record.thickness;
+    }
     if (record.sourceType !== undefined) {
       if (typeof record.sourceType !== 'string' || !/^[A-Z0-9_]{1,32}$/.test(record.sourceType))
         throw new Error('Invalid drawing source type.');

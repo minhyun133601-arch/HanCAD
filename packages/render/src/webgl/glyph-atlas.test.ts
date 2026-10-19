@@ -56,6 +56,22 @@ const label: DisplayText = {
 };
 
 describe('GPU glyph atlas layout', () => {
+  it('mirrors glyph quad positions and winding while retaining their original texture coordinates', () => {
+    const f = fixture(),
+      atlas = new GlyphAtlas(f.gl, { createCanvas: f.createCanvas }),
+      source = { ...label, position: { x: 20, y: 30 }, rotation: 0 },
+      normal = atlas.layout(source, 0),
+      mirrored = atlas.layout({ ...source, mirroredX: true }, 0);
+    expect(mirrored).toHaveLength(normal.length);
+    normal.forEach((glyph, i) => {
+      expect(mirrored[i]!.uv).toEqual(glyph.uv);
+      glyph.corners.forEach((point, j) => {
+        expect(mirrored[i]!.corners[j]!.x).toBeCloseTo(40 - point.x, 10);
+        expect(mirrored[i]!.corners[j]!.y).toBe(point.y);
+      });
+    });
+    expect(mirrored[0]!.corners[1].x).toBeLessThan(mirrored[0]!.corners[0].x);
+  });
   it('rasterizes at the projected font size and caches separately by size without changing text advances', () => {
     const f = fixture(),
       atlas = new GlyphAtlas(f.gl, { createCanvas: f.createCanvas });

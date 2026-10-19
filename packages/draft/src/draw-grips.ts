@@ -7,6 +7,8 @@ import { drawMultiline } from './draw-mline';
 import { drawEntityContext } from './draw-regenerate';
 import { cloudDirectionReversed, cloudEntity } from './draw-cloud-geometry';
 import { cloudArcGrips, stretchCloudArcs } from './draw-cloud-grips';
+import { peditFit, peditSpline } from './modify-poly-geometry';
+import { gripTranslate } from './grip-transform';
 
 const model = (p: Vec3): CadPoint => ({ x: p.x, y: -p.y, z: p.z });
 const move = (p: Vec3, delta: CadPoint): Vec3 => ({
@@ -25,6 +27,13 @@ export const drawGripProvider: GripProvider = {
     const result: EntityGrip[] = [];
     const add = (key: string, p: CadPoint, kind: EntityGrip['kind'] = 'vertex') =>
       result.push({ entityId: entity.id, key, point: p, kind, actions: ['stretch'] });
+    if (
+      (entity.type === 'polyline' || entity.type === 'rect') &&
+      /^POLYLINE_(FIT|SPLINE)/.test(entity.sourceType ?? '')
+    ) {
+      entity.points.forEach((point, index) => add(`v${index}`, { ...point }));
+      return result;
+    }
     if (entity.regionLoops) {
       const bounds = entity.regionLoops.flat().map(geometryBounds);
       add(
@@ -107,6 +116,30 @@ export const drawGripProvider: GripProvider = {
   stretch(entity, keys, delta) {
     const result = structuredClone(entity),
       hot = new Set(keys);
+    if (
+      (result.type === 'polyline' || result.type === 'rect') &&
+      /^POLYLINE_(FIT|SPLINE)/.test(result.sourceType ?? '')
+    ) {
+      const points = result.points.map((p, i) => (hot.has(`v${i}`) ? gripTranslate(p, delta) : p)),
+        frame = { ...result, points };
+      if (result.sourceType === 'POLYLINE_FIT')
+        return peditFit(
+          frame,
+          new Map(Object.entries(result.peditTangents ?? {}).map(([i, a]) => [Number(i), a])),
+        );
+      const degree = result.sourceType === 'POLYLINE_SPLINE_QUADRATIC' ? 2 : 3,
+        count = Math.max(
+          1,
+          Math.round(
+            ((result.drawPaths?.[0]?.length ?? 9) - (result.closed ? 0 : 1)) /
+              Math.max(1, result.points.length - degree),
+          ),
+        );
+      const arcs =
+        (result.curve?.type === 'POLYLINE' || result.curve?.type === 'LWPOLYLINE') &&
+        result.curve.vertices.some((v) => v.bulge !== 0);
+      return peditSpline(frame, degree === 2 ? 5 : 6, arcs ? -count : count);
+    }
     if (hot.has('center') || hot.has('position'))
       return transformGripEntity(result, 'MOVE', { x: 0, y: 0 }, delta);
     if (result.cloudVertices && (result.type === 'polyline' || result.type === 'rect')) {

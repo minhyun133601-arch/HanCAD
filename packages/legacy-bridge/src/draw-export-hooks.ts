@@ -8,6 +8,7 @@ import type { CadBounds, CadEntity, CadPoint } from './types';
 import type { DrawingExportHooks } from './draw-export-types';
 import { nativeGeometrySignatures } from './draw-export-signature';
 import { importSplinePolyline } from './draw-import-spline';
+import { drawingExportStyle, drawingLinetypes } from './draw-export-style';
 
 function fillPaths(entity: CadEntity, tolerance?: number): CadPoint[][] | undefined {
   return entity.drawFill ?? exportWidthFills(entity, tolerance);
@@ -44,6 +45,8 @@ function conicSvg(entity: CadEntity): string | undefined {
   return `<path transform="${matrix}" d="M${Math.cos(start)},${Math.sin(start)} A1,1 0 ${Math.abs(sweep) > Math.PI ? 1 : 0},${sweep > 0 ? 1 : 0} ${Math.cos(start + sweep)},${Math.sin(start + sweep)}" vector-effect="non-scaling-stroke"/>`;
 }
 export const drawingExportHooks: DrawingExportHooks = {
+  style: drawingExportStyle,
+  linetypes: drawingLinetypes,
   bounds: (entity) => {
     const exact = exportEntityBounds(entity),
       fills = exportWidthFills(entity);

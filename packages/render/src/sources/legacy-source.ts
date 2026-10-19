@@ -98,6 +98,7 @@ export function legacyDisplayGeometry(entity: CadEntity, unit?: string): Display
         text: entity.text,
         height: entity.textSize,
         rotation: -entity.rotation,
+        ...(entity.mirroredX ? { mirroredX: true } : {}),
         align: 'left',
       };
     case 'dimension': {

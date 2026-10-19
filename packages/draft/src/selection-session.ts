@@ -9,6 +9,10 @@ export interface SelectionGesture {
   points: CadPoint[];
   crossing?: boolean;
 }
+interface Acquisition {
+  ids: string[];
+  area?: { points: readonly CadPoint[]; crossing: boolean };
+}
 export const selectionKeywords = [
   'Window',
   'Crossing',
@@ -90,6 +94,8 @@ export class SelectionSession {
   automatic = true;
   previous: string[] = [];
   private undo: string[][] = [];
+  private acquisitions: Acquisition[] = [];
+  private acquisitionUndo: Acquisition[][] = [];
   private groupName = false;
   get expectsGroupName(): boolean {
     return this.groupName;
@@ -100,6 +106,7 @@ export class SelectionSession {
     this.remove = this.multiple = this.single = this.subobject = this.groupName = false;
     this.automatic = true;
     this.undo = [];
+    this.acquisitionUndo = [];
     this.options.changed();
   }
   remember(ids: readonly string[] = this.options.getIds()): void {
@@ -120,9 +127,44 @@ export class SelectionSession {
     }
     return ko ? '객체 선택:' : 'Select objects:';
   }
-  apply(ids: readonly string[], shift = false): void {
-    this.undo.push([...this.options.getIds()]);
+  clearAcquisitions(): void {
+    this.acquisitions = [];
+  }
+  getSelectionWindows(): {
+    points: readonly CadPoint[];
+    crossing: boolean;
+    ids: readonly string[];
+  }[] {
+    const selected = new Set(this.options.getIds());
+    return this.acquisitions.flatMap((item) =>
+      item.area ? [{ ...item.area, ids: item.ids.filter((id) => selected.has(id)) }] : [],
+    );
+  }
+  getIndividuallySelectedIds(): string[] {
+    const selected = new Set(this.options.getIds());
+    return [
+      ...new Set(this.acquisitions.filter((item) => !item.area).flatMap((item) => item.ids)),
+    ].filter((id) => selected.has(id));
+  }
+  apply(
+    ids: readonly string[],
+    shift = false,
+    area?: { points: readonly CadPoint[]; crossing: boolean },
+  ): void {
+    const before = new Set(this.options.getIds());
+    this.undo.push([...before]);
+    this.acquisitionUndo.push(structuredClone(this.acquisitions));
     this.options.select(ids, this.remove || shift, this.remove);
+    const selected = new Set(this.options.getIds());
+    this.acquisitions = this.acquisitions
+      .map((item) => ({ ...item, ids: item.ids.filter((id) => selected.has(id)) }))
+      .filter((item) => item.ids.length);
+    const picked = new Set(ids);
+    if (!this.remove && !shift)
+      this.acquisitions.push({
+        ids: [...selected].filter((id) => picked.has(id) || !before.has(id)),
+        ...(area ? { area: structuredClone(area) } : {}),
+      });
     if (this.single) this.options.finish();
     this.options.changed();
   }
@@ -132,7 +174,10 @@ export class SelectionSession {
     gesture.points.push({ ...point });
     if (gesture.kind !== 'polygon' && gesture.kind !== 'fence' && gesture.points.length === 2) {
       const [a, b] = gesture.points;
-      this.apply(selectCadArea(this.options.getState(), a!, b!, gesture.kind, true));
+      this.apply(selectCadArea(this.options.getState(), a!, b!, gesture.kind, true), false, {
+        points: [a!, { x: b!.x, y: a!.y }, b!, { x: a!.x, y: b!.y }],
+        crossing: gesture.kind === 'crossing' || (gesture.kind === 'box' && b!.x < a!.x),
+      });
       this.gesture = undefined;
     }
     this.options.changed();
@@ -160,6 +205,10 @@ export class SelectionSession {
             this.gesture.kind === 'fence' ? 'fence' : this.gesture.crossing ? 'crossing' : 'window',
             true,
           ),
+          false,
+          this.gesture.kind === 'polygon'
+            ? { points: this.gesture.points, crossing: !!this.gesture.crossing }
+            : undefined,
         );
         this.gesture = undefined;
       } else if (value === 'U' || value === 'UNDO') this.gesture.points.pop();
@@ -190,9 +239,10 @@ export class SelectionSession {
       const last = [...state.entities].reverse().find((entity) => visible.has(entity.layer));
       this.apply(last ? [last.id] : []);
     } else if (keyword === 'PREVIOUS') this.apply(this.previous);
-    else if (keyword === 'UNDO')
+    else if (keyword === 'UNDO') {
       this.options.replace(this.undo.pop() ?? [...this.options.getIds()]);
-    else if (keyword === 'ADD') this.remove = false;
+      this.acquisitions = this.acquisitionUndo.pop() ?? this.acquisitions;
+    } else if (keyword === 'ADD') this.remove = false;
     else if (keyword === 'REMOVE') this.remove = true;
     else if (keyword === 'MULTIPLE') this.multiple = true;
     else if (keyword === 'SINGLE') this.single = true;

@@ -4,7 +4,10 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
-description = "Dependency-free double-precision geometry boundary for HanCAD"
+description = "Double-precision geometry boundary for HanCAD"
+
+[dependencies]
+cavalier_contours = "=0.9.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

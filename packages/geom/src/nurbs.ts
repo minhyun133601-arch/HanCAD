@@ -7,7 +7,7 @@ type Homogeneous = [number, number, number, number];
 export function resolveSpline(source: SplineGeometry): SplineGeometry {
   const spline = source.controlPoints.length ? source : fitSpline(source);
   const { degree, controlPoints, knots, weights } = spline;
-  if (!Number.isSafeInteger(degree) || degree < 1 || degree > 10 || controlPoints.length <= degree)
+  if (!Number.isSafeInteger(degree) || degree < 1 || degree > 25 || controlPoints.length <= degree)
     throw new GeometryError('invalid-spline-degree');
   if (
     knots.length !== controlPoints.length + degree + 1 ||
@@ -22,6 +22,15 @@ export function resolveSpline(source: SplineGeometry): SplineGeometry {
     throw new GeometryError('invalid-spline-weights');
   if (controlPoints.some((p) => ![p.x, p.y, p.z].every(Number.isFinite)))
     throw new GeometryError('invalid-spline-control-points');
+  if (
+    spline.kinkFitIndices !== undefined &&
+    (!Array.isArray(spline.kinkFitIndices) ||
+      new Set(spline.kinkFitIndices).size !== spline.kinkFitIndices.length ||
+      spline.kinkFitIndices.some(
+        (index) => !Number.isSafeInteger(index) || index < 0 || index >= spline.fitPoints.length,
+      ))
+  )
+    throw new GeometryError('invalid-spline-kink-indices');
   return spline;
 }
 export function splineEvaluation(

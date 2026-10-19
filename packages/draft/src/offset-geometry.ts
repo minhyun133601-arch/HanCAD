@@ -24,6 +24,7 @@ const subtract = (a: CadPoint, b: CadPoint): CadPoint => ({ x: a.x - b.x, y: a.y
 const addScaled = (a: CadPoint, b: CadPoint, scale: number): CadPoint => ({
   x: a.x + b.x * scale,
   y: a.y + b.y * scale,
+  ...(a.z === undefined ? {} : { z: a.z }),
 });
 const dot = (a: CadPoint, b: CadPoint): number => a.x * b.x + a.y * b.y;
 

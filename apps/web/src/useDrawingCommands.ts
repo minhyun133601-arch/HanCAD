@@ -23,11 +23,13 @@ export function useDrawingCommands({
   files,
   messages,
   resolveTypedPoint,
+  pickEntityId,
 }: {
   session: ReturnType<typeof useCommandSession>;
   files: ReturnType<typeof useDrawingFiles>;
   messages: Messages;
   resolveTypedPoint?: Parameters<typeof useDrafting>[0]['resolveTypedPoint'];
+  pickEntityId?: Parameters<typeof useDrafting>[0]['pickEntityId'];
 }) {
   const controllers = useRef<Record<string, Controller>>({});
   function cancelOthers(except = ''): void {
@@ -54,8 +56,10 @@ export function useDrawingCommands({
     },
     selectionPromptActive: () =>
       (modification.isActive() && !modification.needsPoint()) ||
+      draft.isModifySelecting() ||
       clipboard.snapshot?.inputMode === 'selection',
     ...(resolveTypedPoint ? { resolveTypedPoint } : {}),
+    ...(pickEntityId ? { pickEntityId } : {}),
   });
   const dimensions = useDimensions({
     ...common,
@@ -72,7 +76,11 @@ export function useDrawingCommands({
     ...common,
     cancelOthers: () => cancelOthers('measurement'),
   });
-  const editing = useEditingTools({ ...common, cancelOthers: () => cancelOthers('editing') });
+  const editing = useEditingTools({
+    ...common,
+    ...(pickEntityId ? { pickEntityId } : {}),
+    cancelOthers: () => cancelOthers('editing'),
+  });
   const text = useTextCreation({ ...common, cancelOthers: () => cancelOthers('text') });
   const grip = useGrips({
     ...common,
@@ -131,6 +139,10 @@ export function useDrawingCommands({
     modification.snapshot?.preview ??
     draft.snapshot?.preview ??
     [];
+  const commandPreview = session.sysvars.getNumber('COMMANDPREVIEW') !== 0;
+  const controlledPreview =
+    draft.snapshot &&
+    ['OFFSET', 'FILLET', 'CHAMFER', 'LENGTHEN', 'BLEND'].includes(draft.snapshot.tool);
   return {
     draft,
     dimensions,
@@ -146,10 +158,20 @@ export function useDrawingCommands({
     selectedIds:
       editing.snapshot && editing.snapshot.tool !== 'OFFSET'
         ? editing.snapshot.boundaryIds
-        : draft.visibleSelectedIds,
-    preview: session.sysvars.getNumber('COMMANDPREVIEW') === 0 && editing.active ? [] : preview,
+        : (draft.snapshot?.selectionIds ?? draft.visibleSelectedIds),
+    preview:
+      !commandPreview && editing.active
+        ? []
+        : !commandPreview && controlledPreview
+          ? draft.getSnapEntities()
+          : preview,
     previewHiddenIds:
       grip.snapshot?.previewHiddenIds ??
+      (draft.snapshot
+        ? !commandPreview && controlledPreview
+          ? (draft.snapshot.acceptedEraseIds ?? [])
+          : draft.snapshot.previewHiddenIds
+        : undefined) ??
       (session.sysvars.getNumber('COMMANDPREVIEW') !== 0 && editing.snapshot?.tool !== 'OFFSET'
         ? (editing.snapshot?.previewHiddenIds ?? [])
         : []),

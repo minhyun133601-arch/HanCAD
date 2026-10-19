@@ -16,7 +16,7 @@ test('progress features, limitations and all 26 phases follow the shell language
   await expect(korean.getByRole('heading', { name: '지금 사용할 수 있는 기능' })).toBeVisible();
   await expect(korean.locator('tbody tr')).toHaveCount(26);
   await expect(korean.locator('tbody th').first()).toHaveText('기반 구축');
-  await expect(korean.locator('tbody tr').first()).toContainText('MSVC·Windows SDK');
+  await expect(korean.locator('tbody tr').first()).toContainText('Windows 네이티브 빌드');
   await expect(korean.locator('tbody tr').first()).toContainText('진행 중');
   await korean.locator('summary').click();
   await expect(korean.locator('details li')).toHaveCount(6);
@@ -32,11 +32,15 @@ test('progress features, limitations and all 26 phases follow the shell language
   ).toBeVisible();
   await expect(english.locator('tbody tr')).toHaveCount(26);
   await expect(english.locator('tbody th').first()).toHaveText('Bootstrap');
-  await expect(english.locator('tbody tr').first()).toContainText('await MSVC and the Windows SDK');
+  await expect(english.locator('tbody tr').first()).toContainText(
+    'Windows native build/startup checks pass',
+  );
   await expect(english.locator('tbody tr').first()).toContainText('In progress');
-  await expect(english.locator('.development-dialog-content > ul > li')).toHaveCount(15);
+  await expect(english.locator('.development-dialog-content > ul > li')).toHaveCount(17);
   await expect(english.locator('tbody tr').nth(3)).toContainText('Complete');
   await expect(english.locator('tbody tr').nth(4)).toContainText('Complete');
+  await expect(english.locator('tbody tr').nth(5)).toContainText('Complete');
+  await expect(english.locator('tbody tr').nth(6)).toContainText('Complete');
   await expect(english).toContainText('F1 command help');
   await expect(english).toContainText('TRIM/EXTEND Quick and Standard modes');
   if ((await english.locator('details').getAttribute('open')) === null)
@@ -51,5 +55,5 @@ test('progress features, limitations and all 26 phases follow the shell language
   await openProgress(page, '개발 현황');
   await expect(korean.locator('tbody th').last()).toHaveText('패키징·배포');
   await expect(korean).toContainText('TEXT/DTEXT 도면 위 한글 문자 입력');
-  await expect(korean.locator('details')).toContainText('페이즈 5');
+  await expect(korean.locator('details')).toContainText('Windows 네이티브 빌드·클립보드');
 });

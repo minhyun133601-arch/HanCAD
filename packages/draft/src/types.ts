@@ -28,7 +28,36 @@ export type DraftTool =
   | 'TRACE'
   | '3DPOLY'
   | 'MLINE'
-  | 'MLSTYLE';
+  | 'MLSTYLE'
+  | 'MOVE'
+  | 'COPY'
+  | 'ROTATE'
+  | 'SCALE'
+  | 'MIRROR'
+  | 'STRETCH'
+  | 'ALIGN'
+  | 'OFFSET'
+  | 'FILLET'
+  | 'CHAMFER'
+  | 'BLEND'
+  | 'BREAK'
+  | 'BREAKATPOINT'
+  | 'JOIN'
+  | 'EXPLODE'
+  | 'LENGTHEN'
+  | 'ARRAY'
+  | 'ARRAYRECT'
+  | 'ARRAYPOLAR'
+  | 'ARRAYPATH'
+  | '-ARRAY'
+  | 'PEDIT'
+  | 'SPLINEDIT'
+  | 'REVERSE'
+  | 'DRAWORDER'
+  | 'CHANGE'
+  | 'CHPROP'
+  | 'OVERKILL'
+  | '-OVERKILL';
 export type DraftPrompt =
   | 'firstPoint'
   /** LINE before its second segment: Undo only. */
@@ -49,11 +78,15 @@ export interface DraftSnapshot {
   prompt: DraftPrompt;
   points: readonly CadPoint[];
   preview: readonly CadEntity[];
+  previewHiddenIds?: readonly string[];
+  acceptedEraseIds?: readonly string[];
+  selectionIds?: readonly string[];
   canClose: boolean;
   pointInput: PointInputState;
   promptText?: { ko: string; en: string };
   inputMode?: 'point' | 'number' | 'keyword' | 'selection' | 'text';
   scalarKind?: 'angle' | 'distance';
+  dialog?: 'overkill';
 }
 export interface DraftSessionOptions {
   coordinates?: () => Partial<CoordinateSettings>;

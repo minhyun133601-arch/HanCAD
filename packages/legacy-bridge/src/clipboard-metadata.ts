@@ -27,7 +27,9 @@ export function restoreClipboardMetadata(state: LegacyCadState, source: unknown)
         ].every((number) => typeof number === 'number' && Number.isFinite(number)) ||
         !('entityIds' in value) ||
         !Array.isArray(value.entityIds) ||
-        !value.entityIds.every((id: unknown) => typeof id === 'string')
+        !value.entityIds.every((id: unknown) => typeof id === 'string') ||
+        ('rotation' in value &&
+          (typeof value.rotation !== 'number' || !Number.isFinite(value.rotation)))
       )
         throw new Error('Invalid stored clipboard block.');
       names.add(value.name.toUpperCase());
@@ -39,6 +41,7 @@ export function restoreClipboardMetadata(state: LegacyCadState, source: unknown)
           ...('z' in value.basePoint ? { z: Number(value.basePoint.z) } : {}),
         },
         entityIds: [...new Set(value.entityIds as string[])].filter((id) => present.has(id)),
+        ...('rotation' in value ? { rotation: Number(value.rotation) } : {}),
       };
     })
     .filter((block) => block.entityIds.length > 0);

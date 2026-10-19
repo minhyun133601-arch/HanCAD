@@ -9,6 +9,8 @@ import { getMessages } from '@hancad/ui';
 import type { Messages, MessageKey } from '@hancad/ui';
 import { tempOverrides } from './temp-overrides';
 import { recordStatusPoint } from './status-point-store';
+import { nativeSnapSources } from './native-snap-sources';
+import { evaluateGeometry, closestGeometryPoint } from '@hancad/geom';
 
 interface Options {
   registry: CommandRegistry;
@@ -22,6 +24,7 @@ interface Options {
   ) => void;
   cancelOthers: () => void;
   print: (message: string) => void;
+  pickEntityId?: (point: CadPoint) => string | undefined;
 }
 type EditingSession = OffsetSession | TrimExtendSession;
 type EditingSnapshot = OffsetSnapshot | TrimSnapshot;
@@ -50,6 +53,9 @@ export function useEditingTools(options: Options) {
   latest.current = options;
   const controller = useRef<EditingSession | null>(null);
   const [snapshot, setSnapshot] = useState<EditingSnapshot | null>(null);
+  const indexedState = useRef<LegacyCadState | null>(null);
+  const entityIndex = useRef(new Map<string, CadEntity>());
+  const boundaryEntities = useRef<CadEntity[]>([]);
   function refresh(): void {
     setSnapshot(controller.current?.getSnapshot() ?? null);
   }
@@ -69,6 +75,7 @@ export function useEditingTools(options: Options) {
     finish();
     latest.current.cancelOthers();
     const live = latest.current;
+    boundaryEntities.current = tool === 'OFFSET' ? [] : nativeBoundaries();
     controller.current =
       tool === 'OFFSET'
         ? new OffsetSession(live.getState(), {
@@ -83,6 +90,13 @@ export function useEditingTools(options: Options) {
         : new TrimExtendSession(tool, live.getState(), {
             mode: live.sysvars.getNumber('TRIMEXTENDMODE') === 0 ? 0 : 1,
             edgeMode: live.sysvars.getNumber('EDGEMODE') === 1 ? 1 : 0,
+            project:
+              live.sysvars.getNumber('PROJMODE') === 0
+                ? 0
+                : live.sysvars.getNumber('PROJMODE') === 2
+                  ? 2
+                  : 1,
+            boundaries: boundaryEntities.current,
           });
     refresh();
   }
@@ -91,11 +105,13 @@ export function useEditingTools(options: Options) {
     finish?: boolean;
     mode?: 0 | 1;
     edgeMode?: 0 | 1;
+    project?: 0 | 1 | 2;
   }): void {
     const live = latest.current;
     if (result.error) live.print(live.messages[errors[String(result.error)] ?? 'editInvalidInput']);
     if (result.mode !== undefined) live.sysvars.set('TRIMEXTENDMODE', result.mode);
     if (result.edgeMode !== undefined) live.sysvars.set('EDGEMODE', result.edgeMode);
+    if (result.project !== undefined) live.sysvars.set('PROJMODE', result.project);
     if (result.finish) finish();
     else refresh();
   }
@@ -103,10 +119,44 @@ export function useEditingTools(options: Options) {
     return controller.current?.getSnapshot().state ?? latest.current.getState();
   }
   function entityAt(point: CadPoint, tolerance: number): CadEntity | undefined {
-    return (
+    const state = getState();
+    if (indexedState.current !== state) {
+      entityIndex.current = new Map(state.entities.map((entity) => [entity.id, entity]));
+      indexedState.current = state;
+    }
+    if (latest.current.pickEntityId) {
+      const id = latest.current.pickEntityId(point);
+      const entity = id ? entityIndex.current.get(id) : undefined;
+      if (entity) return entity;
+      return boundaryEntities.current.find((entity) => entity.id === id);
+    }
+    const legacy =
       getLegacyRuntime().core.cadEngine.hitTest(visibleCadEntities(getState()), point, tolerance) ??
-      undefined
+      undefined;
+    if (legacy) return legacy;
+    return boundaryEntities.current.find(
+      (entity) =>
+        entity.curve &&
+        closestGeometryPoint(entity.curve, { x: point.x, y: -point.y, z: point.z ?? 0 }).distance <=
+          tolerance,
     );
+  }
+  function nativeBoundaries(): CadEntity[] {
+    const model = latest.current.getState();
+    return nativeSnapSources(latest.current.sysvars.database.all(), model)
+      .filter((source) => source.hatch)
+      .map((source) => {
+        const at = evaluateGeometry(source.geometry, 0);
+        return {
+          ...model.settings,
+          id: source.entityId ?? source.id,
+          type: 'polyline' as const,
+          points: [{ x: at.x, y: -at.y }],
+          closed: false,
+          curve: source.geometry,
+          sourceType: 'HATCH',
+        };
+      });
   }
   function prompt(): string | null {
     if (!snapshot) return null;
@@ -136,6 +186,19 @@ export function useEditingTools(options: Options) {
       return messages[snapshot.tool === 'TRIM' ? 'trimTargetPrompt' : 'extendTargetPrompt'];
     if (snapshot.prompt === 'trimMode') return messages.trimModePrompt(snapshot.mode === 1);
     if (snapshot.prompt === 'trimEdge') return messages.trimEdgePrompt(snapshot.edgeMode === 1);
+    const korean = messages.cancel.includes('취소');
+    if (snapshot.prompt === 'trimProject')
+      return korean
+        ? '투영 옵션 입력 [없음(N)/UCS(U)/뷰(V)] <UCS>:'
+        : 'Enter a projection option [None/Ucs/View] <UCS>:';
+    if (snapshot.prompt === 'trimFence')
+      return korean ? '울타리의 다음 점 지정 또는 <완료>:' : 'Specify next fence point or <done>:';
+    if (snapshot.prompt === 'trimCrossFirst')
+      return korean ? '첫 번째 구석 지정:' : 'Specify first corner:';
+    if (snapshot.prompt === 'trimCrossSecond')
+      return korean ? '반대 구석 지정:' : 'Specify opposite corner:';
+    if (snapshot.prompt === 'trimErase')
+      return korean ? '지울 객체 선택:' : 'Select objects to erase:';
     return messages[snapshot.tool === 'TRIM' ? 'trimBoundaryPrompt' : 'extendBoundaryPrompt'];
   }
   useEffect(() => {
@@ -144,7 +207,6 @@ export function useEditingTools(options: Options) {
     for (const [name, label] of [
       ['TRIM', 'trim'],
       ['EXTEND', 'extend'],
-      ['OFFSET', 'offset'],
     ] as const)
       options.registry.register({
         name,

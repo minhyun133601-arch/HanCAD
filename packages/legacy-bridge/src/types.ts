@@ -29,6 +29,12 @@ export interface CadEntityBase extends CadDisplayStyle {
   layer: string;
   color: string;
   lineWidth: number;
+  thickness?: number;
+  material?: string;
+  plotStyle?: string;
+  annotative?: boolean;
+  /** PEDIT vertex tangent directions, retained in radians by control-frame index. */
+  peditTangents?: Record<string, number>;
   /** Exact WCS geometry behind the transitional compatibility outline. */
   curve?: CurveGeometry;
   sourceType?: string;
@@ -86,6 +92,7 @@ export interface CadText extends CadEntityBase {
   text: string;
   textSize: number;
   rotation: number;
+  mirroredX?: boolean;
 }
 export interface CadDimension extends CadEntityBase {
   type: 'dimension';
@@ -205,6 +212,7 @@ export interface CadClipboardBlock {
   name: string;
   basePoint: CadPoint;
   entityIds: string[];
+  rotation?: number;
 }
 export interface CadImportReport {
   format: string;
@@ -235,6 +243,10 @@ export interface CadReadResult {
   source: { fileName: string; file: CadFile; bytes: Uint8Array<ArrayBuffer> };
 }
 export interface CadDrawOptions {
+  state?: LegacyCadState;
+  /** White-background SVG/PNG/clipboard export policy; canvas scenes default to display. */
+  exporting?: boolean;
+  background?: number;
   color?: string;
   selected?: boolean;
   lineWidth?: number;

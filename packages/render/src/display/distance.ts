@@ -146,7 +146,9 @@ export function distanceToGeometry(
     case 'text': {
       const dx = point.x - geometry.position.x,
         dy = point.y - geometry.position.y;
-      const x = dx * Math.cos(geometry.rotation) + dy * Math.sin(geometry.rotation);
+      const x =
+        (dx * Math.cos(geometry.rotation) + dy * Math.sin(geometry.rotation)) *
+        (geometry.mirroredX ? -1 : 1);
       const y = -dx * Math.sin(geometry.rotation) + dy * Math.cos(geometry.rotation),
         box = textLocalBox(geometry);
       return Math.hypot(

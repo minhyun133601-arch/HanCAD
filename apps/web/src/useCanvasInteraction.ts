@@ -120,7 +120,7 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
     if (live.draft.getSelectionGesture()) return false;
     return (
       !blocked() &&
-      !live.draft.isDrafting() &&
+      (!live.draft.isDrafting() || live.draft.isSelectionSet()) &&
       !live.dimensions.isActive() &&
       !live.modification.needsPoint() &&
       !live.measurement.isActive() &&

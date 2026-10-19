@@ -61,7 +61,7 @@ export function formatSystemVariableError(
 
 export class SystemVariableProfile {
   readonly values = new Map<string, SysvarValue>();
-  readonly events = new EventBus<{ name: string; value: SysvarValue }>();
+  readonly events = new EventBus<{ name: string; value: SysvarValue | undefined }>();
 }
 
 export interface SystemVariablesOptions {
@@ -172,6 +172,34 @@ export class SystemVariables {
     } else {
       this.sessionValues.set(definition.name, structuredClone(value));
       this.events.publish({ name: definition.name, value: structuredClone(value) });
+    }
+  }
+
+  /** Restore every variable scope when a composed synchronous command fails. */
+  atomic<Result>(label: string, operation: () => Result): Result {
+    const profile = new Map(structuredClone([...this.profile.values])),
+      session = new Map(structuredClone([...this.sessionValues]));
+    try {
+      return this.database.atomic(label, operation);
+    } catch (error) {
+      const restore = (
+        target: Map<string, SysvarValue>,
+        before: Map<string, SysvarValue>,
+        publish: (name: string, value: SysvarValue | undefined) => void,
+      ) => {
+        const changed = [...new Set([...target.keys(), ...before.keys()])].filter(
+          (name) => JSON.stringify(target.get(name)) !== JSON.stringify(before.get(name)),
+        );
+        target.clear();
+        for (const [name, value] of before) target.set(name, structuredClone(value));
+        for (const name of changed)
+          publish(name, before.get(name) ?? getSystemVariableDefinition(name)?.default);
+      };
+      restore(this.profile.values, profile, (name, value) =>
+        this.profile.events.publish({ name, value }),
+      );
+      restore(this.sessionValues, session, (name, value) => this.events.publish({ name, value }));
+      throw error;
     }
   }
 

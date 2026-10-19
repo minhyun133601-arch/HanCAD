@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   ModifySession,
   transformCadSelection,
@@ -9,7 +9,6 @@ import type { ModifySnapshot, ModifyTool } from '@hancad/draft';
 import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import type { CommandRegistry } from '@hancad/commands';
 import type { SystemVariables } from '@hancad/sysvars';
-import { getMessages } from '@hancad/ui';
 import type { Messages } from '@hancad/ui';
 import { tempOverrides } from './temp-overrides';
 import { recordStatusPoint } from './status-point-store';
@@ -132,21 +131,9 @@ export function useModification(options: Options) {
     refresh();
     return true;
   }
-  useEffect(() => {
-    const ko = getMessages('ko-KR'),
-      en = getMessages('en-US');
-    for (const name of ['MOVE', 'COPY'] as const) {
-      const label = name === 'MOVE' ? 'move' : 'copy';
-      options.registry.register({
-        name,
-        displayName: { 'ko-KR': ko[label], 'en-US': en[label] },
-        description: { 'ko-KR': ko.modifyBasePoint, 'en-US': en.modifyBasePoint },
-        execute: () => begin(name),
-      });
-    }
-  }, [options.registry]);
   return {
     snapshot,
+    begin,
     active: snapshot !== null,
     prompt: snapshot ? options.messages[snapshot.prompt] : null,
     isActive: () => controller.current !== null,

@@ -82,14 +82,16 @@ test('physical US keys, unknown commands, history, repeat, and cancel work', asy
   await page.keyboard.press('Escape');
 });
 
-test('ribbon tools report pending commands and bilingual tabs and status switches work', async ({
+test('ribbon tools start modifying commands and bilingual tabs and status switches work', async ({
   page,
 }) => {
   await page.goto('/');
   const history = page.getByRole('log', { name: '명령 기록' });
   await page.getByRole('button', { name: '모깎기', exact: true }).click();
   await expect(history).toContainText('FILLET');
-  await expect(history).toContainText(/구현|미구현|알 수 없는/);
+  await expect(page.locator('.command-prompt')).toContainText('첫 번째 객체');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.command-prompt')).toHaveText('명령:');
   const grid = page.getByRole('button', { name: '그리드', exact: true });
   await expect(grid).toBeEnabled();
   const ortho = page.getByRole('button', { name: '직교 모드', exact: true });

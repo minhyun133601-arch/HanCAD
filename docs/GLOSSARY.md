@@ -1,4 +1,21 @@
 # Reference A — Korean AutoCAD UI glossary
+
+## 2D 수정 (페이즈 07)
+
+| English | 한국어 UI |
+| --- | --- |
+| Displacement / Reference / Copy mode | 변위 / 참조 / 복사 모드 |
+| Through / Erase / Multiple | 통과점 / 지우기 / 다중 |
+| Cutting edges / Boundary edges | 절단 모서리 / 경계 모서리 |
+| Quick / Standard / Project | 빠른 작업 / 표준 / 투영 |
+| Fillet / Chamfer / Blend | 모깎기 / 모따기 / 혼합 |
+| Tangent / Smooth / Trim / No trim | 접선 / 부드럽게 / 자르기 / 자르지 않음 |
+| First point / Break at point / Join / Explode | 첫 번째 점 / 점에서 끊기 / 결합 / 분해 |
+| Rectangular array / Polar array / Path array | 직사각형 배열 / 원형 배열 / 경로 배열 |
+| Edit vertex / Decurve / Reverse | 정점 편집 / 곡선 해제 / 방향 반전 |
+| Draw order / Above / Under / Front / Back | 그리기 순서 / 객체 위로 / 객체 아래로 / 맨 앞으로 / 맨 뒤로 |
+| Delete Duplicate Objects / Ignore Object Property | 중복 객체 삭제 / 무시할 객체 특성 |
+| Tolerance / Do Not Break Polylines | 공차 / 폴리선 끊지 않음 |
 (Save as docs/GLOSSARY.md. Use these exact Korean terms in the UI. If a term is missing or doubtful, use the term from Autodesk's Korean AutoCAD help, add it here, and list it in docs/PARITY_CHECKLIST.md.)
 
 ## 선택·그립·클립보드 (페이즈 05)

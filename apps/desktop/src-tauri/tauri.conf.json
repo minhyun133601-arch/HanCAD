@@ -5,7 +5,7 @@
   "identifier": "local.hancad.desktop",
   "build": {
     "beforeDevCommand": "pnpm --dir ../.. dev:web",
-    "beforeBuildCommand": "pnpm --dir ../.. build:web",
+    "beforeBuildCommand": "pnpm --dir ../.. build",
     "devUrl": "http://127.0.0.1:1420",
     "frontendDist": "../../web/dist"
   },

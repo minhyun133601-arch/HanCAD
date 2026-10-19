@@ -1,4 +1,12 @@
-import type { CadBounds, CadEntity, CadDrawOptions, CadPoint, LegacyCadState } from './types';
+import type {
+  CadBounds,
+  CadEntity,
+  CadDrawOptions,
+  CadPoint,
+  LegacyCadState,
+  CadLinetype,
+} from './types';
+import type { ExportStyle, DrawingStyleContext } from './draw-export-style';
 
 export interface DxfWriter {
   owner: string;
@@ -7,6 +15,8 @@ export interface DxfWriter {
   position: (point: { x: number; y: number; z?: number }, code?: number) => void;
 }
 export interface DrawingExportHooks {
+  style: (entity: CadEntity, state?: LegacyCadState, context?: DrawingStyleContext) => ExportStyle;
+  linetypes: (state: LegacyCadState) => CadLinetype[];
   bounds: (entity: CadEntity) => CadBounds | undefined;
   draw: (context: CanvasRenderingContext2D, entity: CadEntity, options: CadDrawOptions) => boolean;
   svg: (entity: CadEntity, bounds?: CadBounds) => string | undefined;

@@ -1,0 +1,34 @@
+[
+  {
+    "name": "PLINECONVERTMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "스플라인을 폴리선으로 변환할 때 사용할 맞춤 방법을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/KOR/AutoCAD-LT/files/GUID-AB5B75E5-2302-454E-B4D5-5C0DBD7EF1F6.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
+    "name": "PLINEREVERSEWIDTHS",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "폴리선의 방향이 반전될 때 세그먼트 폭 방향의 처리 방법을 조정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-9E0951E0-1917-4309-85C6-96A9ACFC04CF.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  }
+]

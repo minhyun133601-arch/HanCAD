@@ -69,7 +69,9 @@ pnpm check:desktop
 pnpm tauri dev
 ```
 
-`pnpm dev:web` launches the live development server. `pnpm verify` builds
+`pnpm dev:web` builds geometry WASM and launches the live development server.
+`pnpm build:web` and the Tauri release build also generate WASM automatically.
+`pnpm verify` builds
 WASM, checks lint/format/types, runs unit and compatibility tests, builds the web
 app and tests it in Edge. Set `HANCAD_PRODUCTION=1` to test the actual compiled app
 using the same local server as the main launcher.

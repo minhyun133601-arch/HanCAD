@@ -54,6 +54,13 @@ export function transformGripEntity(
   const orientation = (heading: number): number =>
     mirror ? 2 * angle - heading : heading + rotation;
   const result = structuredClone(entity);
+  if (result.peditTangents && (mirror || rotation !== 0))
+    result.peditTangents = Object.fromEntries(
+      Object.entries(result.peditTangents).map(([index, heading]) => [
+        index,
+        mirror ? -2 * angle - heading : heading - rotation,
+      ]),
+    );
   if (result.curve || result.regionLoops) {
     const o = map({ x: 0, y: 0, z: 0 }),
       x = map({ x: 1, y: 0, z: 0 }),
@@ -123,7 +130,11 @@ export function transformGripEntity(
         ...result,
         point: map(result.point),
         textSize: result.textSize * Math.abs(factor),
-        rotation: mirror && !mirrorText ? result.rotation : orientation(result.rotation),
+        rotation:
+          mirror && !mirrorText
+            ? result.rotation
+            : orientation(result.rotation) + (mirror && mirrorText ? Math.PI : 0),
+        ...(mirror && mirrorText ? { mirroredX: !result.mirroredX } : {}),
       };
     case 'dimension': {
       for (const key of ['a', 'b', 'center', 'placement'] as const)

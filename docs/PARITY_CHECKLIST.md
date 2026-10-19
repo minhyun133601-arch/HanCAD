@@ -1,7 +1,19 @@
 # Parity checklist
 
+- [ ] Phase 07 XLINE/RAY TRIM: compare outside and middle intervals, resulting
+      RAY/LINE source types, finite-base EXTEND, fence picks beyond the unit sample
+      and one U restoring the original source. Headless construction tests pass;
+      exact installed-AutoCAD acquisition ordering remains a reference check.
+
 These checks track reference behavior and unresolved compatibility. A registered
 command is not an implemented command.
+
+- [ ] Phase 07 Korean command/reference comparison: every prompt, remembered default, keyword abbreviation, invalid-input notice, right-click/Enter/Escape, command preview and Shift modifier. Execute phase07-acceptance.md against the installed metric Korean reference.
+- [ ] Phase 07 transforms/arrays: compare displacement memory, COPYMODE/Array Fit, Reference Points, mixed individual/crossing STRETCH acquisition and Undo, 2/3-pair ALIGN, nonassociative array defaults/DELOBJ and spatial path banking. Check mirrored Korean glyph bases and block insertion/rotation metadata.
+- [ ] Phase 07 OFFSET/corners: compare mixed arc-polyline gap 0/1/2 topology, self intersections, variable widths, numerical spline residual/cusp components, parallel/circle fillets, polyline branch selection/closing and BLEND tension. The implemented mathematical constructions do not certify identical private kernel control points.
+- [ ] Phase 07 topology/editors: compare source-specific JOIN order and seam, wide EXPLODE warning, BREAK same-point semantics, PEDIT Fit/Spline +/-SPLINESEGS/vertex tangents and SPLINEDIT Fit data/Kink/Refine/conversion against the installed reference. Validate actual SystemVariables, recovery and supported export.
+- [ ] Phase 07 cleanup/properties: compare OVERKILL tolerances, ignored properties, width slopes, overlapping arcs, optimized/broken polylines and association protection. Compare CHANGE mixed-object selection ordering, loaded color books/materials/plot styles, DRAWORDER reference sets and all relevant undo groups.
+- [ ] Phase 07 native HATCH comparison: compare nonassociative MIRRHATCH 0/1 directions/phase, all boundary edge families, arbitrary OCS/elevation, copied metadata and one U. Gradient/association graphs fail explicitly; native pattern rendering/authoring, complete font styles/material rendering and arbitrary spatial tangent metadata remain with their owning phases.
 
 - [ ] Phase 05 installed-reference selection: compare all 18 keyword labels/prompts, found/duplicate/locked punctuation, PICKADD 0/1/2, PICKAUTO 0..7, PICKDRAG 0/1/2, PICKFIRST=0, lasso Space cycling, click-release-click cancellation and Ctrl+polyline segment selection.
 - [ ] Phase 05 visuals: compare exact ACI area colors/opacity, dashed versus glowing selection, preview widths, overlap badge/list order, high-DPI grips, GROUPDISPLAYMODE, GRIPBLOCK, hot/hover colors, GRIPOBJLIMIT and selection-preview limit range. GPU styles and overlays implement behavior; an installed-AutoCAD visual match is not certified.
@@ -103,8 +115,8 @@ command is not an implemented command.
 - [ ] Verify large survey coordinates, floating origin, snapping latency and rendering budgets.
 - [ ] Verify all phase acceptance criteria before changing phase status to complete.
 - [ ] Compare TRIM/EXTEND Quick/Standard line picks, finite fences, Shift switching, local Undo, implied EDGEMODE boundaries and locked boundary selection.
-- [ ] Complete TRIM/EXTEND non-LINE targets, hatch boundaries, Project, Crossing and Erase options before full Phase 07 acceptance.
-- [ ] Compare OFFSET Through/Multiple/Erase/Layer defaults, session-only OFFSETDIST and exact miter results; implement GAPTYPE 1/2, curved/concave polylines and remaining curve types.
+- [ ] Compare the implemented TRIM/EXTEND non-LINE targets, hatch boundaries, Project, Crossing and Erase options with installed AutoCAD. Headless/browser/native functional acceptance is recorded in phase07-acceptance.md.
+- [ ] Compare OFFSET Through/Multiple/Erase/Layer defaults, session-only OFFSETDIST, exact miter results, GAPTYPE 1/2, curved/concave polylines and remaining curve types. These paths are implemented and covered by Phase 07 automated/native checks; private-kernel equivalence remains unverified.
 - [ ] Compare TEXT baseline, 1.25-height line advance, text cap-height/font metrics, rotation and readable in-place editing against the Windows reference.
 - [ ] Verify actual Windows Korean IME candidate-window placement and Hanja; synthetic browser composition tests do not certify those native behaviors.
 - [ ] Complete TEXT justification/styles/control codes, existing-text editing, SHX/BigFont and full MTEXT; verify original Phase 10 acceptance independently.

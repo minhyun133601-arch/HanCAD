@@ -47,7 +47,7 @@ test('preselected ribbon MOVE applies an exact relative displacement and preserv
   await point(page, view, 20, 10);
   await expect(page.getByTestId('drawing-canvas')).toHaveAttribute('data-selection-count', '1');
   await page.getByRole('button', { name: '이동', exact: true }).click();
-  await expect(page.locator('.command-prompt')).toHaveText('기준점 지정:');
+  await expect(page.locator('.command-prompt')).toHaveText('기준점 지정 또는 [변위(D)] <변위>:');
   await enter(page, '10,10');
   await enter(page, '@25,35');
   const moved = (await lines(page))[0];
@@ -75,7 +75,7 @@ test('MOVE without preselection combines picked and window-selected objects befo
   await dragWindow(page, view, [28, 14], [52, 6]);
   await expect(page.getByTestId('drawing-canvas')).toHaveAttribute('data-selection-count', '2');
   await enter(page, '');
-  await expect(page.locator('.command-prompt')).toHaveText('기준점 지정:');
+  await expect(page.locator('.command-prompt')).toHaveText('기준점 지정 또는 [변위(D)] <변위>:');
   await enter(page, '0,0');
   await enter(page, '@10,20');
   const moved = await lines(page);

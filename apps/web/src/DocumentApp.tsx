@@ -31,6 +31,8 @@ import type { CadPoint } from '@hancad/legacy-bridge';
 import { useDraftingSettingsCommands } from './useDraftingSettingsCommands';
 import { GripMenu } from './menus/GripMenu';
 import { selectionKeywordLabels } from '@hancad/draft';
+import { OverkillDialog } from './OverkillDialog';
+import './overkill.css';
 
 export function DocumentApp({
   document: drawingDocument,
@@ -76,14 +78,15 @@ export function DocumentApp({
   );
   const dynamicConstraints = useRef<() => DynamicConstraints>(() => ({ relative: false }));
   const dynamicEditing = useRef<() => boolean>(() => false);
+  const canvasSurface = useRef<CanvasSurface | null>(null);
   const tools = useDrawingCommands({
     session,
     files,
     messages,
     resolveTypedPoint: (point, override) => typedResolver.current(point, override),
+    pickEntityId: (point) => canvasSurface.current?.pick(point),
   });
   const { draft, dimensions, modification, measurement, editing, text } = tools;
-  const canvasSurface = useRef<CanvasSurface | null>(null);
   const navigation = useViewNavigation({
     session,
     files,
@@ -377,6 +380,17 @@ export function DocumentApp({
         {interaction.selectionOverlay}
         {tools.properties.panels}
         {draft.dialogs}
+        {draft.snapshot?.dialog === 'overkill' && (
+          <OverkillDialog
+            korean={locale === 'ko-KR'}
+            submit={(value) => {
+              draft.submit(value);
+            }}
+            cancel={() => {
+              draft.cancel();
+            }}
+          />
+        )}
         <GripMenu
           menu={tools.grip.menu}
           korean={locale === 'ko-KR'}
