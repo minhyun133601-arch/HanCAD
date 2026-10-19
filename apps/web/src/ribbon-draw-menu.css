@@ -1,0 +1,28 @@
+.ribbon-tool-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 47px;
+}
+.ribbon-tool-group.split > .ribbon-tool {
+  height: 60px;
+  padding-bottom: 0;
+}
+.ribbon-method-arrow {
+  height: 15px;
+  width: 100%;
+  padding: 0;
+  border-radius: 2px;
+  font-size: 11px;
+  line-height: 11px;
+}
+.ribbon-method-arrow:hover,
+.ribbon-method-arrow[aria-expanded='true'] {
+  background: #485c6f;
+}
+.panel-tools > .ribbon-tool.ribbon-more-draw {
+  gap: 2px;
+  min-width: 68px;
+  max-width: 76px;
+  flex-basis: 68px;
+}

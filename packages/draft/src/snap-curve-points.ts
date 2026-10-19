@@ -46,6 +46,7 @@ export function staticSnapPoints(curve: CurveGeometry): StaticSnapPoint[] {
     curve.type === 'LINE' ||
     curve.type === 'ARC' ||
     curve.type === 'SPLINE' ||
+    curve.type === 'HELIX' ||
     (curve.type === 'ELLIPSE' && !isClosedSnapCurve(curve))
   ) {
     if (!isClosedSnapCurve(curve)) {

@@ -15,6 +15,33 @@ function mesh(wide = new Float32Array()): MeshData {
 }
 
 describe('retained GPU buffer lifecycle', () => {
+  it('reuses GPU identities for LOD replacements and does not reallocate empty geometry', () => {
+    const f = createTestCanvas(),
+      device = new GpuDevice(f.canvas),
+      initial = device.upload(mesh());
+    const before = f.operations.length;
+    const replacement = mesh();
+    replacement.lines[0] = 3;
+    const updated = device.upload(replacement, initial);
+    for (const key of ['lines', 'wide', 'fills', 'points'] as const) {
+      expect(updated[key].buffer).toBe(initial[key].buffer);
+      expect(updated[key].vao).toBe(initial[key].vao);
+    }
+    const operations = f.operations.slice(before);
+    expect(operations.filter((operation) => operation.name === 'gl:bufferData')).toHaveLength(1);
+    expect(operations.some((operation) => /gl:(create|delete)/.test(operation.name))).toBe(false);
+    expect(updated.wideSource).toBe(replacement.lines);
+    f.canvas.width = 1600;
+    device.draw(updated, { x: 0, y: 0 }, 1, 800, 600, 1, 0, false);
+    expect(updated.wide.count).toBe(2);
+    const thinAgain = device.upload(mesh(), updated);
+    expect(thinAgain.wide.count).toBe(0);
+    expect(thinAgain.wideSource).toBeDefined();
+    device.draw(thinAgain, { x: 0, y: 0 }, 1, 800, 600, 1, 0, false);
+    expect(thinAgain.wide.count).toBe(2);
+    device.release(thinAgain);
+    device.dispose();
+  });
   it('retains packed thin data without generating or uploading unused wide geometry', () => {
     const f = createTestCanvas(),
       device = new GpuDevice(f.canvas),

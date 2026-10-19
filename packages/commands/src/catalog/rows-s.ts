@@ -1,5 +1,7 @@
 /** Command catalog rows S-Z; see rows-a.ts for the field order. */
 export const rowsS: readonly string[] = [
+  'SKETCH|스케치|Sketch|자유형 스케치 선 세그먼트를 작성합니다.|Creates freehand sketch line segments.|6',
+  'TRACE|두께선|Legacy Trace|이전 버전의 폭을 가진 2D 두께선을 작성합니다.|Creates the legacy wide 2D trace primitive requested by Phase 06.|6',
   'SAVE|저장|Save|현재 파일 이름 또는 지정한 이름으로 도면을 저장합니다.|Saves the drawing under the current or a specified file name.|9',
   'SAVEAS|다른 이름으로 저장|Save As|현재 도면 사본을 새 파일 이름으로 저장합니다.|Saves a copy of the current drawing under a new file name.|9',
   'SCALE|축척|Scale|선택한 객체를 확대하거나 축소합니다.|Enlarges or reduces selected objects.|7',
@@ -67,7 +69,7 @@ export const rowsS: readonly string[] = [
   'VSCURRENT|비주얼 스타일|Visual Style|현재 뷰포트의 비주얼 스타일을 설정합니다.|Sets the visual style in the current viewport.|21',
   'WBLOCK|블록 쓰기|Write Block|선택한 객체를 새 도면 파일로 저장하거나 블록을 도면 파일로 변환합니다.|Writes objects or a block to a new drawing file.|13',
   'WEDGE|쐐기|Wedge|3D 솔리드 쐐기를 작성합니다.|Creates a 3D solid wedge.|22',
-  'WIPEOUT|가리기|Wipeout|기존 객체를 현재 배경색으로 가리는 다각형 영역을 작성합니다.|Creates a polygonal area that masks underlying objects with the background color.|6',
+  'WIPEOUT|객체 가리기|Wipeout|기존 객체를 현재 배경색으로 가리는 다각형 영역을 작성합니다.|Creates a polygonal area that masks underlying objects with the background color.|6',
   'WORKSPACE|작업공간|Workspace|작업공간을 작성, 수정 및 저장하고 현재 작업공간으로 설정합니다.|Creates, modifies and saves workspaces and makes one current.|20',
   'XATTACH|외부 참조 부착|Attach Xref|외부 참조로 DWG 파일을 삽입합니다.|Inserts a DWG file as an external reference.|13',
   'XBIND|외부 참조 결합|Xref Bind|외부 참조의 하나 이상의 이름 있는 객체 정의를 현재 도면에 결합합니다.|Binds named object definitions in an xref to the current drawing.|13',

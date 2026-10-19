@@ -108,5 +108,7 @@ export function transformGeometry(curve: CurveGeometry, matrix: Affine3): CurveG
         source: curve.source,
         matrix: multiplyAffine3(matrix, curve.matrix),
       };
+    case 'HELIX':
+      return { type: 'TRANSFORMED', source: curve, matrix: [...matrix] as Affine3 };
   }
 }

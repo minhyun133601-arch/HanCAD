@@ -8,6 +8,7 @@ import type {
   Vec2,
 } from '../display/types';
 import { colorFromDxf, colorFromHex } from '../style/aci';
+import { triangulatePolygon } from '../display/polygon';
 
 const tau = Math.PI * 2;
 const wcs = (point: CadPoint): Vec2 => ({ x: point.x, y: -point.y });
@@ -28,6 +29,43 @@ export function legacyArcGeometry(
 }
 
 export function legacyDisplayGeometry(entity: CadEntity, unit?: string): DisplayGeometry {
+  if (entity.curve) return { type: 'curve', curve: entity.curve };
+  if (entity.regionLoops)
+    return {
+      type: 'composite',
+      triangles: [],
+      parts: entity.regionLoops.flatMap((loop) =>
+        loop.map((curve) => ({ type: 'curve' as const, curve })),
+      ),
+    };
+  if (entity.drawPaths)
+    return {
+      type: 'composite',
+      triangles: [],
+      parts: entity.drawPaths.map((path) => {
+        const vertices = new Float64Array(path.length * 5);
+        path.forEach((point, index) => {
+          vertices[index * 5] = point.x;
+          vertices[index * 5 + 1] = -point.y;
+        });
+        return { type: 'polyline', vertices, closed: false };
+      }),
+    };
+  if (entity.drawFill) {
+    const triangles = entity.drawFill.flatMap((polygon) => triangulatePolygon(polygon.map(wcs)));
+    const parts: DisplayGeometry[] =
+      entity.sourceType === 'WIPEOUT'
+        ? []
+        : entity.drawFill.map((polygon) => {
+            const vertices = new Float64Array(polygon.length * 5);
+            polygon.forEach((p, i) => {
+              vertices[i * 5] = p.x;
+              vertices[i * 5 + 1] = -p.y;
+            });
+            return { type: 'polyline', vertices, closed: true };
+          });
+    return { type: 'composite', parts, triangles, fillControlled: entity.sourceType !== 'WIPEOUT' };
+  }
   switch (entity.type) {
     case 'line':
       return { type: 'line', start: wcs(entity.a), end: wcs(entity.b) };
@@ -48,6 +86,8 @@ export function legacyDisplayGeometry(entity: CadEntity, unit?: string): Display
         vertices[index * 5] = point.x;
         vertices[index * 5 + 1] = -point.y;
         vertices[index * 5 + 2] = -(entity.bulges?.[index] ?? 0);
+        vertices[index * 5 + 3] = entity.startWidths?.[index] ?? entity.constantWidth ?? 0;
+        vertices[index * 5 + 4] = entity.endWidths?.[index] ?? entity.constantWidth ?? 0;
       });
       return { type: 'polyline', vertices, closed: entity.closed };
     }
@@ -110,7 +150,20 @@ export function legacyDisplayEntity(entity: CadEntity, unit?: string): DisplayEn
     lineweight: entity.lineweight ?? -1,
     transparency: entity.transparency ?? 0,
     plinegen: entity.plinegen ?? false,
+    ...(entity.sourceType === 'WIPEOUT' ? { backgroundMask: true } : {}),
   };
+}
+
+function legacyDisplayEntities(entity: CadEntity, unit?: string): DisplayEntity[] {
+  const display = legacyDisplayEntity(entity, unit);
+  if (entity.sourceType !== 'WIPEOUT' || !('points' in entity)) return [display];
+  const { drawFill: _fill, ...outline } = entity;
+  const frame = legacyDisplayEntity(outline, unit);
+  delete frame.backgroundMask;
+  return [
+    display,
+    { ...frame, id: `${entity.id}::frame`, sourceId: entity.id, wipeoutFrame: true },
+  ];
 }
 
 export interface DisplaySourceChanges {
@@ -124,14 +177,14 @@ export interface DisplaySourceChanges {
 export class LegacyDisplaySource {
   private previous = new Map<
     string,
-    { entity: CadEntity; signature: string; display: DisplayEntity }
+    { entity: CadEntity; signature: string; displays: DisplayEntity[] }
   >();
   private unit: string | undefined;
 
   sync(state: LegacyCadState): DisplaySourceChanges {
     const next = new Map<
       string,
-      { entity: CadEntity; signature: string; display: DisplayEntity }
+      { entity: CadEntity; signature: string; displays: DisplayEntity[] }
     >();
     const entities: DisplayEntity[] = [],
       added: DisplayEntity[] = [],
@@ -141,13 +194,21 @@ export class LegacyDisplaySource {
       const signature = previous?.entity === entity ? previous.signature : JSON.stringify(entity);
       const changed =
         !previous || signature !== previous.signature || this.unit !== state.settings.unit;
-      const display = changed ? legacyDisplayEntity(entity, state.settings.unit) : previous.display;
-      next.set(entity.id, { entity, signature, display });
-      entities.push(display);
-      if (!previous) added.push(display);
-      else if (changed) modified.push(display);
+      const displays = changed
+        ? legacyDisplayEntities(entity, state.settings.unit)
+        : previous.displays;
+      next.set(entity.id, { entity, signature, displays });
+      entities.push(...displays);
+      const previousIds = new Set(previous?.displays.map((display) => display.id));
+      for (const display of displays) {
+        if (!previousIds.has(display.id)) added.push(display);
+        else if (changed) modified.push(display);
+      }
     }
-    const removed = [...this.previous.keys()].filter((id) => !next.has(id));
+    const retained = new Set(entities.map((entity) => entity.id));
+    const removed = [...this.previous.values()]
+      .flatMap((item) => item.displays.map((display) => display.id))
+      .filter((id) => !retained.has(id));
     this.previous = next;
     this.unit = state.settings.unit;
     return { entities, added, modified, removed };

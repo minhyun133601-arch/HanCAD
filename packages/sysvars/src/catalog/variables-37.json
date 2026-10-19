@@ -48,6 +48,22 @@
     "max": 1
   },
   {
+    "name": "SPLPERIODIC",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "닫힌 스플라인을 주기적으로 생성하여 닫힘 점에서 부드러운 연속성을 유지할지 조정합니다.",
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1,
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-60D7953C-E22D-4CF3-B779-F776592A5F23.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "1"
+    }
+  },
+  {
     "name": "SSFOUND",
     "type": "string",
     "default": "",

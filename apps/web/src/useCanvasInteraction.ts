@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { editableSelection, transformCadSelection, translateCadEntities } from '@hancad/draft';
+import {
+  editableSelection,
+  transformCadSelection,
+  translateCadEntities,
+  nearestEntityGrip,
+} from '@hancad/draft';
 import type { CadEntity, CadPoint } from '@hancad/legacy-bridge';
 import type { CadPointerPick, CadSelectionDrag } from '@hancad/render';
 import type { Messages } from '@hancad/ui';
@@ -247,7 +252,14 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
       accepted = live.dimensions.pick(target.point, entity);
     } else if (live.modification.needsPoint())
       accepted = live.modification.pick(target.point, Boolean(target.snapped));
-    else accepted = live.draft.pick({ ...event, ...target });
+    else {
+      const scalar = live.getDynamicConstraints?.().scalar;
+      accepted = live.draft.pick({
+        ...event,
+        ...target,
+        ...(scalar !== undefined ? { scalar } : {}),
+      });
+    }
     if (pointInput && accepted) {
       aids.clear();
       tempOverrides.consumeObjectSnap();
@@ -287,7 +299,30 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
       live.dimensions.cursor(target.point, entity);
     } else if (live.modification.isActive())
       live.modification.cursor(target.point, Boolean(target.snapped));
-    else live.draft.cursor(target.point, target);
+    else {
+      const scalar = live.getDynamicConstraints?.().scalar;
+      live.draft.cursor(target.point, { ...target, ...(scalar !== undefined ? { scalar } : {}) });
+    }
+  }
+  function isGripPoint(start: CadPoint): boolean {
+    const live = latest.current;
+    const idle =
+      !live.draft.isActive() &&
+      !live.modification.isActive() &&
+      !live.editing.isActive() &&
+      !live.text.isActive() &&
+      !live.dimensions.isActive() &&
+      !live.clipboard.isActive() &&
+      !live.grip.isActive();
+    return Boolean(
+      idle &&
+      nearestEntityGrip(
+        live.grip.getGrips(),
+        start,
+        Math.max(4, live.session.sysvars.getNumber('GRIPSIZE')) /
+          (live.surface.current?.getView().scale ?? 1),
+      ),
+    );
   }
   function suppressSelectionBox(start: CadPoint): boolean {
     const live = latest.current;
@@ -392,6 +427,7 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
     cursor,
     canSelectArea,
     suppressSelectionBox,
+    isGripPoint,
     selectionDrag,
     dragPreview,
     selectionOverlay: selectionPreview.overlay,

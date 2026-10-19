@@ -111,6 +111,50 @@ async function expectNoBrowserFallback(page: Page): Promise<void> {
   expect(await page.evaluate(() => localStorage.getItem('hancad.drawing-clipboard.v1'))).toBeNull();
 }
 
+test('Clipboard images use the current WIPEOUT frame mode while exact packet metadata stays unchanged', async ({
+  page,
+}) => {
+  for (const token of ['WIPEOUTFRAME', '1', 'WIPEOUT', '0,0', '100,0', '100,50', '0,50', ''])
+    await enter(page, token);
+  await expect(page.getByTestId('drawing-entity-count')).toHaveText('1');
+  const original = (await drawing(page)).entities;
+  expect(original[0]?.frameMode).toBe(1);
+  let originalPayload: string | undefined;
+  for (const value of ['2', '1', '0']) {
+    await enter(page, 'WIPEOUTFRAME');
+    await enter(page, value);
+    await selectAll(page);
+    await page.keyboard.press('Control+c');
+    await expect(page.locator('.command-prompt')).toHaveText('명령:');
+    const copied = await page.evaluate(async () => {
+      const packet = (window as unknown as HarnessWindow).hancadNativeClipboard.packet;
+      if (!packet) throw new Error('Missing Clipboard packet.');
+      const image = await createImageBitmap(
+        new Blob([new Uint8Array(packet.png)], { type: 'image/png' }),
+      );
+      const canvas = document.createElement('canvas');
+      canvas.width = image.width;
+      canvas.height = image.height;
+      const context = canvas.getContext('2d');
+      if (!context) throw new Error('Missing PNG decoder.');
+      context.drawImage(image, 0, 0);
+      image.close();
+      const rgba = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      let ink = 0;
+      for (let index = 0; index < rgba.length; index += 4)
+        if (rgba[index] !== 255 || rgba[index + 1] !== 255 || rgba[index + 2] !== 255) ink++;
+      return { payload: packet.payload, ink };
+    });
+    if (value === '1') expect(copied.ink).toBeGreaterThan(0);
+    else expect(copied.ink).toBe(0);
+    originalPayload ??= copied.payload;
+    expect(copied.payload).toBe(originalPayload);
+    expect(JSON.parse(copied.payload).state.entities).toEqual(original);
+    expect((await drawing(page)).entities).toEqual(original);
+    await expectNoBrowserFallback(page);
+  }
+});
+
 test('native COPYBASE sends exact JSON plus a matching PNG/32-bit DIB and PASTECLIP uses native data', async ({
   page,
 }) => {

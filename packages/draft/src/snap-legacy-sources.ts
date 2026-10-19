@@ -14,6 +14,11 @@ export function legacySnapSources(
     .flatMap(legacyEntitySnapSources);
 }
 export function legacyEntitySnapSources(entity: CadEntity): SnapSource[] {
+  if (entity.curve) return [{ id: entity.id, geometry: entity.curve }];
+  if (entity.regionLoops)
+    return entity.regionLoops
+      .flat()
+      .map((geometry, index) => ({ id: `${entity.id}:${index}`, entityId: entity.id, geometry }));
   const common = { id: entity.id },
     normal = { x: 0, y: 0, z: 1 },
     xAxis = { x: 1, y: 0, z: 0 };
@@ -58,13 +63,13 @@ export function legacyEntitySnapSources(entity: CadEntity): SnapSource[] {
           vertices: entity.points.map((point, index) => ({
             position: snapWcs(point),
             bulge: -(entity.bulges?.[index] ?? 0),
-            startWidth: 0,
-            endWidth: 0,
+            startWidth: entity.startWidths?.[index] ?? 0,
+            endWidth: entity.endWidths?.[index] ?? 0,
           })),
           closed: entity.closed,
           is3D: false,
           normal,
-          constantWidth: 0,
+          constantWidth: entity.constantWidth ?? 0,
         },
       },
     ];

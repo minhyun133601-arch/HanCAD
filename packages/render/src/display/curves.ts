@@ -1,4 +1,4 @@
-import { geometryEvaluation, splineBreakpoints } from '@hancad/geom';
+import { geometryEvaluation, splineBreakpoints, helixBreakpoints } from '@hancad/geom';
 import type { CurveGeometry } from '@hancad/geom';
 import type { Bounds2, DisplayArc, Vec2 } from './types';
 
@@ -91,6 +91,7 @@ export function visibleArcIntervals(arc: DisplayArc, view: Bounds2): [number, nu
 export function curveBreaks(curve: CurveGeometry): number[] {
   if (curve.type === 'TRANSFORMED') return curveBreaks(curve.source);
   if (curve.type === 'SPLINE') return splineBreakpoints(curve);
+  if (curve.type === 'HELIX') return helixBreakpoints(curve);
   if (curve.type === 'POLYLINE' || curve.type === 'LWPOLYLINE') {
     const count = curve.vertices.length - (curve.closed ? 0 : 1);
     return Array.from({ length: count + 1 }, (_, index) => index / count);

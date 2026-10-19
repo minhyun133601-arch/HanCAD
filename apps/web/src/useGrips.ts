@@ -79,6 +79,7 @@ export function useGrips(options: Options) {
       block: live.sysvars.getNumber('GRIPBLOCK'),
       groupMode: live.sysvars.getNumber('GROUPDISPLAYMODE'),
       pickstyle: live.sysvars.getNumber('PICKSTYLE'),
+      revcloudGrips: live.sysvars.getNumber('REVCLOUDGRIPS'),
     };
     const subobjects = live.getSelectedSubobjects?.() ?? {};
     const idKey = ids.join('\0') + JSON.stringify(subobjects),

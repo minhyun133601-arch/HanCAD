@@ -84,6 +84,7 @@ export function useDrawingCommands({
   });
   const clipboard = useClipboardCommands({
     ...common,
+    database: session.database,
     getSelectedIds: draft.getSelectedIds,
     clearSelection: draft.clearSelection,
     selectIds: draft.selectIds,
@@ -172,17 +173,20 @@ export function useDrawingCommands({
           ? messages.dimensionUsage
           : messages.draftingUsage,
     editable:
-      draft.selecting && draft.editable
+      draft.snapshot?.inputMode === 'text'
         ? true
-        : dimensions.active
-          ? dimensions.editable
-          : !active && session.editable,
+        : draft.selecting && draft.editable
+          ? true
+          : dimensions.active
+            ? dimensions.editable
+            : !active && session.editable,
     /** Prompt input type for the ImeController; undefined when no drawing tool is active. */
     inputMode:
       grip.inputMode ??
       (draft.isFilterSelection() ? draft.inputMode : undefined) ??
       (draft.hasSelectionSubprompt() ? draft.inputMode : undefined) ??
       clipboard.inputMode ??
+      draft.snapshot?.inputMode ??
       (draft.selecting && !draft.isDrafting() ? draft.inputMode : undefined) ??
       toolInputMode({
         editing: editing.snapshot,

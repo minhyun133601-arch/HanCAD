@@ -1,7 +1,9 @@
 import { invoke } from '@tauri-apps/api/core';
-import { getLegacyRuntime, readableCadColor } from '@hancad/legacy-bridge';
+import type { DrawingDatabase } from '@hancad/db';
+import { drawingBounds, getLegacyRuntime, readableCadColor } from '@hancad/legacy-bridge';
 import { DRAWING_CLIPBOARD_MIME } from './drawing-clipboard';
 import type { DrawingClipboard } from './drawing-clipboard';
+import { drawingExportState } from './drawing-export-state';
 
 export interface DrawingClipboardPacket {
   payload: string;
@@ -50,9 +52,11 @@ async function storedPayload(value?: string): Promise<string | undefined> {
 
 export async function drawingClipboardImage(
   payload: DrawingClipboard,
+  database: Pick<DrawingDatabase, 'getVariable'>,
 ): Promise<{ png: number[]; dib: number[] }> {
   const runtime = getLegacyRuntime();
-  const bounds = runtime.core.cadEngine.bounds(payload.state.entities);
+  const imageState = drawingExportState(payload.state, database);
+  const bounds = drawingBounds(imageState);
   if (!bounds) throw new Error('Unable to render clipboard image.');
   const width = Math.max(bounds.maxX - bounds.minX, 1),
     height = Math.max(bounds.maxY - bounds.minY, 1),
@@ -66,7 +70,7 @@ export async function drawingClipboardImage(
   context.fillRect(0, 0, canvas.width, canvas.height);
   context.translate(16 - bounds.minX * scale, 16 - bounds.minY * scale);
   context.scale(scale, scale);
-  for (const entity of payload.state.entities)
+  for (const entity of imageState.entities)
     runtime.core.cadExporters.drawEntity(context, entity, {
       color: readableCadColor(entity.color),
       scale,
@@ -96,9 +100,12 @@ export async function drawingClipboardImage(
   return { png: Array.from(new Uint8Array(await blob.arrayBuffer())), dib: Array.from(dib) };
 }
 
-export async function writeDrawingClipboard(payload: DrawingClipboard): Promise<ClipboardSource> {
+export async function writeDrawingClipboard(
+  payload: DrawingClipboard,
+  database: Pick<DrawingDatabase, 'getVariable'>,
+): Promise<ClipboardSource> {
   const json = JSON.stringify(payload),
-    { png, dib } = await drawingClipboardImage(payload);
+    { png, dib } = await drawingClipboardImage(payload, database);
   if ('__TAURI_INTERNALS__' in window) {
     await invoke('write_drawing_clipboard', { packet: { payload: json, png, dib } });
     return 'system';

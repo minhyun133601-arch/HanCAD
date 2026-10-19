@@ -83,6 +83,7 @@
     context.lineWidth = Math.max(0.25, number(options.lineWidth, number(entity.lineWidth, 1.5))) / scale;
     context.lineCap = "round";
     context.lineJoin = "round";
+    if (Tool.core.cadDrawingExport?.draw(context, entity, options)) { context.restore(); return; }
     const line = (a, b) => { context.beginPath(); context.moveTo(a.x, a.y); context.lineTo(b.x, b.y); context.stroke(); };
     if (entity.type === "line") line(point(entity.a), point(entity.b));
     if (entity.type === "polyline" || entity.type === "rect") {
@@ -154,6 +155,8 @@
     };
     const includeAll = (points) => { for (const at of points) include(at); };
     entitiesOf(snapshot, visibleOnly).forEach((entity) => {
+      const exact = Tool.core.cadDrawingExport?.bounds(entity);
+      if (exact) { include({x:exact.minX,y:exact.minY}); include({x:exact.maxX,y:exact.maxY}); return; }
       if (entity.type === "line") { include(point(entity.a)); include(point(entity.b)); }
       if (entity.type === "polyline" || entity.type === "rect") {
         const b=Tool.core.cadEngine.bounds(entity);
@@ -187,7 +190,9 @@
     };
     entitiesOf(snapshot, true).forEach((entity) => {
       const stroke = entityColor(snapshot, entity, true);
-      lines.push(`<g data-layer="${escapeXml(layerName(entity))}" stroke="${stroke}" stroke-width="${cleanNumber(Math.max(1, Math.min(6, number(entity.lineWidth, 1.5))))}" stroke-linecap="round" stroke-linejoin="round" fill="none">`);
+      lines.push(`<g data-layer="${escapeXml(layerName(entity))}" color="${stroke}" stroke="${stroke}" stroke-width="${cleanNumber(Math.max(1, Math.min(6, number(entity.lineWidth, 1.5))))}" stroke-linecap="round" stroke-linejoin="round" fill="none">`);
+      const exact = Tool.core.cadDrawingExport?.svg(entity, {minX:bounds.minX-margin,minY:bounds.minY-margin,maxX:bounds.maxX+margin,maxY:bounds.maxY+margin});
+      if (exact !== undefined) { lines.push(exact, "</g>"); return; }
       const line = (a, b) => `<line x1="${cleanNumber(a.x)}" y1="${cleanNumber(a.y)}" x2="${cleanNumber(b.x)}" y2="${cleanNumber(b.y)}"${vectorStroke}/>`;
       if (entity.type === "line") lines.push(line(point(entity.a), point(entity.b)));
       if (entity.type === "polyline" || entity.type === "rect") {
@@ -231,6 +236,7 @@
   }
 
   function toDxf(snapshot = {}) {
+    Tool.core.cadDrawingExport?.validateDxf(snapshot);
     // Keep stored doubles intact; screen/export preview rounding must not change coordinates.
     const cleanNumber = (value) => String(number(value));
     const output = [], push = (code, value) => output.push(String(code), String(value));
@@ -256,6 +262,7 @@
     const rootDictionary = handle(), groupDictionary = handle(), filterDictionary = handle();
     const filterDefinitions = (snapshot.selectionFilters || []).map(filter => ({ ...filter, handle: handle() }));
     const entityHandles = new Map();
+    const drawingMetadata = [];
     let currentEntityId = null, currentEntityIds = null;
     const dimStyles = new Map(), dimensions = new Map();
     entitiesOf(snapshot).filter((entity) => entity.type === "dimension").forEach((raw, index) => {
@@ -317,11 +324,17 @@
         const reactors = groupDefinitions.filter(group => group.ids.some(sourceId => sourceIds.includes(sourceId)));
         if (reactors.length) { push(102, "{ACAD_REACTORS"); reactors.forEach(group => push(330, group.handle)); push(102, "}"); }
       }
+      const metadata = entity.id && !["VERTEX", "SEQEND"].includes(type) ? Tool.core.cadDrawingExport?.metadata(entity) : undefined;
+      if (metadata) {
+        const dictionary = handle(), record = handle();
+        push(102, "{ACAD_XDICTIONARY"); push(360, dictionary); push(102, "}");
+        drawingMetadata.push({ owner: id, dictionary, record, json: metadata });
+      }
       push(330, owner); push(100, "AcDbEntity"); push(8, dxfLayer(layerName(entity))); if (entity.color) { push(62, 7); push(420, parseInt(color(entity.color).slice(1), 16)); } return id; };
     const line = (entity, a, b, owner) => { start("LINE", entity, owner); push(100, "AcDbLine"); position(a); position(b, 11); };
     const polyline = (entity, points, closed, owner) => {
-      const elevation = points[0]?.z || 0;
-      if (points.some(at => (at.z || 0) !== elevation)) {
+      const elevation = entity.elevation ?? points[0]?.z ?? 0;
+      if (entity.sourceType === "3DPOLY" || points.some(at => (at.z || 0) !== elevation)) {
         const polyOwner = start("POLYLINE", entity, owner); push(100, "AcDb3dPolyline"); push(66, 1); position({x:0,y:0}); push(70, 8 | (closed ? 1 : 0));
         points.forEach(at => { start("VERTEX", entity, polyOwner); push(100, "AcDbVertex"); push(100, "AcDb3dPolylineVertex"); position(at); push(70, 32); });
         start("SEQEND", entity, polyOwner);
@@ -329,7 +342,12 @@
       }
       start("LWPOLYLINE", entity, owner); push(100, "AcDbPolyline"); push(90, points.length); push(70, closed ? 1 : 0);
       if (elevation) push(38, cleanNumber(elevation));
-      points.forEach((at,index) => { push(10, cleanNumber(at.x)); push(20, cleanNumber(-at.y)); if(entity.bulges?.[index]) push(42,cleanNumber(-entity.bulges[index])); });
+      if (entity.thickness !== undefined) push(39, entity.thickness);
+      if (entity.constantWidth !== undefined && !entity.startWidths && !entity.endWidths) push(43, entity.constantWidth);
+      points.forEach((at,index) => { push(10, cleanNumber(at.x)); push(20, cleanNumber(-at.y)); if(entity.bulges?.[index]) push(42,cleanNumber(-entity.bulges[index]));
+        if (entity.startWidths) push(40, entity.startWidths[index] ?? 0);
+        if (entity.endWidths) push(41, entity.endWidths[index] ?? 0);
+      });
     };
     const text = (entity, value, at, size, rotation, owner, centered = false) => {
       start("TEXT", entity, owner); push(100, "AcDbText"); position(at); push(40, cleanNumber(size)); push(1, safeString(value)); push(50, cleanNumber(normalAngle(-number(rotation)) * 180 / Math.PI)); push(7, "STANDARD");
@@ -347,6 +365,7 @@
     };
     function emitEntity(entity, owner) {
       currentEntityId = entity.id;
+      if (Tool.core.cadDrawingExport?.dxf(entity, {owner, push, start, position})) return;
       if (entity.type === "line") line(entity, point(entity.a), point(entity.b), owner);
       if (entity.type === "polyline" || entity.type === "rect") polyline(entity, polygonPoints(entity), entity.closed || entity.type === "rect", owner);
       if (entity.type === "circle" || entity.type === "arc") circleArc(entity, owner);
@@ -405,7 +424,8 @@
     });
     currentEntityId = null;
     push(0, "ENDSEC");
-    if (groupDefinitions.length || filterDefinitions.length) {
+    const nativeSignatures=drawingMetadata.length?Tool.core.cadDrawingExport?.signatures(output):undefined;
+    if (groupDefinitions.length || filterDefinitions.length || drawingMetadata.length) {
       push(0, "SECTION"); push(2, "OBJECTS");
       const dictionary = (id, owner, entries) => {
         push(0, "DICTIONARY"); push(5, id); push(330, owner); push(100, "AcDbDictionary"); push(281, 1);
@@ -423,6 +443,13 @@
         push(0, "XRECORD"); push(5, filter.handle); push(330, filterDictionary); push(100, "AcDbXrecord"); push(280, 1);
         const json = JSON.stringify(filter.expression);
         for (let i = 0; i < json.length; i += 240) push(1, json.slice(i, i + 240));
+      });
+      drawingMetadata.forEach(metadata => {
+        dictionary(metadata.dictionary, metadata.owner, [["HANCAD_DRAW", metadata.record]]);
+        push(0, "XRECORD"); push(5, metadata.record); push(330, metadata.dictionary); push(100, "AcDbXrecord"); push(280, 1);
+        const packet=JSON.parse(metadata.json);packet.nativeSignature=nativeSignatures.get(metadata.owner);
+        const characters = Array.from(JSON.stringify(packet));
+        for (let i = 0; i < characters.length; i += 240) push(1, characters.slice(i, i + 240).join(""));
       });
       push(0, "ENDSEC");
     }

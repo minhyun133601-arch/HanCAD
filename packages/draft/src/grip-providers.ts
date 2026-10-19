@@ -6,6 +6,8 @@ export { gripCircumcenter } from './grip-geometry';
 import { editableSelection } from './selection';
 import { gripTranslate, transformGripEntity } from './grip-transform';
 import type { EntityGrip, GripAction, GripProvider, GripSettings } from './grip-types';
+import { drawGripProvider } from './draw-grips';
+import { simpleCurveGripProvider } from './draw-simple-grips';
 
 const midpoint = (a: CadPoint, b: CadPoint): CadPoint => ({
   x: (a.x + b.x) / 2,
@@ -199,7 +201,11 @@ export const defaultGripProvider: GripProvider = {
   },
 };
 
-const providers: GripProvider[] = [defaultGripProvider];
+const providers: GripProvider[] = [
+  simpleCurveGripProvider(defaultGripProvider),
+  drawGripProvider,
+  defaultGripProvider,
+];
 export function registerGripProvider(provider: GripProvider): () => void {
   providers.unshift(provider);
   return () => {
@@ -245,7 +251,7 @@ export function collectEntityGrips(
   const grips: EntityGrip[] = [
     ...selected
       .filter((entity) => !children.has(entity.id))
-      .flatMap((entity) => gripProvider(entity).grips(entity, settings.grips === 2)),
+      .flatMap((entity) => gripProvider(entity).grips(entity, settings.grips === 2, settings)),
     ...blocks.map((block): EntityGrip => ({
       entityId: block.entityIds[0]!,
       entityIds: [...block.entityIds],

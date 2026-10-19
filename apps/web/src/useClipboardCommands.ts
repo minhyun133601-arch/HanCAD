@@ -8,6 +8,7 @@ import {
 import type { DraftPointOptions, PointInputResult, PointSnapOverride } from '@hancad/draft';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import type { CommandRegistry } from '@hancad/commands';
+import type { DrawingDatabase } from '@hancad/db';
 import type { SystemVariables } from '@hancad/sysvars';
 import type { Messages } from '@hancad/ui';
 import {
@@ -29,6 +30,7 @@ type ClipboardCommand =
   'COPYCLIP' | 'CUTCLIP' | 'COPYBASE' | 'PASTECLIP' | 'PASTEBLOCK' | 'PASTEORIG';
 interface Options {
   registry: CommandRegistry;
+  database: DrawingDatabase;
   sysvars: SystemVariables;
   messages: Messages;
   getState: () => LegacyCadState;
@@ -108,7 +110,7 @@ export function useClipboardCommands(options: Options) {
     publish({ ...current, busy: true, inputMode: 'keyword', preview: [] });
     const request = ++token.current;
     try {
-      const written = await writeDrawingClipboard(data);
+      const written = await writeDrawingClipboard(data, live.database);
       if (token.current !== request) return;
       if (current.command === 'CUTCLIP') {
         if (live.getState() !== source)

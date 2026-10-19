@@ -48,6 +48,8 @@ export interface CadCanvasOptions {
   selectionGesture?: () => SelectionGesture;
   selectionCommandActive?: () => boolean;
   suppressSelectionBox?: (start: CadPoint) => boolean;
+  /** Selected grips receive clicks before empty-space selection, including Shift hot grips. */
+  isGripPoint?: (point: CadPoint) => boolean;
   onSelectionDrag?: (event: CadSelectionDrag) => void;
   getNavigationSettings?: () => CadNavigationSettings;
   getNavigationMode?: () => 'pan' | 'zoom' | undefined;
@@ -229,7 +231,7 @@ export class CadPointerController {
         this.host.invalidate();
         return;
       }
-      if (!this.options.canSelectArea?.()) {
+      if (this.options.isGripPoint?.(point) || !this.options.canSelectArea?.()) {
         this.pick(point, event.shiftKey, event.ctrlKey);
         return;
       }

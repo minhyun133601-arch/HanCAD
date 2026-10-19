@@ -110,6 +110,38 @@
     "max": 1
   },
   {
+    "name": "REVCLOUDCREATEMODE",
+    "type": "integer",
+    "default": 1,
+    "scope": "profile",
+    "description": "구름형 리비전 작성의 기본 입력을 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-5D91AC1F-7F44-412A-8BFE-E9152EC5AF4F.htm",
+      "type": "Integer",
+      "savedIn": "Registry",
+      "initial": "1"
+    },
+    "enum": [0, 1, 2],
+    "min": 0,
+    "max": 2
+  },
+  {
+    "name": "REVCLOUDSCALEMODE",
+    "type": "integer",
+    "default": 0,
+    "scope": "profile",
+    "description": "새 구름형 리비전을 작성할 때 DIMSCALE에 따라 호 길이의 축척을 조정할지 지정합니다.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-61211E9D-DA8A-45ED-B3F3-E9EAB3DD1565.htm",
+      "type": "Integer",
+      "savedIn": "User-settings",
+      "initial": "0"
+    },
+    "enum": [0, 1],
+    "min": 0,
+    "max": 1
+  },
+  {
     "name": "REVCLOUDGRIPS",
     "type": "integer",
     "default": 1,

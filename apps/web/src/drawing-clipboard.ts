@@ -1,5 +1,10 @@
-import { editableSelection, translateCadEntities, validDraftPoint } from '@hancad/draft';
-import { getLegacyRuntime, normalizeCadState } from '@hancad/legacy-bridge';
+import {
+  editableSelection,
+  multilinePaths,
+  translateCadEntities,
+  validDraftPoint,
+} from '@hancad/draft';
+import { drawingBounds, normalizeCadState } from '@hancad/legacy-bridge';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 
 export const DRAWING_CLIPBOARD_MIME = 'application/vnd.hancad.drawing+json';
@@ -18,7 +23,7 @@ export function copyDrawingSelection(
 ): DrawingClipboard | undefined {
   const entities = editableSelection(source, ids);
   if (!entities.length) return undefined;
-  const bounds = getLegacyRuntime().core.cadEngine.bounds(entities);
+  const bounds = drawingBounds({ ...source, entities });
   const base = basePoint ?? { x: bounds?.minX ?? 0, y: bounds?.maxY ?? 0 };
   if (!validDraftPoint(base)) throw new Error('Invalid clipboard base point.');
   const selected = new Set(entities.map((entity) => entity.id));
@@ -102,6 +107,27 @@ export function pasteDrawingClipboard(
   for (const line of payload.state.linetypes ?? [])
     if (!linetypes.some((existing) => existing.name.toUpperCase() === line.name.toUpperCase()))
       linetypes.push(structuredClone(line));
+  const mlineStyles = [...(target.mlineStyles ?? [])];
+  for (const style of payload.state.mlineStyles ?? [])
+    if (!mlineStyles.some((existing) => existing.name.toUpperCase() === style.name.toUpperCase()))
+      mlineStyles.push(structuredClone(style));
+  for (const entity of entities)
+    if (entity.mline) {
+      const style = mlineStyles.find(
+        (existing) => existing.name.toUpperCase() === entity.mline!.style.toUpperCase(),
+      );
+      if (style) {
+        const value = entity.mline;
+        entity.mline = { ...value, style: style.name, offsets: [...style.offsets] };
+        entity.drawPaths = multilinePaths(
+          value.vertices,
+          style.offsets,
+          value.scale,
+          value.justification,
+          value.closed,
+        );
+      }
+    }
   const delta = {
     x: point.x - payload.basePoint.x,
     y: point.y - payload.basePoint.y,
@@ -144,6 +170,7 @@ export function pasteDrawingClipboard(
       linetypes,
       groups,
       clipboardBlocks,
+      ...(mlineStyles.length ? { mlineStyles } : {}),
       selectedIds: [],
     }),
   };

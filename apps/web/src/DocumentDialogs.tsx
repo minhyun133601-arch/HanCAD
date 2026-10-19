@@ -5,6 +5,8 @@ import { DisplayOptionsDialog } from './DisplayOptionsDialog';
 import type { useDimensions } from './useDimensions';
 import type { useCommandSession } from './useCommandSession';
 import type { useViewNavigation } from './useViewNavigation';
+import type { useDrawingFiles } from './useDrawingFiles';
+import { DrawingStyleDialogs } from './DrawingStyleDialogs';
 
 export function DocumentDialogs({
   messages,
@@ -15,6 +17,7 @@ export function DocumentDialogs({
   session,
   navigation,
   focus,
+  files,
 }: {
   messages: Messages;
   locale: Locale;
@@ -24,9 +27,18 @@ export function DocumentDialogs({
   session: ReturnType<typeof useCommandSession>;
   navigation: ReturnType<typeof useViewNavigation>;
   focus: () => void;
+  files: ReturnType<typeof useDrawingFiles>;
 }) {
   return (
     <>
+      <DrawingStyleDialogs
+        registry={session.registry}
+        sysvars={session.sysvars}
+        getState={files.getState}
+        commitState={files.commitState}
+        korean={locale === 'ko-KR'}
+        focus={focus}
+      />
       <ProgressDialog
         messages={messages}
         locale={locale}

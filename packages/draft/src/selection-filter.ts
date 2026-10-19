@@ -4,7 +4,7 @@ import type {
   CadFilterProperty,
   LegacyCadState,
 } from '@hancad/legacy-bridge';
-import { polylineLength } from '@hancad/geom';
+import { geometryLength, polylineLength } from '@hancad/geom';
 import { arcSweep } from './snap-geometry';
 
 const filterProperties = new Set([
@@ -57,6 +57,8 @@ export function cadFilterValue(
   if (block) return property === 'type' ? 'insert' : block.name;
   switch (property) {
     case 'type':
+      if (entity.sourceType)
+        return entity.sourceType === '3DPOLY' ? 'polyline' : entity.sourceType.toLowerCase();
       return entity.type === 'rect' ? 'polyline' : entity.type;
     case 'name':
       return entity.type === 'dimension' ? entity.kind : entity.type;
@@ -75,6 +77,9 @@ export function cadFilterValue(
     case 'radius':
       return entity.type === 'circle' || entity.type === 'arc' ? entity.radius : 0;
     case 'length': {
+      if (entity.curve) return geometryLength(entity.curve);
+      if (entity.regionLoops)
+        return entity.regionLoops.flat().reduce((sum, curve) => sum + geometryLength(curve), 0);
       if (entity.type === 'line')
         return Math.hypot(entity.b.x - entity.a.x, entity.b.y - entity.a.y);
       if (entity.type === 'circle') return Math.PI * 2 * entity.radius;

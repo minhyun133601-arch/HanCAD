@@ -9,7 +9,7 @@ export const rowsA: readonly string[] = [
   '3DFACE|3D 면|3D Face|3D 공간에 3면 또는 4면 표면을 작성합니다.|Creates a three- or four-sided surface in 3D space.|22',
   '3DMOVE|3D 이동|3D Move|3D 뷰에서 지정한 방향과 거리로 객체를 이동합니다.|Moves objects a specified distance in a specified direction in 3D views.|22',
   '3DORBIT|궤도|3D Orbit|현재 뷰포트에서 3D 뷰를 대화식으로 회전합니다.|Rotates the view in 3D space interactively.|21',
-  '3DPOLY|3D 폴리선|3D Polyline|3D 공간에 직선 세그먼트로 된 폴리선을 작성합니다.|Creates a 3D polyline of straight segments.|22',
+  '3DPOLY|3D 폴리선|3D Polyline|3D 공간에 직선 세그먼트로 된 폴리선을 작성합니다.|Creates a 3D polyline of straight segments.|6',
   '3DPRINT|3D 인쇄|3D Print|3D 모형을 3D 인쇄 서비스용으로 내보냅니다.|Sends a 3D model to a 3D printing service.|23',
   '3DROTATE|3D 회전|3D Rotate|3D 뷰에서 축을 중심으로 객체를 회전합니다.|Rotates objects about a base point in 3D views.|22',
   '3DSCALE|3D 축척|3D Scale|3D 뷰에서 객체의 축척을 균일하게 변경합니다.|Scales objects uniformly in 3D views.|22',

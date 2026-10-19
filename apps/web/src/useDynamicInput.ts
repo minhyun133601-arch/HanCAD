@@ -25,6 +25,7 @@ import { inputBlocked, isTextEditingTarget } from './ui-focus';
 export interface DynamicInputOptions {
   sysvars: SystemVariables;
   mode: PromptInputMode;
+  scalarKind?: 'angle' | 'distance';
   input: string;
   changeInput: (value: string) => void;
   prompt: string;
@@ -56,7 +57,11 @@ export function useDynamicInput(options: DynamicInputOptions) {
       (options.mode === 'number' || (options.mode === 'point' && (dimensional || mode & 1)));
   const defaultFields =
     gripFields ??
-    (options.mode === 'number' ? (['distance'] as const) : dynamicFields(dimensional, polar));
+    (options.mode === 'number'
+      ? options.scalarKind === 'angle'
+        ? (['angle'] as const)
+        : (['distance'] as const)
+      : dynamicFields(dimensional, polar));
   const relative = dimensional || Boolean(options.base && vars.getNumber('DYNPICOORDS') === 0);
   const initial: DynamicEdit = {
     field: defaultFields[0] ?? 'x',
@@ -69,7 +74,7 @@ export function useDynamicInput(options: DynamicInputOptions) {
   const fields = state.cartesian ? dynamicFields(false, false) : defaultFields;
   const [menu, setMenu] = useState(false);
   const [highlight, setHighlight] = useState(0);
-  const context = `${options.commandActive}:${options.prompt}:${options.base?.x}:${options.base?.y}:${dimensional}:${polar}:${relative}:${mode}:${grip?.key}:${gripFields?.join(',')}`;
+  const context = `${options.commandActive}:${options.prompt}:${options.base?.x}:${options.base?.y}:${dimensional}:${polar}:${relative}:${mode}:${grip?.key}:${gripFields?.join(',')}:${options.scalarKind}`;
   useEffect(() => {
     edit.current = initial;
     setState(initial);
@@ -262,7 +267,9 @@ export function useDynamicInput(options: DynamicInputOptions) {
                 live.grip,
                 coordinateSettings((name) => live.sysvars.get(name)),
               )
-            : dynamicToken(edit.current, live.input, fallback());
+            : live.mode === 'number' && live.scalarKind !== undefined && !edit.current.cartesian
+              ? live.input.trim() || edit.current.locked[edit.current.field]
+              : dynamicToken(edit.current, live.input, fallback());
         if (value === null) {
           event.preventDefault();
           event.stopPropagation();
@@ -311,6 +318,10 @@ export function useDynamicInput(options: DynamicInputOptions) {
     (mode > 0 && Boolean(mode & 1) && visibility === 2 && options.mode === 'command');
   const showPrompt =
     vars.getNumber('DYNPROMPT') > 0 && (options.commandActive || Boolean(options.input));
+  function scalarConstraints(): DynamicConstraints {
+    const scalar = latest.current.input.trim() || edit.current.locked[edit.current.field];
+    return { relative, ...(scalar !== undefined ? { scalar } : {}) };
+  }
   return {
     visible: Boolean(options.cursor && mode > 0 && (showFields || showPrompt)),
     showFields,
@@ -357,7 +368,11 @@ export function useDynamicInput(options: DynamicInputOptions) {
               latest.current.grip,
               coordinateSettings((name) => latest.current.sysvars.get(name)),
             )
-          : constraintsFor(edit.current, latest.current.input)
+          : latest.current.mode === 'number' &&
+              latest.current.scalarKind !== undefined &&
+              !edit.current.cartesian
+            ? scalarConstraints()
+            : constraintsFor(edit.current, latest.current.input)
         : { relative },
     isEditing: (): boolean => edit.current.engaged || Object.keys(edit.current.locked).length > 0,
     reset: () => {

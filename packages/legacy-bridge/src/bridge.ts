@@ -12,6 +12,8 @@ import { CAD_ENTITY_LIMIT } from './limits';
 import { CadImportError } from './diagnostics';
 import { restoreSelectionMetadata } from './selection-metadata';
 import { restoreClipboardMetadata } from './clipboard-metadata';
+import { restoreDrawMetadata } from './draw-metadata';
+import { drawingExportHooks } from './draw-export-hooks';
 
 export function getLegacyRuntime(): LegacyCadRuntime {
   const runtime = (globalThis as typeof globalThis & { HeechangTool?: LegacyCadRuntime })
@@ -22,6 +24,7 @@ export function getLegacyRuntime(): LegacyCadRuntime {
       '로컬 CAD 실행 모듈을 불러오지 못했습니다. 앱을 다시 열어 주세요.',
     );
   }
+  runtime.core.cadDrawingExport = drawingExportHooks;
   return runtime;
 }
 
@@ -55,6 +58,7 @@ export function normalizeCadState(value: unknown): LegacyCadState {
     );
   restoreSelectionMetadata(state, value);
   restoreClipboardMetadata(state, value);
+  restoreDrawMetadata(state, value as { entities: unknown[]; mlineStyles?: unknown });
   return state;
 }
 

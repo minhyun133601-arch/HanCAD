@@ -4,6 +4,9 @@ export type IconName =
   | 'circle'
   | 'arc'
   | 'rectangle'
+  | 'point'
+  | 'cloud'
+  | 'region'
   | 'move'
   | 'copy'
   | 'rotate'
@@ -28,6 +31,10 @@ const paths: Record<IconName, string> = {
   circle: 'M23 13a10 10 0 1 1-20 0 10 10 0 0 1 20 0 M11 13h4 M13 11v4',
   arc: 'M3 21A18 18 0 0 1 21 3 M2 19h3v3H2z M19 2h3v3h-3z',
   rectangle: 'M3 5h20v16H3z M2 4h3v3H2z M21 19h3v3h-3z',
+  point: 'M13 3v22 M3 14h20 M8 9h10v10H8z',
+  cloud:
+    'M6 22a4 4 0 0 1-3-7 4 4 0 0 1 1-8 4 4 0 0 1 7-3 4 4 0 0 1 7 0 4 4 0 0 1 6 5 4 4 0 0 1-1 7 4 4 0 0 1-6 7 4 4 0 0 1-6 1 4 4 0 0 1-5-2',
+  region: 'M3 5h20v18H3z M3 13l8-8 M3 21 19 5 M9 23 23 9 M17 23l6-6',
   move: 'M13 2v22 M2 13h22 M9 6l4-4 4 4 M9 20l4 4 4-4 M6 9l-4 4 4 4 M20 9l4 4-4 4',
   copy: 'M3 3h13v13H3z M10 10h13v13H10z',
   rotate: 'M5 10a9 9 0 1 1 1 10 M5 3v7h7 M13 11v4 M11 13h4',

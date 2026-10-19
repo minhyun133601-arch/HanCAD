@@ -1,5 +1,7 @@
 import { normalizeCadState } from '@hancad/legacy-bridge';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
+import { geometryLength } from '@hancad/geom';
+import { syncSimpleDrawCurve } from '@hancad/draft';
 
 export interface EntityProperty {
   key: string;
@@ -26,6 +28,10 @@ function point(entity: CadEntity, name: string): CadPoint | undefined {
   return undefined;
 }
 function value(entity: CadEntity, key: string): string {
+  if (key === 'type' && entity.sourceType) return entity.sourceType;
+  if (key === 'length' && entity.curve) return String(geometryLength(entity.curve));
+  if (key === 'length' && entity.regionLoops)
+    return String(entity.regionLoops.flat().reduce((sum, curve) => sum + geometryLength(curve), 0));
   if (key === 'color' && entity.trueColor === undefined && entity.aci === 256) return 'ByLayer';
   if (key === 'color' && entity.trueColor === undefined && entity.aci === 0) return 'ByBlock';
   if (key.includes('.')) {
@@ -86,6 +92,19 @@ function coordinates(name: string, ko: string, en: string): Descriptor[] {
   ]);
 }
 function descriptors(entity: CadEntity): Descriptor[] {
+  if (
+    (entity.curve && !['line', 'circle', 'arc'].includes(entity.type)) ||
+    entity.regionLoops ||
+    entity.mline
+  )
+    return [
+      ...(entity.curve || entity.regionLoops
+        ? [['length', '길이', 'Length', 'number', true] as Descriptor]
+        : []),
+      ...(entity.regionArea !== undefined
+        ? [['regionArea', '면적', 'Area', 'number', true] as Descriptor]
+        : []),
+    ];
   switch (entity.type) {
     case 'line':
       return [
@@ -135,7 +154,9 @@ function descriptors(entity: CadEntity): Descriptor[] {
 export function entityProperties(entities: readonly CadEntity[]): EntityProperty[] {
   if (!entities.length) return [];
   const first = entities[0]!,
-    sameType = entities.every((entity) => entity.type === first.type);
+    sameType = entities.every(
+      (entity) => (entity.sourceType ?? entity.type) === (first.sourceType ?? first.type),
+    );
   return [...common, ...(sameType ? descriptors(first) : [])].map(
     ([key, ko, en, kind, readOnly]) => {
       const firstValue = value(first, key);
@@ -241,7 +262,7 @@ export function changeEntityProperty(
                   : numeric
                 : input,
       });
-    return changed;
+    return syncSimpleDrawCurve(changed);
   });
   return normalizeCadState({ ...state, entities });
 }

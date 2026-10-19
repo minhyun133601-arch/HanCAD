@@ -3,7 +3,32 @@ import type { CoordinateSettings, DraftPoint } from './coordinates';
 import type { PointInputState, PointSnapOverride } from './point-input';
 import type { DraftSnapDeferred } from './snap-types';
 
-export type DraftTool = 'LINE' | 'CIRCLE' | 'RECTANG' | 'PLINE';
+export type DraftTool =
+  | 'LINE'
+  | 'CIRCLE'
+  | 'RECTANG'
+  | 'PLINE'
+  | 'POLYGON'
+  | 'DONUT'
+  | 'ARC'
+  | 'ELLIPSE'
+  | 'SPLINE'
+  | 'XLINE'
+  | 'RAY'
+  | 'POINT'
+  | 'CIRCLETANTANTAN'
+  | 'DIVIDE'
+  | 'MEASURE'
+  | 'REVCLOUD'
+  | 'WIPEOUT'
+  | 'REGION'
+  | 'SKETCH'
+  | 'HELIX'
+  | 'SOLID'
+  | 'TRACE'
+  | '3DPOLY'
+  | 'MLINE'
+  | 'MLSTYLE';
 export type DraftPrompt =
   | 'firstPoint'
   /** LINE before its second segment: Undo only. */
@@ -26,6 +51,9 @@ export interface DraftSnapshot {
   preview: readonly CadEntity[];
   canClose: boolean;
   pointInput: PointInputState;
+  promptText?: { ko: string; en: string };
+  inputMode?: 'point' | 'number' | 'keyword' | 'selection' | 'text';
+  scalarKind?: 'angle' | 'distance';
 }
 export interface DraftSessionOptions {
   coordinates?: () => Partial<CoordinateSettings>;
@@ -47,6 +75,8 @@ export interface DraftTextOptions {
   source?: 'keyboard' | 'script';
 }
 export interface DraftPointOptions {
+  /** A locked scalar dynamic field supersedes a geometric mouse sample. */
+  scalar?: string;
   /** Exact object snaps take precedence over grid and Ortho constraints. */
   snapped?: boolean;
   /** The shared application aid controller has already applied grid/polar/Ortho. */

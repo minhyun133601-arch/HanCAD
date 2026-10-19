@@ -24,6 +24,7 @@ export function DrawingSurface({
   canSelectArea,
   onSelectionDrag,
   suppressSelectionBox,
+  isGripPoint,
   getNavigationSettings,
   selectionGesture,
   onNavigate,
@@ -54,6 +55,7 @@ export function DrawingSurface({
   canSelectArea: NonNullable<CadCanvasOptions['canSelectArea']>;
   onSelectionDrag: NonNullable<CadCanvasOptions['onSelectionDrag']>;
   suppressSelectionBox: NonNullable<CadCanvasOptions['suppressSelectionBox']>;
+  isGripPoint: NonNullable<CadCanvasOptions['isGripPoint']>;
   getNavigationSettings: NonNullable<CadCanvasOptions['getNavigationSettings']>;
   selectionGesture: NonNullable<CadCanvasOptions['selectionGesture']>;
   onNavigate: NonNullable<CadCanvasOptions['onNavigate']>;
@@ -78,6 +80,7 @@ export function DrawingSurface({
         canSelectArea,
         onSelectionDrag,
         suppressSelectionBox,
+        isGripPoint,
         getNavigationSettings,
         selectionGesture,
         selectionCommandActive,

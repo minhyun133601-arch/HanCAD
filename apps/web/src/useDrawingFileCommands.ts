@@ -10,6 +10,7 @@ import type { Messages } from '@hancad/ui';
 import type { DrawingSession } from './drawing-session';
 import { setDocumentSource } from './document-source';
 import { restoreDrawingErasure } from './erasure-history';
+import { drawingExportState } from './drawing-export-state';
 
 type ExportFormat = 'pdf' | 'png' | 'jpg' | 'svg' | 'dxf';
 interface DrawingFileCommandsOptions {
@@ -46,7 +47,9 @@ export function useDrawingFileCommands(options: DrawingFileCommandsOptions): voi
     const active = live.current,
       drawing = active.getDrawing();
     if (!drawing.state.entities.length) throw new Error(active.messages.noDrawing);
-    const result = await exportCadDrawing(drawing.state, format);
+    const state =
+      format === 'dxf' ? drawing.state : drawingExportState(drawing.state, active.database);
+    const result = await exportCadDrawing(state, format);
     const url = URL.createObjectURL(result.blob),
       anchor = document.createElement('a');
     anchor.href = url;

@@ -1,5 +1,6 @@
 import type { CadEntity, CadPoint } from '@hancad/legacy-bridge';
 import type { GripMode } from './grip-types';
+import { transformGeometry } from '@hancad/geom';
 
 export function gripTranslate(point: CadPoint, delta: CadPoint): CadPoint {
   return {
@@ -53,6 +54,40 @@ export function transformGripEntity(
   const orientation = (heading: number): number =>
     mirror ? 2 * angle - heading : heading + rotation;
   const result = structuredClone(entity);
+  if (result.curve || result.regionLoops) {
+    const o = map({ x: 0, y: 0, z: 0 }),
+      x = map({ x: 1, y: 0, z: 0 }),
+      y = map({ x: 0, y: -1, z: 0 }),
+      z = map({ x: 0, y: 0, z: 1 });
+    const matrix = [
+      x.x - o.x,
+      y.x - o.x,
+      z.x - o.x,
+      o.x,
+      o.y - x.y,
+      o.y - y.y,
+      o.y - z.y,
+      -o.y,
+      (x.z ?? 0) - (o.z ?? 0),
+      (y.z ?? 0) - (o.z ?? 0),
+      (z.z ?? 0) - (o.z ?? 0),
+      o.z ?? 0,
+    ] as const;
+    if (result.curve) result.curve = transformGeometry(result.curve, matrix);
+    if (result.regionLoops)
+      result.regionLoops = result.regionLoops.map((loop) =>
+        loop.map((curve) => transformGeometry(curve, matrix)),
+      );
+    if (result.regionArea !== undefined) result.regionArea *= factor * factor;
+  }
+  if (result.drawFill) result.drawFill = result.drawFill.map((polygon) => polygon.map(map));
+  if (result.drawPaths) result.drawPaths = result.drawPaths.map((path) => path.map(map));
+  if (result.mline) {
+    result.mline.vertices = result.mline.vertices.map(map);
+    result.mline.scale *= mirror ? -Math.abs(factor) : Math.abs(factor);
+  }
+  if (result.cloudVertices) result.cloudVertices = result.cloudVertices.map(map);
+  if (result.cloudArcLength !== undefined) result.cloudArcLength *= Math.abs(factor);
   switch (result.type) {
     case 'line':
       return { ...result, a: map(result.a), b: map(result.b) };
@@ -62,6 +97,15 @@ export function transformGripEntity(
         ...result,
         points: result.points.map(map),
         ...(result.bulges ? { bulges: result.bulges.map((b) => (mirror ? -b : b)) } : {}),
+        ...(result.startWidths
+          ? { startWidths: result.startWidths.map((width) => width * Math.abs(factor)) }
+          : {}),
+        ...(result.endWidths
+          ? { endWidths: result.endWidths.map((width) => width * Math.abs(factor)) }
+          : {}),
+        ...(result.constantWidth !== undefined
+          ? { constantWidth: result.constantWidth * Math.abs(factor) }
+          : {}),
       };
     case 'circle':
       return { ...result, center: map(result.center), radius: result.radius * Math.abs(factor) };

@@ -79,6 +79,34 @@ of the pointer-field visibility setting. DSETTINGS/DS/SE provides all seven Kore
 tabs and remembers the selected tab; OSNAP opens the Object Snap tab. Right-click
 a drafting status button and choose Settings to open its corresponding tab.
 
+## Phase 06 drawing construction input (2026-10-19)
+
+PL/PLINE accepts A for Arc and L for Line; in line mode L specifies a tangent
+Length. W sets full starting/ending widths and H sets halfwidths. U removes the
+last accepted segment. C closes line mode and CL closes arc mode. Arc-center is
+CE; CEN remains the Center object-snap override. Enter ends an active polyline or
+continues its starting point from the most recent line/polyline/arc endpoint.
+
+REC/RECTANG accepts F then 5 before the first corner to remember a fillet radius
+of 5. A/D/R after the first corner choose Area, Dimensions or Rotation. POL/POLYGON
+supports I/C for Inscribed/Circumscribed and E for Edge. DO/DONUT repeats center
+placement until Enter; accepted placements survive Escape.
+
+The drawing ribbon dropdowns offer all eleven ARC constructions and CIRCLE's
+Tan-Tan-Tan path. They replay canonical macros and pause for each construction
+point. A then Enter continues tangentially from the last line or arc. The More
+Draw menu exposes remaining Phase 06 commands, including single and multiple
+POINT input, PTYPE, DIVIDE, MEASURE, REVCLOUD, WIPEOUT and REGION. Multiple Points
+uses MULTIPLE followed by POINT and ends with Escape.
+
+At a REVCLOUD Freehand prompt, move the crosshair to accept path samples; return
+near the first point to close or press Enter to retain an open path. REVCLOUD M
+selects an existing cloud, new points, an existing end vertex and a side to erase.
+WIPEOUT F offers ON, OFF or D (display without plotting); P converts a closed
+straight zero-width polyline. REGION accepts picked curves and Enter to build
+each valid planar closed loop. These instructions are acceptance steps, not a
+claim that unrecorded manual checks have passed.
+
 ## Function keys
 
 Phase 05: Ctrl+A selects at the active object prompt or at idle when PICKFIRST=1.

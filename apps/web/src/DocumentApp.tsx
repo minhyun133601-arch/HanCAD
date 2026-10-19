@@ -173,6 +173,7 @@ export function DocumentApp({
   const dynamic = useDynamicInput({
     sysvars: session.sysvars,
     mode: inputMode,
+    ...(draft.snapshot?.scalarKind ? { scalarKind: draft.snapshot.scalarKind } : {}),
     input: session.input,
     changeInput: session.changeInput,
     prompt: routing.prompt,
@@ -270,6 +271,7 @@ export function DocumentApp({
       />
       <Ribbon
         messages={messages}
+        locale={locale}
         activeTab={ribbon}
         setActiveTab={setRibbon}
         execute={execute}
@@ -361,6 +363,7 @@ export function DocumentApp({
             if (event.phase === 'end') input.inputReceived();
           }}
           suppressSelectionBox={interaction.suppressSelectionBox}
+          isGripPoint={interaction.isGripPoint}
           getNavigationSettings={interaction.getNavigationSettings}
           onNavigate={onNavigate}
           getNavigationMode={interaction.getNavigationMode}
@@ -473,6 +476,7 @@ export function DocumentApp({
         }}
       />
       <DocumentDialogs
+        files={files}
         messages={messages}
         locale={locale}
         progressOpen={progressOpen}

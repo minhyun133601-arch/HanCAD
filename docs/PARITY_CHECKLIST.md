@@ -109,3 +109,20 @@ command is not an implemented command.
 - [ ] Verify actual Windows Korean IME candidate-window placement and Hanja; synthetic browser composition tests do not certify those native behaviors.
 - [ ] Complete TEXT justification/styles/control codes, existing-text editing, SHX/BigFont and full MTEXT; verify original Phase 10 acceptance independently.
 - [ ] Verify COORDS=3 with and without geographic-location data when that host exists; the current host disables Geographic and shows a localized unavailable-location message for direct COORDS=3 input.
+
+## Phase 06 drawing-command reference checks
+
+- [ ] Compare every construction prompt/keyword and the eleven ARC ribbon macros with installed Korean AutoCAD; verify unit and included-angle inputs, live Ctrl arc reversal, continuation and remembered command-local values.
+- [ ] Compare PLINE tapered widths, tangent arc continuation, terminal width records, FILLMODE and PLINEGEN, and RECTANG chamfer/fillet/area/rotation/elevation/thickness defaults.
+- [ ] Compare natural Fit SPLINE endpoint conditions, tangent magnitudes, positive tolerance, periodic closure and internal control records at interior parameters; mathematical interpolation tests do not prove Autodesk kernel identity.
+- [ ] Resolve the documented SPLINE degree 1..10 versus SPLDEGREE topic range discrepancy in real AutoCAD and verify which values the sysvar remembers.
+- [ ] Verify ELLIPSE angle-versus-parameter reference direction, first-axis-shorter cases, Isocircle picked radii and the three isoplane rotations.
+- [ ] Verify CIRCLE tangent picks near trimmed arc limits, coincident references and no-solution cases against AutoCAD's supporting-geometry rules.
+- [ ] Compare POINT single/MULTIPLE undo boundaries, PTYPE glyph sizes, DIVIDE/MEASURE start-end choices and tangent Block placement on closed and reversed objects.
+- [ ] Verify REVCLOUD rectangular/polygonal/freehand defaults, 110-degree scallops, deterministic variance, object conversion/reversal, Modify and corner grips; Autodesk's private arc-distribution algorithm is not documented.
+- [ ] Verify WIPEOUT concave masking, frame 0/1/2 selection and display/plot behavior on dark/light backgrounds, and REGION topology/area/centroid grips including arbitrary planar loops.
+- [ ] Compare SKETCH pen toggling, increment sampling and positive spline tolerance with a real pointer; compare HELIX analytic spiral points and Autodesk's approximation/control data.
+- [ ] Verify the legacy TRACE primitive requested by Phase 06 and the assumed metric TRACEWID=1; current AutoCAD TRACE is an annotation-management command and is not yet implemented here.
+- [ ] Complete native ACIS REGION, WIPEOUT image definition, MLINE style/end-cap/library controls and HELIX DXF subclass encoding in their documented later I/O/kernel work; unsupported native encodings must remain explicit failures.
+- [ ] Compare real imported quadratic/cubic spline-fit POLYLINE control frames, open clamped and closed periodic uniform knot assumptions, and SPLINE Object conversion. Retain explicit DXF rejection before conversion until native POLYLINE identity can be written faithfully.
+- [ ] Compare external Clipboard image framing for WIPEOUTFRAME 0/1/2. Current image output uses plot-like framing while retaining the source entity and exact Clipboard JSON.

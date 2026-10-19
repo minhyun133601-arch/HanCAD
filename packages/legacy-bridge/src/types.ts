@@ -1,4 +1,6 @@
 import type { CadImportDiagnostic, CadImportProgressDiagnostic } from './diagnostics';
+import type { CurveGeometry } from '@hancad/geom';
+import type { DrawingExportHooks } from './draw-export-types';
 
 export interface CadPoint {
   x: number;
@@ -27,6 +29,26 @@ export interface CadEntityBase extends CadDisplayStyle {
   layer: string;
   color: string;
   lineWidth: number;
+  /** Exact WCS geometry behind the transitional compatibility outline. */
+  curve?: CurveGeometry;
+  sourceType?: string;
+  drawFill?: CadPoint[][];
+  frameMode?: number;
+  drawPaths?: CadPoint[][];
+  mline?: {
+    vertices: CadPoint[];
+    offsets: number[];
+    scale: number;
+    justification: number;
+    style: string;
+    closed: boolean;
+  };
+  regionLoops?: CurveGeometry[][];
+  regionArea?: number;
+  cloudVertices?: CadPoint[];
+  cloudArcLength?: number;
+  cloudStyle?: 'Normal' | 'Calligraphy';
+  cloudVariance?: boolean;
 }
 export interface CadLine extends CadEntityBase {
   type: 'line';
@@ -39,6 +61,11 @@ export interface CadPolyline extends CadEntityBase {
   closed: boolean;
   /** Signed tangent of one quarter of each outgoing arc sweep in model Y-down coordinates. */
   bulges?: number[];
+  startWidths?: number[];
+  endWidths?: number[];
+  constantWidth?: number;
+  elevation?: number;
+  thickness?: number;
 }
 export interface CadCircle extends CadEntityBase {
   type: 'circle';
@@ -127,6 +154,12 @@ export interface LegacyCadState {
   clipboardBlocks?: CadClipboardBlock[];
   groups?: CadGroup[];
   selectionFilters?: CadNamedFilter[];
+  mlineStyles?: CadMlineStyle[];
+}
+export interface CadMlineStyle {
+  name: string;
+  description: string;
+  offsets: number[];
 }
 export interface CadGroup {
   id?: string;
@@ -210,6 +243,7 @@ export interface CadDrawOptions {
 }
 export interface LegacyCadRuntime {
   core: {
+    cadDrawingExport?: DrawingExportHooks;
     cadEngine: {
       readonly ENTITY_LIMIT: number;
       dimensionGeometry(entity: CadDimension, unit?: string): CadDimensionGeometry | null;

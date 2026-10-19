@@ -16,7 +16,29 @@
 | Base point / Insertion point / Clipboard | 기준점 / 삽입점 / 클립보드 |
 | Properties / Quick Properties | 특성 / 빠른 특성 |
 
+## 2D 그리기 (페이즈 06)
+
+| English | 한국어 UI |
+| --- | --- |
+| Construction Line / Ray | 구성선 / 광선 |
+| Polyline / Halfwidth / Width | 폴리선 / 반폭 / 폭 |
+| Included angle / Chord length / Tangent direction | 사이각 / 현의 길이 / 접선 방향 |
+| Start, Center, End / Start, End, Direction | 시작점, 중심, 끝점 / 시작점, 끝점, 방향 |
+| Tan, Tan, Radius / Tan, Tan, Tan | 접선, 접선, 반지름 / 접선, 접선, 접선 |
+| Chamfer / Fillet / Elevation / Thickness | 모따기 / 모깎기 / 고도 / 두께 |
+| Inscribed in circle / Circumscribed about circle / Edge | 원에 내접 / 원에 외접 / 모서리 |
+| Ellipse / Elliptical Arc / Isocircle | 타원 / 타원형 호 / 등각원 |
+| Spline / Fit / CV / Knots / Tolerance | 스플라인 / 맞춤 / 조정 정점 / 매듭 / 공차 |
+| Single Point / Multiple Points / Point Style | 단일 점 / 다중 점 / 점 스타일 |
+| Divide / Measure | 등분할 / 길이분할 |
+| Revision Cloud / Arc length / Freehand / Calligraphy | 구름형 리비전 / 호 길이 / 자유형 / 캘리그래피 |
+| Pick a side to erase / Reverse direction | 지울 쪽 선택 / 방향 반전 |
+| Wipeout / Frames / Display but not plot | 객체 가리기 / 프레임 / 표시하되 플롯 안 함 |
+| Region / Multiline / Multiline Style | 영역 / 여러 줄 / 여러 줄 스타일 |
+| Sketch / Helix / 2D Solid / Legacy Trace | 스케치 / 나선 / 2D 솔리드 / 이전 버전 두께선 |
+
 ## Shell
+
 | English | 한국어 UI |
 |---|---|
 | Command line / "Command:" / "Type a command" | 명령행 / 명령: / 명령 입력 |

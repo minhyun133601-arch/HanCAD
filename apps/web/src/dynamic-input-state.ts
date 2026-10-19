@@ -5,6 +5,7 @@ import type { CadPoint } from '@hancad/legacy-bridge';
 type PointerDynamicField = 'distance' | 'angle' | 'x' | 'y' | 'z';
 export type DynamicField = PointerDynamicField | GripDimensionField;
 export interface DynamicConstraints extends Partial<Record<GripDimensionField, string>> {
+  scalar?: string;
   distance?: string;
   angle?: string;
   x?: string;

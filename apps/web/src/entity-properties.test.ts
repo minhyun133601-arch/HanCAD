@@ -26,6 +26,44 @@ function fixture() {
   return state;
 }
 describe('basic selected-object Properties', () => {
+  it('keeps ARC source geometry synchronized with existing radius and center edits', () => {
+    const state = fixture();
+    const source = {
+      ...state.settings,
+      id: 'arc',
+      type: 'arc' as const,
+      center: { x: 0, y: 0 },
+      radius: 10,
+      startAngle: 0,
+      endAngle: -Math.PI / 2,
+      clockwise: false,
+      curve: {
+        type: 'ARC' as const,
+        center: { x: 0, y: 0, z: 0 },
+        normal: { x: 0, y: 0, z: 1 },
+        xAxis: { x: 1, y: 0, z: 0 },
+        radius: 10,
+        startAngle: 0,
+        sweepAngle: Math.PI / 2,
+      },
+    };
+    state.entities = [source];
+    expect(
+      entityProperties(state.entities).find((field) => field.key === 'radius')?.readOnly,
+    ).not.toBe(true);
+    const next = changeEntityProperty(
+      changeEntityProperty(state, ['arc'], 'radius', '20'),
+      ['arc'],
+      'center.y',
+      '30',
+    );
+    expect(next.entities[0]).toMatchObject({
+      radius: 20,
+      center: { x: 0, y: -30 },
+      curve: { radius: 20, center: { x: 0, y: 30, z: 0 } },
+    });
+    expect(source.curve.radius).toBe(10);
+  });
   it('reports WCS coordinates and edits geometry and common values immutably', () => {
     const state = fixture();
     const fields = entityProperties([state.entities[0]!]);

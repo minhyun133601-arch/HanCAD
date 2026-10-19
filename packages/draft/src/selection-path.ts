@@ -4,6 +4,7 @@ import { lineBoundaryParameters } from './trim-geometry';
 import { validDraftPoint } from './coordinates';
 import { bulgeArc } from '@hancad/geom';
 import { arcSweep } from './snap-geometry';
+import { selectDrawCurvePath } from './selection-draw-curves';
 
 export type SelectionPathMode = 'window' | 'crossing' | 'fence';
 function onSegment(p: CadPoint, a: CadPoint, b: CadPoint): boolean {
@@ -163,6 +164,10 @@ export function selectCadPath(
   return state.entities
     .filter((entity) => {
       if (blocked.has(entity.layer)) return false;
+      const exact = selectDrawCurvePath(entity, points, mode, (point) =>
+        selectionPolygonContains(points, point),
+      );
+      if (exact !== undefined) return exact;
       const shape = geometry(entity);
       const curves = shape.curves.map((curve) => curveIntervals(curve, pathEdges));
       const touches =

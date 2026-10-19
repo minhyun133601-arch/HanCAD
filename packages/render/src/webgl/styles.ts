@@ -48,12 +48,14 @@ export function entityStyle(
 ) {
   const layer = environment.layers.get(entity.layer);
   const selected =
-    environment.selected.has(entity.id) && numberVariable(environment, 'HIGHLIGHT', 1) !== 0;
-  const preview = environment.preview?.has(entity.id) ?? false;
+    environment.selected.has(entity.sourceId ?? entity.id) &&
+    numberVariable(environment, 'HIGHLIGHT', 1) !== 0;
+  const preview = environment.preview?.has(entity.sourceId ?? entity.id) ?? false;
   const effect = numberVariable(environment, 'SELECTIONEFFECT', 1);
   const effectColor = numberVariable(environment, 'SELECTIONEFFECTCOLOR', 0);
-  const rgb =
-    selected && effect !== 0
+  const rgb = entity.backgroundMask
+    ? environment.background
+    : selected && effect !== 0
       ? effectColor
         ? (ACI_RGB[effectColor] ?? 0x38bdf8)
         : 0x38bdf8
@@ -87,7 +89,10 @@ export function entityStyle(
     numberVariable(environment, 'LWDEFAULT', 25),
   );
   const visible =
-    entity.visible !== false && layer?.visible !== false && !environment.hidden.has(entity.id);
+    entity.visible !== false &&
+    layer?.visible !== false &&
+    !environment.hidden.has(entity.sourceId ?? entity.id) &&
+    (!entity.wipeoutFrame || numberVariable(environment, 'WIPEOUTFRAME', 1) !== 0);
   return [
     ((rgb >> 16) & 255) / 255,
     ((rgb >> 8) & 255) / 255,

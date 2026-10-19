@@ -18,6 +18,7 @@ import {
   polylineSegments,
 } from './polyline3';
 import { resolveSpline, splineBreakpoints, splineEvaluation } from './nurbs';
+import { helixBounds, helixBreakpoints, helixEvaluation } from './helix';
 import {
   bounds3,
   cross3,
@@ -53,6 +54,8 @@ export function geometryEvaluation(
       return polylineEvaluation3(curve, parameter);
     case 'SPLINE':
       return splineEvaluation(curve, parameter);
+    case 'HELIX':
+      return helixEvaluation(curve, parameter);
     case 'TRANSFORMED': {
       const result = geometryEvaluation(curve.source, parameter);
       return {
@@ -88,6 +91,8 @@ export function geometryBounds(curve: CurveGeometry): GeometryBounds {
         kind: 'finite',
         quality: 'conservative',
       };
+    case 'HELIX':
+      return helixBounds(curve);
     case 'TRANSFORMED': {
       const source = geometryBounds(curve.source);
       if (source.kind === 'unbounded') throw new GeometryError('unbounded-transformed-wrapper');
@@ -149,6 +154,8 @@ export function geometryArea(curve: CurveGeometry, tolerance = 1e-9): number | u
       const normal = planarNormal(resolveSpline(curve).controlPoints);
       return normal ? integratedArea(curve, normal, tolerance) : undefined;
     }
+    case 'HELIX':
+      return curve.height === 0 ? integratedArea(curve, curve.normal, tolerance) : undefined;
     case 'TRANSFORMED': {
       const points = Array.from({ length: 33 }, (_, index) => evaluateGeometry(curve, index / 32));
       const normal = planarNormal(points);
@@ -243,6 +250,7 @@ function minimize(f: (t: number) => number, initialLow: number, initialHigh: num
 }
 function geometryBreakpoints(curve: CurveGeometry): number[] {
   if (curve.type === 'SPLINE') return splineBreakpoints(curve);
+  if (curve.type === 'HELIX') return helixBreakpoints(curve);
   if (curve.type === 'TRANSFORMED') return geometryBreakpoints(curve.source);
   if (curve.type === 'LWPOLYLINE' || curve.type === 'POLYLINE') {
     const count = polylineSegments(curve).length;

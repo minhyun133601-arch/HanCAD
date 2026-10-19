@@ -15,6 +15,8 @@ export interface Chunk {
   visible?: number;
   viewKey?: string;
   curved?: boolean;
+  /** Last CPU mesh/upload cost, used to avoid starting work outside a frame's remaining slice. */
+  rebuildMs?: number;
 }
 export function partitionEntities(entities: readonly DisplayEntity[]): Chunk[] {
   const cells = new Map<string, { entity: DisplayEntity; slot: number }[]>();

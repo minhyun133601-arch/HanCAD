@@ -64,7 +64,8 @@ export function tessellateGeometry(
       return;
     case 'composite':
       for (const part of geometry.parts) tessellateGeometry(part, sink, options);
-      for (const [a, b, c] of geometry.triangles) sink.triangle(a, b, c);
+      if (!geometry.fillControlled || options.fillmode !== false)
+        for (const [a, b, c] of geometry.triangles) sink.triangle(a, b, c);
       return;
     case 'polyline': {
       const segments = polylineSegments(geometry),

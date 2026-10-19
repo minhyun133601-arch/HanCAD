@@ -82,14 +82,14 @@
       i-=2;
       if (recordType === "BLOCK") { activeBlock = tags.get(2); continue; }
       if (recordType === "ENDBLK") { activeBlock = null; continue; }
-      // The offline vendor parser omits VERTEX group 30; retain it in this adapter.
+      // Retain VERTEX elevation and spline control-frame tags omitted by the offline parser.
       if (recordType === "POLYLINE") {
-        activePolyline = { elevation: Number(tags.get(30)) || 0, vertices: [] };
+        activePolyline = { elevation: Number(tags.get(30)) || 0, flags: Number(tags.get(70)) || 0, smoothType: Number(tags.get(75)) || 0, vertices: [] };
         if (tags.has(5)) polylineZ.set(tags.get(5), activePolyline);
         else { const queue = anonymousPolylineZ.get(activeBlock) || []; queue.push(activePolyline); anonymousPolylineZ.set(activeBlock, queue); }
         continue;
       }
-      if (recordType === "VERTEX") { if (activePolyline) activePolyline.vertices.push(tags.has(30) ? Number(tags.get(30)) : activePolyline.elevation); continue; }
+      if (recordType === "VERTEX") { if (activePolyline) activePolyline.vertices.push({z:tags.has(30) ? Number(tags.get(30)) : activePolyline.elevation,flags:Number(tags.get(70)) || 0}); continue; }
       if (recordType === "SEQEND") { activePolyline = null; continue; }
       if (recordType === "DIMENSION") {
         const value = {};
@@ -110,7 +110,10 @@
         if (value) Object.assign(entity, value);
       } else if (entity.type === "POLYLINE") {
         const value = entity.handle ? polylineZ.get(entity.handle) : polylines[polylineIndex++];
-        if (value) entity.vertices.forEach((vertex, i) => { if (value.vertices[i] !== undefined) vertex.z = value.vertices[i]; });
+        if (value) {
+          entity.polylineFlags=value.flags;entity.smoothType=value.smoothType;entity.elevation=value.elevation;
+          entity.vertices.forEach((vertex, i) => { if (value.vertices[i] !== undefined) Object.assign(vertex,value.vertices[i]); });
+        }
       }
     };
     applyOverrides(document.entities);
@@ -119,12 +122,19 @@
   }
   function attachSelectionMetadata(lines, document) {
     const records = [];
+    const extensions = new Map();
     for (let i = 0; i < lines.length - 1; i += 2) {
       if (lines[i].trim() !== "0") continue;
       const type = lines[i + 1].trim(), tags = [];
       for (i += 2; i < lines.length - 1 && lines[i].trim() !== "0"; i += 2)
         tags.push([Number(lines[i]), lines[i + 1]]);
       i -= 2;
+      const entityHandle = tags.find(tag => tag[0] === 5)?.[1]?.trim().toUpperCase();
+      let extension = false;
+      for (const [code, value] of tags) {
+        if (code === 102) extension = value.trim() === "{ACAD_XDICTIONARY";
+        if (extension && code === 360 && entityHandle) extensions.set(entityHandle, value.trim().toUpperCase());
+      }
       if (["DICTIONARY", "GROUP", "XRECORD"].includes(type)) records.push({ type, tags });
     }
     const names = new Map(), filterHandles = new Set();
@@ -149,6 +159,22 @@
       try { return [{ name: names.get(first(record, 5)?.toUpperCase()), expression: JSON.parse(record.tags.filter(tag => tag[0] === 1).map(tag => tag[1]).join("")) }]; }
       catch { return []; }
     });
+    document.drawingMetadata = new Map();
+    document.staleDrawingMetadata = new Set();
+    const nativeSignatures=Tool.core.cadDrawingExport?.signatures(lines);
+    const dictionaries = new Map(records.filter(record => record.type === "DICTIONARY").map(record => [first(record, 5)?.toUpperCase(), record]));
+    for (const record of records) {
+      if (record.type !== "XRECORD" || names.get(first(record, 5)?.toUpperCase()) !== "HANCAD_DRAW") continue;
+      const dictionaryHandle = first(record, 330)?.toUpperCase(), dictionary = dictionaries.get(dictionaryHandle);
+      const entityHandle = dictionary && first(dictionary, 330)?.toUpperCase();
+      if (entityHandle && extensions.get(entityHandle) === dictionaryHandle) {
+        const json=record.tags.filter(tag => tag[0] === 1).map(tag => tag[1]).join("");
+        try {
+          if(JSON.parse(json).nativeSignature===nativeSignatures?.get(entityHandle))document.drawingMetadata.set(entityHandle,json);
+          else document.staleDrawingMetadata.add(entityHandle);
+        } catch { document.staleDrawingMetadata.add(entityHandle); }
+      }
+    }
   }
   function convertDocument(document, options = {}) {
     const parser = globalThis.CadDxf;
@@ -193,6 +219,7 @@
       if (entities.length >= LIMIT) throw failure("entity-limit", `가져올 객체가 ${LIMIT.toLocaleString()}개를 초과합니다. CAD에서 필요한 영역만 분리해 주세요.`, { limit: LIMIT });
       const entity = Tool.core.cadEngine.normalizeEntity({ ...raw, id: `import-${entities.length + 1}` });
       if (!entity) throw invalid("entity", "유효하지 않은 객체 데이터");
+      Tool.core.cadDrawingExport?.restore({entities:[entity]}, {entities:[raw]});
       entities.push(entity);
     }
     function poly(points, closed, m, s) {
@@ -250,6 +277,12 @@
       check(options.signal);
       if (e.paperSpace || e.visible === false) { report.skipped++; addWarning("배치 공간 또는 숨김 객체는 가져오지 않습니다. 레이어 숨김 / 잠금은 유지합니다.", diagnostic("hidden-skipped")); return; }
       const s = style(e, inherited);
+      if(e.handle&&document.staleDrawingMetadata?.has(e.handle.toUpperCase()))addWarning("외부에서 수정한 객체의 최신 DXF 형상을 사용합니다.");
+      const metadata = e.handle && document.drawingMetadata?.get(e.handle.toUpperCase());
+      if (metadata && Tool.core.cadDrawingExport) {
+        try { add(Tool.core.cadDrawingExport.importMetadata(metadata, m, s, Tool.core.cadEngine.normalizeEntity)); return; }
+        catch (error) { throw invalid("entity", `도면 확장 데이터가 올바르지 않습니다: ${error.message}`); }
+      }
       if (e.extrusion && (Math.abs(e.extrusion.x) > 1e-8 || Math.abs(e.extrusion.y) > 1e-8)) { skip(e.type, "기울어진 3D 객체는 가져오지 않습니다.", diagnostic("tilted-skipped")); return; }
       if (e.extrusion?.z < 0 && !["LINE", "DIMENSION", "INSERT"].includes(e.type)) m = multiply(m, [-1,0,0,1,0,0]);
       try {
@@ -312,6 +345,14 @@
         }
         if (e.type === "LINE") add({ ...s, type: "line", a: transform(e.start,m), b: transform(e.end,m) });
         else if (["LWPOLYLINE","POLYLINE"].includes(e.type)) {
+          if(e.type==="POLYLINE"&&(e.polylineFlags&4)&&[5,6].includes(e.smoothType)&&Tool.core.cadDrawingExport) {
+            const degree=e.smoothType===5?2:3,frame=e.vertices.filter(vertex=>vertex.flags&16);
+            if(frame.length>degree) {
+              const points=frame.map(vertex=>transform(!e.is3d&&e.elevation?{...vertex,z:e.elevation}:vertex,m));
+              add({...s,type:"polyline",points,closed:e.closed,...Tool.core.cadDrawingExport.splinePolyline(points,degree,e.closed)});
+              return;
+            }
+          }
           const sx=Math.hypot(m[0],m[1]),sy=Math.hypot(m[2],m[3]),uniform=Math.abs(sx-sy)<1e-8*Math.max(1,sx,sy)&&Math.abs(m[0]*m[2]+m[1]*m[3])<1e-8*Math.max(1,sx*sy);
           const vertices=e.vertices.map(v=>e.elevation?{...v,z:e.elevation}:v);
           if(uniform) add({...s,type:"polyline",points:vertices.map(p=>transform(p,m)),closed:e.closed,bulges:vertices.map(v=>(v.bulge||0)*(m[0]*m[3]-m[1]*m[2]<0?1:-1))});
@@ -382,6 +423,7 @@
     if (!unit) addWarning("도면 단위가 mm / cm / m로 지정되지 않아 단위 없는 좌표로 가져옵니다.", diagnostic("unit-unspecified"));
     const linetypes = [...document.lineTypes.values()].map((entry) => ({ name: entry.name, description: entry.description || "", pattern: entry.pattern || [] }));
     const state = Tool.core.cadEngine.normalizeState({ version:1,entities,layers,linetypes,selectedIds:[],settings:{ unit,layer:"0" } });
+    Tool.core.cadDrawingExport?.restore(state, {entities});
     if (document.selectionGroups?.length) state.groups = document.selectionGroups.map(group => ({
       id: group.id, name: group.name, description: group.description, selectable: group.selectable,
       ids: [...new Set(group.handles.flatMap(value => sourceHandles.get(value) || []))],

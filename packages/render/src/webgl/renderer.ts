@@ -23,6 +23,8 @@ export interface RendererSettings {
 }
 const intersects = (a: Bounds2, b: Bounds2) =>
   a.minX <= b.maxX && a.maxX >= b.minX && a.minY <= b.maxY && a.maxY >= b.minY;
+// Leave room for command submission, geometry rasterization and the screen filter at 60 Hz.
+const refinementBudgetMs = 2;
 
 /** Retained chunk buffers and texture-only styling; ordinary frames never visit every entity. */
 export class WebGlRenderer {
@@ -32,6 +34,7 @@ export class WebGlRenderer {
   private readonly source = new LegacyDisplaySource();
   private readonly index = new DisplaySpatialIndex();
   private entities: readonly DisplayEntity[] = [];
+  private aliasEntities: readonly DisplayEntity[] = [];
   private chunks: Chunk[] = [];
   private transparentChunks: Chunk[] = [];
   private transparentKey = '';
@@ -67,6 +70,7 @@ export class WebGlRenderer {
     const diff = this.source.sync(state),
       old = this.entities;
     this.entities = diff.entities;
+    this.aliasEntities = this.entities.filter((entity) => entity.sourceId !== undefined);
     this.slots = new Map(this.entities.map((entity, i) => [entity.id, i]));
     this.count = this.entities.length;
     const changed = new Set([...diff.added, ...diff.modified].map((e) => e.id));
@@ -109,6 +113,7 @@ export class WebGlRenderer {
     this.releaseChunks();
     this.stressCount = 0;
     this.entities = entities;
+    this.aliasEntities = entities.filter((entity) => entity.sourceId !== undefined);
     this.slots = new Map(entities.map((entity, i) => [entity.id, i]));
     this.count = entities.length;
     this.index.set(entities);
@@ -116,6 +121,9 @@ export class WebGlRenderer {
     this.stylesDirty = true;
   }
   setSelection(selected: ReadonlySet<string>, hidden: ReadonlySet<string>) {
+    for (const entity of this.aliasEntities)
+      if (entity.sourceId && selected.has(entity.sourceId) !== this.selected.has(entity.sourceId))
+        this.styleChanges.add(entity.id);
     for (const id of this.selected) if (!selected.has(id)) this.styleChanges.add(id);
     for (const id of selected) if (!this.selected.has(id)) this.styleChanges.add(id);
     if (this.hidden.size !== hidden.size || [...hidden].some((id) => !this.hidden.has(id)))
@@ -125,6 +133,9 @@ export class WebGlRenderer {
   }
   setHighlight(ids: readonly string[]): void {
     const next = new Set(ids);
+    for (const entity of this.aliasEntities)
+      if (entity.sourceId && next.has(entity.sourceId) !== this.preview.has(entity.sourceId))
+        this.styleChanges.add(entity.id);
     for (const id of this.preview) if (!next.has(id)) this.styleChanges.add(id);
     for (const id of next) if (!this.preview.has(id)) this.styleChanges.add(id);
     this.preview = next;
@@ -139,20 +150,27 @@ export class WebGlRenderer {
       this.state?.layers.filter((l) => l.locked || !l.visible).map((l) => l.name),
     );
     const layers = this.settings.layers?.();
-    return hits
-      .filter(
-        (hit) =>
-          (includeLocked ||
-            (!locked.has(hit.entity.layer) && layers?.get(hit.entity.layer)?.locked !== true)) &&
-          !this.state?.layers.some((layer) => layer.name === hit.entity.layer && !layer.visible) &&
-          layers?.get(hit.entity.layer)?.visible !== false,
-      )
-      .map((hit) => hit.entity.id);
+    return [
+      ...new Set(
+        hits
+          .filter(
+            (hit) =>
+              (includeLocked ||
+                (!locked.has(hit.entity.layer) &&
+                  layers?.get(hit.entity.layer)?.locked !== true)) &&
+              !this.state?.layers.some(
+                (layer) => layer.name === hit.entity.layer && !layer.visible,
+              ) &&
+              layers?.get(hit.entity.layer)?.visible !== false,
+          )
+          .map((hit) => hit.entity.sourceId ?? hit.entity.id),
+      ),
+    ];
   }
   query(bounds: Bounds2): string[] {
     return this.index
       .search({ minX: bounds.minX, maxX: bounds.maxX, minY: -bounds.maxY, maxY: -bounds.minY })
-      .map((entity) => entity.id);
+      .map((entity) => entity.sourceId ?? entity.id);
   }
   regenerate(height: number) {
     this.regenHeight = height;
@@ -238,6 +256,7 @@ export class WebGlRenderer {
         'SELECTIONEFFECT',
         'SELECTIONEFFECTCOLOR',
         'HIGHLIGHT',
+        'WIPEOUTFRAME',
       ].map((n) => environment.variable(n)),
       [...environment.layers].map(([name, l]) => [
         name,
@@ -355,12 +374,18 @@ export class WebGlRenderer {
       const viewChanged = chunk.gpu?.viewDependent && chunk.viewKey !== viewKey;
       const refine = chunk.curved !== false && (scale > chunk.lod || scale < chunk.lod / 8);
       if (chunk.dirty || !chunk.gpu || viewChanged || refine) {
-        if (!chunk.dirty && chunk.gpu && !viewChanged && performance.now() - began > 4) {
+        if (
+          !chunk.dirty &&
+          chunk.gpu &&
+          !viewChanged &&
+          rebuilt > 0 &&
+          performance.now() - began + (chunk.rebuildMs ?? 0) > refinementBudgetMs
+        ) {
           pending++;
           return true;
         }
-        if (chunk.gpu) this.device.release(chunk.gpu);
-        if (chunk.texts) this.text.release(chunk.texts);
+        const rebuildBegan = performance.now();
+        if (chunk.texts?.length) this.text.release(chunk.texts);
         const mesh =
           chunk.stressFirst === undefined
             ? buildMesh(chunk.entries, {
@@ -369,7 +394,7 @@ export class WebGlRenderer {
                 dash: (entity) => entityDash(entity, environment),
               })
             : stressMesh(chunk.stressFirst, chunk.stressCount!, lod);
-        chunk.gpu = this.device.upload(mesh);
+        chunk.gpu = this.device.upload(mesh, chunk.gpu);
         chunk.lod = lod;
         chunk.dirty = false;
         chunk.viewKey = viewKey;
@@ -377,11 +402,10 @@ export class WebGlRenderer {
         chunk.curved =
           chunk.stressFirst !== undefined ||
           chunk.entries.some(({ entity }) => !['line', 'text'].includes(entity.geometry.type));
-        chunk.texts = this.text.upload(
-          mesh.texts ?? [],
-          mesh.origin,
-          (scale * this.device.canvas.width) / width,
-        );
+        chunk.texts = mesh.texts?.length
+          ? this.text.upload(mesh.texts, mesh.origin, (scale * this.device.canvas.width) / width)
+          : [];
+        chunk.rebuildMs = performance.now() - rebuildBegan;
       }
       return true;
     };

@@ -404,7 +404,7 @@ export function useSelectionController(options: SelectionControllerOptions) {
       session.gesture = { kind: 'box', points: [{ ...point }] };
       changed();
     },
-    rememberSelection: () => session.remember(),
+    rememberSelection: (ids?: readonly string[]) => session.remember(ids),
     resetSelectionPrompt: () => session.reset(),
     selectionKeywords: 'W C BOX ALL F WP CP G A R M P U AU SI SU O L'.split(' '),
     clearSelection: () => replace([]),

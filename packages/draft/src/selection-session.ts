@@ -102,8 +102,8 @@ export class SelectionSession {
     this.undo = [];
     this.options.changed();
   }
-  remember(): void {
-    this.previous = [...this.options.getIds()];
+  remember(ids: readonly string[] = this.options.getIds()): void {
+    this.previous = [...ids];
   }
   get prompt(): string {
     const ko = this.options.korean();

@@ -12,6 +12,7 @@ import {
   worldNormal,
 } from './vector3';
 import { resolveSpline } from './nurbs';
+import { helixBounds } from './helix';
 
 const supported = new Set([
   'LINE',
@@ -24,6 +25,7 @@ const supported = new Set([
   'SPLINE',
   'XLINE',
   'RAY',
+  'HELIX',
 ]);
 type Fields = Readonly<Record<string, unknown>>;
 /** Interprets geometry only; the database remains responsible for retaining all raw DXF fields. */
@@ -45,6 +47,23 @@ export function geometryFromFields(entityType: string, fields: Fields): Geometry
   }
 }
 function parse(type: string, fields: Fields): CurveGeometry {
+  if (type === 'HELIX') {
+    const normal = normalOf(fields);
+    const curve: CurveGeometry = {
+      type,
+      center: point(fields.center),
+      normal,
+      xAxis: fields.xAxis === undefined ? objectAxes(normal).x : normalize3(point(fields.xAxis)),
+      baseRadius: nonnegative(fields.baseRadius),
+      topRadius: nonnegative(fields.topRadius),
+      turns: positive(fields.turns),
+      height: real(fields.height, 0),
+      clockwise: fields.clockwise === true,
+      startAngle: real(fields.startAngle, 0),
+    };
+    helixBounds(curve);
+    return curve;
+  }
   if (type === 'POINT') return { type, position: point(fields.position) };
   if (type === 'LINE') return { type, start: point(fields.start), end: point(fields.end) };
   if (type === 'XLINE' || type === 'RAY')

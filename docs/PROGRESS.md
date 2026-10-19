@@ -1,6 +1,106 @@
 # HanCAD progress
 
-## Active phase: Phase 05 selection, grips and clipboard (resumed 2026-10-19)
+## Accepted Phases 05 and 06 (2026-10-19)
+
+The user explicitly authorized both phases. All requested implementation and
+functional acceptance checks are complete, with the reference assumptions and
+native I/O boundaries below. Older statements that Phase 06 is unauthorized or
+that native compilation is blocked are historical checkpoints, superseded here.
+This acceptance does not certify installed-AutoCAD kernel identity or the
+separate pending Phase 00 physical Windows checks.
+
+| Milestone                      | Status   | Delivered scope                                                                                                                                                                               |
+| ------------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 5.8 Native execution           | Accepted | Actual MSVC/SDK readiness, locked Rust check/tests, release build, two independent Tauri processes, all five original acceptance cases, real Clipboard/image consumers and contention safety. |
+| 6.1 Drawing infrastructure     | Accepted | Shared coroutine/input host, physical command keys, scalar dynamic fields, exact sources, staged sysvars, protected objects and command undo.                                                 |
+| 6.2 Polylines and outlines     | Accepted | PLINE, RECTANG, POLYGON and DONUT options, tangent arcs, widths, corner/area construction and document-local defaults.                                                                        |
+| 6.3 Curves and construction    | Accepted | CIRCLE and tangent methods, eleven ARC methods, ELLIPSE, Fit/CV SPLINE, real imported spline-fit Object conversion, XLINE and RAY.                                                            |
+| 6.4 Remaining drawing tools    | Accepted | POINT/PTYPE/MULTIPLE, DIVIDE/MEASURE, REVCLOUD, WIPEOUT, REGION, SKETCH, HELIX, SOLID, legacy TRACE, 3DPOLY and basic MLINE/MLSTYLE.                                                          |
+| 6.5 Integration and acceptance | Accepted | Grips including REVCLOUDGRIPS, exact selection, ribbon methods, recovery, supported native DXF, Clipboard and live WIPEOUT image framing; final comprehensive/native/performance checks.      |
+
+### Final verification
+
+- Final product-source `HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=1 pnpm verify`
+  exited 0. WASM round-trip, ESLint, formatting, strict TypeScript, 978 unit
+  tests in 135 files, 31 compatibility tests, 381-command documentation check,
+  production build, renderer QA and 164 browser tests passed. The one skipped
+  case requires an explicitly supplied personal DWG; the public official DWG
+  fixture passed. Browser duration: 5.3 minutes. Log:
+  `test-artifacts/phase06-verify-final-complete-20261019.log`.
+- After the native QA harnesses were promoted to tracked scripts, the complete
+  compatibility suite passed again with 32 tests, including occupied-port
+  ownership protection. Final formatting and both generated-document checks
+  passed; these QA/documentation updates did not change the product build.
+- Renderer QA: 28 scenes, 37 exact-color contracts, 3 viewport boundaries and
+  20 high-zoom comparisons passed. Translated scenes are identical; maximum
+  compositing channel error is 1. These are independent mathematical/Canvas2D
+  references, not screenshots of installed AutoCAD.
+- The unchanged million-entity, 1920x1080 stress gate passed twice consecutively
+  after the LOD/GPU fix. Final run on i3-12100 / Intel UHD Graphics 730:
+  pan 60.00 fps, zoom 59.80 fps, both frame-time p95 16.8 ms, zoom CPU submission
+  p95 3.6 ms, startup 278.4 ms, GL error 0 and final pending refinement 0.
+  Fixed-view tests also compare completed precise meshes byte-for-byte with
+  the original tessellator. Log: `test-artifacts/phase06-render-stress-final-20261019.log`;
+  report/image: `test-artifacts/render-stress/`.
+- System-variable documentation is current: 873 variables and 214 headers.
+  Frozen offline workspace lockfile validation and `cargo fmt --all -- --check`
+  passed. No external dependency was upgraded.
+- Actual locked/offline Cargo check and all four Windows Rust tests passed.
+  Final release build and both tracked native acceptance scripts passed on
+  `target/release/hancad-desktop.exe`; all five frontend artifact hashes were
+  unchanged by native compilation. Exact binary hash, commands and evidence are
+  in `phase05-native-acceptance.md`.
+- The current native binary passed all five original selection/grip/COPYBASE
+  cases and two-process cut/paste/undo/block-DXF/actual contention/replacement
+  checks. Separate WIPEOUT D/ON/OFF runs produced SVG path counts 1/2/1,
+  PNG ink 0/13920/0 and Clipboard PNG ink 0/5952/0. Entity frameMode stayed 1;
+  decoded CF_BITMAP and registered PNG had zero RGB pixel mismatches.
+
+### Executed command acceptance and repaired failures
+
+Shared headless construction scripts compare expected equations within 1e-9.
+Production browser/native sequences cover PLINE Arc to Line to Width, REC Fillet
+5 on the next rectangle and after document switches, ARC Enter tangent
+continuation, moving previews, dynamic angle locks, exact recovery, style dialogs,
+REGION, clouds/masks, grips and undo/redo. Screenshots were inspected for PTYPE,
+MLSTYLE, tangent ARC/ellipse grips, scalar angle fields, concave WIPEOUT and
+native directional selection. Preserved UI captures are in
+`test-artifacts/phase06-visual/`; complete keystrokes are in `phase06-acceptance.md`
+and `phase05-native-acceptance.md`.
+
+Earlier runs are retained rather than reported as passes. Repairs include Shift
+selection versus grip ownership, CIRCLE invalid-radius diagnostics, the official
+Korean prompt expectation, PLINE width arrays through multifunction edits,
+negative elliptical sweeps, Included-angle previews, reversed clouds and actual
+spline-fit DXF recognition. Native testing found the missing CF_BITMAP consumer
+format. Final review also fixed live WIPEOUT output/Clipboard framing. Stress
+initially failed at 58.44 and isolated 57.14 fps zoom; cost prediction, a 2 ms
+refinement slice and GPU buffer/VAO reuse restored the unchanged gate. Generated
+Tauri schemas are now excluded from source formatting checks. Failed and
+intermediate logs remain under `test-artifacts/phase06-*`.
+
+### Remaining reference comparisons and serialization boundaries
+
+Exact sources survive HCD/recovery/Clipboard. Native ACIS REGION, MLINE style
+graphs, WIPEOUT dictionaries, HELIX subclasses, generic transformed curves and
+unconverted spline-fit POLYLINE identities remain explicitly rejected for DXF
+output until their later I/O/kernel implementation. See `phase06-export-notes.md`.
+Basic MLSTYLE edits names/descriptions/offsets; full caps/colors/library controls
+remain later work. Fit SPLINE currently retains positive tolerance while using
+exact interpolation, without smoothing/simplification. Its kernel, isocircle and
+ellipse conventions, cloud scallop distribution, legacy TRACE distinction and
+other assumptions are listed in the phase06 notes, DECISIONS and PARITY_CHECKLIST.
+
+Physical OS-reserved shortcut routing, Windows IME/Hanja, Paint UI and installed
+Korean AutoCAD comparisons were not certified. Actual Win32 image consumption
+was verified independently. The native acceptance notes record the unavailable
+Computer Use helper and distinguish dispatched WebView keys from physical input.
+
+Exact next step: Phase 07 only when the user requests it. No Phase 07
+implementation has started. Preserve the user's existing AGENTS.md and prompt
+protocol edits outside the verified feature commits.
+
+## Historical Phase 05 checkpoints (before final native acceptance)
 
 Source: `docs/prompt-source/prompts/phase-05-selection-grips-clipboard.md`.
 Authorized by the user after Phase 04 completion. The recorded accepted baseline
@@ -8,6 +108,14 @@ below remains valid; do not rerun the full suite at phase start. Preserve existi
 AGENTS.md/prompt protocol edits outside feature commits. Phase 06 is not authorized.
 
 ### Resume plan (2026-10-19)
+
+The user subsequently explicitly authorized downloading/installing the missing
+tools and offered to approve the prior blocker. This supersedes the historical
+installation hold below. Official Build Tools 18.11.0 was downloaded, its SHA256
+and Microsoft Authenticode signature validated, and its CLI installation started
+successfully with the C++ workload, latest stable x64/x86 MSVC and SDK 26100.
+Native execution milestone 5.8 is now in progress pending installer completion
+and actual readiness/build/runtime checks. No new approval rejection occurred.
 
 The user requested continuation of Phase 05. Preserve the recorded comprehensive
 browser evidence; do not rerun it merely to resume. The fresh `pnpm check:desktop`

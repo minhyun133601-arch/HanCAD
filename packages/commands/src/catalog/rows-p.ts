@@ -51,7 +51,7 @@ export const rowsP: readonly string[] = [
   'REDRAWALL|모두 다시 그리기|Redraw All|모든 뷰포트의 표시를 새로 고칩니다.|Refreshes the display in all viewports.|2',
   'REGEN|재생성|Regenerate|현재 뷰포트에서 전체 도면을 재생성합니다.|Regenerates the entire drawing from the current viewport.|2',
   'REGENALL|모두 재생성|Regenerate All|도면을 재생성하고 모든 뷰포트를 새로 고칩니다.|Regenerates the drawing and refreshes all viewports.|2',
-  'REGION|영역|Region|닫힌 영역을 둘러싸는 객체를 영역 객체로 변환합니다.|Converts an object that encloses an area into a region object.|12',
+  'REGION|영역|Region|닫힌 영역을 둘러싸는 객체를 영역 객체로 변환합니다.|Converts an object that encloses an area into a region object.|6',
   'REINIT|재초기화|Reinitialize|디지타이저, 입출력 포트 및 프로그램 매개변수(PGP) 파일을 다시 초기화합니다.|Reinitializes the digitizer, input/output ports and the program parameters file.|3',
   'RENAME|이름 바꾸기|Rename|도면층 및 치수 스타일과 같은 항목에 지정된 이름을 변경합니다.|Changes the names assigned to items such as layers and dimension styles.|15',
   'RENDER|렌더|Render|3D 모형의 사실적인 이미지를 작성합니다.|Creates a photorealistic image of a 3D model.|23',

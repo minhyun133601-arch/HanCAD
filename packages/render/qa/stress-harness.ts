@@ -47,7 +47,8 @@ export async function benchmark(count = 1000000, frames = 300) {
   for (const mode of ['pan', 'zoom'] as const) {
     const elapsed: number[] = [],
       intervals: number[] = [],
-      rebuilt: number[] = [];
+      rebuilt: number[] = [],
+      pending: number[] = [];
     let previous: number | undefined;
     for (let i = 0; i < frames + 15; i++) {
       const now = await new Promise<number>((resolve) => requestAnimationFrame(resolve));
@@ -62,6 +63,7 @@ export async function benchmark(count = 1000000, frames = 300) {
       if (i >= 15) {
         elapsed.push(performance.now() - began);
         rebuilt.push(stats.rebuilt);
+        pending.push(stats.pending);
         if (previous !== undefined) intervals.push(now - previous);
       }
       previous = now;
@@ -72,6 +74,9 @@ export async function benchmark(count = 1000000, frames = 300) {
       frameMs: summary(intervals),
       fps: 1000 / summary(intervals).mean,
       rebuilt: rebuilt.reduce((a, b) => a + b, 0),
+      rebuiltPerFrame: summary(rebuilt),
+      pendingPerFrame: summary(pending),
+      finalPending: pending.at(-1),
     };
   }
   const pixels = new Uint8Array(canvas.width * canvas.height * 4);

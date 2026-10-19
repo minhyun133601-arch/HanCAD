@@ -160,6 +160,37 @@ describe('drafting view navigation and pointer gestures', () => {
     surface.dispose();
   });
 
+  it('routes empty-space grips and Shift hot grips before automatic window selection', () => {
+    const fixture = createTestCanvas(),
+      picks = vi.fn(),
+      drags = vi.fn();
+    let gripPoint = true;
+    const surface = new CadCanvasSurface(fixture.canvas, {
+      observeResize: false,
+      canSelectArea: () => true,
+      suppressSelectionBox: () => true,
+      isGripPoint: () => gripPoint,
+      getSystemVariable: (name) => (name === 'PICKAUTO' ? 1 : undefined),
+      onPick: picks,
+      onSelectionDrag: drags,
+    });
+    surface.setDrawing(createEmptyCadState());
+    for (const shiftKey of [false, true]) {
+      fixture.fire('pointerdown', pointer(0, 100, 100, { shiftKey }));
+      expect(picks).toHaveBeenLastCalledWith(expect.objectContaining({ shiftKey }));
+      fixture.fire('pointerup', pointer(0, 100, 100, { shiftKey }));
+      expect(fixture.canvas.dataset.selectionArea).toBe('');
+    }
+    expect(picks).toHaveBeenCalledTimes(2);
+    expect(drags).not.toHaveBeenCalled();
+    gripPoint = false;
+    fixture.fire('pointerdown', pointer(0, 100, 100, { shiftKey: true }));
+    fixture.fire('pointermove', pointer(0, 180, 180, { buttons: 1, shiftKey: true }));
+    expect(fixture.canvas.dataset.selectionArea).toBe('window');
+    expect(picks).toHaveBeenCalledTimes(2);
+    surface.dispose();
+  });
+
   it('cancels captured dragging on Escape and window blur and removes document listeners', () => {
     const fixture = createTestCanvas();
     const documentHandlers = new Map<string, (event: KeyboardEvent) => void>();

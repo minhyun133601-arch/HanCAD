@@ -1,5 +1,27 @@
 # Decisions
 
+## 2026-10-19: Explicit native toolchain installation authorization
+
+After the blocked Phase 05 checkpoint, the user explicitly requested the missing
+tool download/installation and offered approval. This supersedes the earlier
+recorded installation hold. Choose the Stable Build Tools channel, not Insiders,
+following Microsoft's [MSVC acquisition guidance](https://learn.microsoft.com/en-us/cpp/overview/acquire-msvc).
+The winget Stable package inventory selected Build Tools 18.11.0. Download the
+exact Microsoft bootstrapper and retain it in ignored .tools/:
+`vs_BuildTools-18.11.0.exe`, SHA256
+`89341fb2edf12ef29977078fdc72a9e47767ce6895cc297f274bc4a379db4c71`.
+Its product version is 18.11.0 and its Authenticode status is Valid with publisher
+Microsoft Corporation.
+
+Install only the VCTools workload requirements plus
+Microsoft.VisualStudio.Component.VC.Tools.x86.x64 and
+Microsoft.VisualStudio.Component.Windows11SDK.26100, with Korean product UI.
+These are documented in the official [Build Tools component directory](https://learn.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-build-tools).
+Use --passive --norestart --wait; do not restart the user's machine automatically.
+The chosen installation path is C:/Program Files/Microsoft Visual Studio/18/BuildTools.
+Record actual installed toolset/SDK versions and readiness/build results after
+completion. Repository JavaScript/Rust dependency versions remain unchanged.
+
 ## 2026-10-19: Phase 05 Clipboard failure preservation
 
 The resumed Phase 05 native audit found that HGLOBAL allocation and locking
@@ -1158,3 +1180,112 @@ rewrite command keywords or point modifiers. The old typed-menu-snap E2E was
 strengthened to reject a coordinate without its explicitly requested Midpoint,
 then accept a valid Midpoint and verify one-pick expiry. OSNAPCOORD governs
 running snaps; explicit request priority remains an installed-reference check.
+
+## 2026-10-19: Phase 05 actual Windows acceptance
+
+The user-authorized MSVC/SDK installation resolves the native prerequisite hold.
+MSVC 14.51 linker help exits 1100 despite valid Microsoft help, so readiness
+accepts that nonzero status only with the actual linker banner and /OUT option.
+Empty output, unrelated failures and launch errors remain failures. Existing
+generated target directories also required their Windows ReadOnly attribute to
+be cleared before locked, offline Cargo compilation could finish.
+
+The real Win32 consumer exposed a Clipboard interoperability issue that browser
+mocks could not find: a top-down CF_DIB and PNG were visible, but WinForms
+GetImage returned null. The bridge now prepares a real HBITMAP before replacing
+the Clipboard and publishes CF_BITMAP as well. RAII releases allocations until
+Windows owns them. A separate process decoded the resulting image and compared
+its RGB pixels with the registered PNG exactly. Native process, contention and
+shortcut evidence is distinguished from browser contracts and physical OS input
+in phase05-native-acceptance.md.
+
+## 2026-10-19: Phase 06 exact drawing-command sources
+
+Phase 06 adds coroutine drawing programs behind the existing shared point-input
+controller. Interactive points, physical-key coordinate entry, dynamic input and
+headless scripts use the same program. Accepted multi-segment geometry is retained
+on Escape, and staged drawing variables plus the geometry share one undo group.
+MULTIPLE repeats drawing programs with a separate checkpoint for each iteration.
+No external dependency was upgraded; the legacy adapter now explicitly declares
+its existing workspace geometry dependency and the offline lockfile was updated.
+
+Exact WCS curve definitions are retained alongside transitional display outlines.
+The WebGL renderer, snaps, grips, recovery and Clipboard use those definitions;
+compatibility control points do not replace ellipses, splines, infinite lines or
+helices. REGION retains exact planar boundary curves and area; MLINE retains its
+center path, style offsets and justification. This remains the transitional
+application adapter documented in ARCHITECTURE, rather than completion of Phase 09
+foreign-object preservation or Phase 22 ACIS serialization. Native DXF encodings
+that cannot be written faithfully fail explicitly. See phase06-curve-notes.md and
+phase06-region-notes.md for the official Autodesk references and detailed limits.
+
+The command prompt explicitly requests the legacy filled TRACE primitive. Modern
+[TRACE](https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-Core/files/GUID-D5D7D88B-6C2F-46F9-84F0-FD7B438BDCED.htm)
+in current AutoCAD manages annotation traces. The requested Phase 06 primitive
+therefore takes precedence in this build; modern annotation trace management is
+not represented as implemented. TRACEWID uses drawing-scoped real storage; its
+metric value 1 is a documented HanCAD assumption because the current Autodesk API
+reference establishes the property but does not publish the acadiso default.
+
+The existing natural cubic fit solver, ellipse angle/parameter reference, the
+three isocircle projections, tangent picks against supporting geometry, SKETCH
+sampling and HELIX's own DXF subclass remain explicit installed-AutoCAD comparison
+items. REVCLOUD uses deterministic 110-degree scallops and deterministic variance;
+Help does not specify Autodesk's private arc-distribution algorithm. Tests verify
+construction equations and the recorded assumptions; they are not screenshots or
+measurements from installed AutoCAD.
+
+DIVIDE and MEASURE follow the official distinction between
+[equal subdivisions and fixed intervals](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-6157F6AB-2D6A-4991-987C-00AD46290CE8.htm).
+Block placements use the existing local block definitions, tangent alignment and
+fresh instance membership. Full BLOCK authoring remains Phase 13. Basic MLSTYLE
+currently edits names, descriptions and parallel offsets; full multiline style
+colors, end caps and library-file controls remain recorded differences.
+
+Phase 06 follow-up: SPLDEGREE uses the current Help topic's session initial 3 and
+range 1..5. The SPLINE command documentation separately permits CV degree 1..10;
+command degrees 6..10 remain valid geometry and are remembered in private drawing
+command memory instead of writing a value rejected by the documented sysvar.
+SPLPERIODIC is consumed for Fit closure. This documented reference discrepancy
+needs installed-AutoCAD comparison. Private RECTANG/POLYGON command defaults use
+a WeakMap keyed by each drawing database, surviving tab remounts without leaking
+between drawings; file-reopen/profile persistence is not inferred.
+
+Unbounded-only image/SVG exports currently use a 100-unit anchor window. With
+finite drawing content, XLINE/RAY clip to the actual export page. This does not
+claim the future plot-window behavior. Mixed-width polyline exports retain both
+filled strips and zero-width legs. DIVIDE/MEASURE retain the generated objects as
+the Previous selection; MEASURE chooses the endpoint nearest the pick, closed
+polylines start at their initial vertex, and circles start at SNAPANG. Verify the
+exact-multiple endpoint case independently in installed AutoCAD.
+
+Polyline multifunction insertion preserves the original segment's outer widths
+and linearly interpolates the new shared width by the lengths of the two new
+segments. Removing an interior vertex retains the outer start/end widths of the
+merged segment; the unused terminal width entry remains aligned with the vertex
+array. These choices fix invalid geometry after grip edits, while the precise
+off-segment insertion taper still needs the installed PLINE reference check.
+
+Imported spline-fit POLYLINE recognition uses DXF header flag 4, type 5/6 and
+VERTEX control-frame flag 16 instead of treating generated display vertices as
+controls. The current exact conversion uses clamped open or periodic closed
+uniform degree-2/3 knots. Compare those end conditions with actual AutoCAD files;
+the official tags identify the family but do not prove the fitting kernel.
+Unconverted spline-fit POLYLINE DXF export fails explicitly because writing a
+native SPLINE would silently change its identity. Running SPLINE Object makes
+that conversion explicit, after which the exact native SPLINE writer is valid.
+
+WIPEOUTFRAME is read from the active drawing when producing a file or Clipboard
+image, using a transient entity view. Changing Frames after creation must not
+leave an old border in an image or rewrite the exact entity/Clipboard packet.
+Image output follows the existing plot-like convention: only mode 1 includes
+the frame; mode 2 displays it on the canvas while omitting it from images. The
+precise AutoCAD external Clipboard image convention remains a reference check.
+
+Million-entity validation exposed long zoom frames in the existing LOD upload
+path. Navigation refinement now predicts the next chunk's cost against a 2 ms
+slice and retains GPU buffers/VAOs across retessellation. Dirty edits and
+view-dependent clipping remain immediate. Only pending refinement is spread
+across frames; source data, screen-error tolerance and the benchmark gates stay
+unchanged. Fixed-view tests prove eventual precise mesh completion, and the
+benchmark separately reports final pending work.

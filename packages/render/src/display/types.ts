@@ -53,7 +53,12 @@ export type DisplayGeometry =
   | DisplayText
   | { type: 'point'; position: Vec2 }
   | { type: 'xline' | 'ray'; basePoint: Vec2; direction: Vec2 }
-  | { type: 'composite'; parts: readonly DisplayGeometry[]; triangles: readonly DisplayTriangle[] }
+  | {
+      type: 'composite';
+      parts: readonly DisplayGeometry[];
+      triangles: readonly DisplayTriangle[];
+      fillControlled?: boolean;
+    }
   | { type: 'curve'; curve: CurveGeometry };
 
 export interface DisplayEntity {
@@ -67,6 +72,9 @@ export interface DisplayEntity {
   transparency: EntityTransparency;
   plinegen: boolean;
   visible?: boolean;
+  sourceId?: string;
+  backgroundMask?: boolean;
+  wipeoutFrame?: boolean;
 }
 export interface TessellationOptions {
   /** Maximum model-unit chord error; normally 0.25 / CSS-pixel view scale. */

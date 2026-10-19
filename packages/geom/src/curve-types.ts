@@ -90,6 +90,19 @@ export interface SplineGeometry {
   fitTolerance: number;
   knotParameterization: 'chord' | 'centripetal' | 'uniform';
 }
+/** Analytic conical helix; height zero is an Archimedean spiral in its own plane. */
+export interface HelixGeometry {
+  type: 'HELIX';
+  center: Vec3;
+  normal: Vec3;
+  xAxis: Vec3;
+  baseRadius: number;
+  topRadius: number;
+  turns: number;
+  height: number;
+  clockwise: boolean;
+  startAngle: number;
+}
 /** Keeps nonuniformly transformed polyline widths/bulges instead of flattening source data. */
 export interface TransformedGeometry {
   type: 'TRANSFORMED';
@@ -105,6 +118,7 @@ export type CurveGeometry =
   | EllipseGeometry
   | PolylineGeometry
   | SplineGeometry
+  | HelixGeometry
   | TransformedGeometry;
 export type GeometryParseResult =
   | { status: 'ok'; geometry: CurveGeometry }

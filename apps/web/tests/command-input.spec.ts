@@ -27,7 +27,7 @@ test('한글 mode physical keys start ZOOM and reversed jamo resolve to aliases'
   await page.keyboard.press('Escape');
   for (const [jamo, prompt] of [
     ['ㅣ', '첫 번째 점 지정:'],
-    ['ㅊ', '원의 중심점 지정'],
+    ['ㅊ', '원에 대한 중심점 지정'],
   ] as const) {
     await compose(page, jamo);
     await page.keyboard.press('Enter');

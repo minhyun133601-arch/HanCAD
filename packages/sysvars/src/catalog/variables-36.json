@@ -256,6 +256,22 @@
     "max": 1
   },
   {
+    "name": "SPLDEGREE",
+    "type": "integer",
+    "default": 3,
+    "scope": "session",
+    "description": "조정 정점으로 작성하는 스플라인의 기본 차수를 저장합니다.",
+    "min": 1,
+    "max": 5,
+    "validationNote": "The 2026 SPLDEGREE page specifies 1..5 while SPLINE Degree documents 1..10. Higher command degrees remain session command memory pending live reference verification.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-40B00336-C1EB-47A4-8773-FFB22B8C931C.htm",
+      "type": "Integer",
+      "savedIn": "Not-saved",
+      "initial": "3"
+    }
+  },
+  {
     "name": "SPLFRAME",
     "type": "integer",
     "default": 0,

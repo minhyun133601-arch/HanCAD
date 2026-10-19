@@ -1,5 +1,20 @@
 [
   {
+    "name": "TRACEWID",
+    "type": "real",
+    "default": 1,
+    "scope": "drawing",
+    "description": "이전 버전 두께선 객체의 현재 폭을 저장합니다.",
+    "defaultPolicy": "HanCAD metric legacy assumption: 1 drawing unit. Current Autodesk API documentation confirms TRACEWID identity and database storage but does not publish its numerical acadiso default; compare installed AutoCAD.",
+    "source": {
+      "url": "https://help.autodesk.com/cloudhelp/2026/ENU/OARX-ManagedRefGuide/files/OARX-ManagedRefGuide-Autodesk_AutoCAD_DatabaseServices_Database_Tracewid.html",
+      "type": "Real",
+      "savedIn": "Drawing",
+      "initial": "Not documented in the current API reference; HanCAD metric assumption 1.0"
+    },
+    "validationNote": "Current Autodesk reference documents read/write real storage but no rejecting numeric range; only the type is enforced. TRACE itself accepts positive widths."
+  },
+  {
     "name": "UCSORTHO",
     "type": "integer",
     "default": 1,

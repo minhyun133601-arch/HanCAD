@@ -8,6 +8,7 @@ interface GeometryBuffer {
   vao: WebGLVertexArrayObject;
   count: number;
 }
+const emptyGeometry = new Float32Array();
 const uniformNames = [
   'uStyles',
   'uPatterns',
@@ -112,14 +113,14 @@ export class GpuDevice {
     gl.bindTexture(gl.TEXTURE_2D, this.patterns);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.R32F, 13, height, 0, gl.RED, gl.FLOAT, data);
   }
-  upload(mesh: MeshData): GpuChunk {
+  upload(mesh: MeshData, previous?: GpuChunk): GpuChunk {
     return {
       ...mesh,
       ...(!mesh.wide.length && mesh.lines.length ? { wideSource: mesh.lines } : {}),
-      lines: this.geometry(mesh.lines, false),
-      wide: this.geometry(mesh.wide, true),
-      fills: this.geometry(mesh.fills, false),
-      points: this.geometry(mesh.points ?? new Float32Array(), false),
+      lines: this.geometry(mesh.lines, false, previous?.lines),
+      wide: this.geometry(mesh.wide, true, previous?.wide),
+      fills: this.geometry(mesh.fills, false, previous?.fills),
+      points: this.geometry(mesh.points ?? emptyGeometry, false, previous?.points),
     };
   }
   private prepareWide(chunk: GpuChunk): void {
@@ -142,7 +143,16 @@ export class GpuDevice {
     this.gl.deleteVertexArray(previous.vao);
     delete chunk.wideSource;
   }
-  private geometry(data: Float32Array, wide: boolean): GeometryBuffer {
+  private geometry(data: Float32Array, wide: boolean, previous?: GeometryBuffer): GeometryBuffer {
+    if (previous) {
+      if (data.length || previous.count) {
+        const gl = this.gl;
+        gl.bindBuffer(gl.ARRAY_BUFFER, previous.buffer);
+        // Re-specification orphans in-flight storage while retaining the VAO and buffer identity.
+        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      }
+      return { ...previous, count: data.length / (wide ? 8 : 5) };
+    }
     const gl = this.gl,
       buffer = gl.createBuffer(),
       vao = gl.createVertexArray();

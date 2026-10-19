@@ -4,6 +4,7 @@ import {
   geometryEvaluation,
   polylineSegments,
   splineBreakpoints,
+  helixBreakpoints,
   transformGeometry,
 } from '@hancad/geom';
 import type { CurveGeometry, Vec3 } from '@hancad/geom';
@@ -97,13 +98,19 @@ export function prepareSnapCurve(geometry: CurveGeometry): PreparedSnapCurve {
         point: evaluateGeometry(geometry, parameter),
       })),
     };
-  const breaks = geometry.type === 'SPLINE' ? splineBreakpoints(geometry) : [0, 1];
+  const breaks =
+    geometry.type === 'SPLINE'
+      ? splineBreakpoints(geometry)
+      : geometry.type === 'HELIX'
+        ? helixBreakpoints(geometry)
+        : [0, 1];
   const samples: CurveSample[] = [{ parameter: 0, point: evaluateGeometry(geometry, 0) }];
   for (let span = 1; span < breaks.length; span++) {
     const low = breaks[span - 1]!,
       high = breaks[span]!;
-    for (let step = 1; step <= 64; step++) {
-      const parameter = low + ((high - low) * step) / 64;
+    const subdivisions = geometry.type === 'HELIX' ? 4 : 64;
+    for (let step = 1; step <= subdivisions; step++) {
+      const parameter = low + ((high - low) * step) / subdivisions;
       samples.push({ parameter, point: evaluateGeometry(geometry, parameter) });
     }
   }

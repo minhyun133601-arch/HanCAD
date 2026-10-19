@@ -1,5 +1,29 @@
 # Architecture
 
+Phase 06 drawing tools run as typed command coroutines. `DrawSession` owns the
+current request, shared point acquisition, localized prompts, accepted geometry,
+cursor preview and staged sysvar changes. Every factory runs both interactively
+and from a headless input queue. Numeric/angle prompts retain raw tokens for their
+unit-aware parser; entity requests carry the picked entity and point. Tagged
+freehand cursor samples remain distinct from click input. A completed command
+publishes one entity/replacement/settings batch. Escape retains only explicitly
+accepted partial geometry; preview geometry never enters the journal.
+
+The transitional entity model preserves exact WCS `CurveGeometry` definitions,
+per-vertex widths, elevation/thickness, multiline definitions, revision-cloud
+boundary/settings, polygon fills and REGION boundary loops/area. Approximate
+viewport proxy points do not replace these definitions. Recovery and clipboard
+boundaries validate source data before restoring it. Rendering, snapping and
+grip transforms consume the exact geometry or retained topology. Drawing ribbon
+method menus execute canonical command macros with user-input pauses; all eleven
+ARC methods share the same ARC coroutine and tangent-circle menus invoke CIRCLE.
+
+Basic MLSTYLE and PTYPE dialogs update the same style/variable definitions used
+by command input. WIPEOUT polygons composite in drawing order using the current
+background and separate frame display/plot controls. REGION is a planar boundary
+topology, not a tessellated fake solid; ACIS/SAT serialization remains an explicit
+export boundary until a compatible solid representation is implemented.
+
 Phase 05 routes SELECT, modifying commands and Clipboard selection through one
 headless SelectionSession. Selection membership is transient; groups are drawing
 metadata and named FILTER definitions belong to the shared profile. Native GROUP dictionary/member/reactor records and
@@ -447,6 +471,13 @@ requires whole-object containment; crossing selection tests supported geometry.
 Hidden/locked layers are excluded from edits. Phase 05 connects PICKAUTO/PICKDRAG
 gesture policy, selection previews and the shared selection prompt. Navigation
 reads ZOOMFACTOR/ZOOMWHEEL/MBUTTONPAN live.
+
+Navigation LOD refinement predicts per-chunk work against a 2 ms frame slice.
+GPU buffer storage and VAOs are reused through retessellation; empty geometry
+and absent text avoid redundant uploads. Dirty edits and view-dependent clipping
+still rebuild immediately. Deferred curves continue rendering their retained
+mesh, then converge to the unchanged screen-error tolerance at a fixed view.
+Stress QA reports both frame cadence and final pending refinement.
 
 ModifySession separates MOVE/COPY point input from provisional previews. MOVE
 commits one displacement. Repeated COPY placements remain provisional until

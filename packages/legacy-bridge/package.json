@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "@hancad/geom": "workspace:*"
+  },
   "exports": {
     ".": {
       "types": "./src/index.ts",

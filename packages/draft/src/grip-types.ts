@@ -21,7 +21,7 @@ export interface DisplayGrip extends EntityGrip {
 /** New entity families provide exact grips and local stretch behavior here. */
 export interface GripProvider {
   supports(entity: CadEntity): boolean;
-  grips(entity: CadEntity, extra: boolean): EntityGrip[];
+  grips(entity: CadEntity, extra: boolean, settings?: GripSettings): EntityGrip[];
   stretch(entity: CadEntity, keys: readonly string[], delta: CadPoint): CadEntity;
 }
 export interface GripSessionOptions {
@@ -57,5 +57,6 @@ export interface GripSettings {
   block?: number;
   groupMode?: number;
   pickstyle?: number;
+  revcloudGrips?: number;
 }
 export type GripStateCommit = (state: LegacyCadState) => void;

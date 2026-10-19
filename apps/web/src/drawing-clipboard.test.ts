@@ -26,6 +26,183 @@ function fixture() {
   return state;
 }
 describe('drawing Clipboard commands', () => {
+  it('uses an existing destination MLINE style for both named metadata and actual rail geometry', () => {
+    const source = createEmptyCadState(),
+      target = createEmptyCadState();
+    source.mlineStyles = [{ name: 'Custom', description: 'Source style', offsets: [0.5, -0.5] }];
+    source.entities = [
+      {
+        id: 'mline',
+        type: 'polyline',
+        layer: '0',
+        color: '#ffffff',
+        lineWidth: 1,
+        points: [
+          { x: 0, y: 0 },
+          { x: 10, y: 0 },
+        ],
+        closed: false,
+        sourceType: 'MLINE',
+        drawPaths: [
+          [
+            { x: 0, y: -1 },
+            { x: 10, y: -1 },
+          ],
+          [
+            { x: 0, y: 1 },
+            { x: 10, y: 1 },
+          ],
+        ],
+        mline: {
+          vertices: [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+          ],
+          offsets: [0.5, -0.5],
+          scale: 2,
+          justification: 1,
+          style: 'Custom',
+          closed: false,
+        },
+      },
+    ];
+    target.mlineStyles = [{ name: 'CUSTOM', description: 'Destination style', offsets: [2, -2] }];
+    const packet = copyDrawingSelection(source, ['mline'], { x: 0, y: 0 })!;
+    const pasted = pasteDrawingClipboard(target, parseDrawingClipboard(JSON.stringify(packet)), {
+      x: 100,
+      y: -100,
+    }).state;
+    expect(pasted.mlineStyles).toEqual(target.mlineStyles);
+    expect(pasted.entities[0]?.mline).toMatchObject({
+      style: 'CUSTOM',
+      offsets: [2, -2],
+      vertices: [
+        { x: 100, y: -100 },
+        { x: 110, y: -100 },
+      ],
+    });
+    expect(pasted.entities[0]?.drawPaths).toMatchObject([
+      [
+        { x: 100, y: -104 },
+        { x: 110, y: -104 },
+      ],
+      [
+        { x: 100, y: -96 },
+        { x: 110, y: -96 },
+      ],
+    ]);
+    expect(source.entities[0]?.mline?.offsets).toEqual([0.5, -0.5]);
+  });
+  it('transports exact curves, region loops, mask paths and MLINE style dependencies across drawings', () => {
+    const source = createEmptyCadState();
+    const base = {
+      layer: '0',
+      color: '#ffffff',
+      lineWidth: 1,
+      type: 'polyline' as const,
+      points: [
+        { x: 0, y: 0 },
+        { x: 10, y: 0 },
+      ],
+      closed: false,
+    };
+    const vec = (x: number, y: number) => ({ x, y, z: 0 });
+    source.entities = [
+      {
+        ...base,
+        id: 'ellipse',
+        sourceType: 'ELLIPSE',
+        curve: {
+          type: 'ELLIPSE',
+          center: vec(0, 0),
+          majorAxis: vec(10, 0),
+          minorAxis: vec(0, 5),
+          startParameter: 0,
+          sweepParameter: 2 * Math.PI,
+        },
+      },
+      {
+        ...base,
+        id: 'region',
+        sourceType: 'REGION',
+        regionArea: 100,
+        regionLoops: [
+          [
+            { type: 'LINE', start: vec(0, 0), end: vec(10, 0) },
+            { type: 'LINE', start: vec(10, 0), end: vec(10, 10) },
+            { type: 'LINE', start: vec(10, 10), end: vec(0, 10) },
+            { type: 'LINE', start: vec(0, 10), end: vec(0, 0) },
+          ],
+        ],
+      },
+      {
+        ...base,
+        id: 'mask',
+        sourceType: 'WIPEOUT',
+        drawFill: [
+          [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: -10 },
+          ],
+        ],
+        frameMode: 2,
+      },
+      {
+        ...base,
+        id: 'mline',
+        sourceType: 'MLINE',
+        drawPaths: [
+          [
+            { x: 0, y: 1 },
+            { x: 10, y: 1 },
+          ],
+        ],
+        mline: {
+          vertices: [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+          ],
+          offsets: [-0.5, 0.5],
+          scale: 2,
+          justification: 0,
+          style: 'Custom',
+          closed: false,
+        },
+      },
+    ];
+    source.mlineStyles = [
+      { name: 'Custom', description: 'Clipboard dependency', offsets: [-0.5, 0.5] },
+    ];
+    const copied = copyDrawingSelection(
+      source,
+      source.entities.map((entity) => entity.id),
+      { x: 10, y: -20 },
+    )!;
+    const transported = parseDrawingClipboard(JSON.stringify(copied));
+    expect(transported.state.entities.map((entity) => entity.sourceType)).toEqual([
+      'ELLIPSE',
+      'REGION',
+      'WIPEOUT',
+      'MLINE',
+    ]);
+    const pasted = pasteDrawingClipboard(createEmptyCadState(), transported, {
+      x: 100,
+      y: -200,
+    }).state;
+    expect(pasted.entities[0]?.curve).toMatchObject({
+      center: { x: 90, y: 180, z: 0 },
+      majorAxis: vec(10, 0),
+    });
+    expect(pasted.entities[1]).toMatchObject({
+      regionArea: 100,
+      regionLoops: [[{ start: { x: 90, y: 180, z: 0 } }, {}, {}, {}]],
+    });
+    expect(pasted.entities[2]?.drawFill?.[0]?.[0]).toMatchObject({ x: 90, y: -180 });
+    expect(pasted.entities[3]?.mline?.vertices[0]).toMatchObject({ x: 90, y: -180 });
+    expect(pasted.mlineStyles).toEqual(source.mlineStyles);
+    expect(source.entities[0]?.curve).toMatchObject({ center: vec(0, 0) });
+  });
   it('copies exact double coordinates and explicit COPYBASE origin across another drawing', () => {
     const source = fixture(),
       original = structuredClone(source);

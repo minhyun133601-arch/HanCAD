@@ -78,9 +78,13 @@ test('polyline vertex multifunction menus add/remove a vertex and convert an exa
   await enter(page, '50,20');
   await expect.poll(async () => (await polyline(page)).points.length).toBe(4);
   expect((await polyline(page)).points[1]).toEqual({ x: 50, y: -20 });
+  expect((await polyline(page)).startWidths).toEqual([0, 0, 0, 0]);
+  expect((await polyline(page)).endWidths).toEqual([0, 0, 0, 0]);
   await hoverMenu(page, view, 50, 20);
   await page.getByRole('menuitem', { name: '정점 제거(R)', exact: true }).click();
   await expect.poll(async () => (await polyline(page)).points.length).toBe(3);
+  expect((await polyline(page)).startWidths).toEqual([0, 0, 0]);
+  expect((await polyline(page)).endWidths).toEqual([0, 0, 0]);
   await hoverMenu(page, view, 0, 0);
   await page.getByRole('menuitem', { name: '호로 변환(C)', exact: true }).click();
   await enter(page, '50,50');
@@ -90,6 +94,24 @@ test('polyline vertex multifunction menus add/remove a vertex and convert an exa
   await expect(page.getByRole('menuitem', { name: '선으로 변환(C)', exact: true })).toBeVisible();
   await page.getByRole('menuitem', { name: '선으로 변환(C)', exact: true }).click();
   await expect.poll(async () => (await polyline(page)).bulges?.[0]).toBe(0);
+  const saved = await polyline(page);
+  for (const expected of [
+    { count: 3, bulge: 1 },
+    { count: 3, bulge: 0 },
+    { count: 4, bulge: 0 },
+    { count: 3, bulge: 0 },
+  ]) {
+    await enter(page, 'U');
+    await expect.poll(async () => (await polyline(page)).points.length).toBe(expected.count);
+    await expect
+      .poll(async () => (await polyline(page)).bulges?.[0])
+      .toBeCloseTo(expected.bulge, 9);
+  }
+  await enter(page, 'MREDO');
+  await enter(page, '4');
+  await expect.poll(async () => polyline(page)).toEqual(saved);
+  await page.reload();
+  await expect.poll(async () => polyline(page)).toEqual(saved);
 });
 
 test('Shift hot grips stretch together, copy placements stay provisional, and Esc commits copies in one undo step', async ({

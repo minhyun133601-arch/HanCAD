@@ -11,6 +11,8 @@ import {
 } from './ribbon-definitions';
 import type { Execute, RibbonTab } from './ribbon-definitions';
 import { RibbonKeyTips } from './RibbonKeyTips';
+import { drawRibbonMethods, moreDrawMethods } from './ribbon-draw-methods';
+import { RibbonDrawMenu } from './RibbonDrawMenu';
 export type { RibbonTab } from './ribbon-definitions';
 export { ribbonTabs } from './ribbon-definitions';
 
@@ -150,12 +152,14 @@ export function TitleBar({
 
 export function Ribbon({
   messages,
+  locale = 'ko-KR',
   activeTab,
   setActiveTab,
   execute,
   keyTipsEnabled = true,
 }: {
   messages: Messages;
+  locale?: Locale;
   activeTab: RibbonTab;
   setActiveTab: (tab: RibbonTab) => void;
   execute: Execute;
@@ -185,18 +189,41 @@ export function Ribbon({
           <div className="ribbon-panel" key={panel.label}>
             <div className="panel-tools">
               {panel.tools.map((tool) => (
-                <button
+                <div
                   key={tool.command}
-                  className="ribbon-tool"
-                  title={`${messages[tool.label]} (${tool.command})`}
-                  data-ribbon-keytip={toolKeyTips[tool.command]}
-                  data-ribbon-keytip-level="tools"
-                  onClick={() => execute(tool.command)}
+                  className={`ribbon-tool-group${drawRibbonMethods[tool.command] ? ' split' : ''}`}
                 >
-                  <Icon name={tool.icon} />
-                  <span>{messages[tool.label]}</span>
-                </button>
+                  <button
+                    className="ribbon-tool"
+                    title={`${messages[tool.label]} (${tool.command})`}
+                    data-ribbon-keytip={toolKeyTips[tool.command]}
+                    data-ribbon-keytip-level="tools"
+                    onClick={() => execute(tool.command)}
+                  >
+                    <Icon name={tool.icon} />
+                    <span>{messages[tool.label]}</span>
+                  </button>
+                  {drawRibbonMethods[tool.command] && (
+                    <RibbonDrawMenu
+                      command={tool.command}
+                      label={`${messages[tool.label]} ${locale === 'ko-KR' ? '작성 방법' : 'construction methods'}`}
+                      methods={drawRibbonMethods[tool.command]!}
+                      locale={locale}
+                      execute={execute}
+                    />
+                  )}
+                </div>
               ))}
+              {panel.label === 'draw' && (
+                <RibbonDrawMenu
+                  command="MORE"
+                  locale={locale}
+                  execute={execute}
+                  label={locale === 'ko-KR' ? '다른 그리기 명령' : 'More drawing commands'}
+                  methods={moreDrawMethods}
+                  expanded
+                />
+              )}
             </div>
             {panel.label === 'layers' && (
               <div className="layer-placeholder">

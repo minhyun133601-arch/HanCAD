@@ -311,7 +311,11 @@ importers:
 
   packages/kernel3d: {}
 
-  packages/legacy-bridge: {}
+  packages/legacy-bridge:
+    dependencies:
+      '@hancad/geom':
+        specifier: workspace:*
+        version: link:../geom
 
   packages/lisp: {}
 
