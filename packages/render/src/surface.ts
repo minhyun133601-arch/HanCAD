@@ -72,6 +72,12 @@ export class CadCanvasSurface {
           ...(options.getSystemVariable ? { variable: options.getSystemVariable } : {}),
           ...(options.getLayerStyles ? { layers: options.getLayerStyles } : {}),
           ...(options.getLinetypes ? { linetypes: options.getLinetypes } : {}),
+          ...(options.getNativeDisplayEntities
+            ? { nativeEntities: options.getNativeDisplayEntities }
+            : {}),
+          ...(options.getLineweightDisplayScale
+            ? { lineweightDisplayScale: options.getLineweightDisplayScale }
+            : {}),
           aids: () => this.options.getAidSettings?.() ?? defaultAidSettings,
         });
       } catch (error) {

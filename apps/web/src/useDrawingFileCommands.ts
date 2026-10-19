@@ -11,6 +11,7 @@ import type { DrawingSession } from './drawing-session';
 import { setDocumentSource } from './document-source';
 import { restoreDrawingErasure } from './erasure-history';
 import { drawingExportState } from './drawing-export-state';
+import { recordLayerNotification } from './layer-notifications';
 
 type ExportFormat = 'pdf' | 'png' | 'jpg' | 'svg' | 'dxf';
 interface DrawingFileCommandsOptions {
@@ -61,6 +62,7 @@ export function useDrawingFileCommands(options: DrawingFileCommandsOptions): voi
     window.setTimeout(() => URL.revokeObjectURL(url), 10000);
     const current = live.current;
     current.print(current.messages.exportFinished(result.fileName));
+    if (format === 'dxf') recordLayerNotification(active.database, drawing.state, 'save');
   }
   useEffect(() => {
     const english = getMessages('en-US'),
@@ -127,6 +129,7 @@ export function useDrawingFileCommands(options: DrawingFileCommandsOptions): voi
         anchor.click();
         window.setTimeout(() => URL.revokeObjectURL(url), 10000);
         active.print(active.messages.exportFinished(anchor.download));
+        recordLayerNotification(active.database, active.getDrawing().state, 'save');
       },
     });
     registry.register({

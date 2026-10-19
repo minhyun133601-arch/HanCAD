@@ -13,6 +13,7 @@ import { CadImportError } from './diagnostics';
 import { restoreSelectionMetadata } from './selection-metadata';
 import { restoreClipboardMetadata } from './clipboard-metadata';
 import { restoreDrawMetadata } from './draw-metadata';
+import { restoreLayerMetadata } from './layer-metadata';
 import { drawingExportHooks } from './draw-export-hooks';
 
 export function getLegacyRuntime(): LegacyCadRuntime {
@@ -57,6 +58,7 @@ export function normalizeCadState(value: unknown): LegacyCadState {
       '저장된 도면 객체 검증에 실패했습니다.',
     );
   restoreSelectionMetadata(state, value);
+  restoreLayerMetadata(state, value);
   restoreClipboardMetadata(state, value);
   restoreDrawMetadata(state, value as { entities: unknown[]; mlineStyles?: unknown });
   return state;
@@ -104,8 +106,11 @@ export function drawingToDxf(state: LegacyCadState): string {
   return getLegacyRuntime().core.cadExporters.toDxf(state);
 }
 export function visibleCadEntities(state: LegacyCadState): CadEntity[] {
-  const hidden = new Set(state.layers.filter((layer) => !layer.visible).map((layer) => layer.name));
-  return state.entities.filter((entity) => !hidden.has(entity.layer));
+  const hidden = new Set(
+    state.layers.filter((layer) => !layer.visible || layer.frozen).map((layer) => layer.name),
+  );
+  const isolated = new Set(state.objectIsolation?.hiddenIds ?? []);
+  return state.entities.filter((entity) => !hidden.has(entity.layer) && !isolated.has(entity.id));
 }
 export function drawingBounds(state: LegacyCadState): CadBounds {
   return getLegacyRuntime().core.cadExporters.boundsOf(state, true);

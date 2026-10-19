@@ -64,6 +64,7 @@ export const rowsA: readonly string[] = [
   'CLOSE|닫기|Close|현재 도면을 닫습니다.|Closes the current drawing.|9',
   'CLOSEALL|모두 닫기|Close All|열려 있는 모든 도면을 닫습니다.|Closes all open drawings.|9',
   'COLOR|색상|Color|새 객체의 색상을 설정합니다.|Sets the color for new objects.|8',
+  'COPYTOLAYER|새 도면층으로 객체 복사|Copy to Layer|선택한 객체의 사본을 지정한 도면층에 작성합니다.|Copies selected objects to a specified layer.|8',
   'COMMANDLINE|명령행|Command Line|명령행 윈도우를 표시합니다.|Displays the command line window.|3',
   'COMMANDLINEHIDE|명령행 숨기기|Hide Command Line|명령행 윈도우를 숨깁니다.|Hides the command line window.|3',
   'CONSTRAINTBAR|구속조건 막대|Constraint Bar|객체의 기하학적 구속조건 막대를 표시하거나 숨깁니다.|Shows or hides geometric constraint bars on objects.|18',

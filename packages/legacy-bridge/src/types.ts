@@ -125,6 +125,14 @@ export interface CadLayer extends CadDisplayStyle {
   color: string;
   visible: boolean;
   locked: boolean;
+  frozen?: boolean;
+  plot?: boolean;
+  newViewportFrozen?: boolean;
+  description?: string;
+  unreconciled?: boolean;
+  nativeHandle?: string;
+  material?: string;
+  plotStyle?: string;
 }
 export interface CadSettings extends CadDisplayStyle {
   unit: '' | 'mm' | 'cm' | 'm';
@@ -162,6 +170,7 @@ export interface LegacyCadState {
   groups?: CadGroup[];
   selectionFilters?: CadNamedFilter[];
   mlineStyles?: CadMlineStyle[];
+  objectIsolation?: { hiddenIds: string[]; persistent: boolean };
 }
 export interface CadMlineStyle {
   name: string;

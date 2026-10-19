@@ -1,5 +1,57 @@
 # HanCAD progress
 
+## Phase 08 final acceptance (2026-10-19)
+
+Source: `prompt-source/prompts/phase-08-layers-and-properties.md`.
+Authorized by the user on 2026-10-19. Preserve the accepted Phase 07 baseline
+and the user's existing constitution/prompt edits outside feature commits.
+
+| Milestone                          | Status      | Scope                                                                                                                                           |
+| ---------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| 8.1 Layer data and command host    | Implemented | Native/legacy layer consistency, undoable current layer, -LAYER and layer tools.                                                                |
+| 8.2 Layer manager and states       | Implemented | Modeless manager, filters, state restore/import/export, previous layer state and notifications.                                                 |
+| 8.3 Display property managers      | Implemented | Color, true color, lineweight, transparency, original LIN resources and complex definition preservation.                                        |
+| 8.4 Properties and isolation       | Implemented | Typed/mixed property edits, expressions, Quick Properties, MATCHPROP and object isolation.                                                      |
+| 8.5 Ribbon and drawing integration | Implemented | Live layer/property controls, current creation values, visibility, locked-layer fading and nested inheritance.                                  |
+| 8.6 Final acceptance               | Accepted    | Build/Acceptance audit, comprehensive verification, production browser and Windows native scenarios, performance/regressions and documentation. |
+
+Phase 08 implementation and acceptance are complete. Production run 4 passes:
+1,290 unit tests in 179 files, 32 compatibility cases, 393-command check,
+renderer QA and 213 browser cases (10.4 minutes). One personal-DWG case is
+conditionally skipped without a supplied file. Exact command:
+`HANCAD_PRODUCTION=1 HANCAD_RUNNING_APP=1 pnpm verify --workers=2`.
+Log: `test-artifacts/phase08-verify-run4-20261019.log`.
+
+Windows readiness, Rust formatting/eight tests and sysvar documentation drift
+checks pass. The unchanged million-entity, 1920x1080 stress gate passes with pan
+and zoom 60.00 fps, p95 16.8 ms, GL error 0 and final pending work 0.
+`phase08-acceptance.md` records the initial gate failures, corrections, exact
+native geometry/copy coverage and reference boundaries.
+
+The actual Windows release and all six Phase 08 cases pass with no page errors.
+Thirteen modifying-command cases, two native MIRRHATCH cases, two-process Windows
+Clipboard/grip operations and WIPEOUT regressions also pass. Image consumers
+report zero RGB pixel mismatches. Full logs are listed in phase08-acceptance.md.
+
+The final progress-only release rebuild passes in 1m 44s. The final bilingual
+progress browser case passes; actual final Tauri execution confirms Phase 08
+shows complete and LINE/U/REDO restores exact entities without page errors.
+Final bundle: `index-nWjGk44B.js`; executable SHA-256:
+`a795fa49a2ef288d68a1188978b36ca91e8e90cce443124c08d36a5ac01c44bc`.
+Logs: `phase08-native-build-final-20261019.log`, `phase08-progress-final.log` and
+`phase08-final-artifact-20261019.log` under `test-artifacts/`.
+
+Installed Korean AutoCAD and physical Windows IME/Hanja comparison remain
+unverified. Complex LIN glyph/SHX rendering remains Phase 10; viewport overrides
+and plotting remain Phase 14. Foreign lossless DWG/DXF round trips remain Phase 09.
+The layer/property/style family notes provide manual keystrokes and reference
+boundaries, including external LAS interchange and exact property presentation.
+
+Exact next step: Phase 09 (DWG/DXF I/O and recovery), only when the user requests it.
+The user requested a feature commit, successful remote push and then computer
+shutdown on 2026-10-19. Preserve the four existing user-owned instruction edits.
+No Phase 09 work is authorized by this request.
+
 ## Phase 07 final acceptance (2026-10-19)
 
 Source: `prompt-source/prompts/phase-07-2d-modify-commands.md`.

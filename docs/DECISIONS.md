@@ -1,5 +1,41 @@
 # Decisions
 
+Phase 08 (2026-10-19): retain imported compatibility layer presentation until an
+explicit edit synchronizes the native record. View transitions also have a
+cancellable VTDURATION deadline: stalled WebView animation frames cannot leave
+navigation permanently active, and stale generations cannot apply cancelled views.
+Managed records, renames, layer states and reference remaps share the command
+journal. On and Freeze stay separate; both exclude geometry from selection/snaps,
+while locked geometry remains snappable and uses LAYLOCKFADECTL. LAYON preserves
+the current view. The former transitional auto-fit when imported layers were all
+off is removed; ZOOM Extents explicitly reveals distant geometry.
+Defpoints is nonplotting and cannot be edited while layer 0
+is off/frozen. Reference: [Autodesk Defpoints restriction](https://www.autodesk.com/support/technical/article/caas/sfdcarticles/sfdcarticles/Cannot-select-objects-on-Defpoints-layer-when-Layer-0-is-off-in-AutoCAD.html).
+
+Use original LIN resources and preserve text/shape descriptors before Phase 10
+rendering. Resolve nested properties through actual INSERT paths. Keep lineweight
+display scale in the profile instead of inventing a sysvar. Pixel quantization
+remains an installed-AutoCAD comparison item. Color Books is the explicit requested
+placeholder without proprietary resources; HSL input normalizes to equivalent RGB.
+
+Native property/layer edits preserve unknown graph data and one-command Undo.
+Native curve property editors retain WCS geometry and serialize OCS fields back
+through the original normal. Indexed polyline/spline controls avoid materializing
+one form per vertex. Ellipse parameter fields retain the DXF/API radian parameters;
+their exact Properties-palette presentation remains an installed-reference check.
+Reference: [Autodesk Ellipse properties](https://help.autodesk.com/cloudhelp/2026/ENU/OARX-ManagedRefGuide/files/OARX-ManagedRefGuide-__MEMBERTYPE_Properties_Autodesk_AutoCAD_DatabaseServices_Ellipse.html).
+CLAYER rejects frozen layers but accepts off or locked layers; creation on a
+locked current layer remains valid while editing its existing objects is blocked.
+Reference: [Autodesk locked-layer behavior](https://help.autodesk.com/cloudhelp/2024/ESP/AutoCAD-LT-ActiveX/files/GUID-0A9F3388-F958-4727-BC58-1BF2820E7A45.htm).
+Temporary isolation clears only at reopen/recovery boundaries. Profile display
+settings retain their documented scope across drawing Undo. COPYTOLAYER projects
+WCS displacement into OCS for CIRCLE/ARC/INSERT/TEXT and clones owned graph data
+with fresh handles. Unsupported displaced opaque geometry fails explicitly.
+Lifecycle notifications use documented event bits; PLOT/xref/insert events will be
+emitted by their original later phases, without treating PDF export as PLOT.
+The three phase08 family notes retain official sources and reference assumptions;
+they do not certify proprietary font/rendering identity or Phase 09 lossless I/O.
+
 Phase 07 audit additions (2026-10-19): XLINE/RAY trimming uses the unbounded
 parameter domain: surviving unbounded intervals are RAYs and bounded intervals
 are LINEs. EXTEND moves a RAY's finite base to the nearest backward boundary;

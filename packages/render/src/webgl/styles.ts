@@ -11,6 +11,7 @@ export interface RenderLayer {
   linetype: string;
   transparency: EntityTransparency;
   visible?: boolean;
+  locked?: boolean;
 }
 export interface RenderEnvironment {
   background: number;
@@ -20,6 +21,7 @@ export interface RenderEnvironment {
   selected: ReadonlySet<string>;
   hidden: ReadonlySet<string>;
   preview?: ReadonlySet<string>;
+  lineweightDisplayScale?: number;
 }
 export function numberVariable(environment: RenderEnvironment, name: string, fallback: number) {
   const value = environment.variable(name);
@@ -65,7 +67,7 @@ export function entityStyle(
             layer: layer?.color ?? { kind: 'aci', index: 7 },
             background: environment.background,
           });
-  const alpha =
+  let alpha =
     1 -
     resolveTransparency(
       entity.transparency,
@@ -74,6 +76,8 @@ export function entityStyle(
       numberVariable(environment, 'TRANSPARENCYDISPLAY', 1) !== 0,
     ) /
       100;
+  if ((layer?.locked || entity.locked) && !selected)
+    alpha *= 1 - Math.max(0, Math.min(90, numberVariable(environment, 'LAYLOCKFADECTL', 50))) / 100;
   let linetype = entity.linetype.toUpperCase();
   if (linetype === 'BYLAYER') linetype = layer?.linetype.toUpperCase() ?? 'CONTINUOUS';
   if (linetype === 'BYBLOCK') linetype = 'CONTINUOUS';
@@ -100,7 +104,11 @@ export function entityStyle(
     visible ? alpha : 0,
     Math.max(
       selected && effect !== 0 ? 3 : preview ? 2 : 1,
-      lineweightPixels(weight, Boolean(environment.variable('LWDISPLAY'))),
+      lineweightPixels(
+        weight,
+        Boolean(environment.variable('LWDISPLAY')),
+        environment.lineweightDisplayScale,
+      ),
     ),
     patterns.get(linetype) ?? 0,
     scale,

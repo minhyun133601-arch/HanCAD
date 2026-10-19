@@ -73,6 +73,7 @@ export interface DisplayEntity {
   transparency: EntityTransparency;
   plinegen: boolean;
   visible?: boolean;
+  locked?: boolean;
   sourceId?: string;
   backgroundMask?: boolean;
   wipeoutFrame?: boolean;

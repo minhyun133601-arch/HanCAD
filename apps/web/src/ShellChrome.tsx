@@ -1,6 +1,7 @@
 ﻿import type { Locale, Messages } from '@hancad/ui';
 import { useEffect, useRef, useState } from 'react';
 import { Icon } from './Icon';
+import type { ReactNode } from 'react';
 import {
   fileTools,
   panels,
@@ -157,6 +158,8 @@ export function Ribbon({
   setActiveTab,
   execute,
   keyTipsEnabled = true,
+  layerControls,
+  propertyControls,
 }: {
   messages: Messages;
   locale?: Locale;
@@ -164,6 +167,8 @@ export function Ribbon({
   setActiveTab: (tab: RibbonTab) => void;
   execute: Execute;
   keyTipsEnabled?: boolean;
+  layerControls?: ReactNode;
+  propertyControls?: ReactNode;
 }) {
   return (
     <section className="ribbon" aria-label={messages.ribbon}>
@@ -186,7 +191,10 @@ export function Ribbon({
       </div>
       <div className="ribbon-body" role="tabpanel" aria-label={messages[activeTab]}>
         {panels[activeTab].map((panel) => (
-          <div className="ribbon-panel" key={panel.label}>
+          <div
+            className={`ribbon-panel${(panel.label === 'layers' && layerControls) || (panel.label === 'properties' && propertyControls) ? ' has-live-controls' : ''}`}
+            key={panel.label}
+          >
             <div className="panel-tools">
               {panel.tools.map((tool) => (
                 <div
@@ -225,7 +233,9 @@ export function Ribbon({
                 />
               )}
             </div>
-            {panel.label === 'layers' && (
+            {panel.label === 'layers' && layerControls}
+            {panel.label === 'properties' && propertyControls}
+            {panel.label === 'layers' && !layerControls && (
               <div className="layer-placeholder">
                 <i aria-hidden="true" />
                 {messages.byLayer}

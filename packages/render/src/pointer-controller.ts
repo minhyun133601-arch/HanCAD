@@ -1,6 +1,7 @@
 import type { CadPoint } from '@hancad/legacy-bridge';
 import type { CadAidSettings } from './drafting-aids';
 import type { DisplayLayerStyle } from './sources/style-tables';
+import type { DisplayEntity } from './display/types';
 import type { LinetypeDefinition } from './style/linetype';
 import { selectionPolicy, type SelectionGesture, type SelectionPolicy } from './selection-policy';
 
@@ -58,6 +59,8 @@ export interface CadCanvasOptions {
   getSystemVariable?: (name: string) => unknown;
   getLinetypes?: () => ReadonlyMap<string, LinetypeDefinition>;
   getLayerStyles?: () => ReadonlyMap<string, DisplayLayerStyle>;
+  getNativeDisplayEntities?: () => readonly DisplayEntity[];
+  getLineweightDisplayScale?: () => number;
   /** Called once per completed wheel step, pan drag or extents fit with the prior view. */
   onNavigate?: (kind: CadNavigationKind, before: CadWorldView, after: CadWorldView) => void;
   observeResize?: boolean;

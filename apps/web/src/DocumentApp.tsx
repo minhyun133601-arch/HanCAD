@@ -33,6 +33,10 @@ import { GripMenu } from './menus/GripMenu';
 import { selectionKeywordLabels } from '@hancad/draft';
 import { OverkillDialog } from './OverkillDialog';
 import './overkill.css';
+import { useStyleManagers } from './styles08/useStyleManagers';
+import { RibbonLayerControls, RibbonPropertyControls } from './RibbonLayerControls';
+import { useRibbonProperties } from './useRibbonProperties';
+import { nativePropertyState, commitNativePropertyState } from './native-property-state';
 
 export function DocumentApp({
   document: drawingDocument,
@@ -105,6 +109,8 @@ export function DocumentApp({
     text,
     grip: tools.grip,
     clipboard: tools.clipboard,
+    properties: tools.properties,
+    layers: tools.layers,
     session,
     progressOpen,
     messages,
@@ -128,7 +134,11 @@ export function DocumentApp({
       }),
     [session.sysvars],
   );
-  useHostVariables(drawingDocument.id, { locale, layout, state: tools.state }, canvasSurface);
+  useHostVariables(
+    drawingDocument.id,
+    { locale, layout, state: tools.state, layerManagerOpen: tools.layers.open },
+    canvasSurface,
+  );
   const inputRef = useRef<HTMLDivElement | HTMLInputElement>(null);
   const input = useCommandInput({
     session,
@@ -148,6 +158,47 @@ export function DocumentApp({
     cycleOverlap: interaction.cycleOverlap,
   });
   const { routing, toggle, submit, cancel, execute } = input;
+  const styles = useStyleManagers({
+    registry: session.registry,
+    database: session.database,
+    sysvars: session.sysvars,
+    locale,
+    print: session.print,
+    focus: focusCommand,
+    ...(platform.mode === 'desktop'
+      ? { readSupportFile: (name: string) => platform.readFile(name) }
+      : {}),
+  });
+  const ribbonProperties = useRibbonProperties({
+    korean: locale === 'ko-KR',
+    sysvars: session.sysvars,
+    state: nativePropertyState(session.database, files.state),
+    getState: () => nativePropertyState(session.database, files.getState()),
+    selectedIds: draft.selectedIds,
+    commitState: (label, state) =>
+      commitNativePropertyState(session.sysvars, label, files.getState(), state, files.commitState),
+    layers: tools.layers,
+    execute,
+    print: session.print,
+    openPropertyDialog: (name) => {
+      if (name === 'color')
+        styles.openColor(ribbonProperties.values.color, (value) =>
+          ribbonProperties.changeProperty('color', value),
+        );
+      else if (name === 'transparency')
+        styles.openTransparency(ribbonProperties.values.transparency, (value) =>
+          ribbonProperties.changeProperty('transparency', value),
+        );
+      else if (name === 'lineweight')
+        styles.openLineweight(ribbonProperties.values.lineweight, (value) =>
+          ribbonProperties.changeProperty('lineweight', value),
+        );
+      else
+        styles.openLinetype(ribbonProperties.values.linetype, (value) =>
+          ribbonProperties.changeProperty('linetype', value),
+        );
+    },
+  });
   const { inputMode, commandActive, commandName, historyContext } = routing;
   const selectionKeywords =
     inputMode === 'selection' && !draft.hasSelectionSubprompt()
@@ -156,15 +207,20 @@ export function DocumentApp({
   const points =
     measurement.snapshot?.points ?? dimensions.snapshot?.points ?? draft.snapshot?.points;
   const gripPointInput = tools.grip.snapshot?.pointInput;
+  const layerAid = tools.layers.needsPoint() ? tools.layers.getAidContext() : undefined;
   const basePoint = tools.grip.snapshot
     ? gripPointInput?.sourcePoint
       ? undefined
       : (gripPointInput?.temporaryBase ?? tools.grip.snapshot.basePoint)
-    : (points?.at(-1) ??
-      modification.snapshot?.basePoint ??
-      tools.clipboard.snapshot?.basePoint ??
-      (editing.snapshot?.tool === 'OFFSET' ? editing.snapshot.basePoint : undefined) ??
-      text.snapshot?.point);
+    : layerAid
+      ? layerAid.pointInput.sourcePoint
+        ? undefined
+        : (layerAid.pointInput.temporaryBase ?? layerAid.basePoint)
+      : (points?.at(-1) ??
+        modification.snapshot?.basePoint ??
+        tools.clipboard.snapshot?.basePoint ??
+        (editing.snapshot?.tool === 'OFFSET' ? editing.snapshot.basePoint : undefined) ??
+        text.snapshot?.point);
   const coordinates = useStatusCoordinates({
     sysvars: session.sysvars,
     pointPrompt: inputMode === 'point' || inputMode === 'number',
@@ -279,6 +335,8 @@ export function DocumentApp({
         setActiveTab={setRibbon}
         execute={execute}
         keyTipsEnabled={session.sysvars.getNumber('MENUBAR') === 0}
+        layerControls={<RibbonLayerControls {...ribbonProperties} />}
+        propertyControls={<RibbonPropertyControls {...ribbonProperties} />}
       />
       <FileTabs
         messages={messages}
@@ -375,10 +433,14 @@ export function DocumentApp({
           getSystemVariable={interaction.getSystemVariable}
           getLinetypes={interaction.getLinetypes}
           getLayerStyles={interaction.getLayerStyles}
+          getNativeDisplayEntities={interaction.getNativeDisplayEntities}
+          getLineweightDisplayScale={interaction.getLineweightDisplayScale}
         />
         <DynamicInputOverlay view={dynamic} />
         {interaction.selectionOverlay}
         {tools.properties.panels}
+        {tools.layers.palette}
+        {styles.dialogs}
         {draft.dialogs}
         {draft.snapshot?.dialog === 'overkill' && (
           <OverkillDialog

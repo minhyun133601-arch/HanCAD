@@ -166,6 +166,16 @@ export function useEditorAids(options: Options) {
         temporary: clipboard.trackingPoints,
       };
     }
+    if (live.layers.needsPoint()) {
+      const layer = live.layers.getAidContext();
+      return {
+        base: layer.pointInput.sourcePoint
+          ? undefined
+          : (layer.pointInput.temporaryBase ?? layer.basePoint),
+        previous: undefined,
+        temporary: layer.trackingPoints,
+      };
+    }
     const points = live.measurement.snapshot?.points ?? live.dimensions.snapshot?.points;
     const base = live.draft.isDrafting()
       ? context.pointInput.sourcePoint || context.deferred

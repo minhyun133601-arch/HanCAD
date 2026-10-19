@@ -285,7 +285,7 @@ test('a small Korean drawing exports readable text and circle geometry', async (
   await expect(page.getByTestId('drawing-entity-count')).toHaveText('6');
 });
 
-test('turning on distant large objects fits before rendering and remains undoable', async ({
+test('turning on distant large objects preserves the view, remains undoable and fits with ZOOM Extents', async ({
   page,
 }) => {
   const dxf = [
@@ -371,13 +371,23 @@ test('turning on distant large objects fits before rendering and remains undoabl
     .getByRole('button', { name: '모든 도면층 켜기', exact: true })
     .click({ timeout: 5000 });
   await expect(canvas).toHaveAttribute('data-entity-count', '2');
-  expect(Number(await canvas.getAttribute('data-zoom'))).toBeLessThan(hiddenZoom / 100);
+  expect(Number(await canvas.getAttribute('data-zoom'))).toBe(hiddenZoom);
   await page.keyboard.type('U');
   await page.keyboard.press('Enter');
   await expect(canvas).toHaveAttribute('data-entity-count', '0');
   await page.keyboard.type('REDO');
   await page.keyboard.press('Enter');
   await expect(canvas).toHaveAttribute('data-entity-count', '2');
+  expect(Number(await canvas.getAttribute('data-zoom'))).toBe(hiddenZoom);
+  const input = page.getByRole('textbox', { name: '명령 입력', exact: true });
+  for (const token of ['ZOOM', 'E']) {
+    await input.focus();
+    await page.keyboard.type(token);
+    await page.keyboard.press('Enter');
+  }
+  await expect
+    .poll(async () => Number(await canvas.getAttribute('data-zoom')))
+    .toBeLessThan(hiddenZoom / 100);
   await page.reload();
   await expect(canvas).toHaveAttribute('data-entity-count', '2');
   expect(Number(await canvas.getAttribute('data-zoom'))).toBeLessThan(hiddenZoom / 100);

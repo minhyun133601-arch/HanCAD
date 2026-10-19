@@ -53,6 +53,8 @@ interface DraftingOptions {
   cancelOthers?: () => void;
   onSelectionComplete?: () => void;
   selectionPromptActive?: () => boolean;
+  getSelectionState?: () => LegacyCadState;
+  additionalValidIds?: () => readonly string[];
   pickEntityId?: (point: CadPoint) => string | undefined;
   resolveTypedPoint?: (
     point: CadPoint,
@@ -92,14 +94,16 @@ export function useDrafting(options: DraftingOptions) {
   const [snapshot, setSnapshot] = useState<DraftSnapshot | null>(null);
   const selection = useSelectionController({
     ...options,
-    additionalValidIds: () =>
-      nativeHatchIdentities(latest.current.sysvars.database, latest.current.getState()),
+    additionalValidIds: () => [
+      ...nativeHatchIdentities(latest.current.sysvars.database, latest.current.getState()),
+      ...(latest.current.additionalValidIds?.() ?? []),
+    ],
     getState: () => {
       const current = latest.current,
         model = current.getState();
       return pendingModify.current === 'MIRROR'
         ? nativeMirrorSelectionState(current.sysvars.database, model)
-        : model;
+        : (current.getSelectionState?.() ?? model);
     },
     selectionPromptActive: () =>
       pendingModify.current !== null || !!latest.current.selectionPromptActive?.(),
@@ -183,7 +187,7 @@ export function useDrafting(options: DraftingOptions) {
     const model = current.getState();
     const entitiesById = new Map(model.entities.map((entity) => [entity.id, entity]));
     const layer = model.layers.find((item) => item.name === model.settings.layer);
-    if (!modifyingTools.has(tool) && layer && (!layer.visible || layer.locked)) {
+    if (!modifyingTools.has(tool) && layer?.frozen) {
       current.print(current.messages.currentLayerHidden);
       return;
     }

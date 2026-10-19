@@ -48,3 +48,6 @@ export * from './overkill-dialog-program';
 export { syncSimpleDrawCurve } from './draw-simple-grips';
 export * from './draw-multiple';
 export { multilinePaths } from './draw-mline';
+export { cornerExpression } from './modify-corner-expression';
+export { splineClose } from './modify-spline-data';
+export { purgeSplineFit, refitEditSpline } from './modify-spline-refit';

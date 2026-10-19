@@ -1,4 +1,4 @@
-import { getLegacyRuntime } from '@hancad/legacy-bridge';
+import { getLegacyRuntime, visibleCadEntities } from '@hancad/legacy-bridge';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import { lineBoundaryParameters } from './trim-geometry';
 import { validDraftPoint } from './coordinates';
@@ -161,7 +161,7 @@ export function selectCadPath(
   );
   const pathEdges: [CadPoint, CadPoint][] = points.slice(1).map((p, i) => [points[i]!, p]);
   if (mode !== 'fence') pathEdges.push([points.at(-1)!, points[0]!]);
-  return state.entities
+  return visibleCadEntities(state)
     .filter((entity) => {
       if (blocked.has(entity.layer)) return false;
       const exact = selectDrawCurvePath(entity, points, mode, (point) =>

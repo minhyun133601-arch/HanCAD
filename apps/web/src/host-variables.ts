@@ -13,6 +13,7 @@ export interface HostFacts {
   layout: LayoutId;
   state: LegacyCadState;
   surface: CanvasSurface | null;
+  layerManagerOpen?: boolean;
 }
 
 const sources = new Map<string, () => HostFacts>();
@@ -36,7 +37,6 @@ const closedPalettes = [
   'COUNTPALETTESTATE',
   'DRSTATE',
   'ERSTATE',
-  'LAYERMANAGERSTATE',
   'MSMSTATE',
   'SSMSTATE',
   'TPSTATE',
@@ -49,6 +49,8 @@ export function hostValue(document: DrawingDocument, name: string): SysvarValue 
   if (['PERSPECTIVE', 'VIEWBACKSTATUS', 'VIEWFWDSTATUS'].includes(name)) return 0;
   if (!facts) return undefined;
   switch (name) {
+    case 'LAYERMANAGERSTATE':
+      return facts.layerManagerOpen ? 1 : 0;
     case 'LOCALE':
       return facts.locale === 'ko-KR' ? 'KOR' : 'ENU';
     case 'CLAYOUT': {

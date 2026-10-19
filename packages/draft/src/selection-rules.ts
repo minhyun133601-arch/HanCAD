@@ -1,4 +1,4 @@
-import { getLegacyRuntime, normalizeCadState } from '@hancad/legacy-bridge';
+import { getLegacyRuntime, normalizeCadState, visibleCadEntities } from '@hancad/legacy-bridge';
 import type { CadBounds, CadGroup, LegacyCadState } from '@hancad/legacy-bridge';
 
 export function expandSelectionGroups(
@@ -37,7 +37,9 @@ export function updateCadSelection(
     old = new Set(current);
   const visible = new Set(state.layers.filter((layer) => layer.visible).map((layer) => layer.name));
   const locked = new Set(state.layers.filter((layer) => layer.locked).map((layer) => layer.name));
-  const eligible = state.entities.filter(
+  const zero = state.layers.find((layer) => layer.name === '0');
+  if (zero && (!zero.visible || zero.frozen)) locked.add('Defpoints');
+  const eligible = visibleCadEntities(state).filter(
     (entity) => wanted.has(entity.id) && visible.has(entity.layer),
   );
   const editable = eligible

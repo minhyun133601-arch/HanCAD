@@ -1,5 +1,21 @@
 # Architecture
 
+Phase 08 layer commands and modeless palettes publish compatibility layer state,
+native LAYER records, current-layer variables and state/filter metadata in one
+transaction. Handles survive renaming and references in block definitions follow
+the new name without replacing unrelated groups. Original complex LIN descriptors
+remain in native LTYPE fields; compatibility editors see their loaded names and
+scalar dash lengths. Native INSERT paths resolve layer 0 and ByBlock inheritance
+before rendering. Definition geometry never appears independently in model space.
+
+Properties uses native inquiry adapters which never enter the compatibility view.
+A command composes native field/group patches and its view replacement into one
+undo group. Object isolation is independent of layer off/frozen state and filters
+rendering, selection and osnap. Temporary isolation ends at reopen/recovery entry
+points; Undo and document switching retain it. Object/style edits invalidate native
+meshes while navigation keeps them. Native OS integration includes bounded local
+LIN/LAS support-resource reads.
+
 Phase 07 modifying tools share the typed drawing coroutine host. The host
 captures command-first or preselected sets, crossing-window acquisitions and
 individual picks, including selection Undo. Nested PEDIT/SPLINEDIT selections

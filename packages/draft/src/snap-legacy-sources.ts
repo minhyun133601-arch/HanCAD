@@ -8,9 +8,12 @@ export function legacySnapSources(
   state: LegacyCadState,
   additionalEntities: readonly CadEntity[] = [],
 ): SnapSource[] {
-  const hidden = new Set(state.layers.filter((layer) => !layer.visible).map((layer) => layer.name));
+  const hidden = new Set(
+    state.layers.filter((layer) => !layer.visible || layer.frozen).map((layer) => layer.name),
+  );
+  const isolated = new Set(state.objectIsolation?.hiddenIds ?? []);
   return [...state.entities, ...additionalEntities]
-    .filter((entity) => !hidden.has(entity.layer))
+    .filter((entity) => !hidden.has(entity.layer) && !isolated.has(entity.id))
     .flatMap(legacyEntitySnapSources);
 }
 export function legacyEntitySnapSources(entity: CadEntity): SnapSource[] {

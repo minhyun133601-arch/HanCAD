@@ -3,6 +3,10 @@
   "currentApp": {
     "features": [
       {
+        "ko-KR": "도면층 관리자·필터·상태·LAS, 실시간 리본, 트루컬러·복합 선종류와 다중 객체 특성 편집",
+        "en-US": "Layer manager, filters/states/LAS, live layer ribbon, True Color, complex linetypes and mixed-object property editing"
+      },
+      {
         "ko-KR": "명령행·자동완성·PGP 별칭·투명 명령·매크로·IME 안전 입력과 Alt 리본 키팁",
         "en-US": "Command line, AutoComplete, PGP aliases, transparent commands, macros, IME-safe input and Alt ribbon keytips"
       },
@@ -201,10 +205,10 @@
         "ko-KR": "도면층·특성",
         "en-US": "Layers and properties"
       },
-      "status": "in-progress",
+      "status": "complete",
       "detail": {
-        "ko-KR": "읽어온 도면층 상태 유지와 전체 표시 지원. 개별 편집·특성 관리 확장 예정.",
-        "en-US": "Imported layer states are retained and all layers can be shown. Individual layer and property editing remain planned."
+        "ko-KR": "도면층·필터·상태·LAS, 표시 속성·리본, 형상 특성 편집·MATCHPROP·객체 분리를 구현했습니다. 전체 브라우저·Windows 앱·회귀·성능 검증을 통과했습니다.",
+        "en-US": "Layer manager, filters/states/LAS, display properties, live ribbon, geometry Properties, MATCHPROP and object isolation pass comprehensive browser, Windows native, regression and performance acceptance."
       }
     },
     {

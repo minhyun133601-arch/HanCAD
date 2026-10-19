@@ -82,7 +82,7 @@ export function useTextCreation(options: Options) {
     live.cancelOthers();
     const model = live.getState();
     const layer = model.layers.find((item) => item.name === model.settings.layer);
-    if (layer && (!layer.visible || layer.locked)) {
+    if (layer?.frozen) {
       live.print(live.messages.currentLayerHidden);
       return;
     }

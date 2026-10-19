@@ -1,5 +1,24 @@
 # Parity checklist
 
+- [ ] Phase 08: compare Korean Layer Properties Manager columns, F2/search/sort,
+      property/group filters and imported/exported LAS with installed AutoCAD.
+- [ ] Compare -LAYER options/defaults and accepted changes after Escape, LAYERP,
+      LAYISO Off/Lock-and-Fade and locked-layer selection rules.
+- [ ] Compare CLAYER on off/locked layers, creation on the locked current layer,
+      and frozen-layer rejection against the installed Korean metric reference.
+- [ ] Compare LAYERNOTIFY event masks and unreconciled-layer timing on actual
+      OPEN/SAVE/plot/xref workflows as their file/reference phases become available.
+- [ ] Overlay nested layer-0/ByBlock color, true color, linetype, lineweight and
+      transparency, including frozen/locked ancestor insertion layers.
+- [ ] Compare lineweight display-scale quantization, locked fading, Properties
+      categories/type filters, MATCHPROP Settings, Quick Properties and rollover.
+- [ ] Compare per-type geometry captions, angle/parameter presentation and
+      indexed polyline/spline editors, including ellipse parameter radians.
+- [ ] Compare changing OBJECTISOLATIONMODE after hiding and before saving;
+      automated mode cases currently set it before each isolation operation.
+- [ ] Verify physical Windows Korean IME/F2 renaming and shortcut routing;
+      browser/native CDP tests do not certify physical IME/Hanja input.
+
 - [ ] Phase 07 XLINE/RAY TRIM: compare outside and middle intervals, resulting
       RAY/LINE source types, finite-base EXTEND, fence picks beyond the unit sample
       and one U restoring the original source. Headless construction tests pass;
@@ -102,7 +121,8 @@ command is not an implemented command.
 - [ ] Verify direct-distance bases at dimension placement prompts and empty object-pick behavior.
 - [ ] Verify block insertion and drawing opening use distinct drop targets.
 - [ ] Verify one completed command corresponds to one undo group.
-- [ ] Review transitional auto-fit after LAYON when all imported layers were off.
+- [ ] Compare LAYON preserving the current view and explicit ZOOM Extents after
+      imported layers were all off; the transitional automatic fit is removed.
 - [ ] Verify advanced LINE/CIRCLE/RECTANG/PLINE options beyond the initial usable subset.
 - [ ] Verify complete opaque-object and reference preservation across I/O.
 - [ ] Verify DIMSCALE changes annotation sizes without changing measurements.

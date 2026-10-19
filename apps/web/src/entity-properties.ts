@@ -1,7 +1,13 @@
 import { normalizeCadState } from '@hancad/legacy-bridge';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import { geometryLength } from '@hancad/geom';
-import { syncSimpleDrawCurve } from '@hancad/draft';
+import { cornerExpression, syncSimpleDrawCurve } from '@hancad/draft';
+import {
+  editablePropertyCurve,
+  entityCurveProperties,
+  propertyCurveIndex,
+} from './entity-curve-properties';
+import { changePropertyCurve } from './entity-curve-edit';
 
 export interface EntityProperty {
   key: string;
@@ -10,6 +16,33 @@ export interface EntityProperty {
   kind: 'text' | 'number' | 'boolean';
   readOnly?: boolean;
   value: string;
+  category: 'general' | 'visualization' | 'geometry' | 'other';
+}
+export function propertyTypeLabel(type: string, korean: boolean): string {
+  if (!korean) return type.toUpperCase();
+  return (
+    (
+      {
+        LINE: '선',
+        CIRCLE: '원',
+        ARC: '호',
+        POLYLINE: '폴리선',
+        RECT: '폴리선',
+        LWPOLYLINE: '폴리선',
+        TEXT: '문자',
+        MTEXT: '여러 줄 문자',
+        DIMENSION: '치수',
+        POINT: '점',
+        SPLINE: '스플라인',
+        ELLIPSE: '타원',
+        XLINE: '구성선',
+        RAY: '광선',
+        REGION: '영역',
+        HATCH: '해치',
+        MLINE: '다중선',
+      } as Record<string, string>
+    )[type.toUpperCase()] ?? type
+  );
 }
 export const propertyLineweights = [
   -3, -2, -1, 0, 5, 9, 13, 15, 18, 20, 25, 30, 35, 40, 50, 53, 60, 70, 80, 90, 100, 106, 120, 140,
@@ -28,12 +61,28 @@ function point(entity: CadEntity, name: string): CadPoint | undefined {
   return undefined;
 }
 function value(entity: CadEntity, key: string): string {
-  if (key === 'type' && entity.sourceType) return entity.sourceType;
+  if (
+    editablePropertyCurve(entity) &&
+    (key.startsWith('curve.') || /^(center\.|radius$|diameter$|startAngle$|endAngle$)/.test(key))
+  ) {
+    const property = entityCurveProperties(entity, propertyCurveIndex(key)).find(
+      (field) => field.key === key,
+    );
+    if (property) return property.value;
+  }
+  if (key === 'type') return (entity.sourceType ?? entity.type).toUpperCase();
   if (key === 'length' && entity.curve) return String(geometryLength(entity.curve));
   if (key === 'length' && entity.regionLoops)
     return String(entity.regionLoops.flat().reduce((sum, curve) => sum + geometryLength(curve), 0));
+  if (entity.type === 'circle') {
+    if (key === 'diameter') return String(entity.radius * 2);
+    if (key === 'circumference') return String(2 * Math.PI * entity.radius);
+    if (key === 'area') return String(Math.PI * entity.radius ** 2);
+  }
   if (key === 'color' && entity.trueColor === undefined && entity.aci === 256) return 'ByLayer';
   if (key === 'color' && entity.trueColor === undefined && entity.aci === 0) return 'ByBlock';
+  if (key === 'color' && entity.trueColor === undefined && entity.aci !== undefined)
+    return String(entity.aci);
   if (key.includes('.')) {
     const [name = '', axis = ''] = key.split('.'),
       position = point(entity, name);
@@ -55,7 +104,8 @@ function value(entity: CadEntity, key: string): string {
     return String((-entity.startAngle * 180) / Math.PI);
   if (key === 'endAngle' && entity.type === 'arc')
     return String((-entity.endAngle * 180) / Math.PI);
-  if (key in entity) return String((entity as unknown as Record<string, unknown>)[key]);
+  const stored = (entity as unknown as Record<string, unknown>)[key];
+  if (stored !== undefined) return String(stored);
   return (
     (
       {
@@ -63,6 +113,9 @@ function value(entity: CadEntity, key: string): string {
         linetypeScale: '1',
         lineweight: '-1',
         transparency: 'bylayer',
+        thickness: '0',
+        material: 'ByLayer',
+        plotStyle: 'ByLayer',
       } as Record<string, string>
     )[key] ?? ''
   );
@@ -82,6 +135,9 @@ const common: Descriptor[] = [
   ['linetypeScale', '선종류 축척', 'Linetype scale', 'number'],
   ['lineweight', '선가중치', 'Lineweight', 'number'],
   ['transparency', '투명도', 'Transparency', 'text'],
+  ['thickness', '두께', 'Thickness', 'number'],
+  ['material', '재료', 'Material', 'text'],
+  ['plotStyle', '플롯 스타일', 'Plot style', 'text'],
 ];
 function coordinates(name: string, ko: string, en: string): Descriptor[] {
   return (['x', 'y', 'z'] as const).map((axis) => [
@@ -92,6 +148,12 @@ function coordinates(name: string, ko: string, en: string): Descriptor[] {
   ]);
 }
 function descriptors(entity: CadEntity): Descriptor[] {
+  if (
+    (entity.type === 'polyline' || entity.type === 'rect') &&
+    !entity.points.length &&
+    !entity.curve
+  )
+    return [];
   if (
     (entity.curve && !['line', 'circle', 'arc'].includes(entity.type)) ||
     entity.regionLoops ||
@@ -113,7 +175,13 @@ function descriptors(entity: CadEntity): Descriptor[] {
         ['length', '길이', 'Length', 'number', true],
       ];
     case 'circle':
-      return [...coordinates('center', '중심', 'Center'), ['radius', '반지름', 'Radius', 'number']];
+      return [
+        ...coordinates('center', '중심', 'Center'),
+        ['radius', '반지름', 'Radius', 'number'],
+        ['diameter', '지름', 'Diameter', 'number'],
+        ['circumference', '원주', 'Circumference', 'number', true],
+        ['area', '면적', 'Area', 'number', true],
+      ];
     case 'arc':
       return [
         ...coordinates('center', '중심', 'Center'),
@@ -151,27 +219,60 @@ function descriptors(entity: CadEntity): Descriptor[] {
   }
 }
 
-export function entityProperties(entities: readonly CadEntity[]): EntityProperty[] {
+export function entityProperties(
+  entities: readonly CadEntity[],
+  geometryIndex = 0,
+): EntityProperty[] {
   if (!entities.length) return [];
   const first = entities[0]!,
     sameType = entities.every(
-      (entity) => (entity.sourceType ?? entity.type) === (first.sourceType ?? first.type),
+      (entity) =>
+        (entity.sourceType ?? entity.type).toUpperCase() ===
+        (first.sourceType ?? first.type).toUpperCase(),
     );
-  return [...common, ...(sameType ? descriptors(first) : [])].map(
-    ([key, ko, en, kind, readOnly]) => {
-      const firstValue = value(first, key);
-      return {
-        key,
-        ko,
-        en,
-        kind,
-        ...(readOnly ? { readOnly } : {}),
-        value: entities.every((entity) => value(entity, key) === firstValue)
-          ? firstValue
+  const fields: EntityProperty[] = [
+    ...common,
+    ...(sameType && !editablePropertyCurve(first) ? descriptors(first) : []),
+  ].map(([key, ko, en, kind, readOnly]) => {
+    const firstValue = value(first, key);
+    return {
+      key,
+      ko,
+      en,
+      kind,
+      category:
+        key === 'material'
+          ? 'visualization'
+          : key === 'plotStyle'
+            ? 'other'
+            : common.some((descriptor) => descriptor[0] === key)
+              ? 'general'
+              : 'geometry',
+      ...(readOnly ? { readOnly } : {}),
+      value: entities.every((entity) => value(entity, key) === firstValue)
+        ? firstValue
+        : '*VARIES*',
+    };
+  });
+  if (sameType && editablePropertyCurve(first)) {
+    const others = entities
+      .slice(1)
+      .map(
+        (entity) =>
+          new Map(
+            entityCurveProperties(entity, geometryIndex).map((field) => [field.key, field.value]),
+          ),
+      );
+    fields.push(
+      ...entityCurveProperties(first, geometryIndex).map((field) => ({
+        ...field,
+        value: others.every((values) => values.get(field.key) === field.value)
+          ? field.value
           : '*VARIES*',
-      };
-    },
-  );
+      })),
+    );
+  }
+  return fields;
 }
 
 /** Validate the entire edit before creating a journal replacement snapshot. */
@@ -190,9 +291,11 @@ export function changeEntityProperty(
     )
   )
     throw new Error('Objects on locked layers cannot be modified.');
-  const property = entityProperties(selected).find((item) => item.key === key);
+  const property = entityProperties(selected, propertyCurveIndex(key)).find(
+    (item) => item.key === key,
+  );
   if (!property || property.readOnly) throw new Error('Property is not editable.');
-  const numeric = Number(input);
+  const numeric = property.kind === 'number' ? (cornerExpression(input) ?? NaN) : Number(input);
   if (
     property.kind === 'number' &&
     (!input.trim() || !Number.isFinite(numeric) || Math.abs(numeric) > 1e12)
@@ -200,7 +303,7 @@ export function changeEntityProperty(
     throw new Error('A finite numeric value is required.');
   if (property.kind === 'boolean' && !['true', 'false'].includes(input))
     throw new Error('Invalid boolean value.');
-  if (['radius', 'textSize', 'dimScale', 'linetypeScale'].includes(key) && numeric <= 0)
+  if (['radius', 'diameter', 'textSize', 'dimScale', 'linetypeScale'].includes(key) && numeric <= 0)
     throw new Error('Value must be greater than zero.');
   if ((key === 'textSize' && numeric > 1000) || (key === 'dimScale' && numeric > 10000))
     throw new Error('Value exceeds the supported property range.');
@@ -208,7 +311,11 @@ export function changeEntityProperty(
     throw new Error('Precision must be an integer from 0 through 8.');
   if (key === 'layer' && !state.layers.some((layer) => layer.name === input && !layer.locked))
     throw new Error('Choose an existing unlocked layer.');
-  if (key === 'color' && !/^(#[0-9a-f]{6}|bylayer|byblock)$/i.test(input))
+  if (
+    key === 'color' &&
+    !/^(#[0-9a-f]{6}|bylayer|byblock)$/i.test(input) &&
+    (!/^\d+$/.test(input) || Number(input) > 256)
+  )
     throw new Error('Invalid color.');
   if (
     key === 'linetype' &&
@@ -229,6 +336,18 @@ export function changeEntityProperty(
   const entities = state.entities.map((entity) => {
     if (!wanted.has(entity.id)) return entity;
     const changed = structuredClone(entity);
+    if (
+      changed.curve &&
+      editablePropertyCurve(changed) &&
+      entityCurveProperties(changed, propertyCurveIndex(key)).some((field) => field.key === key)
+    ) {
+      changed.curve = changePropertyCurve(
+        changed.curve,
+        key,
+        property.kind === 'boolean' ? input === 'true' : numeric,
+      );
+      return changed;
+    }
     if (key.includes('.')) {
       const [name = '', axis = ''] = key.split('.'),
         position = point(changed, name);
@@ -240,10 +359,12 @@ export function changeEntityProperty(
       changed.startAngle = (-numeric * Math.PI) / 180;
     else if (key === 'endAngle' && changed.type === 'arc')
       changed.endAngle = (-numeric * Math.PI) / 180;
+    else if (key === 'diameter' && changed.type === 'circle') changed.radius = numeric / 2;
     else if (key === 'color') {
       changed.color = input.startsWith('#') ? input : changed.color;
       if (input.toLowerCase() === 'bylayer') changed.aci = 256;
       else if (input.toLowerCase() === 'byblock') changed.aci = 0;
+      else if (/^\d+$/.test(input)) changed.aci = Number(input);
       else {
         delete changed.aci;
         changed.trueColor = parseInt(input.slice(1), 16);
@@ -264,5 +385,16 @@ export function changeEntityProperty(
       });
     return syncSimpleDrawCurve(changed);
   });
-  return normalizeCadState({ ...state, entities });
+  const inquiries = new Set(
+    entities
+      .filter((entity) => entity.sourceType && entity.id.startsWith('native:ENTITY:'))
+      .map((entity) => entity.id),
+  );
+  if (!inquiries.size) return normalizeCadState({ ...state, entities });
+  const normalized = normalizeCadState({
+    ...state,
+    entities: entities.filter((entity) => !inquiries.has(entity.id)),
+  });
+  const byId = new Map(normalized.entities.map((entity) => [entity.id, entity]));
+  return { ...normalized, entities: entities.map((entity) => byId.get(entity.id) ?? entity) };
 }

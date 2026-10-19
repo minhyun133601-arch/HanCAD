@@ -1,5 +1,6 @@
 /** Command catalog rows S-Z; see rows-a.ts for the field order. */
 export const rowsS: readonly string[] = [
+  'SETBYLAYER|ByLayer로 변경|Set ByLayer|선택한 객체의 특성 재지정을 ByLayer로 변경합니다.|Changes property overrides on selected objects to ByLayer.|8',
   'SKETCH|스케치|Sketch|자유형 스케치 선 세그먼트를 작성합니다.|Creates freehand sketch line segments.|6',
   'TRACE|두께선|Legacy Trace|이전 버전의 폭을 가진 2D 두께선을 작성합니다.|Creates the legacy wide 2D trace primitive requested by Phase 06.|6',
   'SAVE|저장|Save|현재 파일 이름 또는 지정한 이름으로 도면을 저장합니다.|Saves the drawing under the current or a specified file name.|9',
@@ -58,7 +59,7 @@ export const rowsS: readonly string[] = [
   'UNDO|명령 취소|Undo|명령의 효과를 되돌립니다.|Reverses the effect of commands.|1',
   'UNGROUP|그룹 해제|Ungroup|그룹의 객체를 개별 객체로 분리합니다.|Ungroups objects in a group.|5',
   'UNION|합집합|Union|둘 이상의 3D 솔리드, 표면 또는 2D 영역을 하나로 결합합니다.|Unions two or more 3D solids, surfaces or 2D regions into one.|22',
-  'UNISOLATEOBJECTS|객체 격리 끝|End Object Isolation|격리되거나 숨겨진 객체를 표시합니다.|Displays objects previously hidden or isolated.|15',
+  'UNISOLATEOBJECTS|객체 격리 끝|End Object Isolation|격리되거나 숨겨진 객체를 표시합니다.|Displays objects previously hidden or isolated.|8',
   'UNITS|단위|Units|좌표, 거리 및 각도의 표시 형식과 정밀도를 조정합니다.|Controls coordinate, distance and angle formats and precision.|15',
   'VIEW|뷰 관리자|View Manager|이름 있는 뷰, 카메라 뷰, 배치 뷰 및 사전 설정 뷰를 저장하고 복원합니다.|Saves and restores named model space, layout and preset views.|21',
   'VIEWGO|뷰로 이동|Go to View|이름 있는 뷰를 복원합니다.|Restores a named view.|21',

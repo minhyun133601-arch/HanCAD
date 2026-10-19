@@ -1,4 +1,4 @@
-import { getLegacyRuntime, normalizeCadState } from '@hancad/legacy-bridge';
+import { getLegacyRuntime, normalizeCadState, visibleCadEntities } from '@hancad/legacy-bridge';
 import type { CadEntity, CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
 import { validDraftPoint } from './coordinates';
 import { copyCadGroups } from './selection-rules';
@@ -7,8 +7,12 @@ import { selectDrawCurvePath } from './selection-draw-curves';
 
 export function editableSelection(state: LegacyCadState, ids: readonly string[]): CadEntity[] {
   const wanted = new Set(ids);
-  const blocked = new Set(state.layers.filter((l) => !l.visible || l.locked).map((l) => l.name));
-  return state.entities.filter((entity) => wanted.has(entity.id) && !blocked.has(entity.layer));
+  const blocked = new Set(state.layers.filter((l) => l.locked).map((l) => l.name));
+  const zero = state.layers.find((layer) => layer.name === '0');
+  if (zero && (!zero.visible || zero.frozen)) blocked.add('Defpoints');
+  return visibleCadEntities(state).filter(
+    (entity) => wanted.has(entity.id) && !blocked.has(entity.layer),
+  );
 }
 
 /** Left-to-right contains complete objects; right-to-left crosses actual geometry. */
@@ -23,7 +27,9 @@ export function selectCadArea(
   const blocked = new Set(
     state.layers.filter((l) => !l.visible || (!includeLocked && l.locked)).map((l) => l.name),
   );
-  const eligible = state.entities.filter((entity) => !blocked.has(entity.layer));
+  const zero = state.layers.find((layer) => layer.name === '0');
+  if (zero && (!zero.visible || zero.frozen)) blocked.add('Defpoints');
+  const eligible = visibleCadEntities(state).filter((entity) => !blocked.has(entity.layer));
   const crossing = mode === 'crossing' || (mode === 'box' && b.x < a.x);
   const minX = Math.min(a.x, b.x),
     maxX = Math.max(a.x, b.x),

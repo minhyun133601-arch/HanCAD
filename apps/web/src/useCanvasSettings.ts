@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { drawingStyleTables, type DrawingStyleTables } from '@hancad/render';
 import type { CanvasInteractionOptions } from './useCanvasInteraction';
+import { nativeDisplayEntities } from './native-display-entities';
+import type { DisplayEntity } from '@hancad/render';
+import { readLineweightDisplayScale } from './styles08/lineweight-scale';
 
 /** Live display variables and cached layer tables shared by the drawing surface. */
 export function useCanvasSettings(options: CanvasInteractionOptions, needsPoint: () => boolean) {
@@ -10,13 +13,55 @@ export function useCanvasSettings(options: CanvasInteractionOptions, needsPoint:
     state: ReturnType<CanvasInteractionOptions['files']['getState']>;
     tables: DrawingStyleTables;
   } | null>(null);
-  useEffect(
-    () =>
-      options.session.database.events.subscribe(() => {
-        styleCache.current = null;
-      }),
-    [options.session.database],
-  );
+  const nativeCache = useRef<readonly DisplayEntity[] | null>(null);
+  const displayScale = useRef(readLineweightDisplayScale());
+  useEffect(() => {
+    let disposed = false,
+      queued = false;
+    const refresh = () => {
+      styleCache.current = null;
+      nativeCache.current = null;
+      if (queued) return;
+      queued = true;
+      queueMicrotask(() => {
+        queued = false;
+        if (disposed) return;
+        const live = latest.current;
+        live.surface.current?.setDrawing(live.files.getState(), false);
+        live.surface.current?.setSelection(live.draft.getSelectedIds());
+        live.surface.current?.redraw();
+      });
+    };
+    const unsubscribe = options.session.database.events.subscribe((event) => {
+      if (
+        event.type === 'object-added' ||
+        event.type === 'object-modified' ||
+        event.type === 'object-erased' ||
+        event.type === 'object-unerased'
+      )
+        refresh();
+      else latest.current.surface.current?.redraw();
+    });
+    const unsubscribeVariables = options.session.sysvars.events.subscribe((event) => {
+      if (event.name === 'LWDEFAULT') refresh();
+      else latest.current.surface.current?.redraw();
+    });
+    const scaleChanged = (event: Event) => {
+      const value = event instanceof CustomEvent ? Number(event.detail) : NaN;
+      displayScale.current =
+        Number.isFinite(value) && value >= 0.1 && value <= 10
+          ? value
+          : readLineweightDisplayScale();
+      refresh();
+    };
+    window.addEventListener('hancad-lineweight-scale-change', scaleChanged);
+    return () => {
+      disposed = true;
+      unsubscribe();
+      unsubscribeVariables();
+      window.removeEventListener('hancad-lineweight-scale-change', scaleChanged);
+    };
+  }, [options.session.database]);
   function styleTables(): DrawingStyleTables {
     const live = latest.current,
       state = live.files.getState();
@@ -44,6 +89,16 @@ export function useCanvasSettings(options: CanvasInteractionOptions, needsPoint:
     getSystemVariable: (name: string): unknown => latest.current.session.sysvars.get(name),
     getLinetypes: () => styleTables().linetypes,
     getLayerStyles: () => styleTables().layers,
+    getLineweightDisplayScale: () => displayScale.current,
+    getNativeDisplayEntities: () => {
+      const live = latest.current;
+      nativeCache.current ??= nativeDisplayEntities(
+        live.session.database,
+        live.files.getState(),
+        live.session.sysvars.getNumber('LWDEFAULT'),
+      );
+      return nativeCache.current;
+    },
     getAidSettings: () => {
       const live = latest.current,
         vars = live.session.sysvars;

@@ -5,6 +5,7 @@ import { legacySnapSources, SnapIndex } from '@hancad/draft';
 import type { SnapSource } from '@hancad/draft';
 import type { CadEntity, LegacyCadState } from '@hancad/legacy-bridge';
 import { nativeHatchSnapCurves } from './native-hatch-snap-sources';
+import { nativePropertyIds } from './native-property-state';
 
 /** Native curves keep weights, bulges, ellipse axes and elevation through point acquisition. */
 export function nativeSnapSources(
@@ -45,7 +46,7 @@ export function nativeSnapSources(
       .map((object) => object.name),
   );
   for (const layer of legacy?.layers ?? [])
-    if (!layer.visible) hidden.add(layer.name);
+    if (!layer.visible || layer.frozen) hidden.add(layer.name);
     else hidden.delete(layer.name);
   const visible = (object: DatabaseObject, inheritLayer?: string): boolean => {
     const layer =
@@ -54,6 +55,7 @@ export function nativeSnapSources(
         : (groupString(object, 8) ?? '0');
     return (
       object.fields.visible !== false &&
+      !legacy?.objectIsolation?.hiddenIds.includes(object.handle) &&
       number(object, 'visibility', 60, 0) !== 1 &&
       !hidden.has(layer === '0' && inheritLayer ? inheritLayer : layer)
     );
@@ -208,7 +210,14 @@ export function drawingSnapSources(
       geometry: { type: 'POINT', position: point },
     });
   }
-  return [...merged.values()];
+  const hiddenIds = new Set(state.objectIsolation?.hiddenIds ?? []);
+  if (!hiddenIds.size) return [...merged.values()];
+  const nativeIds = nativePropertyIds(database, state);
+  return [...merged.values()].filter(
+    (source) =>
+      !hiddenIds.has(source.entityId ?? source.id) &&
+      !hiddenIds.has(nativeIds.get(source.entityId ?? source.id) ?? ''),
+  );
 }
 export function createDrawingSnapIndex(
   database: DrawingDatabase,

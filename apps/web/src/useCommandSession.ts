@@ -223,10 +223,11 @@ export function useCommandSession(locale: Locale, document?: DrawingDocument) {
       runtime.database.invalidateSingleRedo();
     if (resolution && command && resolution.definition.nextPrompt) {
       const values = tokens.slice(1);
-      const step = nextStep(command, resolution.prefixes, values);
+      const prefixes = nested ? { ...resolution.prefixes, transparent: true } : resolution.prefixes;
+      const step = nextStep(command, prefixes, values);
       if (step) {
         const line = tokens[0] ?? command;
-        const base = { kind: 'prompted', command, line, prefixes: resolution.prefixes } as const;
+        const base = { kind: 'prompted', command, line, prefixes } as const;
         showStep(slot, { ...base, values }, step);
         return;
       }

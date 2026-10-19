@@ -26,6 +26,34 @@ function fixture() {
   return state;
 }
 describe('basic selected-object Properties', () => {
+  it('evaluates arithmetic geometry edits and rejects executable or nonfinite expressions atomically', () => {
+    const state = fixture();
+    const next = changeEntityProperty(state, ['circle'], 'diameter', 'sqrt(81) * 4');
+    expect(next.entities[1]).toMatchObject({ radius: 18 });
+    expect(changeEntityProperty(next, ['line'], 'a.x', '(100 + 20) / 3').entities[0]).toMatchObject(
+      { a: { x: 40 } },
+    );
+    for (const expression of ['1/0', 'globalThis.alert(1)', 'sqrt(-1)', '1e20', '-4'])
+      expect(() => changeEntityProperty(state, ['circle'], 'radius', expression)).toThrow();
+    expect(state.entities[1]).toMatchObject({ radius: 5 });
+    expect(
+      entityProperties([next.entities[1]!]).find((property) => property.key === 'area'),
+    ).toMatchObject({ category: 'geometry', readOnly: true, value: String(Math.PI * 18 ** 2) });
+  });
+  it('exposes categorized common attributes and accepts ACI without retaining True Color', () => {
+    const state = fixture();
+    const fields = entityProperties(state.entities);
+    expect(fields.find((field) => field.key === 'material')?.category).toBe('visualization');
+    expect(fields.find((field) => field.key === 'plotStyle')?.category).toBe('other');
+    const red = changeEntityProperty(state, ['line', 'circle'], 'color', '#ff0000');
+    const aci = changeEntityProperty(red, ['line', 'circle'], 'color', '5');
+    expect(aci.entities[0]).toMatchObject({ aci: 5 });
+    expect(aci.entities[0]?.trueColor).toBeUndefined();
+    expect(
+      entityProperties(aci.entities.slice(0, 2)).find((field) => field.key === 'color')?.value,
+    ).toBe('5');
+    expect(() => changeEntityProperty(state, ['line'], 'color', '257')).toThrow();
+  });
   it('keeps ARC source geometry synchronized with existing radius and center edits', () => {
     const state = fixture();
     const source = {

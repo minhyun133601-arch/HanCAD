@@ -43,7 +43,7 @@ export function drawingStyleTables(
       linetype: layer.linetype ?? 'CONTINUOUS',
       lineweight: layer.lineweight ?? -3,
       transparency: typeof layer.transparency === 'number' ? layer.transparency : 0,
-      visible: layer.visible,
+      visible: layer.visible && !layer.frozen,
       locked: layer.locked,
     });
   for (const object of objects) {

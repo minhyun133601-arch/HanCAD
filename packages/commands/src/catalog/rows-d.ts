@@ -80,7 +80,7 @@ export const rowsD: readonly string[] = [
   'HATCHTOBACK|해치를 뒤로 보내기|Send Hatches to Back|도면의 모든 해치를 다른 객체 뒤로 보냅니다.|Sets the draw order of all hatches to be behind other objects.|12',
   'HELIX|나선|Helix|2D 또는 3D 나선 또는 스프링을 작성합니다.|Creates a 2D or 3D spiral or spring.|6',
   'HELP|도움말|Help|활성 명령 또는 명령 검색에 대한 도움말을 표시합니다.|Displays help for the active command or a command search.|3',
-  'HIDEOBJECTS|객체 숨기기|Hide Objects|선택한 객체를 일시적으로 숨깁니다.|Temporarily hides selected objects.|15',
+  'HIDEOBJECTS|객체 숨기기|Hide Objects|선택한 객체를 일시적으로 숨깁니다.|Temporarily hides selected objects.|8',
   'HIDE|숨기기|Hide|3D 와이어프레임 모형을 은선이 제거된 상태로 재생성합니다.|Regenerates a 3D wireframe model with hidden lines suppressed.|21',
   'HIDEPALETTES|팔레트 숨기기|Hide Palettes|현재 표시된 팔레트와 명령행을 숨깁니다.|Hides all currently displayed palettes, including the command line.|20',
   'HYPERLINK|하이퍼링크|Hyperlink|객체에 하이퍼링크를 부착하거나 기존 하이퍼링크를 수정합니다.|Attaches a hyperlink to an object or modifies an existing hyperlink.|13',

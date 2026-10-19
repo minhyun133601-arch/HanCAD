@@ -36,6 +36,7 @@ import { useDrawingFileNotice } from './useDrawingFileNotice';
 import { viewVariables } from './view-history';
 import { syncClipboardBlockRecords } from './clipboard-block-records';
 import { syncSelectionGroupRecords } from './selection-group-records';
+import { syncLayerRecords } from './layers/layer-records';
 
 interface DrawingFilesOptions {
   registry: CommandRegistry;
@@ -84,7 +85,7 @@ export function useDrawingFiles({
   const actions = useRef({ messages, print, drawing });
   actions.current = { messages, print, drawing };
 
-  useDrawingFileNotice({ initial, messages, print, documentName, notice, consumeNotice });
+  useDrawingFileNotice({ initial, database, messages, print, documentName, notice, consumeNotice });
   useEffect(() => () => controller.current?.abort(), []);
 
   function persist(serialized: string): void {
@@ -275,6 +276,7 @@ export function useDrawingFiles({
             transaction.setVariable(name, value);
           syncClipboardBlockRecords(database, transaction, next.state);
           syncSelectionGroupRecords(database, transaction, next.state);
+          syncLayerRecords(database, transaction, next.state);
           transaction.setVariable(drawingViewVariable, serialized);
         });
       });

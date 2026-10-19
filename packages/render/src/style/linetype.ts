@@ -39,7 +39,7 @@ export const CONTINUOUS = 'CONTINUOUS';
 const MAX_DASHES = 12;
 
 function parseComplex(body: string, line: number): ComplexLinetypeElement {
-  const parts = body.split(',').map((part) => part.trim());
+  const parts = splitPattern(body);
   const head = parts.shift() ?? '';
   const quoted = /^"(.*)"$/.exec(head);
   const source = parts.shift() ?? '';
@@ -56,9 +56,14 @@ function parseComplex(body: string, line: number): ComplexLinetypeElement {
   };
   if (!element.value || !source) throw new LinetypeParseError('element', line);
   for (const part of parts) {
-    const match = /^([SRAUXY])\s*=\s*([-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?)[DRG]?$/i.exec(part);
+    const match = /^([SRAUXY])\s*=\s*([-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?)([DRG]?)$/i.exec(part);
     if (!match?.[1] || match[2] === undefined) throw new LinetypeParseError('element', line);
-    const value = Number(match[2]);
+    let value = Number(match[2]);
+    if (!Number.isFinite(value)) throw new LinetypeParseError('element', line);
+    if ('RAU'.includes(match[1].toUpperCase())) {
+      if (match[3]?.toUpperCase() === 'R') value *= 180 / Math.PI;
+      else if (match[3]?.toUpperCase() === 'G') value *= 0.9;
+    }
     switch (match[1].toUpperCase()) {
       case 'S':
         element.scale = value;
@@ -108,7 +113,8 @@ export function parseLin(text: string): LinetypeDefinition[] {
   const lines = text.replace(/^﻿/, '').split(/\r?\n/);
   let header: { name: string; description: string; line: number } | undefined;
   lines.forEach((raw, index) => {
-    const line = raw.replace(/;;.*$/, '').trim();
+    const line = raw.trim();
+    if (line.startsWith(';')) return;
     if (!line) return;
     if (line.startsWith('*')) {
       if (header) throw new LinetypeParseError('pattern', header.line);
@@ -131,6 +137,7 @@ export function parseLin(text: string): LinetypeDefinition[] {
     for (const part of parts) {
       if (part.startsWith('[')) {
         if (!part.endsWith(']')) throw new LinetypeParseError('element', index + 1);
+        if (pendingComplex) elements.push({ length: 0, complex: pendingComplex });
         pendingComplex = parseComplex(part.slice(1, -1), index + 1);
         continue;
       }
@@ -172,7 +179,14 @@ export function linetypeFromFields(name: string, fields: Readonly<Record<string,
         : typeof item === 'object' && item !== null && 'length' in item
           ? Number((item as { length: unknown }).length)
           : Number.NaN;
-    if (Number.isFinite(length)) elements.push({ length });
+    if (Number.isFinite(length)) {
+      const complex =
+        typeof item === 'object' && item !== null && 'complex' in item ? item.complex : undefined;
+      elements.push({
+        length,
+        ...(validComplex(complex) ? { complex: structuredClone(complex) } : {}),
+      });
+    }
   }
   return {
     name: name.toUpperCase(),
@@ -182,7 +196,22 @@ export function linetypeFromFields(name: string, fields: Readonly<Record<string,
   } satisfies LinetypeDefinition;
 }
 
-export function linetypeFields(definition: LinetypeDefinition): Record<string, unknown> {
+function validComplex(value: unknown): value is ComplexLinetypeElement {
+  if (typeof value !== 'object' || value === null) return false;
+  const item = value as Partial<ComplexLinetypeElement>;
+  return (
+    (item.kind === 'shape' || item.kind === 'text') &&
+    typeof item.value === 'string' &&
+    typeof item.source === 'string' &&
+    [item.scale, item.rotation, item.x, item.y].every(
+      (v) => typeof v === 'number' && Number.isFinite(v),
+    ) &&
+    typeof item.absoluteRotation === 'boolean' &&
+    typeof item.uprightRotation === 'boolean'
+  );
+}
+
+export function linetypeFields(definition: LinetypeDefinition) {
   return {
     description: definition.description,
     alignment: 65,

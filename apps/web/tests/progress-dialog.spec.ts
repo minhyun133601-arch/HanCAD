@@ -36,13 +36,16 @@ test('progress features, limitations and all 26 phases follow the shell language
     'Windows native build/startup checks pass',
   );
   await expect(english.locator('tbody tr').first()).toContainText('In progress');
-  await expect(english.locator('.development-dialog-content > ul > li')).toHaveCount(17);
+  await expect(english.locator('.development-dialog-content > ul > li')).toHaveCount(18);
   await expect(english.locator('tbody tr').nth(3)).toContainText('Complete');
   await expect(english.locator('tbody tr').nth(4)).toContainText('Complete');
   await expect(english.locator('tbody tr').nth(5)).toContainText('Complete');
   await expect(english.locator('tbody tr').nth(6)).toContainText('Complete');
+  await expect(english.locator('tbody tr').nth(7)).toContainText('Complete');
+  await expect(english.locator('tbody tr').nth(8)).toContainText('Complete');
   await expect(english).toContainText('F1 command help');
   await expect(english).toContainText('TRIM/EXTEND Quick and Standard modes');
+  await expect(english).toContainText('Layer manager, filters/states/LAS');
   if ((await english.locator('details').getAttribute('open')) === null)
     await english.locator('summary').click();
   await expect(english.locator('details')).toHaveJSProperty('open', true);
@@ -55,5 +58,6 @@ test('progress features, limitations and all 26 phases follow the shell language
   await openProgress(page, '개발 현황');
   await expect(korean.locator('tbody th').last()).toHaveText('패키징·배포');
   await expect(korean).toContainText('TEXT/DTEXT 도면 위 한글 문자 입력');
+  await expect(korean).toContainText('도면층 관리자·필터·상태·LAS');
   await expect(korean.locator('details')).toContainText('Windows 네이티브 빌드·클립보드');
 });

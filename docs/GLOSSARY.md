@@ -1,5 +1,18 @@
 # Reference A — Korean AutoCAD UI glossary
 
+## 도면층·특성 (페이즈 08)
+
+| English | 한국어 UI |
+| --- | --- |
+| Layer Properties Manager / Current layer | 도면층 특성 관리자 / 현재 도면층 |
+| On / Freeze / Lock / Plot | 켜기 / 동결 / 잠금 / 플롯 |
+| New VP Freeze / Description | 새 VP 동결 / 설명 |
+| Property Filter / Group Filter / Invert Filter | 특성 필터 / 그룹 필터 / 필터 반전 |
+| Layer State / Unreconciled Layers | 도면층 상태 / 조정되지 않은 도면층 |
+| General / Geometry / Miscellaneous | 일반 / 형상 / 기타 |
+| Varies / Quick Properties / Match Properties | 다양함 / 빠른 특성 / 특성 일치 |
+| True Color / Lineweight / Transparency | 트루컬러 / 선가중치 / 투명도 |
+
 ## 2D 수정 (페이즈 07)
 
 | English | 한국어 UI |

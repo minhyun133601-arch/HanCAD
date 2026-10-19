@@ -10,6 +10,10 @@ export function drawingExportState(
   const frameMode = value === 0 || value === 2 ? value : 1;
   return {
     ...state,
+    layers: state.layers.map((layer) => ({
+      ...layer,
+      visible: layer.visible && !layer.frozen && layer.plot !== false,
+    })),
     entities: state.entities.map((entity) =>
       entity.sourceType === 'WIPEOUT' ? { ...entity, frameMode } : entity,
     ),

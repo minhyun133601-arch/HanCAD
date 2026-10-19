@@ -1,5 +1,15 @@
 # Reference B — Shortcuts, aliases, mouse behavior, input syntax
 
+## Phase 08 palette and property input
+
+Ctrl+1 opens Properties; Ctrl+Shift+P toggles Quick Properties. F2 renames the
+selected Layer Properties Manager row while that modeless palette has focus.
+Command-history F2 stays unchanged outside the palette. Layer/state names use
+editable IME text prompts. Numeric geometry fields accept validated expressions.
+Ribbon On/Freeze/Lock controls publish the same updates as LAYER. COPYTOLAYER
+shares base-point/second-point acquisition and drafting aids. Manual sequences
+are in the phase08 family notes.
+
 ## Phase 07 modifying command input
 
 Shift-pick in FILLET temporarily uses radius zero without changing FILLETRAD.

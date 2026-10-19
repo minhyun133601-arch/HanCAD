@@ -12,6 +12,10 @@ import { toolInputMode } from './input-mode';
 import { useGrips } from './useGrips';
 import { useClipboardCommands } from './useClipboardCommands';
 import { useProperties } from './useProperties';
+import { useLayerTools } from './layers/useLayerTools';
+import { nativePropertyState, commitNativePropertyState } from './native-property-state';
+import { commitNativeLayerChange } from './native-layer-change';
+import { drawingStyleState } from './drawing-style-state';
 
 interface Controller {
   isActive: () => boolean;
@@ -40,7 +44,7 @@ export function useDrawingCommands({
     registry: session.registry,
     sysvars: session.sysvars,
     messages,
-    getState: files.getState,
+    getState: () => drawingStyleState(session.database, files.getState()),
     commitState: files.commitState,
     print: session.print,
   };
@@ -48,6 +52,14 @@ export function useDrawingCommands({
     ...common,
     state: files.state,
     cancelOthers: () => cancelOthers('draft'),
+    getSelectionState: () => {
+      const state = nativePropertyState(session.database, files.getState());
+      return layers.isActive()
+        ? { ...state, layers: state.layers.map((l) => ({ ...l, locked: false })) }
+        : state;
+    },
+    additionalValidIds: () =>
+      nativePropertyState(session.database, files.getState()).entities.map((e) => e.id),
     onSelectionComplete: () => {
       const owner = Object.entries(controllers.current).find(
         ([name, item]) => name !== 'draft' && item.isActive(),
@@ -57,7 +69,9 @@ export function useDrawingCommands({
     selectionPromptActive: () =>
       (modification.isActive() && !modification.needsPoint()) ||
       draft.isModifySelecting() ||
-      clipboard.snapshot?.inputMode === 'selection',
+      clipboard.snapshot?.inputMode === 'selection' ||
+      properties.isSelecting() ||
+      layers.snapshot?.inputMode === 'selection',
     ...(resolveTypedPoint ? { resolveTypedPoint } : {}),
     ...(pickEntityId ? { pickEntityId } : {}),
   });
@@ -103,6 +117,46 @@ export function useDrawingCommands({
     ...common,
     selectedIds: draft.selectedIds,
     korean: messages.cancel.includes('취소'),
+    getSelectedIds: draft.getSelectedIds,
+    selectIds: draft.selectIds,
+    clearSelection: draft.clearSelection,
+    cancelOthers: () => cancelOthers('properties'),
+    ...(pickEntityId ? { pickEntityId } : {}),
+    execute: (command: string) => {
+      void session.execute(command);
+    },
+    getPropertyState: () => nativePropertyState(session.database, files.getState()),
+    commitPropertyState: (label, next) =>
+      commitNativePropertyState(session.sysvars, label, files.getState(), next, files.commitState),
+  });
+  const layers = useLayerTools({
+    ...common,
+    getState: () => ({
+      ...files.getState(),
+      settings: { ...files.getState().settings, layer: String(session.sysvars.get('CLAYER')) },
+    }),
+    database: session.database,
+    korean: messages.cancel.includes('취소'),
+    getSelectedIds: draft.getSelectedIds,
+    selectIds: draft.selectIds,
+    clearSelection: draft.clearSelection,
+    cancelOthers: () => cancelOthers('layers'),
+    getAllEntityIds: () =>
+      nativePropertyState(session.database, files.getState()).entities.map((e) => e.id),
+    getPreviewEntities: () => nativePropertyState(session.database, files.getState()).entities,
+    getEntityLayer: (id) =>
+      nativePropertyState(session.database, files.getState()).entities.find((e) => e.id === id)
+        ?.layer,
+    commitNativeLayerChange: (label, state, variables, change) =>
+      commitNativeLayerChange(
+        session.sysvars,
+        label,
+        files.getState(),
+        state,
+        variables,
+        change,
+        files.commitState,
+      ),
   });
   useEffect(
     () =>
@@ -121,6 +175,8 @@ export function useDrawingCommands({
     measurement,
     grip,
     clipboard,
+    properties,
+    layers,
     editing,
     text,
     modification,
@@ -133,6 +189,7 @@ export function useDrawingCommands({
     measurement.snapshot?.preview ??
     grip.snapshot?.preview ??
     clipboard.snapshot?.preview ??
+    layers.snapshot?.preview ??
     editing.snapshot?.preview ??
     text.snapshot?.preview ??
     dimensions.snapshot?.preview ??
@@ -153,8 +210,9 @@ export function useDrawingCommands({
     grip,
     clipboard,
     properties,
+    layers,
     active,
-    state: editing.snapshot?.state ?? files.state,
+    state: layers.previewState ?? properties.previewState ?? editing.snapshot?.state ?? files.state,
     selectedIds:
       editing.snapshot && editing.snapshot.tool !== 'OFFSET'
         ? editing.snapshot.boundaryIds
@@ -181,6 +239,8 @@ export function useDrawingCommands({
       (draft.isFilterSelection() ? draft.prompt : null) ??
       (draft.hasSelectionSubprompt() ? draft.prompt : null) ??
       clipboard.prompt ??
+      properties.prompt ??
+      layers.prompt ??
       editing.prompt ??
       text.prompt ??
       dimensions.prompt ??
@@ -195,7 +255,7 @@ export function useDrawingCommands({
           ? messages.dimensionUsage
           : messages.draftingUsage,
     editable:
-      draft.snapshot?.inputMode === 'text'
+      layers.inputMode === 'text' || draft.snapshot?.inputMode === 'text'
         ? true
         : draft.selecting && draft.editable
           ? true
@@ -208,6 +268,8 @@ export function useDrawingCommands({
       (draft.isFilterSelection() ? draft.inputMode : undefined) ??
       (draft.hasSelectionSubprompt() ? draft.inputMode : undefined) ??
       clipboard.inputMode ??
+      properties.inputMode ??
+      layers.inputMode ??
       draft.snapshot?.inputMode ??
       (draft.selecting && !draft.isDrafting() ? draft.inputMode : undefined) ??
       toolInputMode({
@@ -238,9 +300,13 @@ export function useDrawingCommands({
     },
     submit: (value: string): boolean => {
       if (draft.isFilterSelection()) return draft.submit(value);
+      if (properties.isActive() && /^(?:_?S|_?SETTINGS)$/i.test(value.trim()))
+        return properties.submit(value);
       const selecting =
         (modification.isActive() && !modification.needsPoint()) ||
-        clipboard.snapshot?.inputMode === 'selection';
+        clipboard.snapshot?.inputMode === 'selection' ||
+        properties.isSelecting() ||
+        layers.snapshot?.inputMode === 'selection';
       if (selecting && draft.submitSelection(value)) return true;
       if (selecting && !value.trim()) draft.rememberSelection();
       if (selecting && !value.trim()) draft.resetSelectionPrompt();

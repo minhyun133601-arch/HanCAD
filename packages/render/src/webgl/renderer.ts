@@ -20,6 +20,8 @@ export interface RendererSettings {
   layers?: () => ReadonlyMap<string, DisplayLayerStyle>;
   linetypes?: () => ReadonlyMap<string, LinetypeDefinition>;
   aids?: () => CadAidSettings;
+  nativeEntities?: () => readonly DisplayEntity[];
+  lineweightDisplayScale?: () => number;
 }
 const intersects = (a: Bounds2, b: Bounds2) =>
   a.minX <= b.maxX && a.maxX >= b.minX && a.minY <= b.maxY && a.maxY >= b.minY;
@@ -67,8 +69,24 @@ export class WebGlRenderer {
   setDrawing(state: LegacyCadState) {
     this.state = state;
     if (this.stressCount) return;
-    const diff = this.source.sync(state),
+    const legacy = this.source.sync(state),
       old = this.entities;
+    const native = this.settings.nativeEntities?.() ?? [];
+    const previous = native.length
+      ? new Map(old.map((entity) => [entity.id, entity]))
+      : new Map<string, DisplayEntity>();
+    const diff = native.length
+      ? {
+          entities: [...legacy.entities, ...native],
+          added: [...legacy.added, ...native.filter((e) => !previous.has(e.id))],
+          modified: [
+            ...legacy.modified,
+            ...native.filter(
+              (e) => previous.has(e.id) && JSON.stringify(previous.get(e.id)) !== JSON.stringify(e),
+            ),
+          ],
+        }
+      : legacy;
     this.entities = diff.entities;
     this.aliasEntities = this.entities.filter((entity) => entity.sourceId !== undefined);
     this.slots = new Map(this.entities.map((entity, i) => [entity.id, i]));
@@ -147,19 +165,24 @@ export class WebGlRenderer {
     if (this.stressCount) return [];
     const hits = this.index.pick({ x: point.x, y: -point.y }, tolerance);
     const locked = new Set(
-      this.state?.layers.filter((l) => l.locked || !l.visible).map((l) => l.name),
+      this.state?.layers.filter((l) => l.locked || !l.visible || l.frozen).map((l) => l.name),
     );
     const layers = this.settings.layers?.();
+    const isolated = new Set(this.state?.objectIsolation?.hiddenIds ?? []);
+    const zero = this.state?.layers.find((layer) => layer.name === '0');
     return [
       ...new Set(
         hits
           .filter(
             (hit) =>
+              !isolated.has(hit.entity.sourceId ?? hit.entity.id) &&
+              !(hit.entity.layer === 'Defpoints' && zero && (!zero.visible || zero.frozen)) &&
               (includeLocked ||
-                (!locked.has(hit.entity.layer) &&
+                (!hit.entity.locked &&
+                  !locked.has(hit.entity.layer) &&
                   layers?.get(hit.entity.layer)?.locked !== true)) &&
               !this.state?.layers.some(
-                (layer) => layer.name === hit.entity.layer && !layer.visible,
+                (layer) => layer.name === hit.entity.layer && (!layer.visible || layer.frozen),
               ) &&
               layers?.get(hit.entity.layer)?.visible !== false,
           )
@@ -216,8 +239,11 @@ export class WebGlRenderer {
       layers: this.settings.layers?.() ?? tables.layers,
       linetypes: this.settings.linetypes?.() ?? tables.linetypes,
       selected: this.selected,
-      hidden: this.hidden,
+      hidden: this.state?.objectIsolation?.hiddenIds.length
+        ? new Set([...this.hidden, ...this.state.objectIsolation.hiddenIds])
+        : this.hidden,
       preview: this.preview,
+      lineweightDisplayScale: this.settings.lineweightDisplayScale?.() ?? 1,
     };
   }
   draw(eye: Vec2, scale: number, width: number, height: number, background: number) {
@@ -245,6 +271,7 @@ export class WebGlRenderer {
     }
     const key = JSON.stringify([
       background,
+      environment.lineweightDisplayScale,
       ...[
         'LWDISPLAY',
         'LWDEFAULT',
@@ -253,6 +280,7 @@ export class WebGlRenderer {
         'PSLTSCALE',
         'CANNOSCALEVALUE',
         'TRANSPARENCYDISPLAY',
+        'LAYLOCKFADECTL',
         'SELECTIONEFFECT',
         'SELECTIONEFFECTCOLOR',
         'HIGHLIGHT',
@@ -264,6 +292,7 @@ export class WebGlRenderer {
         l.lineweight,
         l.transparency,
         l.visible,
+        l.locked,
       ]),
     ]);
     if (key !== this.styleKey) {
@@ -282,6 +311,17 @@ export class WebGlRenderer {
       for (const chunk of [...this.chunks, ...this.transparentChunks]) chunk.dirty = true;
       this.stylesDirty = true;
     }
+    if (!this.stylesDirty)
+      for (const id of this.styleChanges) {
+        const slot = this.slots.get(id);
+        if (slot === undefined) continue;
+        const alpha = entityStyle(this.entities[slot]!, environment, this.patterns)[3]!;
+        const previousAlpha = this.styleData[slot * 8 + 3]!;
+        if ((alpha > 0 && alpha < 1) !== (previousAlpha > 0 && previousAlpha < 1)) {
+          this.stylesDirty = true;
+          break;
+        }
+      }
     if (this.stylesDirty) {
       const patterns = patternTable(environment.linetypes);
       this.patterns = patterns.names;

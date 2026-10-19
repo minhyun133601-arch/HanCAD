@@ -35,7 +35,10 @@ export function snapDraftPoint(
     osmode & 16384
   )
     return;
-  const hidden = new Set(state.layers.filter((layer) => !layer.visible).map((layer) => layer.name));
+  const hidden = new Set(
+    state.layers.filter((layer) => !layer.visible || layer.frozen).map((layer) => layer.name),
+  );
+  const isolated = new Set(state.objectIsolation?.hiddenIds ?? []);
   const primitives: SnapPrimitive[] = [];
   const collect = (primitive: SnapPrimitive): void => {
     if (primitiveNear(primitive, point, tolerance)) primitives.push(primitive);
@@ -51,7 +54,7 @@ export function snapDraftPoint(
   };
   for (const entities of [state.entities, additionalEntities]) {
     for (const entity of entities) {
-      if (hidden.has(entity.layer)) continue;
+      if (hidden.has(entity.layer) || isolated.has(entity.id)) continue;
       const segment = (a: CadPoint, b: CadPoint): void => {
         if (osmode & 32) collect({ type: 'segment', a, b, entityId: entity.id });
         if (osmode & 1) {

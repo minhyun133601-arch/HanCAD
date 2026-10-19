@@ -67,6 +67,7 @@ export function commitNativeCopies(
   database: DrawingDatabase,
   label: string,
   copies: Copies,
+  overrides?: ReadonlyMap<string, DatabaseObject>,
 ): string[] {
   const ids: string[] = [],
     all = database.all();
@@ -81,7 +82,7 @@ export function commitNativeCopies(
             (child.owner === graph[i]!.handle || child.handle === graph[i]!.extensionDictionary) &&
             !included.has(child.handle)
           ) {
-            graph.push(child);
+            graph.push(overrides?.get(child.handle) ?? child);
             included.add(child.handle);
           }
       const handles = new Map<string, string>();

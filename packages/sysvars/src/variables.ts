@@ -280,6 +280,15 @@ export class SystemVariables {
         `${name}의 값이 유효하지 않습니다. 이름 "${value}"이(가) 도면에 없습니다.`,
         { reason: 'missing-symbol', reference: value },
       );
+    if (
+      name === 'CLAYER' &&
+      Number(symbol.fields.flags ?? symbol.groups.find((g) => g.code === 70)?.value ?? 0) & 1
+    )
+      throw new SystemVariableError(
+        name,
+        'invalid',
+        '동결된 도면층은 현재 도면층으로 만들 수 없습니다.',
+      );
     return symbol.name;
   }
 

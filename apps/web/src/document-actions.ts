@@ -9,6 +9,7 @@ import { readDimensionStyle } from './dimension-style';
 import { readDraftingVariables } from './drafting-variables';
 import { NativeDrawingFileError } from './native-file-error';
 import { nativeDrawingView } from './native-drawing-cache';
+import { endTemporaryObjectIsolation } from './temporary-object-isolation';
 
 export function createDocument(manager: DocumentManager): DrawingDocument {
   const previous = manager.active;
@@ -65,7 +66,16 @@ export function openNativeDocument(
   try {
     const loaded = deserializeHcd(bytes);
     const view = loaded.database.getVariable(drawingViewVariable);
-    if (typeof view === 'string') parseDrawingSession(view);
+    if (typeof view === 'string') {
+      const original = parseDrawingSession(view);
+      const reopened = endTemporaryObjectIsolation(original);
+      if (reopened !== original) {
+        loaded.database.transaction('OPEN', (tx) =>
+          tx.setVariable(drawingViewVariable, JSON.stringify(reopened)),
+        );
+        loaded.database.clearHistory();
+      }
+    }
     return manager.create(loaded.database, name, loaded.blobs, 'opened');
   } catch (error) {
     throw new NativeDrawingFileError(error);
@@ -90,7 +100,10 @@ function readInitialDocumentDrawing(
       identityMigrated: false,
       reused: true,
     };
-  if (restoreLocal) return { ...restoreDrawing(), reused: false };
+  if (restoreLocal) {
+    const restored = restoreDrawing();
+    return { ...restored, drawing: endTemporaryObjectIsolation(restored.drawing), reused: false };
+  }
   return {
     drawing: {
       state: createEmptyCadState(name),

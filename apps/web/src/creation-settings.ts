@@ -39,6 +39,7 @@ export function creationSettings(
   const transparency = Number(get('CETRANSPARENCY'));
   const result: CadSettings = {
     ...settings,
+    layer: typeof get('CLAYER') === 'string' ? String(get('CLAYER')) : settings.layer,
     aci,
     linetype: String(get('CELTYPE')),
     lineweight: Number(get('CELWEIGHT')),

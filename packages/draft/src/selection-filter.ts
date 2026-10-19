@@ -5,6 +5,7 @@ import type {
   LegacyCadState,
 } from '@hancad/legacy-bridge';
 import { geometryLength, polylineLength } from '@hancad/geom';
+import { visibleCadEntities } from '@hancad/legacy-bridge';
 import { arcSweep } from './snap-geometry';
 
 const filterProperties = new Set([
@@ -152,7 +153,7 @@ export function filterCadSelection(
   const eligible = new Set(
     state.layers.filter((layer) => layer.visible && !layer.locked).map((layer) => layer.name),
   );
-  return state.entities
+  return visibleCadEntities(state)
     .filter(
       (entity) =>
         (!wanted || wanted.has(entity.id)) &&
@@ -180,7 +181,7 @@ export function selectSimilarCadEntities(
   const eligible = new Set(
     state.layers.filter((layer) => layer.visible && !layer.locked).map((layer) => layer.name),
   );
-  return state.entities
+  return visibleCadEntities(state)
     .filter(
       (entity) =>
         eligible.has(entity.layer) &&

@@ -1,4 +1,5 @@
 import type { CadPoint, LegacyCadState } from '@hancad/legacy-bridge';
+import { visibleCadEntities } from '@hancad/legacy-bridge';
 import { parseDraftPoint } from './coordinates';
 import { selectCadArea } from './selection';
 import { selectCadPath } from './selection-path';
@@ -236,7 +237,9 @@ export class SelectionSession {
       const visible = new Set(
         state.layers.filter((layer) => layer.visible).map((layer) => layer.name),
       );
-      const last = [...state.entities].reverse().find((entity) => visible.has(entity.layer));
+      const last = visibleCadEntities(state)
+        .reverse()
+        .find((entity) => visible.has(entity.layer));
       this.apply(last ? [last.id] : []);
     } else if (keyword === 'PREVIOUS') this.apply(this.previous);
     else if (keyword === 'UNDO') {

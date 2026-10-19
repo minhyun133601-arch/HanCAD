@@ -26,6 +26,8 @@ import type { useGrips } from './useGrips';
 import type { useClipboardCommands } from './useClipboardCommands';
 import { useSelectionPreview } from './useSelectionPreview';
 import { useCanvasSettings } from './useCanvasSettings';
+import type { useProperties } from './useProperties';
+import type { useLayerTools } from './layers/useLayerTools';
 
 export interface CanvasInteractionOptions {
   files: ReturnType<typeof useDrawingFiles>;
@@ -37,6 +39,8 @@ export interface CanvasInteractionOptions {
   text: ReturnType<typeof useTextCreation>;
   grip: ReturnType<typeof useGrips>;
   clipboard: ReturnType<typeof useClipboardCommands>;
+  properties: ReturnType<typeof useProperties>;
+  layers: ReturnType<typeof useLayerTools>;
   session: ReturnType<typeof useCommandSession>;
   progressOpen: boolean;
   messages: Messages;
@@ -113,6 +117,8 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
       !live.draft.isActive() &&
       !live.modification.isActive() &&
       !live.clipboard.isActive() &&
+      !live.properties.isActive() &&
+      !live.layers.isActive() &&
       !live.editing.isActive() &&
       live.session.sysvars.getNumber('PICKFIRST') === 0
     )
@@ -127,6 +133,7 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
       !live.text.isActive() &&
       !live.grip.isActive() &&
       !live.clipboard.needsPoint() &&
+      !live.layers.needsPoint() &&
       (!live.editing.isActive() || live.editing.canSelectArea())
     );
   }
@@ -141,7 +148,8 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
       live.editing.needsPoint() ||
       live.text.needsPoint() ||
       live.grip.needsPoint() ||
-      live.clipboard.needsPoint()
+      live.clipboard.needsPoint() ||
+      live.layers.needsPoint()
     );
   }
   function resolve(point: CadPoint, force = false) {
@@ -150,6 +158,11 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
   function pick(event: CadPointerPick): CadPoint | undefined {
     if (blocked()) return;
     const live = latest.current;
+    if (live.properties.isActive() && !live.properties.isSelecting()) {
+      const id = live.surface.current?.pickAll(event.point, true)[0];
+      live.properties.pick({ ...event, ...(id ? { entityId: id } : {}) });
+      return;
+    }
     if (needsPoint() && live.getDynamicConstraints?.().invalid) {
       live.session.print(live.messages.invalidPoint);
       return;
@@ -159,6 +172,8 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
       !live.draft.isActive() &&
       !live.modification.isActive() &&
       !live.clipboard.isActive() &&
+      !live.properties.isActive() &&
+      !live.layers.isActive() &&
       !live.editing.isActive() &&
       !live.navigation.isActive() &&
       !live.dimensions.isActive() &&
@@ -174,6 +189,8 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
       !live.editing.isActive() &&
       !live.text.isActive() &&
       !live.clipboard.isActive() &&
+      !live.properties.isActive() &&
+      !live.layers.isActive() &&
       !live.draft.isActive() &&
       live.grip.pickGrip(
         event.point,
@@ -237,6 +254,7 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
     else if (live.grip.isActive())
       accepted = live.grip.pick(target.point, Boolean(target.snapped), event.ctrlKey);
     else if (live.clipboard.needsPoint()) accepted = live.clipboard.pick(target.point);
+    else if (live.layers.needsPoint()) accepted = live.layers.pick(target.point);
     else if (live.measurement.isActive()) accepted = live.measurement.pick(target.point);
     else if (live.editing.isActive()) {
       const entity = live.editing.entityAt(
@@ -275,6 +293,11 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
       const surface = live.surface.current;
       const local = surface?.worldToScreen(point),
         rect = surface?.canvas.getBoundingClientRect();
+      if (local && rect)
+        live.properties.hover(surface?.pickAll(point, true)[0], {
+          x: local.x + rect.left,
+          y: local.y + rect.top,
+        });
       live.grip.hover(
         point,
         Math.max(4, live.session.sysvars.getNumber('GRIPSIZE')) / (surface?.getView().scale ?? 1),
@@ -288,6 +311,7 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
     }
     if (live.grip.isActive()) live.grip.cursor(target.point, Boolean(target.snapped));
     else if (live.clipboard.needsPoint()) live.clipboard.cursor(target.point);
+    else if (live.layers.needsPoint()) live.layers.cursor(target.point);
     else if (live.measurement.isActive()) live.measurement.cursor(target.point);
     else if (live.editing.isActive()) {
       const entity = live.editing.entityAt(point, 8 / (live.surface.current?.getView().scale ?? 1));
@@ -313,6 +337,8 @@ export function useCanvasInteraction(options: CanvasInteractionOptions) {
       !live.text.isActive() &&
       !live.dimensions.isActive() &&
       !live.clipboard.isActive() &&
+      !live.properties.isActive() &&
+      !live.layers.isActive() &&
       !live.grip.isActive();
     return Boolean(
       idle &&

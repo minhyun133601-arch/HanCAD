@@ -1,0 +1,159 @@
+.layer-palette {
+  position: absolute;
+  z-index: 24;
+  left: 24px;
+  top: 28px;
+  width: min(1100px, calc(100% - 48px));
+  max-height: 70%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #657080;
+  background: #303840;
+  color: #e5e8ee;
+  box-shadow: 0 10px 30px #0008;
+  font:
+    12px 'Malgun Gothic',
+    sans-serif;
+  resize: both;
+  overflow: auto;
+  min-width: 460px;
+  min-height: 240px;
+}
+.layer-palette header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #222b35;
+  padding: 8px 12px;
+}
+.layer-palette button,
+.layer-palette input,
+.layer-palette select {
+  font: inherit;
+  color: inherit;
+  background: #242c35;
+  border: 1px solid #596471;
+  border-radius: 2px;
+  padding: 4px 7px;
+}
+.layer-palette button {
+  cursor: pointer;
+}
+.layer-palette button:hover {
+  background: #4c5b6b;
+}
+.layer-palette button:disabled {
+  opacity: 0.4;
+}
+.layer-palette nav {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+}
+.layer-palette nav [aria-pressed='true'] {
+  background: #436687;
+}
+.layer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 8px;
+  flex-wrap: wrap;
+}
+.layer-toolbar label {
+  display: flex;
+  align-items: center;
+}
+.layer-grid {
+  overflow: auto;
+  flex: 1;
+  min-height: 110px;
+}
+.layer-grid table {
+  border-collapse: collapse;
+  width: 100%;
+  white-space: nowrap;
+}
+.layer-grid th {
+  position: sticky;
+  top: 0;
+  background: #35414d;
+  z-index: 1;
+}
+.layer-grid td,
+.layer-grid th {
+  padding: 2px;
+  border: 1px solid #4b5865;
+  text-align: center;
+}
+.layer-grid th button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+}
+.layer-grid tr[aria-selected='true'] {
+  background: #34597a;
+}
+.layer-grid td input {
+  width: 78px;
+  background: transparent;
+  border-color: transparent;
+  padding: 3px;
+}
+.layer-grid td:nth-child(2) input,
+.layer-grid td:last-child input {
+  width: 145px;
+}
+.layer-grid td button {
+  border: 0;
+  background: transparent;
+  width: 100%;
+}
+.layer-palette footer {
+  padding: 6px 9px;
+  background: #252e38;
+}
+.layer-settings {
+  padding: 12px;
+  overflow: auto;
+}
+.layer-settings label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0;
+}
+.layer-settings label input {
+  flex: 1;
+}
+.layer-settings > button {
+  margin: 4px;
+}
+.layer-state-row {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid #55606e;
+}
+.layer-state-row span {
+  flex: 1;
+}
+.layer-palette [role='alert'] {
+  padding: 4px 10px;
+  color: #ffbf8d;
+}
+.layer-notification {
+  position: absolute;
+  right: 16px;
+  bottom: calc(var(--command-dock-height, 0px) + 62px);
+  z-index: 23;
+  max-width: min(420px, calc(100% - 32px));
+  padding: 8px 12px;
+  border: 1px solid #7d8e9f;
+  border-radius: 3px;
+  background: #35485c;
+  color: #f3f6fb;
+  box-shadow: 0 4px 12px #0007;
+  cursor: pointer;
+}

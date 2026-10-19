@@ -1,0 +1,70 @@
+.style08-dialog {
+  min-width: 440px;
+  max-width: min(800px, 95vw);
+}
+.style08-dialog form > label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 9px 0;
+}
+.style08-dialog label > input:not([type='checkbox']):not([type='radio']),
+.style08-dialog label > select {
+  margin-left: auto;
+}
+.style08-dialog [role='tablist'],
+.style08-row {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+.style08-dialog [aria-selected='true'] {
+  background-color: #30475c;
+}
+.style08-aci-grid {
+  display: grid;
+  grid-template-columns: repeat(24, 18px);
+  gap: 2px;
+  margin: 16px 0;
+}
+.style08-aci-grid button {
+  width: 18px;
+  height: 18px;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid #777;
+  border-radius: 0;
+}
+.style08-aci-grid button[aria-pressed='true'] {
+  outline: 2px solid white;
+  outline-offset: 1px;
+  z-index: 1;
+}
+.style08-weight-preview {
+  display: block;
+  border-top: solid currentColor;
+  width: 90%;
+  margin: 18px auto;
+}
+.style08-linetype-load-list {
+  display: grid;
+  max-height: 340px;
+  overflow: auto;
+  gap: 5px;
+}
+.style08-linetype-load-list label {
+  display: flex;
+  gap: 6px;
+}
+.style08-dialog table {
+  max-height: 360px;
+  display: block;
+  overflow: auto;
+  border-collapse: collapse;
+  width: 100%;
+}
+.style08-dialog th,
+.style08-dialog td {
+  padding: 5px 8px;
+  text-align: left;
+}

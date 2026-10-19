@@ -107,13 +107,18 @@ export interface TransitionSettings {
 /** Geometric height interpolation maintains uniform apparent zoom speed. */
 export class ViewTransition {
   private frame: number | undefined;
+  private deadline: ReturnType<typeof setTimeout> | undefined;
+  private generation = 0;
   constructor(
     private readonly read: () => CadWorldView,
     private readonly write: (view: CadWorldView) => void,
   ) {}
   cancel(): void {
     if (this.frame !== undefined) cancelAnimationFrame(this.frame);
+    if (this.deadline !== undefined) clearTimeout(this.deadline);
     this.frame = undefined;
+    this.deadline = undefined;
+    this.generation++;
   }
   start(target: CadWorldView, settings: TransitionSettings, complete: () => void = () => {}): void {
     this.cancel();
@@ -127,12 +132,26 @@ export class ViewTransition {
       complete();
       return;
     }
+    const generation = this.generation;
+    let finished = false;
+    const finish = (): void => {
+      if (finished || generation !== this.generation) return;
+      finished = true;
+      this.cancel();
+      this.write(target);
+      complete();
+    };
     let began: number | undefined, last: number | undefined;
     const tick = (now: number): void => {
+      if (finished || generation !== this.generation) return;
       began ??= now;
       const slow = last !== undefined && now - last > 1000 / Math.max(1, settings.minimumFps);
       last = now;
       const progress = slow ? 1 : Math.min(1, (now - began) / settings.duration);
+      if (progress >= 1) {
+        finish();
+        return;
+      }
       const t = progress * progress * (3 - 2 * progress);
       this.write({
         center: {
@@ -141,12 +160,10 @@ export class ViewTransition {
         },
         height: before.height * (target.height / before.height) ** t,
       });
-      if (progress < 1) this.frame = requestAnimationFrame(tick);
-      else {
-        this.frame = undefined;
-        complete();
-      }
+      if (!finished && generation === this.generation) this.frame = requestAnimationFrame(tick);
     };
+    // Occluded or overloaded WebViews may stop delivering animation frames entirely.
+    this.deadline = setTimeout(finish, settings.duration);
     this.frame = requestAnimationFrame(tick);
   }
 }

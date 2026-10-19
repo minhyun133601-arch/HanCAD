@@ -3,6 +3,7 @@ import { cachedDimensionStyle } from './dimension-style';
 import { cachedDraftingVariables } from './drafting-variables';
 import { parseDrawingSession } from './drawing-session';
 import type { DrawingSession } from './drawing-session';
+import { endTemporaryObjectIsolation } from './temporary-object-isolation';
 export { parseDrawingSession } from './drawing-session';
 export type { DrawingSession } from './drawing-session';
 
@@ -37,7 +38,7 @@ export function restoreCachedDrawingSession(serialized: string): {
   drawing: DrawingSession;
   identityMigrated: boolean;
 } {
-  const drawing = parseDrawingSession(serialized);
+  const drawing = endTemporaryObjectIsolation(parseDrawingSession(serialized));
   const dimensionStyle = cachedDimensionStyle(drawing.dimensionStyle, drawing.documentId);
   const draftingVariables = cachedDraftingVariables(drawing.draftingVariables, drawing.documentId);
   return {

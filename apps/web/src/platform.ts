@@ -82,8 +82,8 @@ export class DesktopPlatform implements Platform {
   async info(): Promise<PlatformInfo> {
     return invoke<PlatformInfo>('platform_info');
   }
-  async readFile(_path: string): Promise<Uint8Array> {
-    throw this.unavailable('files');
+  async readFile(path: string): Promise<Uint8Array> {
+    return new Uint8Array(await invoke<number[]>('read_support_file', { path }));
   }
   async writeFile(_path: string, _data: Uint8Array): Promise<void> {
     throw this.unavailable('files');

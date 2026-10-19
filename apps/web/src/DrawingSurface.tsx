@@ -34,6 +34,8 @@ export function DrawingSurface({
   getSystemVariable,
   getLinetypes,
   getLayerStyles,
+  getNativeDisplayEntities,
+  getLineweightDisplayScale,
   editOverlay,
   selectionCommandActive,
 }: {
@@ -65,6 +67,8 @@ export function DrawingSurface({
   getSystemVariable: NonNullable<CadCanvasOptions['getSystemVariable']>;
   getLinetypes: NonNullable<CadCanvasOptions['getLinetypes']>;
   getLayerStyles: NonNullable<CadCanvasOptions['getLayerStyles']>;
+  getNativeDisplayEntities: NonNullable<CadCanvasOptions['getNativeDisplayEntities']>;
+  getLineweightDisplayScale: NonNullable<CadCanvasOptions['getLineweightDisplayScale']>;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const surface = useRef<CanvasSurface | null>(null);
@@ -91,6 +95,8 @@ export function DrawingSurface({
         getSystemVariable,
         getLinetypes,
         getLayerStyles,
+        getNativeDisplayEntities,
+        getLineweightDisplayScale,
       });
       canvas.setDrawing(drawing);
       surface.current = canvas;

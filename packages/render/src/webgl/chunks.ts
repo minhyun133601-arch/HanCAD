@@ -45,7 +45,8 @@ export function visibleDisplayBounds(
   let result: Bounds2 | undefined;
   for (const entity of entities) {
     if (
-      (wanted && !wanted.has(entity.id)) ||
+      (wanted && !wanted.has(entity.sourceId ?? entity.id) && !wanted.has(entity.id)) ||
+      environment.hidden.has(entity.sourceId ?? entity.id) ||
       entity.visible === false ||
       environment.layers.get(entity.layer)?.visible === false
     )

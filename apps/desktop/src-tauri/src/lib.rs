@@ -1,5 +1,6 @@
 use serde::Serialize;
 mod clipboard;
+mod support_files;
 
 #[derive(Serialize)]
 struct PlatformInfo {
@@ -24,6 +25,7 @@ pub fn run() {
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             platform_info,
+            support_files::read_support_file,
             clipboard::write_drawing_clipboard,
             clipboard::read_drawing_clipboard
         ])
